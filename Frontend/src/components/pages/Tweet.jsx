@@ -46,9 +46,9 @@ const Tweet = ({ visibility, onClose }) => {
 
     const toggleBox = (index) => {
         if (active === index) {
-            return ` h-auto my-8 absolute z-10 `;
+            return ` `;
         } else {
-            return `absolute left-5 top-[h-auto] `;
+            return ` `;
         }
     };
 
@@ -92,7 +92,7 @@ const Tweet = ({ visibility, onClose }) => {
                                                 onClick={() => toggleActive(index)}
                                                 value={tweet}
                                                 onChange={(e) => handleChange(e, index)}
-                                                className=" min-h-[4.5rem] w-[29.5rem] resize-none overflow-hidden border-2 text-2xl outline-none"
+                                                className=" min-h-[14.5rem] w-[29.5rem] resize-none overflow-hidden border-2 text-2xl outline-none"
                                                 placeholder={isThreadStarter ? "What's Happening" : "Add Another Tweet"}></textarea>
                                         </div>
                                     </div>
