@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { ImCross } from "react-icons/im";
 import { Avatar } from "@mui/material";
 
@@ -40,26 +40,34 @@ const Tweet = ({ visibility, onClose }) => {
 
     const handleTweet = () => {
         console.log(tweets);
+        onClose();
     };
 
     const [active, setActive] = useState(null);
 
-    const toggleBox = (index) => {
-        if (active === index) {
-            return ` `;
-        } else {
-            return ` `;
-        }
-    };
-
     const toggleActive = (index) => {
         setActive(index);
     };
-    return (
-        <div className="fixed inset-0  h-[100vh] w-[100vw] ">
-            <div className=" fixed h-full w-full bg-black opacity-70"></div>
+    const toggleBox = (index) => {
+        if (active === index) {
+            return `  `;
+        } else {
+            return ``;
+        }
+    };
 
-            <div className="relative left-[28rem] top-[4rem] flex h-auto max-h-[40rem]  min-h-[18rem] w-[35rem] flex-col overflow-y-auto rounded-lg bg-white">
+    const refInputElement = useCallback((inputElement) => {
+        if (inputElement) {
+            inputElement.focus();
+            toggleActive();
+        }
+    }, []);
+
+    return (
+        <div className=" fixed  inset-0 h-[100vh] w-[100vw]">
+            <div className="fixed h-full w-full bg-black opacity-70"></div>
+
+            <div className="relative left-[28rem] top-[4rem]  flex h-auto max-h-[40rem]  min-h-[18rem] w-[42rem] flex-col overflow-y-auto rounded-lg bg-white">
                 <div className=" h-fit w-full ">
                     <div className="  m-2 flex h-10 w-10 items-center justify-center rounded-full  p-2 hover:border-2 hover:bg-blue-100" onClick={onClose}>
                         <ImCross className="  " />
@@ -69,14 +77,14 @@ const Tweet = ({ visibility, onClose }) => {
                 {tweets.map((tweet, index) => {
                     return (
                         <div key={index}>
-                            <div className=" relative h-full  ">
+                            <div className="    h-full ">
                                 <div className={`flex h-full w-full flex-col    `}>
-                                    <div className="ml-3 flex  gap-2">
+                                    <div className=" ml-3  flex gap-2">
                                         <div className="h-full w-fit ">
-                                            <Avatar />
+                                            <Avatar sx={{ width: 50, height: 50, zIndex: 30 }} />
                                         </div>
 
-                                        <div className={`mb-3  text-right  ${toggleBox(index)}`}>
+                                        <div className={`${toggleBox(index)}  mb-3 text-right`}>
                                             {!isThreadStarter ? (
                                                 <div className="">
                                                     <button
@@ -89,10 +97,11 @@ const Tweet = ({ visibility, onClose }) => {
                                                 </div>
                                             ) : null}
                                             <textarea
+                                                ref={refInputElement}
                                                 onClick={() => toggleActive(index)}
                                                 value={tweet}
                                                 onChange={(e) => handleChange(e, index)}
-                                                className=" min-h-[14.5rem] w-[29.5rem] resize-none overflow-hidden border-2 text-2xl outline-none"
+                                                className={`min-h-[14.5rem]  w-[35rem] resize-none overflow-hidden border-2 text-2xl outline-none`}
                                                 placeholder={isThreadStarter ? "What's Happening" : "Add Another Tweet"}></textarea>
                                         </div>
                                     </div>
@@ -101,7 +110,7 @@ const Tweet = ({ visibility, onClose }) => {
                         </div>
                     );
                 })}
-                <div className="ml-[3.9rem] mt-3 w-[85%] border-[0.01rem] bg-gray-300"></div>
+                <div className=" ml-[3.9rem] mt-3  w-[85%] border-[0.01rem] bg-gray-300"></div>
                 <div className=" my-3 flex justify-end gap-5 ">
                     {tweets.every((tweet) => {
                         return tweet.length > 0;

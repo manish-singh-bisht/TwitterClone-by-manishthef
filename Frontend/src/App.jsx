@@ -6,6 +6,8 @@ import Home from "./components/pages/Home";
 import Login from "./components/Login_Register/Login";
 import SignUpOption from "./components/Login_Register/SignUpOption";
 import Sidebar from "./components/Sidebar/Sidebar";
+import TweetDetail from "./components/pages/TweetDetail";
+import Test from "./components/pages/Test";
 
 const App = () => {
     const {
@@ -30,6 +32,8 @@ const App = () => {
                         <Route exact path="/" element={isAuthenticated ? <Home /> : <Login />} />
                         <Route exact path="/login" element={<Login />} />
                         <Route exact path="/signUp" element={<SignUpOption />} />
+                        <Route exact path="/:ownerName/:id" element={<TweetDetail />} />
+                        <Route exact path="/Explore" element={<Test />} />
                     </Routes>
                 </div>
             </div>

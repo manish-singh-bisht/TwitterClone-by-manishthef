@@ -43,7 +43,7 @@ const Sidebar = () => {
                     {tab === "/More" ? <SidebarList Icon={HiDotsCircleHorizontal} Option="More" /> : <SidebarList Icon={HiOutlineDotsCircleHorizontal} Option="More" />}
                 </NavLink>
                 <div
-                    className="flex h-12 w-60 items-center justify-center rounded-3xl bg-blue-500 font-bold text-white hover:bg-blue-600 active:bg-blue-800 "
+                    className="flex h-12 w-64 items-center justify-center rounded-3xl bg-blue-500 text-[1.2rem] font-bold text-white hover:bg-blue-600 active:bg-blue-800 "
                     onClick={() => {
                         setIsTweetBoxOpen(true);
                     }}>

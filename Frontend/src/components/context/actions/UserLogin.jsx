@@ -15,7 +15,7 @@ const UserLogin = async ({ email, password, dispatch, ACTIONS }) => {
         );
         dispatch({ type: ACTIONS.LOGIN_SUCCESS, payload: data.user });
     } catch (error) {
-        dispatch({ type: ACTIONS.LOGIN_FAILURE, payload: error });
+        dispatch({ type: ACTIONS.LOGIN_FAILURE, payload: error.response.data.message });
     }
 };
 

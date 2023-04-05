@@ -29,7 +29,7 @@ const Login = () => {
                                 Sign up
                             </Link>
                             <div
-                                className="flex h-16 w-[25.5rem] items-center justify-center rounded-[4rem] border-2 border-blue-200 bg-white font-bold text-blue-400 hover:bg-gray-50 hover:text-black active:bg-gray-100 "
+                                className="flex h-16 w-[25.5rem] cursor-pointer select-none items-center justify-center rounded-[4rem] border-2 border-blue-200 bg-white font-bold text-blue-400 hover:bg-gray-50 hover:text-black active:bg-gray-100 "
                                 onClick={() => setIsLoginVisible(true)}>
                                 Log in
                             </div>

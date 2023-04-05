@@ -4,7 +4,7 @@ const SidebarList = ({ Icon, Option }) => {
     return (
         <>
             <section className=" flex w-fit items-center rounded-[24rem] p-4  hover:bg-gray-200">
-                <Icon className="mr-2 text-3xl" />
+                <Icon className="mr-2 text-4xl" />
                 <p className="text-2xl">{Option}</p>
             </section>
         </>
