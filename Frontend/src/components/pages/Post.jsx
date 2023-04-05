@@ -34,7 +34,7 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVi
         <div className="   hover:bg-gray-50">
             <Link to={`${ownerName}/${postId}`} className=" m-2 flex gap-2 hover:bg-gray-50">
                 <div>
-                    <Avatar className=" m-2" sx={{ width: 50, height: 50, zIndex: 10 }} src="./Public/logo/twitter.jpg" />
+                    <Avatar className=" m-2" sx={{ width: 50, height: 50, zIndex: 1 }} src="./Public/logo/twitter.jpg" />
                 </div>
                 <div className="mr-2 flex w-[90%] flex-col gap-2 ">
                     <Link to={`/user/${ownerId}`} className="text-[1.1rem] font-bold hover:underline ">

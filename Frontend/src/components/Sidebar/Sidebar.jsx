@@ -15,7 +15,7 @@ const Sidebar = () => {
     };
 
     return (
-        <main className="fixed  flex h-[100vh] w-[24rem] flex-col items-end justify-between    ">
+        <main className="fixed z-20 flex h-[100vh] w-[24rem] flex-col items-end justify-between    ">
             <div className=" flex w-3/4 select-none flex-col  gap-1 ">
                 <NavLink to="/" onClick={() => setTab("/")}>
                     <FaTwitter className="m-1 h-[3.2rem] w-[3.2rem]  rounded-full p-2 text-5xl text-blue-500 hover:bg-blue-100" />

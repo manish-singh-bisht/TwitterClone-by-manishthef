@@ -27,7 +27,7 @@ const Home = () => {
                 <Loader />
             ) : (
                 <>
-                    <div className="sticky inset-0  flex h-[7rem] w-[46vw] flex-col gap-2 border-2  bg-white/60  backdrop-blur-md  ">
+                    <div className="sticky inset-0 z-10 flex h-[7rem] w-[46vw] flex-col gap-2 border-2  bg-white/60  backdrop-blur-md  ">
                         <h1 className="mx-2 mt-2  text-2xl font-bold">Home</h1>
 
                         <div className="flex h-full items-center justify-center  ">
