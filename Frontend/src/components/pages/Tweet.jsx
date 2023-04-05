@@ -64,8 +64,8 @@ const Tweet = ({ visibility, onClose }) => {
     }, []);
 
     return (
-        <div className=" fixed  inset-0 h-[100vh] w-[100vw]">
-            <div className="fixed h-full w-full bg-black opacity-70"></div>
+        <div className=" fixed  inset-0 h-[100vh] w-[100vw] ">
+            <div className="fixed  h-full w-full  bg-black opacity-70"></div>
 
             <div className="relative left-[28rem] top-[4rem]  flex h-auto max-h-[40rem]  min-h-[18rem] w-[42rem] flex-col overflow-y-auto rounded-lg bg-white">
                 <div className=" h-fit w-full ">
@@ -111,7 +111,7 @@ const Tweet = ({ visibility, onClose }) => {
                     );
                 })}
                 <div className=" ml-[3.9rem] mt-3  w-[85%] border-[0.01rem] bg-gray-300"></div>
-                <div className=" my-3 flex justify-end gap-5 ">
+                <div className=" my-3 mr-2 flex justify-end gap-5">
                     {tweets.every((tweet) => {
                         return tweet.length > 0;
                     }) && (
