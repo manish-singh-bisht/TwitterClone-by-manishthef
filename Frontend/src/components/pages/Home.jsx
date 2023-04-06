@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 import Post from "./Post";
 import { useGlobalContext } from "../context/Context";
 import PostsOfFollowing from "../context/actions/PostsOfFollowing";
-import GetAllUsers from "../context/actions/GetAllUsers";
 import Loader from "./Loader";
 
 const Home = () => {
@@ -12,9 +11,7 @@ const Home = () => {
     async function PostOfFollowingUsers() {
         await PostsOfFollowing({ dispatchPostOfFollowing, ACTIONS });
     }
-    // async function GetAllUsers() {
-    //     await GetAllUsers({ dispatchGetAllUsers, ACTIONS });
-    // }
+
     useEffect(() => {
         PostOfFollowingUsers();
     }, [dispatchPostOfFollowing]);
@@ -39,12 +36,13 @@ const Home = () => {
                     </div>
 
                     <main className="grid grid-cols-[46vw_auto]  ">
-                        <div className="flex h-[100%] flex-col border-l border-r">
+                        <div className={` flex h-[100%] flex-col border-l border-r`}>
                             {posts && posts.length > 1 ? (
                                 posts.map((post) => {
                                     return (
                                         <Post
                                             key={post._id}
+                                            sectionId={post._id}
                                             postId={post._id}
                                             tweet={post.tweet}
                                             postImage={post.images.url}

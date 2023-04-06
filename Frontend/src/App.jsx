@@ -32,8 +32,10 @@ const App = () => {
                         <Route exact path="/" element={isAuthenticated ? <Home /> : <Login />} />
                         <Route exact path="/login" element={<Login />} />
                         <Route exact path="/signUp" element={<SignUpOption />} />
-                        <Route exact path="/:ownerName/:id" element={<TweetDetail />} />
+                        <Route exact path="/:ownerName/:postID" element={<TweetDetail />} />
+                        <Route exact path="/user/:id" element={<Test />} />
                         <Route exact path="/Explore" element={<Test />} />
+                        <Route exact path="/test" element={<Test />} />
                     </Routes>
                 </div>
             </div>

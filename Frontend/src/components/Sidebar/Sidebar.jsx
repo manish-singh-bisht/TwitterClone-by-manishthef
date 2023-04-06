@@ -12,7 +12,7 @@ const Sidebar = () => {
     const [isTweetBoxOpen, setIsTweetBoxOpen] = useState(false);
     const hideTwitterBox = () => {
         setIsTweetBoxOpen(false);
-        document.body.style.overflow = "unset";
+        document.body.style.overflow = "unset"; //makes the back of modal move again i.e set overflow to normal
     };
 
     return (
@@ -44,10 +44,10 @@ const Sidebar = () => {
                     {tab === "/More" ? <SidebarList Icon={HiDotsCircleHorizontal} Option="More" /> : <SidebarList Icon={HiOutlineDotsCircleHorizontal} Option="More" />}
                 </NavLink>
                 <div
-                    className="flex h-16 w-64 items-center justify-center rounded-[2rem] bg-blue-500 text-[1.22rem] font-bold text-white hover:bg-blue-600 active:bg-blue-800 "
+                    className="flex h-12 w-64 items-center justify-center rounded-3xl bg-blue-500 text-[1.2rem] font-bold text-white hover:bg-blue-600 active:bg-blue-800 "
                     onClick={() => {
                         setIsTweetBoxOpen(true);
-                        document.body.style.overflow = "hidden";
+                        document.body.style.overflow = "hidden"; //makes the back of modal not move  i.e set overflow to hidden
                     }}>
                     Tweet
                 </div>

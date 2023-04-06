@@ -67,7 +67,7 @@ const Tweet = ({ visibility, onClose }) => {
         <div className=" fixed  inset-0 h-[100vh] w-[100vw] ">
             <div className="fixed  h-full w-full  bg-black opacity-70"></div>
 
-            <div className="relative left-[28rem] top-[4rem]  flex h-auto max-h-[40rem]  min-h-[18rem] w-[42rem] flex-col overflow-y-auto rounded-lg bg-white">
+            <div className="relative left-[28rem] top-[4rem]  flex h-auto max-h-[40rem]  min-h-[18rem] w-[39.3rem] flex-col overflow-y-auto rounded-xl bg-white">
                 <div className=" h-fit w-full ">
                     <div className="  m-2 flex h-10 w-10 items-center justify-center rounded-full  p-2 hover:border-2 hover:bg-blue-100" onClick={onClose}>
                         <ImCross className="  " />
@@ -101,7 +101,7 @@ const Tweet = ({ visibility, onClose }) => {
                                                 onClick={() => toggleActive(index)}
                                                 value={tweet}
                                                 onChange={(e) => handleChange(e, index)}
-                                                className={`min-h-[14.5rem]  w-[35rem] resize-none overflow-hidden border-2 text-2xl outline-none`}
+                                                className={`min-h-[13rem]  w-[33rem] resize-none overflow-hidden border-2 text-2xl outline-none`}
                                                 placeholder={isThreadStarter ? "What's Happening" : "Add Another Tweet"}></textarea>
                                         </div>
                                     </div>
