@@ -1,13 +1,13 @@
 import React from "react";
-
-const GetAllUsers = async ({ dispatchGetAllUsers, ACTIONS }) => {
+import axios from "axios";
+const GetPostById = async ({ dispatchGetPostById, ACTIONS, postId }) => {
     try {
-        dispatchGetAllUsers({ type: ACTIONS.GET_ALL_USERS_REQUEST });
-        const { data } = await axios.get("http://localhost:4000/api/v1/users", { withCredentials: true });
-        dispatchGetAllUsers({ type: ACTIONS.GET_ALL_USERS_SUCCESS, payload: data.users });
+        dispatchGetPostById({ type: ACTIONS.GET_POST_BY_ID_REQUEST });
+        const { data } = await axios.get(`http://localhost:4000/api/v1/${postId}`, { withCredentials: true });
+        dispatchGetPostById({ type: ACTIONS.GET_POST_BY_ID_SUCCESS, payload: data.post });
     } catch (error) {
-        dispatchGetAllUsers({ type: ACTIONS.GET_ALL_USERS_FAILURE, payload: error.response.data.message });
+        dispatchGetPostById({ type: ACTIONS.GET_POST_BY_ID_FAILURE, payload: error.response.data.message });
     }
 };
 
-export default GetAllUsers;
+export default GetPostById;

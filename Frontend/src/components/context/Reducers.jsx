@@ -11,9 +11,13 @@ export const ACTIONS = {
     POST_OF_FOLLOWING_SUCCESS: " PostOfFollowing success",
     POST_OF_FOLLOWING_FAILURE: " PostOfFollowing failure",
 
-    GET_ALL_USERS_REQUEST: " GetAllUsers request",
-    GET_ALL_USERS_SUCCESS: " GetAllUsers success",
-    GET_ALL_USERS_FAILURE: " GetAllUsers failure",
+    GET_POST_BY_ID_REQUEST: " GetPostById request",
+    GET_POST_BY_ID_SUCCESS: " GetPostById success",
+    GET_POST_BY_ID_FAILURE: " GetPostById failure",
+
+    LIKE_UNLIKE_REQUEST: " LikeUnlike request",
+    LIKE_UNLIKE_SUCCESS: " LikeUnlike success",
+    LIKE_UNLIKE_FAILURE: " LikeUnlike failure",
 
     CLEAR_ERRORS: "clear Errors",
 };
@@ -57,14 +61,29 @@ export const PostOfFollowingReducer = (state, action) => {
     }
 };
 
-export const GetAllUsersReducer = (state, action) => {
+export const GetPostByIdReducer = (state, action) => {
     switch (action.type) {
-        case ACTIONS.GET_ALL_USERS_REQUEST:
-            return { ...state, loading: true, users: [], error: "" };
-        case ACTIONS.GET_ALL_USERS_SUCCESS:
-            return { ...state, loading: false, users: action.payload, error: "" };
-        case ACTIONS.GET_ALL_USERS_FAILURE:
-            return { ...state, loading: false, users: [], error: action.payload };
+        case ACTIONS.GET_POST_BY_ID_REQUEST:
+            return { ...state, loading: true, post: {}, error: "" };
+        case ACTIONS.GET_POST_BY_ID_SUCCESS:
+            return { ...state, loading: false, post: action.payload, error: "" };
+        case ACTIONS.GET_POST_BY_ID_FAILURE:
+            return { ...state, loading: false, post: {}, error: action.payload };
+        case ACTIONS.CLEAR_ERRORS:
+            return { ...state, error: "" };
+
+        default:
+            return state;
+    }
+};
+export const LikeUnlikeReducer = (state, action) => {
+    switch (action.type) {
+        case ACTIONS.LIKE_UNLIKE_REQUEST:
+            return { ...state, loading: true, error: "" };
+        case ACTIONS.LIKE_UNLIKE_SUCCESS:
+            return { ...state, loading: false, error: "" };
+        case ACTIONS.LIKE_UNLIKE_FAILURE:
+            return { ...state, loading: false, error: action.payload };
         case ACTIONS.CLEAR_ERRORS:
             return { ...state, error: "" };
 

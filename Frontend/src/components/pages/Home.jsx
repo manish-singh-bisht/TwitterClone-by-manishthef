@@ -1,20 +1,20 @@
 import React, { useEffect } from "react";
-
 import Post from "./Post";
 import { useGlobalContext } from "../context/Context";
 import PostsOfFollowing from "../context/actions/PostsOfFollowing";
 import Loader from "./Loader";
 
 const Home = () => {
-    const { dispatchPostOfFollowing, ACTIONS, statePostOfFollowing, stateGetAllUsers, dispatchGetAllUsers } = useGlobalContext();
+    const { dispatchPostOfFollowing, ACTIONS, statePostOfFollowing } = useGlobalContext();
 
+    //For getting post of users that the current loggedin user follows.
     async function PostOfFollowingUsers() {
         await PostsOfFollowing({ dispatchPostOfFollowing, ACTIONS });
     }
 
     useEffect(() => {
         PostOfFollowingUsers();
-    }, [dispatchPostOfFollowing]);
+    }, []);
 
     const { posts, loading, error } = statePostOfFollowing;
 
@@ -24,7 +24,7 @@ const Home = () => {
                 <Loader />
             ) : (
                 <>
-                    <div className="sticky inset-0 z-10 flex h-[7rem] w-[46vw] flex-col gap-2 border-2  bg-white/60  backdrop-blur-md  ">
+                    <div className="sticky inset-0 z-10 flex h-[7rem] w-[44vw] flex-col gap-2 border-2  bg-white/60  backdrop-blur-md  ">
                         <h1 className="mx-2 mt-2  text-2xl font-bold">Home</h1>
 
                         <div className="flex h-full items-center justify-center  ">
@@ -35,14 +35,13 @@ const Home = () => {
                         </div>
                     </div>
 
-                    <main className="grid grid-cols-[46vw_auto]  ">
+                    <main className="grid grid-cols-[44vw_auto]  ">
                         <div className={` flex h-[100%] flex-col border-l border-r`}>
                             {posts && posts.length > 1 ? (
                                 posts.map((post) => {
                                     return (
                                         <Post
                                             key={post._id}
-                                            sectionId={post._id}
                                             postId={post._id}
                                             tweet={post.tweet}
                                             postImage={post.images.url}
@@ -56,7 +55,7 @@ const Home = () => {
                                     );
                                 })
                             ) : (
-                                <div>no posts yet</div>
+                                <div>Follow someone to see their post</div>
                             )}
                         </div>
                     </main>

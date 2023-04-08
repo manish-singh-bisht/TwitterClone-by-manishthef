@@ -3,7 +3,7 @@ import { FaTwitter } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import LoginOption from "./LoginOption";
 
-const Login = () => {
+const LoginSignUpMainPage = () => {
     const [isLoginVisible, setIsLoginVisible] = useState(false);
     const hideLogin = () => {
         setIsLoginVisible(false);
@@ -43,4 +43,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default LoginSignUpMainPage;

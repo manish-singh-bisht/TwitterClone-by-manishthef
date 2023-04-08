@@ -34,29 +34,49 @@ const LoginOption = ({ onClose, isLoginVisible }) => {
                         </p>
                     </div>
 
-                    <form className="mt-12 flex flex-col gap-4 " onSubmit={handleLogin}>
-                        <input
-                            type="Email"
-                            required
-                            className="h relative block h-16 w-[23.5rem] border-2 border-gray-700 bg-black p-2  text-white focus:border-blue-500 focus:outline-none"
-                            placeholder="Email"
-                            value={email}
-                            onChange={(e) => {
-                                setEmail(e.target.value);
-                            }}
-                        />
-
-                        <input
-                            type="Password"
-                            required
-                            className="block h-16 w-[23.5rem] border-2 border-gray-700 bg-black p-2 text-white focus:border-blue-500 focus:outline-none"
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => {
-                                setPassword(e.target.value);
-                            }}
-                        />
-
+                    <form className="relative mt-12 flex flex-col gap-4 " onSubmit={handleLogin}>
+                        <div>
+                            <input
+                                type="Email"
+                                required
+                                id="Email"
+                                className="peer block  h-16 w-[23.5rem] rounded-md border-2 border-gray-700 bg-black p-2 pt-8  text-white  placeholder-transparent focus:border-blue-500 focus:outline-none"
+                                placeholder="Email"
+                                value={email}
+                                onChange={(e) => {
+                                    setEmail(e.target.value);
+                                }}
+                            />
+                            <label
+                                htmlFor="Email"
+                                className="absolute top-1 left-[.60rem] text-sm text-blue-400 transition-all
+                            peer-placeholder-shown:top-[1.2rem]
+                            peer-placeholder-shown:text-base
+                        peer-placeholder-shown:text-white peer-focus:top-1
+                        peer-focus:text-sm
+                        peer-focus:text-blue-400">
+                                Email
+                            </label>
+                        </div>
+                        <div className="relative">
+                            <input
+                                type="Password"
+                                id="Password"
+                                required
+                                className="peer block h-16 w-[23.5rem] rounded-md border-2 border-gray-700 bg-black p-2 pt-8 text-white placeholder-transparent focus:border-blue-500 focus:outline-none"
+                                placeholder="Password"
+                                value={password}
+                                onChange={(e) => {
+                                    setPassword(e.target.value);
+                                }}
+                            />
+                            <label
+                                htmlFor="Password"
+                                className="absolute top-1
+                                left-[.60rem] text-sm text-blue-400 transition-all peer-placeholder-shown:top-[1.26rem] peer-placeholder-shown:text-base peer-placeholder-shown:text-white peer-focus:top-1 peer-focus:text-sm peer-focus:text-blue-400">
+                                Password
+                            </label>
+                        </div>
                         <button className="h-9 rounded-[24rem] bg-gray-100 font-bold hover:bg-gray-200 active:bg-gray-300 ">Next</button>
                     </form>
 

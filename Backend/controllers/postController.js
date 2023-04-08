@@ -29,7 +29,7 @@ exports.createPost = async (req, res, next) => {
 
 exports.findPostById = async (req, res, next) => {
     try {
-        const post = await Posts.findById(req.params.id).populate({ path: "owner", select: "name" });
+        const post = await Posts.findById(req.params.id).populate("likes");
         if (!post) {
             return next(new ErrorHandler("Post not found", 404));
         }
@@ -38,7 +38,7 @@ exports.findPostById = async (req, res, next) => {
             post,
         });
     } catch (error) {
-        next(new ErrorHandler(error.message, 400));
+        next(new ErrorHandler(error.message, 500));
     }
 };
 
@@ -54,6 +54,7 @@ exports.likeAndUnlikePost = async (req, res, next) => {
             const index = post.likes.indexOf(req.user._id);
             post.likes.splice(index, 1);
             await post.save();
+
             return res.status(200).json({
                 success: true,
                 message: "post unliked successfully",
