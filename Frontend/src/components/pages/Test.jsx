@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import GetPostById from "../context/actions/GetAllUsers";
+
 import { useGlobalContext } from "../context/Context";
+import GetPostById from "../context/actions/GetPostById";
+import Loader from "./Loader";
 
 function Test() {
     const postId = "64022360385e05dc0ed30ddb";
@@ -14,14 +16,12 @@ function Test() {
         GetPostByIdHandler();
     }, []);
 
-    const { post } = stateGetPostById;
-    const likes = [post.likes];
+    const { post, loading } = stateGetPostById;
+    if (!loading && post.likes !== undefined) {
+        console.log(post.likes.length);
+    }
 
-    return (
-        <>
-            <div>hi</div>
-        </>
-    );
+    return <>{loading ? <Loader /> : <div>hi</div>}</>;
 }
 
 export default Test;
