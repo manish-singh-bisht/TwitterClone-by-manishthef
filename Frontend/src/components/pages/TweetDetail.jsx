@@ -8,6 +8,8 @@ import PhotoGallery from "./PhotoGallery";
 import LikeUnlike from "../context/actions/LikeUnlike";
 import { useGlobalContext } from "../context/Context";
 import "./AnimationUsedInPostAndTweetDetail.css";
+import axios from "axios";
+
 const TweetDetail = () => {
     const { ACTIONS, dispatchLikeUnlike, state } = useGlobalContext();
 
@@ -19,17 +21,32 @@ const TweetDetail = () => {
     }
 
     //using data that was sent in the state  from Post
-    const locaion = useLocation();
-    const { tweet, ownerName, ownerId, ownerImage, postImage, postVideo, likes, comments, isDelete, isAccount } = locaion.state;
-
-    //For scrolling to the top of window when the component shows up
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
+    const location = useLocation();
+    const { tweet, ownerName, ownerId, ownerImage, postImage, postVideo, likes, comments, isDelete, isAccount } = location.state;
 
     //For like and unlike of post
     const [isLiked, setIsLiked] = useState(false);
-    const [liked, setLiked] = useState(likes.length);
+    const [liked, setLiked] = useState(likes.length); //this likes.length will not give updated data, but this liked is getting updated below,so the user see's the updated data
+
+    useEffect(() => {
+        window.scrollTo(0, 0); //For scrolling to the top of window when the component shows up
+
+        //gets the updated data of likes, when user likes at homepage and then comes to detailpage,the user gets the updated data
+        async function test() {
+            const { data } = await axios.get(`http://localhost:4000/api/v1/${postId}`, { withCredentials: true });
+            let like = [];
+            like = data.post.likes;
+            setLiked(like.length);
+
+            //For keeping the heart red or unred even after refreshing the page
+            like.forEach((item) => {
+                if (item._id === state.user._id) {
+                    setIsLiked(true);
+                }
+            });
+        }
+        test();
+    }, [state.user._id, isLiked]);
 
     //ANIMATION FOR THE NUMBER NEXT TO LIKE/UNLIKE
     const [animationLikes, setAnimationLikes] = useState("initial");
@@ -44,20 +61,13 @@ const TweetDetail = () => {
         }
         setTimeout(() => setAnimationLikes("initial"), 200);
     };
+
     const likeHandler = async () => {
         handleLikesAnimation();
         await LikeUnlike({ dispatchLikeUnlike, ACTIONS, postId });
         setIsLiked(!isLiked);
     };
 
-    //For keeping the heart red or unred even after refreshing the page
-    useEffect(() => {
-        likes.forEach((item) => {
-            if (item._id === state.user._id) {
-                setIsLiked(true);
-            }
-        });
-    }, []);
     const photos = ["https://source.unsplash.com/random/900x800", "https://source.unsplash.com/random/900x800"];
     //Grid layout for different numbers of image,used below
     let gridClass = "";
