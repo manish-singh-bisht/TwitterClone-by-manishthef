@@ -21,8 +21,4 @@ const AppProvider = ({ children }) => {
     return <AppContext.Provider value={{ ACTIONS, state, dispatch, statePostOfFollowing, dispatchPostOfFollowing, stateGetPostById, dispatchGetPostById, stateLikeUnlike, dispatchLikeUnlike }}>{children}</AppContext.Provider>;
 };
 
-//custom hook for using context
-export const useGlobalContext = () => {
-    return useContext(AppContext);
-};
 export { AppContext, AppProvider };

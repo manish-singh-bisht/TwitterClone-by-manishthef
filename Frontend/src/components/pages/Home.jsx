@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import Post from "./Post";
-import { useGlobalContext } from "../context/Context";
 import PostsOfFollowing from "../context/actions/PostsOfFollowing";
 import Loader from "./Loader";
+import { useGlobalContext } from "../CustomHooks/useGlobalContext";
 
 const Home = () => {
     const { dispatchPostOfFollowing, ACTIONS, statePostOfFollowing } = useGlobalContext();

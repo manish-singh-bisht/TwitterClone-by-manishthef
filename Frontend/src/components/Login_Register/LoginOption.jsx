@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { ImCross } from "react-icons/im";
 import { FaTwitter } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useGlobalContext } from "../context/Context";
 import UserLogin from "../context/actions/UserLogin";
+import { useGlobalContext } from "../CustomHooks/useGlobalContext";
 
 const LoginOption = ({ onClose, isLoginVisible }) => {
     if (!isLoginVisible) return null;
@@ -14,7 +14,6 @@ const LoginOption = ({ onClose, isLoginVisible }) => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-
         await UserLogin({ email, password, dispatch, ACTIONS });
     };
     return (

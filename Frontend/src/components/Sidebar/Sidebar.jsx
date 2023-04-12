@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, Suspense, memo } from "react";
 import { FaBookmark, FaRegBookmark, FaTwitter } from "react-icons/fa";
 import { AiFillHome, AiOutlineHome, AiFillBell, AiOutlineBell } from "react-icons/ai";
 import { HiMail, HiOutlineMail, HiOutlineDotsCircleHorizontal, HiDotsCircleHorizontal, HiOutlineHashtag, HiHashtag } from "react-icons/hi";
 import { RiAccountCircleLine, RiAccountCircleFill } from "react-icons/ri";
 import { NavLink, Link } from "react-router-dom";
 import SidebarList from "./SidebarList";
-import Tweet from "../pages/Tweet";
+import Loader from "../pages/Loader";
+
+const Tweet = React.lazy(() => import("../pages/Tweet"));
 
 const Sidebar = () => {
     const [tab, setTab] = useState(window.location.pathname);
@@ -59,9 +61,11 @@ const Sidebar = () => {
                     <div>fd</div>
                 </div>
             </div>
-            <Tweet visibility={isTweetBoxOpen} onClose={hideTwitterBox} />
+            <Suspense fallback={<Loader />}>
+                <Tweet visibility={isTweetBoxOpen} onClose={hideTwitterBox} />
+            </Suspense>
         </main>
     );
 };
 
-export default Sidebar;
+export default memo(Sidebar);

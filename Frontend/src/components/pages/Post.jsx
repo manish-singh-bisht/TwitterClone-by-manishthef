@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { BiMessageRounded } from "react-icons/bi";
 import { AiFillHeart, AiOutlineHeart, AiOutlineRetweet } from "react-icons/ai";
+import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { Avatar } from "@mui/material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import PhotoGallery from "./PhotoGallery";
 import LikeUnlike from "../context/actions/LikeUnlike";
-import { useGlobalContext } from "../context/Context";
 import "./AnimationUsedInPostAndTweetDetail.css";
+import useAnimation from "../CustomHooks/useAnimation";
+import { useGlobalContext } from "../CustomHooks/useGlobalContext";
 
 const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVideo, likes = [], comments = [], isDelete = false, isAccount = false }) => {
     const { ACTIONS, dispatchLikeUnlike, state } = useGlobalContext();
@@ -15,23 +17,12 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVi
     const [isLiked, setIsLiked] = useState(false);
     const [liked, setLiked] = useState(likes.length);
 
-    //ANIMATION FOR THE NUMBER NEXT TO LIKE/UNLIKE
-    const [animationLikes, setAnimationLikes] = useState("initial");
-    const handleLikesAnimation = () => {
-        {
-            isLiked ? setTimeout(() => setAnimationLikes("goDown"), 0) : setTimeout(() => setAnimationLikes("goUp"), 0);
-        }
+    //ANIMATION FOR THE NUMBER NEXT TO LIKE/UNLIKE USING CUSTOM HOOK
+    const [animationLikes, liked1, handleLikesAnimation] = useAnimation(isLiked, setIsLiked, liked, setLiked);
 
-        setTimeout(() => setLiked(isLiked ? liked - 1 : liked + 1), 200);
-        {
-            isLiked ? setTimeout(() => setAnimationLikes("waitUp"), 100) : setTimeout(() => setAnimationLikes("waitDown"), 100);
-        }
-        setTimeout(() => setAnimationLikes("initial"), 200);
-    };
     const likeHandler = async () => {
         handleLikesAnimation();
         await LikeUnlike({ dispatchLikeUnlike, ACTIONS, postId });
-        setIsLiked(!isLiked);
     };
 
     //For keeping the heart red or unred even after refreshing the page
@@ -56,11 +47,14 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVi
         }
     }, [location]);
 
-    const photos = ["https://source.unsplash.com/random/900x800", "https://source.unsplash.com/random/900x800"];
+    const photos = [];
 
     //Grid layout for different numbers of image,used below
     let gridClass = "";
     switch (photos.length) {
+        case 0:
+            gridClass = "";
+            break;
         case 1:
             gridClass = "w-full h-full";
             break;
@@ -80,7 +74,7 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVi
     //For navigating to detailtweet with data
     const navigate = useNavigate();
     const handleClick = () => {
-        navigate(`${ownerName}/${postId}`, { state: { tweet, ownerName, ownerId, ownerImage, postImage, postVideo, likes, comments, isDelete, isAccount } });
+        navigate(`${ownerName}/${postId}`, { state: { tweet, ownerName, ownerId, ownerImage, postImage, postVideo, comments, isDelete, isAccount } });
     };
 
     return (
@@ -100,9 +94,7 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVi
                     </Link>
                     <pre className={` mt-10 max-w-[98%] whitespace-pre-wrap break-words  `}>{tweet}</pre>
                     <div className={`grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
-                        {photos.map((photo, index) => (
-                            <PhotoGallery key={index} photos={photos} photo={photo} index={index} />
-                        ))}
+                        {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo} index={index} />)}
                     </div>
                 </div>
             </div>
@@ -125,7 +117,13 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVi
                     <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-red-100 group-hover:text-red-500" onClick={likeHandler}>
                         {isLiked ? <AiFillHeart className="h-[1.35rem] w-[1.35rem]  fill-red-500" /> : <AiOutlineHeart className="h-[1.35rem] w-[1.35rem]   " />}
                     </button>
-                    <span className={`group-hover:text-red-500 ${animationLikes}`}>{liked}</span>
+                    <span className={`group-hover:text-red-500 ${animationLikes}`}>{liked1}</span>
+                </div>
+                <div className="group flex items-center justify-center gap-2 ">
+                    <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
+                        <FaRegBookmark className="h-[1.2rem] w-[1.2rem] " />
+                    </button>
+                    <span className="group-hover:text-blue-500"></span>
                 </div>
             </div>
             <hr className="w-full bg-gray-100" />
