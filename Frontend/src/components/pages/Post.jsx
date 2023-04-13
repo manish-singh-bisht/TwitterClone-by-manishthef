@@ -1,8 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { BiMessageRounded } from "react-icons/bi";
-import { AiFillHeart, AiOutlineHeart, AiOutlineRetweet } from "react-icons/ai";
-import { FaBookmark, FaRegBookmark } from "react-icons/fa";
-import { Avatar } from "@mui/material";
+import { Bookmark, Comments, HeartLike, HeartUnlike, Retweets } from "./SVGs";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import PhotoGallery from "./PhotoGallery";
 import LikeUnlike from "../context/actions/LikeUnlike";
@@ -18,7 +15,7 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVi
     const [liked, setLiked] = useState(likes.length);
 
     //ANIMATION FOR THE NUMBER NEXT TO LIKE/UNLIKE USING CUSTOM HOOK
-    const [animationLikes, liked1, handleLikesAnimation] = useAnimation(isLiked, setIsLiked, liked, setLiked);
+    const [animationLikes, likedValue, handleLikesAnimation] = useAnimation(isLiked, setIsLiked, liked, setLiked);
 
     const likeHandler = async () => {
         handleLikesAnimation();
@@ -47,7 +44,7 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVi
         }
     }, [location]);
 
-    const photos = [];
+    const photos = ["https://source.unsplash.com/random/1200x600", "https://source.unsplash.com/random/900x900"];
 
     //Grid layout for different numbers of image,used below
     let gridClass = "";
@@ -76,13 +73,22 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVi
     const handleClick = () => {
         navigate(`${ownerName}/${postId}`, { state: { tweet, ownerName, ownerId, ownerImage, postImage, postVideo, comments, isDelete, isAccount } });
     };
-
+    const profile = "";
     return (
         <div className={` scroll-mt-32 hover:bg-gray-50 `} id={postId}>
             <div onClick={handleClick} className=" m-2 flex cursor-pointer gap-2 hover:bg-gray-50">
-                <div>
-                    <Avatar className=" m-2" sx={{ width: 50, height: 50, zIndex: 1 }} src="./Public/logo/twitter.jpg" />
-                </div>
+                {profile ? (
+                    <div className="m-1 h-[3.2rem] w-[3.2rem] items-center justify-center rounded-full   bg-gray-400">
+                        <img src={profile} alt="profile image" className="h-full w-full rounded-full object-cover" />
+                    </div>
+                ) : (
+                    <div className="relative m-1 flex h-[3.2rem] w-[3.2rem] items-center justify-center  rounded-full bg-gray-200">
+                        <svg className="  h-9 w-9 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
+                        </svg>
+                    </div>
+                )}
+
                 <div className="relative mr-2 flex w-[87%] flex-col  gap-2">
                     <Link
                         to={`/user/${ownerId}`}
@@ -99,29 +105,29 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVi
                 </div>
             </div>
 
-            <div className="my-4 ml-[5rem] flex w-[87.5%] gap-24   ">
+            <div className="my-4 ml-[4.25rem] flex w-[87.5%] gap-24   ">
                 <div className="group flex items-center justify-center gap-2 ">
                     <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
-                        <BiMessageRounded className="h-[1.35rem] w-[1.35rem] " />
+                        <Comments />
                     </button>
                     <span className="group-hover:text-blue-500">{likes.length}</span>
                 </div>
 
                 <div className="group flex items-center justify-center gap-2 ">
                     <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-green-100 group-hover:text-green-500">
-                        <AiOutlineRetweet className="h-[1.35rem] w-[1.35rem] " />
+                        <Retweets />
                     </button>
                     <span className="group-hover:text-green-500">{likes.length}</span>
                 </div>
                 <div className=" group flex items-center justify-center gap-2  ">
                     <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-red-100 group-hover:text-red-500" onClick={likeHandler}>
-                        {isLiked ? <AiFillHeart className="h-[1.35rem] w-[1.35rem]  fill-red-500" /> : <AiOutlineHeart className="h-[1.35rem] w-[1.35rem]   " />}
+                        {isLiked ? <HeartLike /> : <HeartUnlike />}
                     </button>
-                    <span className={`group-hover:text-red-500 ${animationLikes}`}>{liked1}</span>
+                    <span className={`group-hover:text-red-500 ${animationLikes}`}>{likedValue}</span>
                 </div>
                 <div className="group flex items-center justify-center gap-2 ">
                     <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
-                        <FaRegBookmark className="h-[1.2rem] w-[1.2rem] " />
+                        <Bookmark />
                     </button>
                     <span className="group-hover:text-blue-500"></span>
                 </div>

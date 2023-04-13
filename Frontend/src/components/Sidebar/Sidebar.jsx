@@ -1,11 +1,8 @@
 import React, { useState, Suspense, memo } from "react";
-import { FaBookmark, FaRegBookmark, FaTwitter } from "react-icons/fa";
-import { AiFillHome, AiOutlineHome, AiFillBell, AiOutlineBell } from "react-icons/ai";
-import { HiMail, HiOutlineMail, HiOutlineDotsCircleHorizontal, HiDotsCircleHorizontal, HiOutlineHashtag, HiHashtag } from "react-icons/hi";
-import { RiAccountCircleLine, RiAccountCircleFill } from "react-icons/ri";
 import { NavLink, Link } from "react-router-dom";
 import SidebarList from "./SidebarList";
 import Loader from "../pages/Loader";
+import { BellFilled, BellOutline, BookmarkFilled, BookmarkOutline, HashtagFilled, HashtagOutline, HomeFilled, HomeOutLine, MessageFilled, MessageOutline, MoreFilled, MoreOutline, ProfileFilled, ProfileOutline, TwitterIcon } from "../pages/SVGs";
 
 const Tweet = React.lazy(() => import("../pages/Tweet"));
 
@@ -20,30 +17,30 @@ const Sidebar = () => {
     return (
         <main className="fixed z-20 flex h-[100vh] w-[24rem] flex-col items-end justify-between    ">
             <div className=" flex w-3/4 select-none flex-col  gap-1 ">
-                <NavLink to="/" onClick={() => setTab("/")}>
-                    <FaTwitter className="m-1 h-[3.2rem] w-[3.2rem]  rounded-full p-2 text-5xl text-blue-500 hover:bg-blue-100" />
+                <NavLink to="/" className={({ isActive }) => (isActive ? "w-fit " : " w-fit ")} onClick={() => setTab("/")}>
+                    <TwitterIcon className="" />
                 </NavLink>
 
                 <NavLink className={({ isActive }) => (isActive ? "w-fit font-bold" : " w-fit  font-normal")} to="/" onClick={() => setTab("/")}>
-                    {tab === "/" ? <SidebarList Icon={AiFillHome} Option="Home" /> : <SidebarList Icon={AiOutlineHome} Option="Home" />}
+                    {tab === "/" ? <SidebarList Icon={HomeFilled} Option="Home" /> : <SidebarList Icon={HomeOutLine} Option="Home" />}
                 </NavLink>
                 <NavLink className={({ isActive }) => (isActive ? "w-fit font-bold" : "w-fit font-normal")} to="/Explore" onClick={() => setTab("/Explore")}>
-                    {tab === "/Explore" ? <SidebarList Icon={HiHashtag} Option="Explore" /> : <SidebarList Icon={HiOutlineHashtag} Option="Explore" />}
+                    {tab === "/Explore" ? <SidebarList Icon={HashtagFilled} Option="Explore" /> : <SidebarList Icon={HashtagOutline} Option="Explore" />}
                 </NavLink>
                 <NavLink className={({ isActive }) => (isActive ? "w-fit font-bold" : "w-fit font-normal")} to="/Notifications" onClick={() => setTab("/Notifications")}>
-                    {tab === "/Notifications" ? <SidebarList Icon={AiFillBell} Option="Notifications" /> : <SidebarList Icon={AiOutlineBell} Option="Notifications" />}
+                    {tab === "/Notifications" ? <SidebarList Icon={BellFilled} Option="Notifications" /> : <SidebarList Icon={BellOutline} Option="Notifications" />}
                 </NavLink>
                 <NavLink className={({ isActive }) => (isActive ? "w-fit font-bold" : "w-fit font-normal")} to="/Messages" onClick={() => setTab("/Messages")}>
-                    {tab === "/Messages" ? <SidebarList Icon={HiMail} Option="Messages" /> : <SidebarList Icon={HiOutlineMail} Option="Messages" />}
+                    {tab === "/Messages" ? <SidebarList Icon={MessageFilled} Option="Messages" /> : <SidebarList Icon={MessageOutline} Option="Messages" />}
                 </NavLink>
                 <NavLink className={({ isActive }) => (isActive ? "w-fit font-bold" : "w-fit font-normal")} to="/Bookmark" onClick={() => setTab("/Bookmark")}>
-                    {tab === "/Bookmark" ? <SidebarList Icon={FaBookmark} Option="Bookmark" /> : <SidebarList Icon={FaRegBookmark} Option="Bookmark" />}
+                    {tab === "/Bookmark" ? <SidebarList Icon={BookmarkFilled} Option="Bookmark" /> : <SidebarList Icon={BookmarkOutline} Option="Bookmark" />}
                 </NavLink>
                 <NavLink className={({ isActive }) => (isActive ? "w-fit font-bold" : "w-fit font-normal")} to="/Profile" onClick={() => setTab("/Profile")}>
-                    {tab === "/Profile" ? <SidebarList Icon={RiAccountCircleFill} Option="Profile" /> : <SidebarList Icon={RiAccountCircleLine} Option="Profile" />}
+                    {tab === "/Profile" ? <SidebarList Icon={ProfileFilled} Option="Profile" /> : <SidebarList Icon={ProfileOutline} Option="Profile" />}
                 </NavLink>
                 <NavLink className={({ isActive }) => (isActive ? "w-fit font-bold" : "w-fit font-normal")} to="/More" onClick={() => setTab("/More")}>
-                    {tab === "/More" ? <SidebarList Icon={HiDotsCircleHorizontal} Option="More" /> : <SidebarList Icon={HiOutlineDotsCircleHorizontal} Option="More" />}
+                    {tab === "/More" ? <SidebarList Icon={MoreFilled} Option="More" /> : <SidebarList Icon={MoreOutline} Option="More" />}
                 </NavLink>
                 <div
                     className="flex h-12 w-64 items-center justify-center rounded-3xl bg-blue-500 text-[1.2rem] font-bold text-white hover:bg-blue-600 active:bg-blue-800 "

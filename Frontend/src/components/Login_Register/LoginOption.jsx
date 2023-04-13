@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { ImCross } from "react-icons/im";
-import { FaTwitter } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import UserLogin from "../context/actions/UserLogin";
 import { useGlobalContext } from "../CustomHooks/useGlobalContext";
+import { CrossInLogin, TwitterIconInLogin } from "../pages/SVGs";
 
 const LoginOption = ({ onClose, isLoginVisible }) => {
     if (!isLoginVisible) return null;
@@ -19,13 +18,13 @@ const LoginOption = ({ onClose, isLoginVisible }) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm">
             <div className="flex h-[85vh] w-[45vw] rounded-xl bg-black ">
-                <div className="m-4 h-6 w-6 ">
-                    <ImCross className="  cursor-pointer  text-white hover:text-lg" onClick={onClose} />
+                <div className="m-[0.39rem] h-fit " onClick={onClose}>
+                    <CrossInLogin className=" " />
                 </div>
 
                 <div className="flex w-full flex-col items-center  ">
                     <div className="flex h-[30vh] flex-col items-center justify-around ">
-                        <FaTwitter className="m-2 h-10 w-10 text-gray-200" />
+                        <TwitterIconInLogin className="" />
                         <p
                             className="m-4
                             text-[3rem] font-bold text-gray-100">

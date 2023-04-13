@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { FaTwitter } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import LoginOption from "./LoginOption";
+import { TwitterIconInLoginSignupMainPage } from "../pages/SVGs";
 
 const LoginSignUpMainPage = () => {
     const [isLoginVisible, setIsLoginVisible] = useState(false);
@@ -18,7 +18,7 @@ const LoginSignUpMainPage = () => {
                 <div className="flex w-[38vw] flex-col justify-center ">
                     <div className="h-[70vh] ">
                         <div className="">
-                            <FaTwitter className="h-12 w-12 text-blue-400" />
+                            <TwitterIconInLoginSignupMainPage className="" />
                         </div>
                         <div className="mt-14 flex h-[35%] flex-col justify-between ">
                             <div className="text-[4.5rem] font-bold">Happening now</div>

@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { ImCross } from "react-icons/im";
-import { Avatar } from "@mui/material";
+import { Cross } from "./SVGs";
 
 const Tweet = ({ visibility, onClose }) => {
     if (!visibility) return;
@@ -62,15 +61,15 @@ const Tweet = ({ visibility, onClose }) => {
             toggleActive();
         }
     }, []);
-
+    const profile = "";
     return (
         <div className=" fixed  inset-0 h-[100vh] w-[100vw] ">
             <div className="fixed  h-full w-full  bg-black opacity-70"></div>
 
             <div className="relative left-[28rem] top-[4rem]  flex h-auto max-h-[40rem]  min-h-[18rem] w-[39.3rem] flex-col overflow-y-auto rounded-xl bg-white">
                 <div className=" h-fit w-full ">
-                    <div className="  m-2 flex h-10 w-10 items-center justify-center rounded-full  p-2 hover:border-2 hover:bg-blue-100" onClick={onClose}>
-                        <ImCross className="  " />
+                    <div className="  m-2 flex h-10 w-10 cursor-pointer items-center justify-center  rounded-full p-2 hover:bg-blue-100" onClick={onClose}>
+                        <Cross className="  " />
                     </div>
                 </div>
 
@@ -80,9 +79,17 @@ const Tweet = ({ visibility, onClose }) => {
                             <div className="    h-full ">
                                 <div className={`flex h-full w-full flex-col    `}>
                                     <div className=" ml-3  flex gap-2">
-                                        <div className="h-full w-fit ">
-                                            <Avatar sx={{ width: 50, height: 50, zIndex: 30 }} />
-                                        </div>
+                                        {profile ? (
+                                            <div className=" h-[3.2rem] w-[3.2rem] items-center justify-center rounded-full   bg-gray-400">
+                                                <img src={profile} alt="profile image" className="h-full w-full rounded-full object-cover" />
+                                            </div>
+                                        ) : (
+                                            <div className="relative  flex h-[3.2rem] w-[3.2rem] items-center justify-center  rounded-full bg-gray-200">
+                                                <svg className="  h-9 w-9 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
+                                                </svg>
+                                            </div>
+                                        )}
 
                                         <div className={`${toggleBox(index)}  mb-3 text-right`}>
                                             {!isThreadStarter ? (

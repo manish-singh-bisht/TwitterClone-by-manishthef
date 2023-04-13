@@ -1,19 +1,28 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { AiOutlineArrowLeft } from "react-icons/ai";
-import { FaBookmark, FaRegBookmark } from "react-icons/fa";
+import React, { Suspense, useCallback, useEffect, useState } from "react";
+
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { BiMessageRounded } from "react-icons/bi";
-import { AiFillHeart, AiOutlineHeart, AiOutlineRetweet } from "react-icons/ai";
-import { Avatar } from "@mui/material";
+
 import PhotoGallery from "./PhotoGallery";
 import LikeUnlike from "../context/actions/LikeUnlike";
 import "./AnimationUsedInPostAndTweetDetail.css";
 import axios from "axios";
 import useAnimation from "../CustomHooks/useAnimation";
 import { useGlobalContext } from "../CustomHooks/useGlobalContext";
+import Loader from "./Loader";
+import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets } from "./SVGs";
+
+const Modal = React.lazy(() => import("./Modal"));
 
 const TweetDetail = () => {
     const { ACTIONS, dispatchLikeUnlike, state } = useGlobalContext();
+
+    //Modal for like,retweet
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [type, setType] = useState("");
+    const hideModal = () => {
+        setIsModalOpen(false);
+        document.body.style.overflow = "unset";
+    };
 
     //For navigating to a particular section that is to the tweet that openend this component.
     const navigate = useNavigate();
@@ -52,14 +61,14 @@ const TweetDetail = () => {
     }, [fetchData]);
 
     //ANIMATION FOR THE NUMBER NEXT TO LIKE/UNLIKE USING CUSTOM HOOK
-    const [animationLikes, liked1, handleLikesAnimation] = useAnimation(isLiked, setIsLiked, liked, setLiked);
+    const [animationLikes, likedValue, handleLikesAnimation] = useAnimation(isLiked, setIsLiked, liked, setLiked);
 
     const likeHandler = async () => {
         handleLikesAnimation();
         await LikeUnlike({ dispatchLikeUnlike, ACTIONS, postId });
     };
 
-    const photos = [];
+    const photos = ["https://source.unsplash.com/random/1200x600", "https://source.unsplash.com/random/900x900"];
     //Grid layout for different numbers of image,used below
     let gridClass = "";
     switch (photos.length) {
@@ -81,23 +90,32 @@ const TweetDetail = () => {
         default:
             break;
     }
-
+    const profile = "";
     return (
         <main className="grid grid-cols-[44vw_auto]   ">
             <div className="flex h-[100%] min-h-screen flex-col  border-l  border-r">
                 <div className=" sticky inset-0 z-10 flex h-[3.5rem] items-center gap-7 bg-white/60 backdrop-blur-md ">
                     <div onClick={handleClick}>
                         <div className="m-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full hover:border-2 hover:bg-gray-200 active:bg-gray-300">
-                            <AiOutlineArrowLeft className="h-[65%] w-[65%] " />
+                            <LeftArrow className="h-[65%] w-[65%] " />
                         </div>
                     </div>
                     <div className="text-[1.6rem] font-bold">Tweet</div>
                 </div>
                 <div className=" m-2  gap-2  ">
                     <div className="flex gap-2">
-                        <div>
-                            <Avatar className=" m-2 " sx={{ width: 50, height: 50, zIndex: 1 }} src="../Public/logo/twitter.jpg" />
-                        </div>
+                        {profile ? (
+                            <div className="m-1 h-[3.2rem] w-[3.2rem] items-center justify-center rounded-full   bg-gray-400">
+                                <img src={profile} alt="profile image" className="h-full w-full rounded-full object-cover" />
+                            </div>
+                        ) : (
+                            <div className="relative m-1 flex h-[3.2rem] w-[3.2rem] items-center justify-center  rounded-full bg-gray-200">
+                                <svg className="  h-9 w-9 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
+                                </svg>
+                            </div>
+                        )}
+
                         <div className="mr-2 flex w-[87%] flex-col gap-2 ">
                             <Link to={`/user/${ownerId}`} className="w-fit text-[1.1rem] font-bold hover:underline">
                                 {ownerName}
@@ -113,7 +131,7 @@ const TweetDetail = () => {
                     </div>
                 </div>
                 <div className="mx-4 -mt-1  "> time</div>
-                <div className="m-4  border-t-[0.05rem]"></div>
+                <div className="m-4  border-t-[0.01rem] opacity-80"></div>
                 <div className="mx-4 flex gap-8  font-bold">
                     <div className="cursor-pointer">
                         <span className={`${animationLikes}`}>1</span> <span className={` text-[0.9rem] font-normal hover:underline`}>Retweets</span>
@@ -121,38 +139,45 @@ const TweetDetail = () => {
                     <div className="cursor-pointer">
                         <span className={`${animationLikes}`}>1</span> <span className={`text-[0.9rem] font-normal hover:underline`}>Quotes</span>
                     </div>
-                    <div className="cursor-pointer">
-                        <span className={`${animationLikes}`}>{liked1}</span> <span className={`text-[0.9rem] font-normal hover:underline`}>Likes</span>
+                    <div
+                        className="cursor-pointer"
+                        onClick={() => {
+                            setIsModalOpen(true);
+                            document.body.style.overflow = "hidden";
+                            setType("Liked");
+                        }}>
+                        <span className={`${animationLikes}`}>{likedValue}</span>
+                        <span className={`text-[0.9rem] font-normal hover:underline`}>Likes</span>
                     </div>
                     <div className="cursor-pointer">
                         <span className={`${animationLikes}`}>1</span> <span className={` text-[0.9rem] font-normal hover:underline`}>Bookmarks</span>
                     </div>
                 </div>
-                <div className="m-4  border-t-[0.05rem]"></div>
+                <div className="m-4  border-t-[0.01rem] opacity-80"></div>
                 <div className="  mx-2 -mt-2 flex gap-20    pl-10">
                     <div className="group flex items-center justify-center gap-2 ">
                         <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
-                            <BiMessageRounded className="h-[1.35rem] w-[1.35rem] " />
+                            <Comments />
                         </button>
                     </div>
 
                     <div className="group flex items-center justify-center gap-2 ">
                         <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-green-100 group-hover:text-green-500">
-                            <AiOutlineRetweet className="h-[1.35rem] w-[1.35rem] " />
+                            <Retweets />
                         </button>
                     </div>
                     <div className=" group flex items-center justify-center gap-2  ">
                         <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-red-100 group-hover:text-red-500" onClick={likeHandler}>
-                            {isLiked ? <AiFillHeart className="h-[1.35rem] w-[1.35rem]  fill-red-500" /> : <AiOutlineHeart className="h-[1.35rem] w-[1.35rem]   " />}
+                            {isLiked ? <HeartLike /> : <HeartUnlike />}
                         </button>
                     </div>
                     <div className="group flex items-center justify-center gap-2 ">
                         <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
-                            <FaRegBookmark className="h-[1.2rem] w-[1.2rem] " />
+                            <Bookmark />
                         </button>
                     </div>
                 </div>
-                <div className="m-5  border-t-[0.05rem]"></div> <hr className="w-full bg-gray-100" />
+                <div className="m-5  border-t-[0.01rem] opacity-80"></div> <hr className="w-full bg-gray-100" />
                 <div className="mt-10">
                     Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quia, vero ducimus. Doloribus, quam est voluptatibus vero odio quia repellendus dolor et nulla quibusdam asperiores hic, harum aliquid eaque, aspernatur laboriosam alias
                     officia quod numquam quos! Dignissimos fugit molestias quasi nemo nihil aspernatur itaque, ea, et doloribus obcaecati dolore amet reiciendis ipsa delectus, iste magni similique. Enim debitis molestiae mollitia numquam, pariatur
@@ -163,6 +188,9 @@ const TweetDetail = () => {
                     consectetur iure et? Ipsa mollitia recusandae laborum omnis. Quis, placeat! Reiciendis libero sed rerum accusantium, quisquam iste nihil.S
                 </div>
             </div>
+            <Suspense fallback={<Loader />}>
+                <Modal visibility={isModalOpen} onClose={hideModal} type={type} />
+            </Suspense>
         </main>
     );
 };
