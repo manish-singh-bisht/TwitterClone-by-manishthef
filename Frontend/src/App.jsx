@@ -1,15 +1,15 @@
 import React, { Suspense, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoadUserWhenToken from "./components/context/actions/LoadUserWhenToken";
+import LoadUserWhenToken from "./context/actions/LoadUserWhenToken";
 
 import Sidebar from "./components/Sidebar/Sidebar";
 import Loader from "./components/pages/Loader";
-import { useGlobalContext } from "./components/CustomHooks/useGlobalContext";
+import { useGlobalContext } from "./CustomHooks/useGlobalContext";
 
-const Home = React.lazy(() => import("./components/pages/Home"));
+const Home = React.lazy(() => import("./components/pages/Home/Home"));
 const LoginSignUpMainPage = React.lazy(() => import("./components/Login_Register/LoginSignUpMainPage"));
 const SignUpOption = React.lazy(() => import("./components/Login_Register/SignUpOption"));
-const TweetDetail = React.lazy(() => import("./components/pages/TweetDetail"));
+const TweetDetail = React.lazy(() => import("./components/pages/Home/TweetDetail"));
 const Test = React.lazy(() => import("./components/pages/Test"));
 
 const App = () => {

@@ -1,10 +1,11 @@
 import React, { useState, useCallback } from "react";
-import { Cross } from "./SVGs";
+import { CircularRadialProgressForTweetTextLimit, Cross } from "../pages/SVGs/SVGs";
 
-const Tweet = ({ visibility, onClose }) => {
+const TweetModal = ({ visibility, onClose }) => {
     if (!visibility) return;
 
     const [tweets, setTweets] = useState([""]);
+    const [singleTweet, setSingleTweet] = useState("");
     const [isThreadStarter, setIsThreadStarter] = useState(true);
 
     const handleChange = (e, index) => {
@@ -59,6 +60,7 @@ const Tweet = ({ visibility, onClose }) => {
         if (inputElement) {
             inputElement.focus();
             toggleActive();
+            setSingleTweet("");
         }
     }, []);
     const profile = "";
@@ -91,7 +93,7 @@ const Tweet = ({ visibility, onClose }) => {
                                             </div>
                                         )}
 
-                                        <div className={`${toggleBox(index)}  mb-3 text-right`}>
+                                        <div className={`${toggleBox(index)}  text-right`}>
                                             {!isThreadStarter ? (
                                                 <div className="">
                                                     <button
@@ -105,9 +107,15 @@ const Tweet = ({ visibility, onClose }) => {
                                             ) : null}
                                             <textarea
                                                 ref={refInputElement}
-                                                onClick={() => toggleActive(index)}
+                                                onClick={() => {
+                                                    toggleActive(index);
+                                                    setSingleTweet(tweet);
+                                                }}
                                                 value={tweet}
-                                                onChange={(e) => handleChange(e, index)}
+                                                onChange={(e) => {
+                                                    handleChange(e, index);
+                                                    setSingleTweet(tweet);
+                                                }}
                                                 className={`min-h-[13rem]  w-[33rem] resize-none overflow-hidden border-2 text-2xl outline-none`}
                                                 placeholder={isThreadStarter ? "What's Happening" : "Add Another Tweet"}></textarea>
                                         </div>
@@ -117,27 +125,31 @@ const Tweet = ({ visibility, onClose }) => {
                         </div>
                     );
                 })}
-                <div className=" ml-[3.9rem] mt-3  w-[85%] border-[0.01rem] bg-gray-300"></div>
-                <div className=" my-3 mr-2 flex justify-end gap-5">
+                <div className=" ml-[4.6rem]   w-[85%] border-[0.01rem] bg-gray-300"></div>
+                <div className={` my-3 mx-5 flex justify-end gap-2 border-2`}>
                     {tweets.every((tweet) => {
                         return tweet.length > 0;
                     }) && (
-                        <button className=" w-fit rounded-full border-2 border-gray-200 px-3 py-1 font-bold text-blue-500 hover:bg-blue-100" onClick={addTweet}>
-                            +
-                        </button>
+                        <div className="flex gap-1">
+                            <div className={`  h-[2.3rem] w-fit `}>{<CircularRadialProgressForTweetTextLimit tweetCount={singleTweet.length} maxCount={280} />}</div>
+                            <div className="min-h-full border-l-2"></div>
+                            <button className="rounded-full border-2 border-gray-200 px-3 py-1 font-bold text-blue-500 hover:bg-blue-100" onClick={addTweet}>
+                                +
+                            </button>
+                        </div>
                     )}
                     {tweets.every((tweet) => {
-                        return tweet.length > 0;
+                        return tweet.length > 0 && tweet.length < 280;
                     }) ? (
-                        <button className="mr-2 w-fit rounded-3xl bg-blue-500  px-3 py-[0.2rem] font-bold text-white" onClick={handleTweet}>
+                        <button className=" w-fit rounded-3xl bg-blue-500  px-3 py-[0.2rem] font-bold text-white" onClick={handleTweet}>
                             {isThreadStarter ? "Tweet" : "Tweet all"}
                         </button>
                     ) : (
-                        <button className="mr-2 w-fit rounded-3xl bg-gray-500  px-3 py-[0.2rem] font-bold text-white">{isThreadStarter ? "Tweet" : "Tweet all"}</button>
+                        <button className="w-fit rounded-3xl bg-gray-500  px-3 py-[0.2rem] font-bold text-white">{isThreadStarter ? "Tweet" : "Tweet all"}</button>
                     )}
                 </div>
             </div>
         </div>
     );
 };
-export default Tweet;
+export default TweetModal;

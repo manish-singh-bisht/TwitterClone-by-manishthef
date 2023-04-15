@@ -1,4 +1,4 @@
-import React, { useContext, useReducer } from "react";
+import React, { useReducer } from "react";
 import { UserReducer, ACTIONS, PostOfFollowingReducer, LikeUnlikeReducer, GetPostByIdReducer } from "./Reducers";
 
 //creating context

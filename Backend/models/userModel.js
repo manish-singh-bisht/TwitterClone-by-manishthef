@@ -8,11 +8,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, "Enter your name"],
     },
-    // handle: {
-    //     type: String,
-    //     required: [true, "Enter the twitter handle you want for yourself"],
-    //     unique: [true, "Try something else,it's already taken"],
-    // },
+    handle: {
+        type: String,
+        required: [true, "Enter the twitter handle you want for yourself"],
+        unique: [true, "Try something else,it's already taken"],
+    },
     email: {
         type: String,
         required: [true, "Enter your email"],
@@ -34,6 +34,9 @@ const userSchema = new mongoose.Schema({
             public_id: String,
             url: String,
         },
+    },
+    description: {
+        type: String,
     },
     posts: [
         {

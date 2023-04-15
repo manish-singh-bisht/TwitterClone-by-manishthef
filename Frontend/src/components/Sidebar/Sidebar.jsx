@@ -2,9 +2,9 @@ import React, { useState, Suspense, memo } from "react";
 import { NavLink, Link } from "react-router-dom";
 import SidebarList from "./SidebarList";
 import Loader from "../pages/Loader";
-import { BellFilled, BellOutline, BookmarkFilled, BookmarkOutline, HashtagFilled, HashtagOutline, HomeFilled, HomeOutLine, MessageFilled, MessageOutline, MoreFilled, MoreOutline, ProfileFilled, ProfileOutline, TwitterIcon } from "../pages/SVGs";
+import { BellFilled, BellOutline, BookmarkFilled, BookmarkOutline, HashtagFilled, HashtagOutline, HomeFilled, HomeOutLine, MessageFilled, MessageOutline, MoreFilled, MoreOutline, ProfileFilled, ProfileOutline, TwitterIcon } from "../pages/SVGs/SVGs";
 
-const Tweet = React.lazy(() => import("../pages/Tweet"));
+const TweetModal = React.lazy(() => import("../Modal/TweetModal"));
 
 const Sidebar = () => {
     const [tab, setTab] = useState(window.location.pathname);
@@ -59,7 +59,7 @@ const Sidebar = () => {
                 </div>
             </div>
             <Suspense fallback={<Loader />}>
-                <Tweet visibility={isTweetBoxOpen} onClose={hideTwitterBox} />
+                <TweetModal visibility={isTweetBoxOpen} onClose={hideTwitterBox} />
             </Suspense>
         </main>
     );

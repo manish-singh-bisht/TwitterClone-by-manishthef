@@ -221,3 +221,23 @@ export const MoreFilled = () => {
         </svg>
     );
 };
+
+export const CircularRadialProgressForTweetTextLimit = ({ tweetCount, maxCount }) => {
+    const gaugeColor = tweetCount <= 259 ? "blue" : tweetCount <= 279 ? "#FFC72C" : "red";
+
+    const remainingCharactersCountText = tweetCount >= 260 ? maxCount - tweetCount : "";
+
+    const percentage = tweetCount / maxCount;
+
+    return (
+        <>
+            <svg viewBox="-25 -18 100 100" width="44" height="44">
+                <circle r="38" fill="none" stroke="gray" strokeWidth="4.5" opacity="0.2" cx="25" cy="25" />
+                <circle r="38" fill="none" stroke={gaugeColor} strokeWidth="4.5" strokeDasharray={`${percentage * 236} 236`} transform="rotate(-90) translate(-50)" cx="25" cy="25" />
+                <text x="25" y="35" textAnchor="middle" fill="currentColor" fontSize="2.1rem">
+                    {remainingCharactersCountText}
+                </text>
+            </svg>
+        </>
+    );
+};

@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import Post from "./Post";
-import PostsOfFollowing from "../context/actions/PostsOfFollowing";
-import Loader from "./Loader";
-import { useGlobalContext } from "../CustomHooks/useGlobalContext";
+import PostsOfFollowing from "../../../context/actions/PostsOfFollowing";
+import Loader from "../Loader";
+import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
 
 const Home = () => {
     const { dispatchPostOfFollowing, ACTIONS, statePostOfFollowing } = useGlobalContext();
@@ -39,17 +39,20 @@ const Home = () => {
                         <div className={` flex h-[100%] flex-col border-l border-r`}>
                             {posts && posts.length > 1 ? (
                                 posts.map((post) => {
+                                    const ownerImage = post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null;
+                                    const postVideo = post.video && post.video.url ? post.video.url : null;
+
                                     return (
                                         <Post
                                             key={post._id}
                                             postId={post._id}
                                             tweet={post.tweet}
                                             postImage={post.images.url}
-                                            postVideo={post.video.url}
+                                            postVideo={postVideo}
                                             likes={post.likes}
                                             comments={post.comments}
                                             ownerName={post.owner.name}
-                                            ownerImage={post.owner.profile.image.url}
+                                            ownerImage={ownerImage}
                                             ownerId={post.owner._id}
                                         />
                                     );

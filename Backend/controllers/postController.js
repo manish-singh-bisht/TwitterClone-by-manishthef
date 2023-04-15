@@ -117,7 +117,7 @@ exports.getPostofFollowing = async (req, res, next) => {
     }
 };
 
-//adding or updating comment on a post
+//adding comment on a post
 exports.postComment = async (req, res, next) => {
     try {
         const post = await Posts.findById(req.params.id);
@@ -125,34 +125,16 @@ exports.postComment = async (req, res, next) => {
             return next(new ErrorHandler("post not found", 400));
         }
 
-        //checking if user already has a comment ont the post
-        const flag = -1;
-        post.comments.forEach((item, index) => {
-            if (item.user.toString() === req.user._id.toString()) {
-                flag = index;
-            }
+        post.comments.push({
+            user: req.user._id,
+            comment: req.body.comment,
         });
-        if (flag !== -1) {
-            //updating comment
-            post.comments[flag].comment = req.body.comment;
-            await post.save();
-            return res.status(200).json({
-                success: true,
-                message: "comment updated",
-            });
-        } else {
-            //commenting for the first time
-            post.comments.push({
-                user: req.user._id,
-                comment: req.body.comment,
-            });
-            await post.save();
+        await post.save();
 
-            return res.status(200).json({
-                success: true,
-                message: "comment added",
-            });
-        }
+        return res.status(200).json({
+            success: true,
+            message: "comment added",
+        });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
     }

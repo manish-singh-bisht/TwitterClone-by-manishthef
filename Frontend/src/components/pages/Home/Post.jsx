@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Bookmark, Comments, HeartLike, HeartUnlike, Retweets } from "./SVGs";
+import { Bookmark, Comments, HeartLike, HeartUnlike, Retweets } from "../SVGs/SVGs";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import PhotoGallery from "./PhotoGallery";
-import LikeUnlike from "../context/actions/LikeUnlike";
+import LikeUnlike from "../../../context/actions/LikeUnlike";
 import "./AnimationUsedInPostAndTweetDetail.css";
-import useAnimation from "../CustomHooks/useAnimation";
-import { useGlobalContext } from "../CustomHooks/useGlobalContext";
+import useAnimation from "../../../CustomHooks/useAnimation";
+import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
 
 const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVideo, likes = [], comments = [], isDelete = false, isAccount = false }) => {
     const { ACTIONS, dispatchLikeUnlike, state } = useGlobalContext();

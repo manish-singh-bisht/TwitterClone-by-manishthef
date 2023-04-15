@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import UserLogin from "../context/actions/UserLogin";
-import { useGlobalContext } from "../CustomHooks/useGlobalContext";
-import { CrossInLogin, TwitterIconInLogin } from "../pages/SVGs";
+import UserLogin from "../../context/actions/UserLogin";
+import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
+import { CrossInLogin, TwitterIconInLogin } from "../pages/SVGs/SVGs";
 
-const LoginOption = ({ onClose, isLoginVisible }) => {
+const LoginOptionModal = ({ onClose, isLoginVisible }) => {
     if (!isLoginVisible) return null;
 
     const [email, setEmail] = useState("");
@@ -90,4 +90,4 @@ const LoginOption = ({ onClose, isLoginVisible }) => {
     );
 };
 
-export default LoginOption;
+export default LoginOptionModal;

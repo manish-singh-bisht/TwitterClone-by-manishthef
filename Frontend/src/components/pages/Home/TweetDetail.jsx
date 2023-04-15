@@ -3,22 +3,23 @@ import React, { Suspense, useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import PhotoGallery from "./PhotoGallery";
-import LikeUnlike from "../context/actions/LikeUnlike";
+import LikeUnlike from "../../../context/actions/LikeUnlike";
 import "./AnimationUsedInPostAndTweetDetail.css";
 import axios from "axios";
-import useAnimation from "../CustomHooks/useAnimation";
-import { useGlobalContext } from "../CustomHooks/useGlobalContext";
-import Loader from "./Loader";
-import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets } from "./SVGs";
+import useAnimation from "../../../CustomHooks/useAnimation";
+import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
+import Loader from "../Loader";
+import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets } from "../SVGs/SVGs";
 
-const Modal = React.lazy(() => import("./Modal"));
+const ModalForLikesBookmarksRetweets = React.lazy(() => import("../../Modal/ModalForLikesBookmarksRetweets"));
 
 const TweetDetail = () => {
     const { ACTIONS, dispatchLikeUnlike, state } = useGlobalContext();
 
-    //Modal for like,retweet
+    //Modal for like,retweet,Bookmark
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [type, setType] = useState("");
+    const [list, setList] = useState(null);
     const hideModal = () => {
         setIsModalOpen(false);
         document.body.style.overflow = "unset";
@@ -38,14 +39,14 @@ const TweetDetail = () => {
     //For like and unlike of post
     const [isLiked, setIsLiked] = useState(false);
     const [liked, setLiked] = useState(null);
+    const [likedBy, setIsLikedBy] = useState([]);
 
     const fetchData = useCallback(async () => {
-        window.scrollTo(0, 0); //For scrolling to the top of window when the component shows up
-
         //gets the updated data of likes, when user likes at homepage and then comes to detailpage,the user gets the updated data
         const { data } = await axios.get(`http://localhost:4000/api/v1/${postId}`, { withCredentials: true });
         let like = [];
         like = data.post.likes;
+        setIsLikedBy(like);
         setLiked(like.length);
 
         //For keeping the heart red or unred even after refreshing the page
@@ -54,7 +55,14 @@ const TweetDetail = () => {
                 setIsLiked(true);
             }
         });
-    }, [postId, state.user._id]);
+    }, [postId, state.user._id, isLiked]);
+
+    useEffect(() => {
+        //For scrolling to the top of window when the component shows up
+        window.scrollTo(0, 0);
+        //When user opens the like modal, when clicked on like, and clicks any profile, it takes them to their profile and when they click back arrow, it brings them here,so if its not there then the overflow will be hidden,so it prevents that.
+        document.body.style.overflow = "unset";
+    }, []);
 
     useEffect(() => {
         fetchData();
@@ -145,6 +153,7 @@ const TweetDetail = () => {
                             setIsModalOpen(true);
                             document.body.style.overflow = "hidden";
                             setType("Liked");
+                            setList(likedBy);
                         }}>
                         <span className={`${animationLikes}`}>{likedValue}</span>
                         <span className={`text-[0.9rem] font-normal hover:underline`}>Likes</span>
@@ -189,7 +198,7 @@ const TweetDetail = () => {
                 </div>
             </div>
             <Suspense fallback={<Loader />}>
-                <Modal visibility={isModalOpen} onClose={hideModal} type={type} />
+                <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} />
             </Suspense>
         </main>
     );

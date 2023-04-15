@@ -5,12 +5,12 @@ const ErrorHandler = require("../utils/ErrorHandler");
 //for registration of new users.
 exports.register = async (req, res, next) => {
     try {
-        const { name, email, password, profile } = req.body;
-        let user = await Users.findOne({ email });
+        const { name, email, password, profile, handle } = req.body;
+        let user = await Users.findOne({ handle, email });
         if (user) {
             return next(new ErrorHandler("User already exists", 400));
         } else {
-            user = await Users.create({ name, email, password, profile });
+            user = await Users.create({ handle, name, email, password, profile });
 
             const token = await user.generateToken();
 
