@@ -194,6 +194,24 @@ exports.profileOfUsers = async (req, res, next) => {
         next(new ErrorHandler(error.message, 500));
     }
 };
+//search profile/user
+exports.searchUser = async (req, res, next) => {
+    try {
+        if (req.params.handle.length >= 0) {
+            const users = await Users.find({ $or: [{ name: { $regex: req.params.handle, $options: "i" } }, { handle: { $regex: req.params.handle, $options: "i" } }] });
+
+            if (!users) {
+                return next(new ErrorHandler("No such user", 400));
+            }
+            res.status(200).json({
+                success: true,
+                users,
+            });
+        }
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};
 
 //gets all users in database
 exports.getAllUsers = async (req, res, next) => {

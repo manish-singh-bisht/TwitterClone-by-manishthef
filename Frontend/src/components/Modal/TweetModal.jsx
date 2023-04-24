@@ -1,12 +1,18 @@
 import React, { useState, useCallback } from "react";
 import { CircularRadialProgressForTweetTextLimit, Cross } from "../pages/SVGs/SVGs";
+import EditorForTweetModal from "../pages/EditorForTweetModal";
 
 const TweetModal = ({ visibility, onClose }) => {
     if (!visibility) return;
 
     const [tweets, setTweets] = useState([""]);
-    const [singleTweet, setSingleTweet] = useState("");
+    const [singleTweet, setSingleTweet] = useState(""); //For the circular progress bar
     const [isThreadStarter, setIsThreadStarter] = useState(true);
+
+    //will be passed in editor
+    const height = "min-h-[13rem] ";
+    const width = " w-[33rem]";
+    const placeholder = isThreadStarter ? "What's Happening" : "Add Another Tweet";
 
     const handleChange = (e, index) => {
         e.target.style.height = "auto";
@@ -93,9 +99,9 @@ const TweetModal = ({ visibility, onClose }) => {
                                             </div>
                                         )}
 
-                                        <div className={`${toggleBox(index)}  text-right`}>
+                                        <div className={`${toggleBox(index)}  `}>
                                             {!isThreadStarter ? (
-                                                <div className="">
+                                                <div className="text-right">
                                                     <button
                                                         onClick={() => {
                                                             deletetTweet(index);
@@ -105,19 +111,22 @@ const TweetModal = ({ visibility, onClose }) => {
                                                     </button>
                                                 </div>
                                             ) : null}
-                                            <textarea
-                                                ref={refInputElement}
-                                                onClick={() => {
+
+                                            <EditorForTweetModal
+                                                height={height}
+                                                width={width}
+                                                placeholder={placeholder}
+                                                // ref={refInputElement}
+                                                c={(tweet) => {
                                                     toggleActive(index);
                                                     setSingleTweet(tweet);
                                                 }}
                                                 value={tweet}
-                                                onChange={(e) => {
+                                                ch={(e) => {
                                                     handleChange(e, index);
-                                                    setSingleTweet(tweet);
+                                                    setSingleTweet(e.target.value);
                                                 }}
-                                                className={`min-h-[13rem]  w-[33rem] resize-none overflow-hidden border-2 text-2xl outline-none`}
-                                                placeholder={isThreadStarter ? "What's Happening" : "Add Another Tweet"}></textarea>
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -125,7 +134,7 @@ const TweetModal = ({ visibility, onClose }) => {
                         </div>
                     );
                 })}
-                <div className=" ml-[4.6rem]   w-[85%] border-[0.01rem] bg-gray-300"></div>
+                <div className=" ml-[4.6rem] mt-4  w-[85%] border-[0.01rem] bg-gray-300"></div>
                 <div className={` my-3 mx-5 flex justify-end gap-2 border-2`}>
                     {tweets.every((tweet) => {
                         return tweet.length > 0;
