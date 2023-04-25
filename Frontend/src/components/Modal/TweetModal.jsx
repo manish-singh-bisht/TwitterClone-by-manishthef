@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { CircularRadialProgressForTweetTextLimit, Cross } from "../pages/SVGs/SVGs";
-import EditorForTweetModal from "../pages/EditorForTweetModal";
+import EditorForTweetModal from "../Editors/EditorForTweetModal";
 import { v4 as uuidv4 } from "uuid";
 
 const TweetModal = ({ visibility, onClose }) => {
