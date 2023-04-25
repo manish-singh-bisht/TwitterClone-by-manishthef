@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import TextStyle from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import { EditorContent, useEditor } from "@tiptap/react";
@@ -6,20 +6,24 @@ import StarterKit from "@tiptap/starter-kit";
 import { Mention } from "@tiptap/extension-mention";
 import suggestion from "./suggestion";
 import Placeholder from "@tiptap/extension-placeholder";
+
 import "./EditorStyles.css";
 
-const EditorForTweetModal = forwardRef(({ height, width, placeholder, c, value }) => {
+const EditorForTweetModal = ({ height, width, placeholder, onClick: click, onChange: change, whenEditorInFocus }) => {
     const [editorContent, setEditorContent] = useState("");
 
     const editor = useEditor({
+        autofocus: true,
         extensions: [
             StarterKit,
+
             Placeholder.configure({
                 placeholder,
             }),
             Color.configure({
                 types: ["textStyle"],
             }),
+
             Mention.configure({
                 HTMLAttributes: {
                     class: "mention ",
@@ -38,12 +42,22 @@ const EditorForTweetModal = forwardRef(({ height, width, placeholder, c, value }
         content: ``,
         onUpdate({ editor }) {
             setEditorContent(editor.getHTML());
+            change(editor.getText());
+        },
+        onFocus({ event }) {
+            whenEditorInFocus();
         },
     });
 
     useEffect(() => {
+        if (editor !== null && placeholder !== "") {
+            editor.extensionManager.extensions.filter((extension) => extension.name === "placeholder")[0].options["placeholder"] = placeholder;
+            editor.view.dispatch(editor.state.tr);
+        }
+    }, [editor, placeholder]);
+
+    useEffect(() => {
         const handleKey = (event) => {
-            const { selection } = editor.state;
             if (event.key === "@") {
                 editor.commands.setColor("blue");
             } else if (event.key === " ") {
@@ -61,9 +75,8 @@ const EditorForTweetModal = forwardRef(({ height, width, placeholder, c, value }
     if (!editor) {
         return null;
     }
-    const newValue = editor?.getText();
 
-    return <EditorContent editor={editor} onChange={value(newValue)} onClick={c(newValue)} />;
-});
+    return <EditorContent editor={editor} onClick={() => click(editor.getText())} />;
+};
 
 export default EditorForTweetModal;

@@ -1,11 +1,12 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { CircularRadialProgressForTweetTextLimit, Cross } from "../pages/SVGs/SVGs";
 import EditorForTweetModal from "../pages/EditorForTweetModal";
+import { v4 as uuidv4 } from "uuid";
 
 const TweetModal = ({ visibility, onClose }) => {
     if (!visibility) return;
 
-    const [tweets, setTweets] = useState([""]);
+    const [tweets, setTweets] = useState([{ id: uuidv4(), text: "" }]);
     const [singleTweet, setSingleTweet] = useState(""); //For the circular progress bar
     const [isThreadStarter, setIsThreadStarter] = useState(true);
 
@@ -14,34 +15,24 @@ const TweetModal = ({ visibility, onClose }) => {
     const width = " w-[33rem]";
     const placeholder = isThreadStarter ? "What's Happening" : "Add Another Tweet";
 
-    const handleChange = (e, index) => {
-        e.target.style.height = "auto";
-        e.target.style.height = `${e.target.scrollHeight}px`;
-
-        const { value } = e.target;
-        const updatedTweets = [...tweets];
-        updatedTweets[index] = value;
-
+    const handleChange = (value, id) => {
+        const updatedTweets = tweets.map((tweet) => (tweet.id === id ? { ...tweet, text: value } : tweet));
         setTweets(updatedTweets);
     };
 
-    const addTweet = () => {
-        const updatedTweets = [...tweets];
-        const newTweet = "";
+    const deleteTweet = (id) => {
+        const updatedTweets = tweets.filter((tweet) => tweet.id !== id);
 
-        updatedTweets.push(newTweet);
-        setTweets(updatedTweets);
-        setIsThreadStarter(false);
-    };
-
-    const deletetTweet = (index) => {
-        const updatedTweets = [...tweets];
-        const removeTweet = updatedTweets.filter((_, i) => i !== index);
-
-        if (removeTweet.length === 1) {
+        if (updatedTweets.length === 1) {
             setIsThreadStarter(true);
         }
-        setTweets(removeTweet);
+        setTweets(updatedTweets);
+    };
+    const addTweet = () => {
+        const newTweet = { id: uuidv4(), text: "" };
+        const updatedTweets = [...tweets, newTweet];
+        setTweets(updatedTweets);
+        setIsThreadStarter(false);
     };
 
     const handleTweet = () => {
@@ -51,24 +42,22 @@ const TweetModal = ({ visibility, onClose }) => {
 
     const [active, setActive] = useState(null);
 
-    const toggleActive = (index) => {
-        setActive(index);
+    const toggleActive = (id) => {
+        setActive(id);
     };
-    const toggleBox = (index) => {
-        if (active === index) {
+    const toggleBox = (id) => {
+        if (active === id) {
             return `  `;
         } else {
             return ``;
         }
     };
 
-    const refInputElement = useCallback((inputElement) => {
-        if (inputElement) {
-            inputElement.focus();
-            toggleActive();
-            setSingleTweet("");
-        }
-    }, []);
+    const whenEditorInFocus = (id) => {
+        toggleActive(id);
+        setSingleTweet("");
+    };
+
     const profile = "";
     return (
         <div className=" fixed  inset-0 h-[100vh] w-[100vw] ">
@@ -83,7 +72,7 @@ const TweetModal = ({ visibility, onClose }) => {
 
                 {tweets.map((tweet, index) => {
                     return (
-                        <div key={index}>
+                        <div key={tweet.id}>
                             <div className="    h-full ">
                                 <div className={`flex h-full w-full flex-col    `}>
                                     <div className=" ml-3  flex gap-2">
@@ -99,12 +88,12 @@ const TweetModal = ({ visibility, onClose }) => {
                                             </div>
                                         )}
 
-                                        <div className={`${toggleBox(index)}  `}>
+                                        <div className={`${toggleBox(tweet.id)}  `}>
                                             {!isThreadStarter ? (
                                                 <div className="text-right">
                                                     <button
                                                         onClick={() => {
-                                                            deletetTweet(index);
+                                                            deleteTweet(tweet.id);
                                                         }}
                                                         className="w-fit  pr-2 text-right text-gray-200 hover:text-blue-300">
                                                         X
@@ -116,15 +105,14 @@ const TweetModal = ({ visibility, onClose }) => {
                                                 height={height}
                                                 width={width}
                                                 placeholder={placeholder}
-                                                // ref={refInputElement}
-                                                c={(tweet) => {
-                                                    toggleActive(index);
+                                                whenEditorInFocus={() => whenEditorInFocus(tweet.id)}
+                                                onClick={(tweet) => {
+                                                    toggleActive(tweet.id);
                                                     setSingleTweet(tweet);
                                                 }}
-                                                value={tweet}
-                                                ch={(e) => {
-                                                    handleChange(e, index);
-                                                    setSingleTweet(e.target.value);
+                                                onChange={(value) => {
+                                                    handleChange(value, tweet.id);
+                                                    setSingleTweet(value);
                                                 }}
                                             />
                                         </div>
@@ -137,18 +125,18 @@ const TweetModal = ({ visibility, onClose }) => {
                 <div className=" ml-[4.6rem] mt-4  w-[85%] border-[0.01rem] bg-gray-300"></div>
                 <div className={` my-3 mx-5 flex justify-end gap-2 border-2`}>
                     {tweets.every((tweet) => {
-                        return tweet.length > 0;
+                        return tweet.text.length > 0;
                     }) && (
                         <div className="flex gap-1">
                             <div className={`  h-[2.3rem] w-fit `}>{<CircularRadialProgressForTweetTextLimit tweetCount={singleTweet.length} maxCount={280} />}</div>
                             <div className="min-h-full border-l-2"></div>
-                            <button className="rounded-full border-2 border-gray-200 px-3 py-1 font-bold text-blue-500 hover:bg-blue-100" onClick={addTweet}>
+                            <button className=" h-9 w-9  rounded-full border-2 border-gray-200 font-bold text-blue-500 hover:bg-blue-100" onClick={addTweet}>
                                 +
                             </button>
                         </div>
                     )}
                     {tweets.every((tweet) => {
-                        return tweet.length > 0 && tweet.length < 280;
+                        return tweet.text.length > 0 && tweet.text.length < 280;
                     }) ? (
                         <button className=" w-fit rounded-3xl bg-blue-500  px-3 py-[0.2rem] font-bold text-white" onClick={handleTweet}>
                             {isThreadStarter ? "Tweet" : "Tweet all"}
