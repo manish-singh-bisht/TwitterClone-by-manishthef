@@ -4,7 +4,7 @@ import { Color } from "@tiptap/extension-color";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Mention } from "@tiptap/extension-mention";
-import suggestion from "./suggestion";
+import suggestion from "./Mention/suggestion";
 import Placeholder from "@tiptap/extension-placeholder";
 
 import "./EditorStyles.css";

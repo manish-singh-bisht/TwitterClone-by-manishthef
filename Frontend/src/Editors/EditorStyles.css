@@ -12,10 +12,3 @@
     height: 0;
     pointer-events: none;
 }
-
-mark {
-    background-color: red;
-    border-radius: 0.25em;
-    box-decoration-break: clone;
-    padding: 0.125em 0;
-}
