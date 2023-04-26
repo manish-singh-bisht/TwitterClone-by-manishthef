@@ -1,4 +1,3 @@
-import "./MentionList.css";
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 
 export default forwardRef((props, ref) => {
@@ -9,7 +8,7 @@ export default forwardRef((props, ref) => {
         const item = props.items[index];
 
         if (item) {
-            props.command({ id: item.name });
+            props.command({ id: item.handle });
         }
     };
 
@@ -66,9 +65,9 @@ export default forwardRef((props, ref) => {
     return (
         <>
             {props.items !== undefined && props.items.length > 0 && (
-                <div className="items" ref={containerRef}>
+                <div className="relative  z-0 mt-[4.5rem] h-[21rem] w-[21rem] overflow-y-auto  rounded-md border-2 bg-white shadow-xl shadow-black" ref={containerRef}>
                     {props.items.map((item, index) => (
-                        <button className={`item flex ${index === selectedIndex ? "is-selected" : ""}`} key={index} onClick={() => selectItem(index)}>
+                        <button className={` items-top z-0 flex w-full gap-3  p-2 hover:bg-gray-50 ${index === selectedIndex ? "bg-gray-50" : ""}`} key={index} onClick={() => selectItem(index)}>
                             {item.url !== null ? (
                                 <div className="m-1 h-[3.2rem] w-[3.2rem] items-center justify-center rounded-full   bg-gray-400">
                                     <img src={item.url} alt="profile image" className="h-full w-full rounded-full object-cover" />
@@ -80,7 +79,10 @@ export default forwardRef((props, ref) => {
                                     </svg>
                                 </div>
                             )}
-                            <div>{item.name}</div>
+                            <div className="flex flex-col text-start align-top">
+                                <div className="">{item.name}</div>
+                                <div className="mt-[-0.2rem] text-gray-400">@{item.handle}</div>
+                            </div>
                         </button>
                     ))}
                 </div>

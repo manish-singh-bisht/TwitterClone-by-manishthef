@@ -1,17 +1,21 @@
 import React, { useState } from "react";
-import { CircularRadialProgressForTweetTextLimit, Cross } from "../pages/SVGs/SVGs";
+import { CircularRadialProgressForTweetTextLimit, Cross, Globe } from "../SVGs/SVGs";
 import EditorForTweetModal from "../Editors/EditorForTweetModal";
 import { v4 as uuidv4 } from "uuid";
+import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 
 const TweetModal = ({ visibility, onClose }) => {
     if (!visibility) return;
+
+    const { state } = useGlobalContext();
+    const profile = state.user && state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null;
 
     const [tweets, setTweets] = useState([{ id: uuidv4(), text: "" }]);
     const [singleTweet, setSingleTweet] = useState(""); //For the circular progress bar
     const [isThreadStarter, setIsThreadStarter] = useState(true);
 
     //will be passed in editor
-    const height = "min-h-[13rem] ";
+    const height = "min-h-[10rem] ";
     const width = " w-[33rem]";
     const placeholder = isThreadStarter ? "What's Happening" : "Add Another Tweet";
 
@@ -58,7 +62,6 @@ const TweetModal = ({ visibility, onClose }) => {
         setSingleTweet("");
     };
 
-    const profile = "";
     return (
         <div className=" fixed  inset-0 h-[100vh] w-[100vw] ">
             <div className="fixed  h-full w-full  bg-black opacity-70"></div>
@@ -122,8 +125,14 @@ const TweetModal = ({ visibility, onClose }) => {
                         </div>
                     );
                 })}
-                <div className=" ml-[4.6rem] mt-4  w-[85%] border-[0.01rem] bg-gray-300"></div>
-                <div className={` my-3 mx-5 flex justify-end gap-2 border-2`}>
+                <div className="mt-4 ml-[3.6rem] flex  w-[15rem]   ">
+                    <div className="flex h-6  w-fit select-none items-center  gap-1 rounded-[1.8rem] px-3 text-[0.94rem] font-bold  text-blue-500 hover:bg-blue-100">
+                        <Globe />
+                        <p className="">Everyone can reply</p>
+                    </div>
+                </div>
+                <div className=" ml-[4.6rem] mt-3 w-[85%] border-[0.01rem] bg-gray-300"></div>
+                <div className={` my-3 mx-5 flex justify-end gap-2 `}>
                     {tweets.every((tweet) => {
                         return tweet.text.length > 0;
                     }) && (
@@ -136,7 +145,7 @@ const TweetModal = ({ visibility, onClose }) => {
                         </div>
                     )}
                     {tweets.every((tweet) => {
-                        return tweet.text.length > 0 && tweet.text.length < 280;
+                        return tweet.text.length > 0 && tweet.text.length <= 280;
                     }) ? (
                         <button className=" w-fit rounded-3xl bg-blue-500  px-3 py-[0.2rem] font-bold text-white" onClick={handleTweet}>
                             {isThreadStarter ? "Tweet" : "Tweet all"}

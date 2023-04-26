@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import LoginOptionModal from "./LoginOptionModal";
-import { TwitterIconInLoginSignupMainPage } from "../pages/SVGs/SVGs";
+import { TwitterIconInLoginSignupMainPage } from "../SVGs/SVGs";
 
 const LoginSignUpMainPage = () => {
     const [isLoginVisible, setIsLoginVisible] = useState(false);

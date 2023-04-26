@@ -2,7 +2,7 @@ import React, { useState, Suspense, memo } from "react";
 import { NavLink, Link } from "react-router-dom";
 import SidebarList from "./SidebarList";
 import Loader from "../pages/Loader";
-import { BellFilled, BellOutline, BookmarkFilled, BookmarkOutline, HashtagFilled, HashtagOutline, HomeFilled, HomeOutLine, MessageFilled, MessageOutline, MoreFilled, MoreOutline, ProfileFilled, ProfileOutline, TwitterIcon } from "../pages/SVGs/SVGs";
+import { BellFilled, BellOutline, BookmarkFilled, BookmarkOutline, HashtagFilled, HashtagOutline, HomeFilled, HomeOutLine, MessageFilled, MessageOutline, MoreFilled, MoreOutline, ProfileFilled, ProfileOutline, TwitterIcon } from "../SVGs/SVGs";
 
 const TweetModal = React.lazy(() => import("../Modal/TweetModal"));
 

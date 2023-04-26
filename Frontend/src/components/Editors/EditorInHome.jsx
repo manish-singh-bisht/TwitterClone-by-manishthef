@@ -9,16 +9,15 @@ import Placeholder from "@tiptap/extension-placeholder";
 
 import "./EditorStyles.css";
 
-const EditorForTweetModal = ({ height, width, placeholder, onClick: click, onChange: change, whenEditorInFocus }) => {
+const EditorInHome = ({ onChange: change, showGlobeHandler }) => {
     const [editorContent, setEditorContent] = useState("");
 
     const editor = useEditor({
-        autofocus: true,
         extensions: [
             StarterKit,
 
             Placeholder.configure({
-                placeholder,
+                placeholder: "What's happening?",
             }),
             Color.configure({
                 types: ["textStyle"],
@@ -36,7 +35,7 @@ const EditorForTweetModal = ({ height, width, placeholder, onClick: click, onCha
         ],
         editorProps: {
             attributes: {
-                class: `resize-none overflow-hidden text-2xl outline-none ${height} ${width}`,
+                class: `mt-2 resize-none overflow-hidden text-2xl  outline-none border-2 w-[35rem]`,
             },
         },
         content: ``,
@@ -44,17 +43,10 @@ const EditorForTweetModal = ({ height, width, placeholder, onClick: click, onCha
             setEditorContent(editor.getHTML());
             change(editor.getText());
         },
-        onFocus({ event }) {
-            whenEditorInFocus();
+        onFocus() {
+            showGlobeHandler();
         },
     });
-
-    useEffect(() => {
-        if (editor !== null && placeholder !== "") {
-            editor.extensionManager.extensions.filter((extension) => extension.name === "placeholder")[0].options["placeholder"] = placeholder;
-            editor.view.dispatch(editor.state.tr);
-        }
-    }, [editor, placeholder]);
 
     useEffect(() => {
         const handleKey = (event) => {
@@ -76,7 +68,7 @@ const EditorForTweetModal = ({ height, width, placeholder, onClick: click, onCha
         return null;
     }
 
-    return <EditorContent editor={editor} onClick={() => click(editor.getText())} />;
+    return <EditorContent editor={editor} />;
 };
 
-export default EditorForTweetModal;
+export default EditorInHome;

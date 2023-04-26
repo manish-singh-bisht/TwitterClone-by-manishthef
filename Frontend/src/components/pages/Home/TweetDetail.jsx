@@ -9,7 +9,7 @@ import axios from "axios";
 import useAnimation from "../../../CustomHooks/useAnimation";
 import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
 import Loader from "../Loader";
-import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets } from "../SVGs/SVGs";
+import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets } from "../../SVGs/SVGs";
 
 const ModalForLikesBookmarksRetweets = React.lazy(() => import("../../Modal/ModalForLikesBookmarksRetweets"));
 

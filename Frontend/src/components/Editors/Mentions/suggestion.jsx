@@ -19,8 +19,9 @@ export default {
                 return users.map((user) => {
                     const name = user.name;
                     const image = user.profile && user.profile.image && user.profile.image.url ? user.profile.image.url : null;
+                    const handle = user.handle;
 
-                    return { name: name, url: image };
+                    return { name: name, url: image, handle: handle };
                 });
             } else {
                 return [];

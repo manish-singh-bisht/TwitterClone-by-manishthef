@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Cross } from "../pages/SVGs/SVGs";
+import { Cross } from "../SVGs/SVGs";
 import { Link } from "react-router-dom";
 
 const ModalForLikesBookmarksRetweets = ({ visibility, onClose, type, list }) => {
