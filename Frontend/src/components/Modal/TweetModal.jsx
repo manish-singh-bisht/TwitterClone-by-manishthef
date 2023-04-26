@@ -160,10 +160,10 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
                         return tweet.text.length > 0 && tweet.text.length <= 280;
                     }) ? (
                         <button className=" w-fit rounded-3xl bg-blue-500  px-3 py-[0.2rem] font-bold text-white" onClick={handleTweet}>
-                            {isThreadStarter ? "Tweet" : "Tweet all"}
+                            {initialTweetFromOtherPartsOfApp !== null ? "Tweet all" : isThreadStarter ? "Tweet" : "Tweet all"}
                         </button>
                     ) : (
-                        <button className="w-fit rounded-3xl bg-gray-500  px-3 py-[0.2rem] font-bold text-white">{isThreadStarter ? "Tweet" : "Tweet all"}</button>
+                        <button className="w-fit rounded-3xl bg-gray-500  px-3 py-[0.2rem] font-bold text-white">{initialTweetFromOtherPartsOfApp !== null ? "Tweet all" : isThreadStarter ? "Tweet" : "Tweet all"}</button>
                     )}
                 </div>
             </div>
