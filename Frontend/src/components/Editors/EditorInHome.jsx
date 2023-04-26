@@ -9,7 +9,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 
 import "./EditorStyles.css";
 
-const EditorInHome = ({ onChange: change, showGlobeHandler }) => {
+const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handleIsTweetPressFalse, isTweetPressInTweetModal, handleIsTweetPressInTweetModalFalse }) => {
     const [editorContent, setEditorContent] = useState("");
 
     const editor = useEditor({
@@ -35,7 +35,7 @@ const EditorInHome = ({ onChange: change, showGlobeHandler }) => {
         ],
         editorProps: {
             attributes: {
-                class: `mt-2 resize-none overflow-hidden text-2xl  outline-none border-2 w-[35rem]`,
+                class: `mt-2 resize-none overflow-hidden text-2xl  outline-none  w-[35rem]`,
             },
         },
         content: ``,
@@ -47,6 +47,13 @@ const EditorInHome = ({ onChange: change, showGlobeHandler }) => {
             showGlobeHandler();
         },
     });
+    useEffect(() => {
+        if ((isTweetPress || isTweetPressInTweetModal) && editor) {
+            editor.commands.clearContent(true);
+            handleIsTweetPressFalse();
+            handleIsTweetPressInTweetModalFalse();
+        }
+    }, [isTweetPress, isTweetPressInTweetModal]);
 
     useEffect(() => {
         const handleKey = (event) => {

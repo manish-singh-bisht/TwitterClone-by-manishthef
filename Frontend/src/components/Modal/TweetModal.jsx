@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { CircularRadialProgressForTweetTextLimit, Cross, Globe } from "../SVGs/SVGs";
 import EditorForTweetModal from "../Editors/EditorForTweetModal";
 import { v4 as uuidv4 } from "uuid";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 
-const TweetModal = ({ visibility, onClose }) => {
+const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, handleIsTweetPressInTweetModalTrue }) => {
     if (!visibility) return;
 
     const { state } = useGlobalContext();
@@ -14,10 +14,20 @@ const TweetModal = ({ visibility, onClose }) => {
     const [singleTweet, setSingleTweet] = useState(""); //For the circular progress bar
     const [isThreadStarter, setIsThreadStarter] = useState(true);
 
+    //creates a new tweet if initialTweetFromOtherPartsOfApp!==null and initialTweetFromOtherPartsOfApp value is passed in editor, so that editor can display it.
+    useEffect(() => {
+        if (initialTweetFromOtherPartsOfApp !== null) {
+            const newTweet = { id: uuidv4(), text: initialTweetFromOtherPartsOfApp };
+            const updatedTweets = [...tweets, newTweet];
+            setTweets(updatedTweets);
+            initialTweetFromOtherPartsOfApp = null;
+        }
+    }, []);
+
     //will be passed in editor
     const height = "min-h-[10rem] ";
     const width = " w-[33rem]";
-    const placeholder = isThreadStarter ? "What's Happening" : "Add Another Tweet";
+    const placeholder = initialTweetFromOtherPartsOfApp !== null ? "Add Another Tweet" : isThreadStarter ? "What's Happening" : "Add Another Tweet";
 
     const handleChange = (value, id) => {
         const updatedTweets = tweets.map((tweet) => (tweet.id === id ? { ...tweet, text: value } : tweet));
@@ -41,6 +51,7 @@ const TweetModal = ({ visibility, onClose }) => {
 
     const handleTweet = () => {
         console.log(tweets);
+        handleIsTweetPressInTweetModalTrue();
         onClose();
     };
 
@@ -63,7 +74,7 @@ const TweetModal = ({ visibility, onClose }) => {
     };
 
     return (
-        <div className=" fixed  inset-0 h-[100vh] w-[100vw] ">
+        <div className=" fixed inset-0  z-30 h-[100vh] w-[100vw] ">
             <div className="fixed  h-full w-full  bg-black opacity-70"></div>
 
             <div className="relative left-[28rem] top-[4rem]  flex h-auto max-h-[40rem]  min-h-[18rem] w-[39.3rem] flex-col overflow-y-auto rounded-xl bg-white">
@@ -105,6 +116,7 @@ const TweetModal = ({ visibility, onClose }) => {
                                             ) : null}
 
                                             <EditorForTweetModal
+                                                initialTweetFromOtherPartsOfApp={index === 0 && initialTweetFromOtherPartsOfApp} //so that only first instance of editor  displays the  initialTweetFromOtherPartsOfApp value and not all instances of editor.
                                                 height={height}
                                                 width={width}
                                                 placeholder={placeholder}

@@ -99,6 +99,7 @@ const TweetDetail = () => {
             break;
     }
     const profile = "";
+    const tv = 0;
     return (
         <main className="grid grid-cols-[44vw_auto]   ">
             <div className="flex h-[100%] min-h-screen flex-col  border-l  border-r">
@@ -140,29 +141,37 @@ const TweetDetail = () => {
                 </div>
                 <div className="mx-4 -mt-1  "> time</div>
                 <div className="m-4  border-t-[0.01rem] opacity-80"></div>
-                <div className="mx-4 flex gap-8  font-bold">
-                    <div className="cursor-pointer">
-                        <span className={`${animationLikes}`}>1</span> <span className={` text-[0.9rem] font-normal hover:underline`}>Retweets</span>
-                    </div>
-                    <div className="cursor-pointer">
-                        <span className={`${animationLikes}`}>1</span> <span className={`text-[0.9rem] font-normal hover:underline`}>Quotes</span>
-                    </div>
-                    <div
-                        className="cursor-pointer"
-                        onClick={() => {
-                            setIsModalOpen(true);
-                            document.body.style.overflow = "hidden";
-                            setType("Liked");
-                            setList(likedBy);
-                        }}>
-                        <span className={`${animationLikes}`}>{likedValue}</span>
-                        <span className={`text-[0.9rem] font-normal hover:underline`}>Likes</span>
-                    </div>
-                    <div className="cursor-pointer">
-                        <span className={`${animationLikes}`}>1</span> <span className={` text-[0.9rem] font-normal hover:underline`}>Bookmarks</span>
-                    </div>
-                </div>
-                <div className="m-4  border-t-[0.01rem] opacity-80"></div>
+                {likedValue > 0 || tv > 0 ? (
+                    <>
+                        <div className="mx-4 flex gap-8  font-bold">
+                            {tv > 0 && (
+                                <div className="cursor-pointer">
+                                    <span className={`${animationLikes}`}>1</span> <span className={` text-[0.9rem] font-normal hover:underline`}>Retweets</span>
+                                </div>
+                            )}
+                            <div className="cursor-pointer">
+                                <span className={`${animationLikes}`}>1</span> <span className={`text-[0.9rem] font-normal hover:underline`}>Quotes</span>
+                            </div>
+                            {likedValue > 0 ? (
+                                <div
+                                    className="cursor-pointer"
+                                    onClick={() => {
+                                        setIsModalOpen(true);
+                                        document.body.style.overflow = "hidden";
+                                        setType("Liked");
+                                        setList(likedBy);
+                                    }}>
+                                    {likedValue > 0 ? <span className={`${animationLikes}`}>{likedValue}</span> : null}
+                                    <span className={`text-[0.9rem] font-normal hover:underline`}>Likes</span>
+                                </div>
+                            ) : null}
+                            <div className="cursor-pointer">
+                                <span className={`${animationLikes}`}>1</span> <span className={` text-[0.9rem] font-normal hover:underline`}>Bookmarks</span>
+                            </div>
+                        </div>
+                        <div className="m-4  border-t-[0.01rem] opacity-80"></div>
+                    </>
+                ) : null}
                 <div className="  mx-2 -mt-2 flex gap-20    pl-10">
                     <div className="group flex items-center justify-center gap-2 ">
                         <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">

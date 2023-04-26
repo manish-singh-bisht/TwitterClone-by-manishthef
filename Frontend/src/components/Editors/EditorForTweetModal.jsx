@@ -9,8 +9,9 @@ import Placeholder from "@tiptap/extension-placeholder";
 
 import "./EditorStyles.css";
 
-const EditorForTweetModal = ({ height, width, placeholder, onClick: click, onChange: change, whenEditorInFocus }) => {
+const EditorForTweetModal = ({ height, width, placeholder, onClick: click, onChange: change, whenEditorInFocus, initialTweetFromOtherPartsOfApp }) => {
     const [editorContent, setEditorContent] = useState("");
+    const [isFirstEditor, setIsFirstEditor] = useState(true);
 
     const editor = useEditor({
         autofocus: true,
@@ -40,6 +41,7 @@ const EditorForTweetModal = ({ height, width, placeholder, onClick: click, onCha
             },
         },
         content: ``,
+
         onUpdate({ editor }) {
             setEditorContent(editor.getHTML());
             change(editor.getText());
@@ -48,6 +50,11 @@ const EditorForTweetModal = ({ height, width, placeholder, onClick: click, onCha
             whenEditorInFocus();
         },
     });
+    useEffect(() => {
+        if (initialTweetFromOtherPartsOfApp !== null && editor) {
+            editor.commands.setContent(initialTweetFromOtherPartsOfApp, { emitUpdate: true });
+        }
+    }, [editor]);
 
     useEffect(() => {
         if (editor !== null && placeholder !== "") {

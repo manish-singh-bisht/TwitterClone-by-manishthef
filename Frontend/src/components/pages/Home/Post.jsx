@@ -105,7 +105,7 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVi
                 </div>
             </div>
 
-            <div className="my-4 ml-[4.25rem] flex w-[87.5%] gap-24   ">
+            <div className="my-4 ml-[4.25rem] flex w-[87.5%] gap-24   border-2">
                 <div className="group flex items-center justify-center gap-2 ">
                     <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
                         <Comments />
@@ -123,9 +123,9 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVi
                     <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-red-100 group-hover:text-red-500" onClick={likeHandler}>
                         {isLiked ? <HeartLike /> : <HeartUnlike />}
                     </button>
-                    <span className={`group-hover:text-red-500 ${animationLikes}`}>{likedValue}</span>
+                    <span className={`group-hover:text-red-500 ${animationLikes}`}>{likedValue > 0 ? likedValue : null}</span>
                 </div>
-                <div className="group flex items-center justify-center gap-2 ">
+                <div className="group flex items-center justify-center gap-2 border-2">
                     <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
                         <Bookmark />
                     </button>

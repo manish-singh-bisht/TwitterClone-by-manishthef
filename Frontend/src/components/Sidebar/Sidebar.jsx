@@ -59,7 +59,7 @@ const Sidebar = () => {
                 </div>
             </div>
             <Suspense fallback={<Loader />}>
-                <TweetModal visibility={isTweetBoxOpen} onClose={hideTwitterBox} />
+                <TweetModal visibility={isTweetBoxOpen} onClose={hideTwitterBox} initialTweetFromOtherPartsOfApp={null} />
             </Suspense>
         </main>
     );
