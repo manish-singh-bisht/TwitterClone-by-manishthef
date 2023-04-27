@@ -156,6 +156,8 @@ const Home = () => {
                                             ownerName={post.owner.name}
                                             ownerImage={ownerImage}
                                             ownerId={post.owner._id}
+                                            handle={post.owner.handle}
+                                            timeCreated={post.createdAt}
                                         />
                                     );
                                 })

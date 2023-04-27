@@ -6,9 +6,12 @@ import LikeUnlike from "../../../context/actions/LikeUnlike";
 import "./AnimationUsedInPostAndTweetDetail.css";
 import useAnimation from "../../../CustomHooks/useAnimation";
 import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
+import { usePostTime } from "../../../CustomHooks/usePostTime";
 
-const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVideo, likes = [], comments = [], isDelete = false, isAccount = false }) => {
+const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVideo, handle, timeCreated, likes = [], comments = [], isDelete = false, isAccount = false }) => {
     const { ACTIONS, dispatchLikeUnlike, state } = useGlobalContext();
+
+    const formattedTime = usePostTime(Date.parse(timeCreated));
 
     //For like and unlike of post
     const [isLiked, setIsLiked] = useState(false);
@@ -71,7 +74,7 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVi
     //For navigating to detailtweet with data
     const navigate = useNavigate();
     const handleClick = () => {
-        navigate(`${ownerName}/${postId}`, { state: { tweet, ownerName, ownerId, ownerImage, postImage, postVideo, comments, isDelete, isAccount } });
+        navigate(`${ownerName}/${postId}`, { state: { tweet, ownerName, handle, timeCreated, ownerId, ownerImage, postImage, postVideo, comments, isDelete, isAccount } });
     };
     const profile = "";
     return (
@@ -95,8 +98,11 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVi
                         onClick={(e) => {
                             e.stopPropagation();
                         }}
-                        className="absolute  w-fit  text-[1.1rem] font-bold hover:underline">
-                        {ownerName}
+                        className="absolute flex w-fit  items-center gap-1 text-[1.1rem] font-bold ">
+                        <span className="hover:underline">{ownerName}</span>
+                        <span className="text-[0.9rem] font-normal text-gray-700">{`@${handle}`}</span>
+                        <span className="mt-[-0.4rem] flex items-center justify-center  text-[0.8rem]">.</span>
+                        <span className="flex text-[0.9rem] font-normal text-gray-700">{`${formattedTime}`}</span>
                     </Link>
                     <pre className={` mt-10 max-w-[98%] whitespace-pre-wrap break-words  `}>{tweet}</pre>
                     <div className={`grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
@@ -110,7 +116,7 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVi
                     <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
                         <Comments />
                     </button>
-                    <span className="group-hover:text-blue-500">{likes.length}</span>
+                    <span className="group-hover:text-blue-500">{comments.length > 0 ? comments.length : null}</span>
                 </div>
 
                 <div className="group flex items-center justify-center gap-2 ">

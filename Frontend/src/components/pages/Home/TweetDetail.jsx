@@ -10,6 +10,7 @@ import useAnimation from "../../../CustomHooks/useAnimation";
 import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
 import Loader from "../Loader";
 import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets } from "../../SVGs/SVGs";
+import { usePostTimeInTweetDetail } from "../../../CustomHooks/usePostTime";
 
 const ModalForLikesBookmarksRetweets = React.lazy(() => import("../../Modal/ModalForLikesBookmarksRetweets"));
 
@@ -34,7 +35,9 @@ const TweetDetail = () => {
 
     //using data that was sent in the state  from Post
     const location = useLocation();
-    const { tweet, ownerName, ownerId, ownerImage, postImage, postVideo, comments, isDelete, isAccount } = location.state;
+    const { tweet, ownerName, ownerId, handle, timeCreated, ownerImage, postImage, postVideo, comments, isDelete, isAccount } = location.state;
+
+    const formattedTime = usePostTimeInTweetDetail(Date.parse(timeCreated));
 
     //For like and unlike of post
     const [isLiked, setIsLiked] = useState(false);
@@ -126,20 +129,20 @@ const TweetDetail = () => {
                         )}
 
                         <div className="mr-2 flex w-[87%] flex-col gap-2 ">
-                            <Link to={`/user/${ownerId}`} className="w-fit text-[1.1rem] font-bold hover:underline">
-                                {ownerName}
+                            <Link to={`/user/${ownerId}`} className="flex w-fit flex-col  text-[1.1rem] font-bold ">
+                                <span className="hover:underline">{ownerName}</span>
+                                <span className="mt-[-0.3rem] text-[0.9rem] font-normal text-gray-700">{`@${handle}`}</span>
                             </Link>
-                            handle
                         </div>
                     </div>
                     <div className="m-2">
                         <pre className={` mb-3 max-w-[98%] whitespace-pre-wrap break-words `}>{tweet}</pre>
-                        <div className={`grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
+                        <div className={`m-[-0.25rem] grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
                             {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo} index={index} />)}
                         </div>
                     </div>
                 </div>
-                <div className="mx-4 -mt-1  "> time</div>
+                <div className="mx-4  "> {formattedTime}</div>
                 <div className="m-4  border-t-[0.01rem] opacity-80"></div>
                 {likedValue > 0 || tv > 0 ? (
                     <>
