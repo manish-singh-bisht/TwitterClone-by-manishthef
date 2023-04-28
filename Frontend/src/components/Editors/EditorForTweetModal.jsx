@@ -11,7 +11,6 @@ import "./EditorStyles.css";
 
 const EditorForTweetModal = ({ height, width, placeholder, onClick: click, onChange: change, whenEditorInFocus, initialTweetFromOtherPartsOfApp }) => {
     const [editorContent, setEditorContent] = useState("");
-    const [isFirstEditor, setIsFirstEditor] = useState(true);
 
     const editor = useEditor({
         autofocus: true,

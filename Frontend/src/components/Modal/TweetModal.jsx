@@ -52,7 +52,9 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
 
     const handleTweet = () => {
         console.log(tweets);
-        handleIsTweetPressInTweetModalTrue();
+        if (initialTweetFromOtherPartsOfApp) {
+            handleIsTweetPressInTweetModalTrue();
+        }
         onClose();
     };
 
