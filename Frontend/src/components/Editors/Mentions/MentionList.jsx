@@ -65,7 +65,7 @@ export default forwardRef((props, ref) => {
     return (
         <>
             {props.items !== undefined && props.items.length > 0 && (
-                <div className="relative  z-0 mt-[4.5rem] h-[21rem] w-[21rem] overflow-y-auto  rounded-md border-2 bg-white shadow-xl shadow-black" ref={containerRef}>
+                <div className="relative z-0 mt-[4.5rem] h-fit max-h-[21rem] w-[21rem] overflow-y-auto  rounded-md border-2 bg-white shadow-xl shadow-black" ref={containerRef}>
                     {props.items.map((item, index) => (
                         <button className={` items-top z-0 flex w-full gap-3  p-2 hover:bg-gray-50 ${index === selectedIndex ? "bg-gray-50" : ""}`} key={index} onClick={() => selectItem(index)}>
                             {item.url !== null ? (

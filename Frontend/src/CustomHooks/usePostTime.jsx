@@ -8,8 +8,8 @@ export function usePostTime(postTime) {
             const now = Date.now();
             const diffMs = now - postTime;
 
-            // Check if the post is more than 3 days old
-            if (diffMs >= 259200000) {
+            // Check if the post is more than 1 day old
+            if (diffMs >= 86400000) {
                 const date = new Date(postTime);
                 const month = date.toLocaleString("default", { month: "short" });
                 const day = date.getDate();

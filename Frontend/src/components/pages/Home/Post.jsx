@@ -7,9 +7,12 @@ import "./AnimationUsedInPostAndTweetDetail.css";
 import useAnimation from "../../../CustomHooks/useAnimation";
 import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
 import { usePostTime } from "../../../CustomHooks/usePostTime";
+import Avatar from "../Avatar";
 
 const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVideo, handle, timeCreated, likes = [], comments = [], isDelete = false, isAccount = false }) => {
     const { ACTIONS, dispatchLikeUnlike, state } = useGlobalContext();
+
+    const profile = state.user && state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null;
 
     const formattedTime = usePostTime(Date.parse(timeCreated));
 
@@ -76,21 +79,11 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVi
     const handleClick = () => {
         navigate(`${ownerName}/${postId}`, { state: { tweet, ownerName, handle, timeCreated, ownerId, ownerImage, postImage, postVideo, comments, isDelete, isAccount } });
     };
-    const profile = "";
+
     return (
         <div className={` scroll-mt-32 hover:bg-gray-50 `} id={postId}>
             <div onClick={handleClick} className=" m-2 flex cursor-pointer gap-2 hover:bg-gray-50">
-                {profile ? (
-                    <div className="m-1 h-[3.2rem] w-[3.2rem] items-center justify-center rounded-full   bg-gray-400">
-                        <img src={profile} alt="profile image" className="h-full w-full rounded-full object-cover" />
-                    </div>
-                ) : (
-                    <div className="relative m-1 flex h-[3.2rem] w-[3.2rem] items-center justify-center  rounded-full bg-gray-200">
-                        <svg className="  h-9 w-9 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
-                        </svg>
-                    </div>
-                )}
+                <Avatar profile={profile} />
 
                 <div className="relative mr-2 flex w-[87%] flex-col  gap-2">
                     <Link

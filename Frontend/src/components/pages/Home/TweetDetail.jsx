@@ -1,7 +1,5 @@
 import React, { Suspense, useCallback, useEffect, useState } from "react";
-
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-
 import PhotoGallery from "./PhotoGallery";
 import LikeUnlike from "../../../context/actions/LikeUnlike";
 import "./AnimationUsedInPostAndTweetDetail.css";
@@ -11,6 +9,8 @@ import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
 import Loader from "../Loader";
 import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets } from "../../SVGs/SVGs";
 import { usePostTimeInTweetDetail } from "../../../CustomHooks/usePostTime";
+import Avatar from "../Avatar";
+import CommentBox from "./CommentBox";
 
 const ModalForLikesBookmarksRetweets = React.lazy(() => import("../../Modal/ModalForLikesBookmarksRetweets"));
 
@@ -32,6 +32,13 @@ const TweetDetail = () => {
     function handleClick() {
         navigate("/", { state: { sectionId: postId } });
     }
+
+    useEffect(() => {
+        //For scrolling to the top of window when the component shows up
+        window.scrollTo(0, 0);
+        //When user opens the like modal, when clicked on like, and clicks any profile, it takes them to their profile and when they click back arrow, it brings them here,so if its not there then the overflow will be hidden,so it prevents that.
+        document.body.style.overflow = "unset";
+    }, []);
 
     //using data that was sent in the state  from Post
     const location = useLocation();
@@ -59,13 +66,6 @@ const TweetDetail = () => {
             }
         });
     }, [postId, state.user._id, isLiked]);
-
-    useEffect(() => {
-        //For scrolling to the top of window when the component shows up
-        window.scrollTo(0, 0);
-        //When user opens the like modal, when clicked on like, and clicks any profile, it takes them to their profile and when they click back arrow, it brings them here,so if its not there then the overflow will be hidden,so it prevents that.
-        document.body.style.overflow = "unset";
-    }, []);
 
     useEffect(() => {
         fetchData();
@@ -101,8 +101,10 @@ const TweetDetail = () => {
         default:
             break;
     }
-    const profile = "";
+    const profile = state.user && state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null;
+
     const tv = 0;
+
     return (
         <main className="grid grid-cols-[44vw_auto]   ">
             <div className="flex h-[100%] min-h-screen flex-col  border-l  border-r">
@@ -114,19 +116,9 @@ const TweetDetail = () => {
                     </div>
                     <div className="text-[1.6rem] font-bold">Tweet</div>
                 </div>
-                <div className=" m-2  gap-2  ">
+                <div className=" m-2">
                     <div className="flex gap-2">
-                        {profile ? (
-                            <div className="m-1 h-[3.2rem] w-[3.2rem] items-center justify-center rounded-full   bg-gray-400">
-                                <img src={profile} alt="profile image" className="h-full w-full rounded-full object-cover" />
-                            </div>
-                        ) : (
-                            <div className="relative m-1 flex h-[3.2rem] w-[3.2rem] items-center justify-center  rounded-full bg-gray-200">
-                                <svg className="  h-9 w-9 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
-                                </svg>
-                            </div>
-                        )}
+                        <Avatar profile={profile} />
 
                         <div className="mr-2 flex w-[87%] flex-col gap-2 ">
                             <Link to={`/user/${ownerId}`} className="flex w-fit flex-col  text-[1.1rem] font-bold ">
@@ -198,16 +190,8 @@ const TweetDetail = () => {
                         </button>
                     </div>
                 </div>
-                <div className="m-5  border-t-[0.01rem] opacity-80"></div> <hr className="w-full bg-gray-100" />
-                <div className="mt-10">
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quia, vero ducimus. Doloribus, quam est voluptatibus vero odio quia repellendus dolor et nulla quibusdam asperiores hic, harum aliquid eaque, aspernatur laboriosam alias
-                    officia quod numquam quos! Dignissimos fugit molestias quasi nemo nihil aspernatur itaque, ea, et doloribus obcaecati dolore amet reiciendis ipsa delectus, iste magni similique. Enim debitis molestiae mollitia numquam, pariatur
-                    corrupti nostrum dolores nemo qui harum iusto laborum porro necessitatibus dolorem et fugiat fugit esse aliquid saepe deserunt vitae. Officia qui labore perferendis vero illo deleniti non odit necessitatibus accusamus omnis
-                    eveniet molestiae facilis tempore sapiente natus nam, commodi eum aut autem esse sed nesciunt sequi aliquam ipsam. Libero sequi impedit nihil laboriosam aliquam repudiandae cum doloribus error molestias, facere dolores alias iste
-                    odit iure doloremque debitis iusto inventore voluptatem commodi voluptatibus accusantium maiores repellendus, porro ipsum. Officiis, dolorem cum! Cupiditate expedita iure magnam fugiat repellendus blanditiis quae, mollitia nisi id
-                    error sunt minima iste quaerat aliquid repudiandae incidunt. Fugit eos et officiis tempore doloribus sed quibusdam. Sit, voluptates? Dolorem ipsa cum exercitationem numquam, reiciendis, hic illo pariatur, quia culpa nulla
-                    consectetur iure et? Ipsa mollitia recusandae laborum omnis. Quis, placeat! Reiciendis libero sed rerum accusantium, quisquam iste nihil.S
-                </div>
+                <div className="mx-4 mt-4  border-t-[0.01rem] opacity-80"></div>
+                <CommentBox profile={profile} />
             </div>
             <Suspense fallback={<Loader />}>
                 <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} />

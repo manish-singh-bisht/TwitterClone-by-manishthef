@@ -3,25 +3,13 @@ import Post from "./Post";
 import PostsOfFollowing from "../../../context/actions/PostsOfFollowing";
 import Loader from "../Loader";
 import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
-import EditorInHome from "../../Editors/EditorInHome";
-import { CircularRadialProgressForTweetTextLimit, Globe } from "../../SVGs/SVGs";
-import { v4 as uuidv4 } from "uuid";
-const TweetModal = React.lazy(() => import("../../Modal/TweetModal"));
+import TweetBoxInHome from "./TweetBoxInHome";
 
 const Home = () => {
     const { dispatchPostOfFollowing, ACTIONS, statePostOfFollowing, state } = useGlobalContext();
+
     const { posts, loading, error } = statePostOfFollowing;
     const profile = state.user && state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null;
-
-    const [singleTweet, setSingleTweet] = useState({ id: uuidv4(), text: "" });
-    const [isTweetBoxOpen, setIsTweetBoxOpen] = useState(false);
-    const [isTweetPress, setIsTweetPress] = useState(false); //for clearing the tweet box in home after the tweet button is pressed in home itself
-    const [isTweetPressInTweetModal, setIsTweetPressInTweetModal] = useState(false); //for clearing the tweet box in home after the tweet button is pressed in tweetmodal
-
-    const hideTwitterBox = () => {
-        setIsTweetBoxOpen(false);
-        document.body.style.overflow = "unset"; //makes the back of modal move again i.e set overflow to normal
-    };
 
     //For getting post of users that the current loggedin user follows.
     async function PostOfFollowingUsers() {
@@ -31,32 +19,6 @@ const Home = () => {
     useEffect(() => {
         PostOfFollowingUsers();
     }, []);
-
-    const [showGlobe, setShowGlobe] = useState(false);
-
-    //for keeping the globe and other related to show when editor is in focus for the first time
-    const showGlobeHandler = () => {
-        setShowGlobe(true);
-    };
-
-    const handleChange = (value) => {
-        setSingleTweet({ ...singleTweet, text: value });
-    };
-    const handleTweet = () => {
-        const newTweet = { id: uuidv4(), text: "" };
-        setSingleTweet(newTweet);
-        setIsTweetPress(true);
-    };
-
-    const handleIsTweetPressFalse = () => {
-        setIsTweetPress(false);
-    };
-    const handleIsTweetPressInTweetModalFalse = () => {
-        setIsTweetPressInTweetModal(false);
-    };
-    const handleIsTweetPressInTweetModalTrue = () => {
-        setIsTweetPressInTweetModal(true);
-    };
 
     return (
         <>
@@ -77,68 +39,7 @@ const Home = () => {
 
                     <main className="grid grid-cols-[44vw_auto]  ">
                         <div className={` flex h-[100%] flex-col border-l border-r`}>
-                            <div className="  min-h-[7.5rem] border-b">
-                                <div className="m-2 flex  gap-2">
-                                    <div className="">
-                                        {profile ? (
-                                            <div className="m-1 h-[3.2rem] w-[3.2rem] items-center justify-center rounded-full   bg-gray-400">
-                                                <img src={profile} alt="profile image" className="h-full w-full rounded-full object-cover" />
-                                            </div>
-                                        ) : (
-                                            <div className="relative m-1 flex h-[3.2rem] w-[3.2rem] items-center justify-center  rounded-full bg-gray-200">
-                                                <svg className="  h-9 w-9 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
-                                                </svg>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <EditorInHome
-                                        showGlobeHandler={showGlobeHandler}
-                                        onChange={(value) => {
-                                            handleChange(value);
-                                        }}
-                                        isTweetPress={isTweetPress}
-                                        handleIsTweetPressFalse={handleIsTweetPressFalse}
-                                        isTweetPressInTweetModal={isTweetPressInTweetModal}
-                                        handleIsTweetPressInTweetModalFalse={handleIsTweetPressInTweetModalFalse}
-                                    />
-                                </div>
-                                {showGlobe && (
-                                    <>
-                                        <div className="mt-2 ml-[3.6rem] flex  w-[15rem]   ">
-                                            <div className="flex h-6  w-fit select-none items-center  gap-1 rounded-[1.8rem] px-3 text-[0.94rem] font-bold  text-blue-500 hover:bg-blue-100">
-                                                <Globe />
-                                                <p className="">Everyone can reply</p>
-                                            </div>
-                                        </div>
-                                        <div className=" ml-[4.6rem] mt-3 w-[85%] border-[0.01rem] bg-gray-300"></div>
-                                    </>
-                                )}
-
-                                <div className={` mx-5 mt-3 mb-2 flex justify-end gap-2 `}>
-                                    {singleTweet.text.length > 0 && (
-                                        <div className="flex gap-1">
-                                            <div className={`  h-[2.3rem] w-fit `}>{<CircularRadialProgressForTweetTextLimit tweetCount={singleTweet.text.length} maxCount={280} />}</div>
-                                            <div className="min-h-full border-l-2"></div>
-                                            <button
-                                                className=" h-9 w-9  rounded-full border-2 border-gray-200 font-bold text-blue-500 hover:bg-blue-100"
-                                                onClick={() => {
-                                                    setIsTweetBoxOpen(true);
-                                                    document.body.style.overflow = "hidden"; //makes the back of modal not move  i.e set overflow to hidden
-                                                }}>
-                                                +
-                                            </button>
-                                        </div>
-                                    )}
-                                    {singleTweet.text.length > 0 && singleTweet.text.length <= 280 ? (
-                                        <button className=" w-fit rounded-3xl bg-blue-500  px-3 py-[0.2rem] font-bold text-white" onClick={handleTweet}>
-                                            Tweet
-                                        </button>
-                                    ) : (
-                                        <button className="w-fit rounded-3xl bg-gray-500  px-3 py-[0.2rem] font-bold text-white">Tweet </button>
-                                    )}
-                                </div>
-                            </div>
+                            <TweetBoxInHome profile={profile} />
                             {posts && posts.length > 1 ? (
                                 posts.map((post) => {
                                     const ownerImage = post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null;
@@ -166,9 +67,6 @@ const Home = () => {
                             )}
                         </div>
                     </main>
-                    <Suspense fallback={<Loader />}>
-                        <TweetModal visibility={isTweetBoxOpen} onClose={hideTwitterBox} initialTweetFromOtherPartsOfApp={singleTweet.text} handleIsTweetPressInTweetModalTrue={handleIsTweetPressInTweetModalTrue} />
-                    </Suspense>
                 </>
             )}
         </>
