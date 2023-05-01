@@ -3,12 +3,16 @@ import Avatar from "../Avatar";
 import EditorForComments from "../../Editors/EditorForComments";
 import { CircularRadialProgressForTweetTextLimit } from "../../SVGs/SVGs";
 import { v4 as uuidv4 } from "uuid";
+import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
+import PostComments from "../../../context/Actions/PostComments";
 
-const CommentBox = ({ profile }) => {
+const CommentBox = ({ profile, postId }) => {
+    const { dispatchComment, ACTIONS } = useGlobalContext();
     const [comment, setComment] = useState({ id: uuidv4(), text: "" });
     const [isReplyPress, setIsReplyPress] = useState(false); //for clearing the comment box  after the reply button is pressed.
 
-    const handleReply = () => {
+    const handleReply = async () => {
+        await PostComments({ dispatchComment, ACTIONS, postId, comment: comment.text });
         const newComment = { id: uuidv4(), text: "" };
         setComment(newComment);
         setIsReplyPress(true);

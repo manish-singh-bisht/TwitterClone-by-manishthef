@@ -6,7 +6,7 @@ const { createPost, likeAndUnlikePost, deletePost, getPostofFollowing, postComme
 router.route("/post/upload").post(isAuthenticated, createPost);
 router.route("/post/:id").get(isAuthenticated, likeAndUnlikePost).delete(isAuthenticated, deletePost);
 router.route("/posts").get(isAuthenticated, getPostofFollowing);
-router.route("/post/comment/:id").put(isAuthenticated, postComment);
+router.route("/post/comment/:id").post(isAuthenticated, postComment);
 router.route("/post/comment/:id").delete(isAuthenticated, deleteComment);
 router.route("/:id").get(isAuthenticated, findPostById);
 

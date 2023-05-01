@@ -124,7 +124,20 @@ exports.postComment = async (req, res, next) => {
         if (!post) {
             return next(new ErrorHandler("post not found", 400));
         }
-
+        let commentIndex = -1;
+        post.comments.forEach((item, index) => {
+            if (item.user.toString() === req.user._id.toString()) {
+                if (req.body.comment === item.comment) {
+                    commentIndex = index;
+                }
+            }
+        });
+        if (commentIndex !== -1) {
+            return res.status(400).json({
+                success: false,
+                message: "Oops already wrote this message",
+            });
+        }
         post.comments.push({
             user: req.user._id,
             comment: req.body.comment,

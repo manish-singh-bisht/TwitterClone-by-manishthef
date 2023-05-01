@@ -191,7 +191,7 @@ const TweetDetail = () => {
                     </div>
                 </div>
                 <div className="mx-4 mt-4  border-t-[0.01rem] opacity-80"></div>
-                <CommentBox profile={profile} />
+                <CommentBox profile={profile} postId={postId} />
             </div>
             <Suspense fallback={<Loader />}>
                 <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} />
