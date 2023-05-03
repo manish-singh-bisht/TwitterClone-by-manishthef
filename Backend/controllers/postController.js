@@ -1,3 +1,4 @@
+const Comments = require("../models/commentModel");
 const Posts = require("../models/postModel");
 const Users = require("../models/userModel");
 const ErrorHandler = require("../utils/ErrorHandler");
@@ -90,6 +91,9 @@ exports.deletePost = async (req, res, next) => {
             user.posts.splice(index, 1);
             await user.save();
 
+            //deleting all comments in the post
+            await Comments.deleteMany({ post: req.params.id });
+
             return res.status(200).json({
                 success: true,
                 message: "post deleted",
@@ -107,89 +111,11 @@ exports.getPostofFollowing = async (req, res, next) => {
         const user = await Users.findById(req.user._id);
 
         //Line below will bring all posts of the users that are being followed by the logged in user.
-        const posts = await Posts.find({ owner: { $in: user.following } }).populate("owner likes comments.user");
+        const posts = await Posts.find({ owner: { $in: user.following } }).populate("owner likes comments");
         res.status(200).json({
             success: true,
             posts: posts.reverse(),
         });
-    } catch (error) {
-        next(new ErrorHandler(error.message, 500));
-    }
-};
-
-//adding comment on a post
-exports.postComment = async (req, res, next) => {
-    try {
-        const post = await Posts.findById(req.params.id);
-        if (!post) {
-            return next(new ErrorHandler("post not found", 400));
-        }
-        let commentIndex = -1;
-        post.comments.forEach((item, index) => {
-            if (item.user.toString() === req.user._id.toString()) {
-                if (req.body.comment === item.comment) {
-                    commentIndex = index;
-                }
-            }
-        });
-        if (commentIndex !== -1) {
-            return res.status(400).json({
-                success: false,
-                message: "Oops already wrote this message",
-            });
-        }
-        post.comments.push({
-            user: req.user._id,
-            comment: req.body.comment,
-        });
-        await post.save();
-
-        return res.status(200).json({
-            success: true,
-            message: "comment added",
-        });
-    } catch (error) {
-        next(new ErrorHandler(error.message, 500));
-    }
-};
-
-exports.deleteComment = async (req, res, next) => {
-    try {
-        const post = await Posts.findById(req.params.id);
-        if (!post) {
-            return next(new ErrorHandler("post not found", 400));
-        }
-
-        //owner of post can delete any comment
-        if (post.owner.toString() === req.user._id.toString()) {
-            const commentID = req.body.commentID;
-            if (commentID === undefined) {
-                return next(new ErrorHandler("commment id required", 400));
-            }
-            post.comments.forEach((item, index) => {
-                if (item._id.toString() === req.body.commentID.toString()) {
-                    return post.comments.splice(index, 1);
-                }
-            });
-
-            await post.save();
-            return res.status(200).json({
-                success: true,
-                message: "comment deleted",
-            });
-        } else {
-            //owner of comment can only delete his/her comment
-            post.comments.forEach((item, index) => {
-                if (item.user.toString() === req.user._id.toString()) {
-                    return post.comments.splice(index, 1);
-                }
-            });
-            await post.save();
-            return res.status(200).json({
-                success: true,
-                message: "your comment is deleted",
-            });
-        }
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
     }

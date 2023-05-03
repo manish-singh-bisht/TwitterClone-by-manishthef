@@ -1,23 +1,27 @@
 const mongoose = require("mongoose");
 
 const commentSchema = new mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
-    message: String,
-    createdAt: {
-        type: Date,
-        default: Date.now,
+    comment: {
+        type: String,
     },
-    updatedAt: {
-        type: Date,
-        default: Date.now,
+    images: [
+        {
+            public_id: String,
+            url: String,
+        },
+    ],
+
+    video: {
+        public_id: String,
+        url: String,
     },
-    user: {
+    owner: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "Users",
     },
     post: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Post",
+        ref: "Posts",
     },
     parent: {
         type: mongoose.Schema.Types.ObjectId,
@@ -32,9 +36,13 @@ const commentSchema = new mongoose.Schema({
     likes: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Like",
+            ref: "Users",
         },
     ],
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
 module.exports = mongoose.model("Comments", commentSchema);

@@ -34,14 +34,8 @@ const postSchema = new mongoose.Schema({
 
     comments: [
         {
-            user: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Users",
-            },
-            comment: {
-                type: String,
-                required: true,
-            },
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Comments",
         },
     ],
 });

@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Post from "./Post";
 import PostsOfFollowing from "../../../context/actions/PostsOfFollowing";
 import Loader from "../Loader";
@@ -40,7 +40,7 @@ const Home = () => {
                     <main className="grid grid-cols-[44vw_auto]  ">
                         <div className={` flex h-[100%] flex-col border-l border-r`}>
                             <TweetBoxInHome profile={profile} />
-                            {posts && posts.length > 1 ? (
+                            {posts && posts.length > 0 ? (
                                 posts.map((post) => {
                                     const ownerImage = post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null;
                                     const postVideo = post.video && post.video.url ? post.video.url : null;

@@ -1,5 +1,6 @@
 const Users = require("../models/userModel");
 const Posts = require("../models/postModel");
+const Comments = require("../models/commentModel");
 const ErrorHandler = require("../utils/ErrorHandler");
 
 //for registration of new users.
@@ -238,11 +239,16 @@ exports.deleteMyProfile = async (req, res, next) => {
         await user.deleteOne(user);
         res.cookie("token", null, { expires: new Date(Date.now()), httpOnly: true });
 
-        //deleting all post of the user
+        //deleting all posts and comments in those posts of the user
         for (let index = 0; index < posts.length; index++) {
             const post = await Posts.findById(posts[index]);
-            await Posts.deleteOne(post);
+            for (let j = 0; j < post.comments.length; j++) {
+                const comment = await Comments.findById(post.comments[j]);
+                await comment.deleteOne();
+            }
+            await post.deleteOne();
         }
+
         // Removing User from Followers Following
         for (let i = 0; i < followers.length; i++) {
             const follower = await Users.findById(followers[i]);

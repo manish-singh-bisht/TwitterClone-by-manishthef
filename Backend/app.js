@@ -15,9 +15,11 @@ app.use(cookieParser());
 //routes imports
 const userRoute = require("./routes/userRoute");
 const postRoute = require("./routes/postRoute");
+const commentRoute = require("./routes/commentRoute");
 //routes
 app.use("/api/v1", userRoute);
 app.use("/api/v1", postRoute);
+app.use("/api/v1", commentRoute);
 
 //error middleware
 app.use(errorMiddleware);
