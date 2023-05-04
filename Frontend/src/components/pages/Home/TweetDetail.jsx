@@ -202,7 +202,7 @@ const TweetDetail = () => {
                     comments.length > 0 &&
                     comments.map((comment) => {
                         return (
-                            <div key={comment._id}>
+                            <div key={comment._id} className="-mt-[0.44rem]">
                                 <CommentCard comment={comment} />
                             </div>
                         );

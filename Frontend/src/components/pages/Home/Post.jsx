@@ -1,39 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Bookmark, Comments, HeartLike, HeartUnlike, Retweets } from "../../SVGs/SVGs";
+import React, { useEffect } from "react";
+import { Bookmark, Comments, Retweets } from "../../SVGs/SVGs";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import PhotoGallery from "./PhotoGallery";
-import LikeUnlike from "../../../context/actions/LikeUnlike";
 import "./AnimationUsedInPostAndTweetDetail.css";
-import useAnimation from "../../../CustomHooks/useAnimation";
-import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
 import { usePostTime } from "../../../CustomHooks/usePostTime";
 import Avatar from "../Avatar";
+import LikeUnlikePost from "./LikeUnlikePost";
 
-const Post = ({ postId, tweet, ownerName, ownerId, ownerImage: profile, postImage, postVideo, handle, timeCreated, likes = [], comments = [], isDelete = false, isAccount = false }) => {
-    const { ACTIONS, dispatchLikeUnlike, state } = useGlobalContext();
-
+const Post = ({ postId, tweet, ownerName, ownerId, ownerImage: profile, postImage, postVideo, handle, timeCreated, likes = [], comments = [], isDelete = false, isAccount = false, handlerLikeUnlike, dispatchLikeUnlike, state, ACTIONS }) => {
     const formattedTime = usePostTime(Date.parse(timeCreated));
-
-    //For like and unlike of post
-    const [isLiked, setIsLiked] = useState(false);
-    const [liked, setLiked] = useState(likes.length);
-
-    //ANIMATION FOR THE NUMBER NEXT TO LIKE/UNLIKE USING CUSTOM HOOK
-    const [animationLikes, likedValue, handleLikesAnimation] = useAnimation(isLiked, setIsLiked, liked, setLiked);
-
-    const likeHandler = async () => {
-        handleLikesAnimation();
-        await LikeUnlike({ dispatchLikeUnlike, ACTIONS, postId });
-    };
-
-    //For keeping the heart red or unred even after refreshing the page
-    useEffect(() => {
-        likes.forEach((item) => {
-            if (item._id === state.user._id) {
-                setIsLiked(true);
-            }
-        });
-    }, []);
 
     //For Scrolling to particular tweet after left arrow in TweetDetail.jsx component is clicked
     const location = useLocation();
@@ -48,7 +23,7 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage: profile, postImag
         }
     }, [location]);
 
-    const photos = ["https://source.unsplash.com/random/1200x600", "https://source.unsplash.com/random/900x900"];
+    const photos = [];
 
     //Grid layout for different numbers of image,used below
     let gridClass = "";
@@ -79,7 +54,7 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage: profile, postImag
     };
 
     return (
-        <div className={` scroll-mt-32 hover:bg-gray-50 `} id={postId}>
+        <div className={` scroll-mt-32  hover:bg-gray-50`} id={postId}>
             <div onClick={handleClick} className=" m-2 flex cursor-pointer gap-2 hover:bg-gray-50">
                 <Avatar profile={profile} />
 
@@ -117,10 +92,7 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage: profile, postImag
                     <span className="group-hover:text-green-500">{likes.length}</span>
                 </div>
                 <div className=" group flex items-center justify-center gap-2  ">
-                    <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-red-100 group-hover:text-red-500" onClick={likeHandler}>
-                        {isLiked ? <HeartLike /> : <HeartUnlike />}
-                    </button>
-                    <span className={`group-hover:text-red-500 ${animationLikes}`}>{likedValue > 0 ? likedValue : null}</span>
+                    <LikeUnlikePost likes={likes} ACTIONS={ACTIONS} dispatchLikeUnlike={dispatchLikeUnlike} state={state} handlerLikeUnlike={handlerLikeUnlike} postId={postId} />
                 </div>
                 <div className="group flex items-center justify-center gap-2 border-2">
                     <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">

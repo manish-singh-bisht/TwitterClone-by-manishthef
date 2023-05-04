@@ -4,9 +4,9 @@ import PostsOfFollowing from "../../../context/actions/PostsOfFollowing";
 import Loader from "../Loader";
 import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
 import TweetBoxInHome from "./TweetBoxInHome";
-
+import LikeUnlike from "../../../context/actions/LikeUnlike";
 const Home = () => {
-    const { dispatchPostOfFollowing, ACTIONS, statePostOfFollowing, state } = useGlobalContext();
+    const { dispatchPostOfFollowing, ACTIONS, statePostOfFollowing, state, dispatchLikeUnlike } = useGlobalContext();
 
     const { posts, loading, error } = statePostOfFollowing;
     const profile = state.user && state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null;
@@ -59,6 +59,10 @@ const Home = () => {
                                             ownerId={post.owner._id}
                                             handle={post.owner.handle}
                                             timeCreated={post.createdAt}
+                                            handlerLikeUnlike={LikeUnlike}
+                                            dispatchLikeUnlike={dispatchLikeUnlike}
+                                            state={state}
+                                            ACTIONS={ACTIONS}
                                         />
                                     );
                                 })

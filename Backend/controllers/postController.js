@@ -30,7 +30,12 @@ exports.createPost = async (req, res, next) => {
 
 exports.findPostById = async (req, res, next) => {
     try {
-        const post = await Posts.findById(req.params.id).populate("likes comments");
+        const post = await Posts.findById(req.params.id)
+            .populate("likes comments")
+            .populate({
+                path: "comments",
+                populate: [{ path: "owner", select: "name handle profile" }, { path: "post" }],
+            });
         if (!post) {
             return next(new ErrorHandler("Post not found", 404));
         }

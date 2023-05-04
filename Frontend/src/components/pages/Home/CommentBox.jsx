@@ -25,8 +25,8 @@ const CommentBox = ({ profile, postId }) => {
     };
     return (
         <>
-            <div className="m-2  border-2">
-                <div className="flex gap-2">
+            <div className=" border-b">
+                <div className="m-2 flex gap-2">
                     <Avatar profile={profile} />
                     <EditorForComments
                         onChange={(value) => {

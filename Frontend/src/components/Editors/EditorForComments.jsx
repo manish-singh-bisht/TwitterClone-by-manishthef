@@ -35,7 +35,7 @@ const EditorForComments = ({ onChange: change, isReplyPress, handleIsReplyPressF
         ],
         editorProps: {
             attributes: {
-                class: `mt-2 resize-none overflow-hidden text-2xl  outline-none border-2  w-[35rem]`,
+                class: `mt-2 resize-none overflow-hidden text-2xl  outline-none   w-[35rem]`,
             },
         },
         content: ``,
