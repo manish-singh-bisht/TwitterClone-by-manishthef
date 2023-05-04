@@ -30,7 +30,7 @@ exports.createPost = async (req, res, next) => {
 
 exports.findPostById = async (req, res, next) => {
     try {
-        const post = await Posts.findById(req.params.id).populate("likes");
+        const post = await Posts.findById(req.params.id).populate("likes comments");
         if (!post) {
             return next(new ErrorHandler("Post not found", 404));
         }

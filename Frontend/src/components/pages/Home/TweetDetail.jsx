@@ -11,11 +11,12 @@ import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets } from 
 import { usePostTimeInTweetDetail } from "../../../CustomHooks/usePostTime";
 import Avatar from "../Avatar";
 import CommentBox from "./CommentBox";
+import CommentCard from "./CommentCard";
 
 const ModalForLikesBookmarksRetweets = React.lazy(() => import("../../Modal/ModalForLikesBookmarksRetweets"));
 
 const TweetDetail = () => {
-    const { ACTIONS, dispatchLikeUnlike, state } = useGlobalContext();
+    const { ACTIONS, dispatchLikeUnlike, state, stateComment } = useGlobalContext();
 
     //Modal for like,retweet,Bookmark
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,7 +43,7 @@ const TweetDetail = () => {
 
     //using data that was sent in the state  from Post
     const location = useLocation();
-    const { tweet, ownerName, ownerId, handle, timeCreated, ownerImage, postImage, postVideo, comments, isDelete, isAccount } = location.state;
+    const { tweet, ownerName, ownerId, handle, timeCreated, ownerImage: profile, postImage, postVideo, isDelete, isAccount } = location.state;
 
     const formattedTime = usePostTimeInTweetDetail(Date.parse(timeCreated));
 
@@ -50,6 +51,9 @@ const TweetDetail = () => {
     const [isLiked, setIsLiked] = useState(false);
     const [liked, setLiked] = useState(null);
     const [likedBy, setIsLikedBy] = useState([]);
+
+    //For comments
+    const [comments, setComments] = useState([]);
 
     const fetchData = useCallback(async () => {
         //gets the updated data of likes, when user likes at homepage and then comes to detailpage,the user gets the updated data
@@ -65,7 +69,8 @@ const TweetDetail = () => {
                 setIsLiked(true);
             }
         });
-    }, [postId, state.user._id, isLiked]);
+        setComments(data.post.comments);
+    }, [postId, state.user._id, isLiked, stateComment.comment]);
 
     useEffect(() => {
         fetchData();
@@ -101,7 +106,6 @@ const TweetDetail = () => {
         default:
             break;
     }
-    const profile = state.user && state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null;
 
     const tv = 0;
 
@@ -191,7 +195,18 @@ const TweetDetail = () => {
                     </div>
                 </div>
                 <div className="mx-4 mt-4  border-t-[0.01rem] opacity-80"></div>
+
                 <CommentBox profile={profile} postId={postId} />
+
+                {comments &&
+                    comments.length > 0 &&
+                    comments.map((comment) => {
+                        return (
+                            <div key={comment._id}>
+                                <CommentCard comment={comment} />
+                            </div>
+                        );
+                    })}
             </div>
             <Suspense fallback={<Loader />}>
                 <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} />

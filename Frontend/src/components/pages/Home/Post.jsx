@@ -9,10 +9,8 @@ import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
 import { usePostTime } from "../../../CustomHooks/usePostTime";
 import Avatar from "../Avatar";
 
-const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVideo, handle, timeCreated, likes = [], comments = [], isDelete = false, isAccount = false }) => {
+const Post = ({ postId, tweet, ownerName, ownerId, ownerImage: profile, postImage, postVideo, handle, timeCreated, likes = [], comments = [], isDelete = false, isAccount = false }) => {
     const { ACTIONS, dispatchLikeUnlike, state } = useGlobalContext();
-
-    const profile = state.user && state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null;
 
     const formattedTime = usePostTime(Date.parse(timeCreated));
 
@@ -77,7 +75,7 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage, postImage, postVi
     //For navigating to detailtweet with data
     const navigate = useNavigate();
     const handleClick = () => {
-        navigate(`${ownerName}/${postId}`, { state: { tweet, ownerName, handle, timeCreated, ownerId, ownerImage, postImage, postVideo, comments, isDelete, isAccount } });
+        navigate(`${ownerName}/${postId}`, { state: { tweet, ownerName, handle, timeCreated, ownerId, profile, postImage, postVideo, isDelete, isAccount } });
     };
 
     return (
