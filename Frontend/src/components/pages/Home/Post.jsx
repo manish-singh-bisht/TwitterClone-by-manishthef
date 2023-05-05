@@ -7,7 +7,7 @@ import { usePostTime } from "../../../CustomHooks/usePostTime";
 import Avatar from "../Avatar";
 import LikeUnlikePost from "./LikeUnlikePost";
 
-const Post = ({ postId, tweet, ownerName, ownerId, ownerImage: profile, postImage, postVideo, handle, timeCreated, likes = [], comments = [], isDelete = false, isAccount = false, handlerLikeUnlike, dispatchLikeUnlike, state, ACTIONS }) => {
+const Post = ({ postId, tweet, ownerName, ownerId, ownerImage: profile, postImage, postVideo, handle, timeCreated, likes = [], comments = [], isDelete = false, isAccount = false, handler, dispatch, state, ACTIONS }) => {
     const formattedTime = usePostTime(Date.parse(timeCreated));
 
     //For Scrolling to particular tweet after left arrow in TweetDetail.jsx component is clicked
@@ -92,7 +92,7 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage: profile, postImag
                     <span className="group-hover:text-green-500">{likes.length}</span>
                 </div>
                 <div className=" group flex items-center justify-center gap-2  ">
-                    <LikeUnlikePost likes={likes} ACTIONS={ACTIONS} dispatchLikeUnlike={dispatchLikeUnlike} state={state} handlerLikeUnlike={handlerLikeUnlike} postId={postId} />
+                    <LikeUnlikePost likes={likes} ACTIONS={ACTIONS} dispatch={dispatch} state={state} handler={handler} postId={postId} />
                 </div>
                 <div className="group flex items-center justify-center gap-2 border-2">
                     <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">

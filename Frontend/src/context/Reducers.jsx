@@ -23,6 +23,10 @@ export const ACTIONS = {
     COMMENT_SUCCESS: " Comment success",
     COMMENT_FAILURE: " Comment failure",
 
+    COMMENT_LIKE_UNLIKE_REQUEST: "Like Unlike Comment request",
+    COMMENT_LIKE_UNLIKE_SUCCESS: "Like Unlike Comment success",
+    COMMENT_LIKE_UNLIKE_FAILURE: "Like Unlike Comment failure",
+
     CLEAR_ERRORS: "clear Errors",
 };
 
@@ -83,11 +87,11 @@ export const GetPostByIdReducer = (state, action) => {
 export const LikeUnlikeReducer = (state, action) => {
     switch (action.type) {
         case ACTIONS.LIKE_UNLIKE_REQUEST:
-            return { ...state, loading: true, error: "" };
+            return { ...state, loading: true, message: "", error: "" };
         case ACTIONS.LIKE_UNLIKE_SUCCESS:
-            return { ...state, loading: false, error: "" };
+            return { ...state, loading: false, message: action.payload, error: "" };
         case ACTIONS.LIKE_UNLIKE_FAILURE:
-            return { ...state, loading: false, error: action.payload };
+            return { ...state, loading: false, message: "", error: action.payload };
         case ACTIONS.CLEAR_ERRORS:
             return { ...state, error: "" };
 
@@ -104,6 +108,21 @@ export const commentReducer = (state, action) => {
             return { ...state, loading: false, comment: action.payload, error: "" };
         case ACTIONS.COMMENT_FAILURE:
             return { ...state, loading: false, comment: "", error: action.payload };
+        case ACTIONS.CLEAR_ERRORS:
+            return { ...state, error: "" };
+
+        default:
+            return state;
+    }
+};
+export const commentLikeUnlikeReducer = (state, action) => {
+    switch (action.type) {
+        case ACTIONS.COMMENT_LIKE_UNLIKE_REQUEST:
+            return { ...state, loading: true, message: "", error: "" };
+        case ACTIONS.COMMENT_LIKE_UNLIKE_SUCCESS:
+            return { ...state, loading: false, message: action.payload, error: "" };
+        case ACTIONS.COMMENT_LIKE_UNLIKE_FAILURE:
+            return { ...state, loading: false, message: "", error: action.payload };
         case ACTIONS.CLEAR_ERRORS:
             return { ...state, error: "" };
 

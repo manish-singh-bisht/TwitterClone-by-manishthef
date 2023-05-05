@@ -80,3 +80,35 @@ exports.deleteComment = async (req, res, next) => {
         next(new ErrorHandler(error.message, 500));
     }
 };
+
+exports.likeAndUnlikeComment = async (req, res, next) => {
+    try {
+        const comment = await Comments.findById(req.params.id);
+        if (!comment) {
+            return next(new ErrorHandler("Comment is not present", 400));
+        }
+
+        //unlike comment
+        if (comment.likes.includes(req.user._id)) {
+            const index = comment.likes.indexOf(req.user._id);
+            comment.likes.splice(index, 1);
+            await comment.save();
+
+            return res.status(200).json({
+                success: true,
+                message: "comment unliked successfully",
+            });
+        } else {
+            //comment like
+
+            comment.likes.push(req.user._id);
+            await comment.save();
+            return res.status(200).json({
+                success: true,
+                message: "comment liked successfully",
+            });
+        }
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};

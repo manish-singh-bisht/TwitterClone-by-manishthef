@@ -1,7 +1,7 @@
 import React, { Suspense, useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import PhotoGallery from "./PhotoGallery";
-import LikeUnlike from "../../../context/actions/LikeUnlike";
+import LikeUnlike from "../../../context/Actions/LikeUnlike";
 import "./AnimationUsedInPostAndTweetDetail.css";
 import axios from "axios";
 import useAnimation from "../../../CustomHooks/useAnimation";
@@ -10,13 +10,12 @@ import Loader from "../Loader";
 import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets } from "../../SVGs/SVGs";
 import { usePostTimeInTweetDetail } from "../../../CustomHooks/usePostTime";
 import Avatar from "../Avatar";
-import CommentBox from "./CommentBox";
 import CommentCard from "./CommentCard";
 
 const ModalForLikesBookmarksRetweets = React.lazy(() => import("../../Modal/ModalForLikesBookmarksRetweets"));
 
 const TweetDetail = () => {
-    const { ACTIONS, dispatchLikeUnlike, state, stateComment } = useGlobalContext();
+    const { ACTIONS, dispatchLikeUnlike: dispatch, state, stateComment } = useGlobalContext();
 
     //Modal for like,retweet,Bookmark
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -81,7 +80,7 @@ const TweetDetail = () => {
 
     const likeHandler = async () => {
         handleLikesAnimation();
-        await LikeUnlike({ dispatchLikeUnlike, ACTIONS, postId });
+        await LikeUnlike({ dispatch, ACTIONS, postId });
     };
 
     const photos = ["https://source.unsplash.com/random/1200x600", "https://source.unsplash.com/random/900x900"];
@@ -160,7 +159,7 @@ const TweetDetail = () => {
                                         setType("Liked");
                                         setList(likedBy);
                                     }}>
-                                    {likedValue > 0 ? <span className={`${animationLikes}`}>{likedValue}</span> : null}
+                                    {likedValue > 0 ? <span className={`${animationLikes} mr-1`}>{likedValue}</span> : null}
                                     <span className={`text-[0.9rem] font-normal hover:underline`}>Likes</span>
                                 </div>
                             ) : null}
@@ -196,17 +195,7 @@ const TweetDetail = () => {
                 </div>
                 <div className="mx-4 mt-4  border-t-[0.01rem] opacity-80"></div>
 
-                <CommentBox profile={profile} postId={postId} />
-
-                {comments &&
-                    comments.length > 0 &&
-                    comments.map((comment) => {
-                        return (
-                            <div key={comment._id} className="-mt-[0.44rem]">
-                                <CommentCard comment={comment} />
-                            </div>
-                        );
-                    })}
+                <CommentCard comments={comments} postId={postId} />
             </div>
             <Suspense fallback={<Loader />}>
                 <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} />

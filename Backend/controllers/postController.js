@@ -34,7 +34,7 @@ exports.findPostById = async (req, res, next) => {
             .populate("likes comments")
             .populate({
                 path: "comments",
-                populate: [{ path: "owner", select: "name handle profile" }, { path: "post" }],
+                populate: [{ path: "owner", select: "name handle profile" }, { path: "post" }, { path: "likes" }],
             });
         if (!post) {
             return next(new ErrorHandler("Post not found", 404));

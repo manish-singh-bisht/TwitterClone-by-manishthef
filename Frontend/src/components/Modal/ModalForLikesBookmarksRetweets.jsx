@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Cross } from "../SVGs/SVGs";
 import { Link } from "react-router-dom";
 
@@ -21,8 +21,8 @@ const ModalForLikesBookmarksRetweets = ({ visibility, onClose, type, list }) => 
                         list.map((item) => {
                             return (
                                 <Link to="/test" key={item._id} className=" hover:bg-gray-100">
-                                    <div className="mx-4 mt-2 flex flex-col gap-1">
-                                        <div className="flex gap-3">
+                                    <div className="mx-4 mt-2 flex flex-col gap-1 ">
+                                        <div className="flex gap-3 ">
                                             {item.profile && item.profile.image.url ? (
                                                 <div className=" h-[3.2rem] max-w-[3.2rem] items-center justify-center rounded-full   bg-gray-400">
                                                     <img src={item.profile.image.url} alt="profile image" className="h-full w-full rounded-full object-cover" />
@@ -34,15 +34,15 @@ const ModalForLikesBookmarksRetweets = ({ visibility, onClose, type, list }) => 
                                                     </svg>
                                                 </div>
                                             )}
-                                            <div className="flex w-full items-center justify-between ">
+                                            <div className="flex w-full items-start justify-between ">
                                                 <div className=" flex flex-col align-top">
                                                     <div className="  text-[1.1rem] font-bold hover:underline">{item.name}</div>
-                                                    <div className="mt-[-0.5rem]">handle</div>
+                                                    <div className="">{`@${item.handle}`}</div>
                                                 </div>
                                                 <button className="h-[2.1rem] w-[4.5rem] rounded-[5rem] bg-black  text-white">Follow</button>
                                             </div>
                                         </div>
-                                        <div className="ml-[4rem]  pb-5">Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae mollitia eveniet quos consequatur laudantium repellat voluptatibus velit vel quis expedita.</div>
+                                        <div className="ml-[4rem]   pb-5">Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae mollitia eveniet quos consequatur laudantium repellat voluptatibus velit vel quis expedita.</div>
                                     </div>
                                 </Link>
                             );

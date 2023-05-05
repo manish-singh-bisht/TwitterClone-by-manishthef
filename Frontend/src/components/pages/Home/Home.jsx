@@ -4,7 +4,7 @@ import PostsOfFollowing from "../../../context/actions/PostsOfFollowing";
 import Loader from "../Loader";
 import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
 import TweetBoxInHome from "./TweetBoxInHome";
-import LikeUnlike from "../../../context/actions/LikeUnlike";
+import LikeUnlike from "../../../context/Actions/LikeUnlike";
 const Home = () => {
     const { dispatchPostOfFollowing, ACTIONS, statePostOfFollowing, state, dispatchLikeUnlike } = useGlobalContext();
 
@@ -59,8 +59,8 @@ const Home = () => {
                                             ownerId={post.owner._id}
                                             handle={post.owner.handle}
                                             timeCreated={post.createdAt}
-                                            handlerLikeUnlike={LikeUnlike}
-                                            dispatchLikeUnlike={dispatchLikeUnlike}
+                                            handler={LikeUnlike}
+                                            dispatch={dispatchLikeUnlike}
                                             state={state}
                                             ACTIONS={ACTIONS}
                                         />

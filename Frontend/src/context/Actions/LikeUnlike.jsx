@@ -1,13 +1,14 @@
 import React from "react";
 import axios from "axios";
-const LikeUnlike = async ({ dispatchLikeUnlike, ACTIONS, postId }) => {
+const LikeUnlike = async ({ dispatch, ACTIONS, postId }) => {
     try {
-        dispatchLikeUnlike({ type: ACTIONS.LIKE_UNLIKE_REQUEST });
+        dispatch({ type: ACTIONS.LIKE_UNLIKE_REQUEST });
 
         const { data } = await axios.get(`http://localhost:4000/api/v1/post/${postId}`, { withCredentials: true });
-        dispatchLikeUnlike({ type: ACTIONS.LIKE_UNLIKE_SUCCESS });
+
+        dispatch({ type: ACTIONS.LIKE_UNLIKE_SUCCESS, payload: data.message });
     } catch (error) {
-        dispatchLikeUnlike({ type: ACTIONS.LIKE_UNLIKE_FAILURE, payload: error.response.data.message });
+        dispatch({ type: ACTIONS.LIKE_UNLIKE_FAILURE, payload: error.response.data.message });
     }
 };
 
