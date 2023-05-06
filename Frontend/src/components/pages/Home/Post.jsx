@@ -7,10 +7,10 @@ import { usePostTime } from "../../../CustomHooks/usePostTime";
 import Avatar from "../Avatar";
 import LikeUnlikePost from "./LikeUnlikePost";
 
-const Post = ({ postId, tweet, ownerName, ownerId, ownerImage: profile, postImage, postVideo, handle, timeCreated, likes = [], comments = [], isDelete = false, isAccount = false, handler, dispatch, state, ACTIONS }) => {
+const Post = ({ postId, tweet, ownerName, ownerId, ownerImage: profile, postImage, postVideo, handle, timeCreated, likes = [], comments = [], isDelete = false, isAccount = false, handler, dispatch, state, ACTIONS, isComment }) => {
     const formattedTime = usePostTime(Date.parse(timeCreated));
 
-    //For Scrolling to particular tweet after left arrow in TweetDetail.jsx component is clicked
+    //For Scrolling to particular tweet after left arrow in TweetDetail.jsx/CommentDetail.jsx component is clicked
     const location = useLocation();
     useEffect(() => {
         if (location.state && location.state.sectionId) {
@@ -20,6 +20,7 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage: profile, postImag
             if (section) {
                 section.scrollIntoView();
             }
+            document.body.style.overflow = "unset";
         }
     }, [location]);
 
@@ -47,10 +48,13 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage: profile, postImag
             break;
     }
 
-    //For navigating to detailtweet with data
+    //For navigating to TweetDetail/CommentDetail with data
     const navigate = useNavigate();
+    const commentId = postId;
+    const newUrl = !isComment ? `/${ownerName}/${postId}` : `/${ownerName}/comment/${commentId}`;
+
     const handleClick = () => {
-        navigate(`${ownerName}/${postId}`, { state: { tweet, ownerName, handle, timeCreated, ownerId, profile, postImage, postVideo, isDelete, isAccount } });
+        navigate(newUrl, { replace: true, state: { tweet, ownerName, handle, timeCreated, ownerId, profile, postImage, postVideo, isDelete, isAccount } });
     };
 
     return (

@@ -19,6 +19,7 @@ const CommentCard = ({ comments, postId }) => {
                     return (
                         <Post
                             key={comment._id}
+                            isComment={true}
                             postId={comment._id}
                             tweet={comment.comment}
                             postImage={comment.images.url}

@@ -112,3 +112,24 @@ exports.likeAndUnlikeComment = async (req, res, next) => {
         next(new ErrorHandler(error.message, 500));
     }
 };
+
+exports.findCommentById = async (req, res, next) => {
+    try {
+        const comment = await Comments.findById(req.params.id)
+            .populate("likes post")
+            .populate({
+                path: "post",
+                populate: [{ path: "owner", select: "name handle profile" }],
+            });
+
+        if (!comment) {
+            return next(new ErrorHandler("Comment not found", 404));
+        }
+        return res.status(200).json({
+            message: "success",
+            comment,
+        });
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};

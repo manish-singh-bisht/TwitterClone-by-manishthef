@@ -10,6 +10,7 @@ const Home = React.lazy(() => import("./components/pages/Home/Home"));
 const LoginSignUpMainPage = React.lazy(() => import("./components/Login_Register/LoginSignUpMainPage"));
 const SignUpOption = React.lazy(() => import("./components/Login_Register/SignUpOption"));
 const TweetDetail = React.lazy(() => import("./components/pages/Home/TweetDetail"));
+const CommentDetail = React.lazy(() => import("./components/pages/Home/CommentDetail"));
 const Test = React.lazy(() => import("./components/pages/Test"));
 
 const App = () => {
@@ -37,6 +38,7 @@ const App = () => {
                             <Route exact path={`${!isAuthenticated ? `/login` : ``}`} element={<LoginSignUpMainPage />} />
                             <Route exact path={`${!isAuthenticated ? `/signUp` : ``}`} element={<SignUpOption />} />
                             <Route exact path="/:ownerName/:postId" element={<TweetDetail />} />
+                            <Route exact path="/:ownerName/comment/:commentId" element={<CommentDetail />} />
                             <Route exact path="/user/:ownerId" element={<Test />} />
                             <Route exact path="/Explore" element={<Test />} />
                             <Route exact path="/test" element={<Test />} />

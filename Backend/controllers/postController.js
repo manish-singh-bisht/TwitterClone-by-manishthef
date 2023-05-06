@@ -31,7 +31,7 @@ exports.createPost = async (req, res, next) => {
 exports.findPostById = async (req, res, next) => {
     try {
         const post = await Posts.findById(req.params.id)
-            .populate("likes comments")
+            .populate("likes comments owner")
             .populate({
                 path: "comments",
                 populate: [{ path: "owner", select: "name handle profile" }, { path: "post" }, { path: "likes" }],
