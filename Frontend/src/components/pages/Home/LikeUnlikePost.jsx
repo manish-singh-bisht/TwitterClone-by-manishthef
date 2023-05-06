@@ -17,7 +17,6 @@ const LikeUnlikePost = ({ likes, ACTIONS, dispatch, state, handler, postId }) =>
 
     //For keeping the heart red or unred even after refreshing the page
     useEffect(() => {
-        console.log(likes);
         likes.forEach((item) => {
             if (item._id === state.user._id) {
                 setIsLiked(true);

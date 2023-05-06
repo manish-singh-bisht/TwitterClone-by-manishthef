@@ -77,24 +77,24 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage: profile, postImag
                 </div>
             </div>
 
-            <div className="my-4 ml-[4.25rem] flex w-[87.5%] gap-24   border-2">
-                <div className="group flex items-center justify-center gap-2 ">
+            <div className="my-4 ml-[4.25rem] flex w-[87.5%] gap-20   border-2">
+                <div className="group flex w-[3rem] items-center justify-around">
                     <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
                         <Comments />
                     </button>
                     <span className="group-hover:text-blue-500">{comments.length > 0 ? comments.length : null}</span>
                 </div>
 
-                <div className="group flex items-center justify-center gap-2 ">
+                <div className="group flex w-[3rem] items-center justify-around">
                     <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-green-100 group-hover:text-green-500">
                         <Retweets />
                     </button>
                     <span className="group-hover:text-green-500">{likes.length}</span>
                 </div>
-                <div className=" group flex items-center justify-center gap-2  ">
+                <div className=" group flex w-[3rem] items-center justify-around  ">
                     <LikeUnlikePost likes={likes} ACTIONS={ACTIONS} dispatch={dispatch} state={state} handler={handler} postId={postId} />
                 </div>
-                <div className="group flex items-center justify-center gap-2 border-2">
+                <div className="group flex w-[3rem] items-center justify-around ">
                     <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
                         <Bookmark />
                     </button>
