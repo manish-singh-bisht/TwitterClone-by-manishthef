@@ -1,40 +1,43 @@
-import React, { Suspense, useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets } from "../../SVGs/SVGs";
-import CommentCard from "./CommentCard";
-import Loader from "../Loader";
-import ModalForLikesBookmarksRetweets from "../../Modal/ModalForLikesBookmarksRetweets";
-import PhotoGallery from "./PhotoGallery";
+import React, { Suspense, useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { LeftArrow } from "../../SVGs/SVGs";
 import Avatar from "../Avatar";
 import axios from "axios";
+import Post from "./Post";
+import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
+import LikeUnlike from "../../../context/Actions/LikeUnlike";
+import Loader from "../Loader";
+
+const CommentCard = React.lazy(() => import("./CommentCard"));
+const ActiveComment = React.lazy(() => import("./ActiveComment"));
 
 const CommentDetail = () => {
+    const componentRef = useRef(null);
+    const { ACTIONS, state, dispatchLikeUnlike, stateComment } = useGlobalContext();
     //For navigating to a particular section that is to the tweet that openend this component.
     const navigate = useNavigate();
     const { commentId } = useParams();
-    let postId;
-    let tweet;
-    let timeCreated;
-    let handle;
-    let ownerImage;
-    let ownerName;
+
+    const [post, setPost] = useState();
+    const [comment, setComment] = useState([]);
 
     useEffect(() => {
         const getCommentById = async () => {
             const { data } = await axios.get(`http://localhost:4000/api/v1/comment/${commentId}`, { withCredentials: true });
-            postId = data.comment.post._id;
-            tweet = data.comment.post.tweet;
-            handle = data.comment.post.owner.handle;
-            timeCreated = data.comment.post.createdAt;
-            ownerName = data.comment.post.owner.name;
-            ownerImage = data.comment.post.owner.profile && data.comment.post.owner.profile.image.url ? data.comment.post.owner.profile.image.url : null;
+            setPost(data.comment.post);
+            setComment(data.comment);
         };
         getCommentById();
-    }, []);
+        componentRef?.current?.scrollIntoView();
+    }, [commentId, stateComment]);
 
     function handleClick() {
-        navigate(`/${ownerName}/${postId}`, { replace: true, state: { sectionId: commentId, tweet, handle, ownerName, timeCreated, ownerImage } });
+        navigate(`/${post.owner.name}/${post._id}`, {
+            replace: true,
+            state: { sectionId: commentId, tweet: post.tweet, handle: post.owner.handle, ownerName: post.owner.name, timeCreated: post.createdAt, ownerImage: post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null },
+        });
     }
+
     const photos = ["https://source.unsplash.com/random/1200x600", "https://source.unsplash.com/random/900x900"];
     //Grid layout for different numbers of image,used below
     let gridClass = "";
@@ -59,19 +62,45 @@ const CommentDetail = () => {
     }
 
     const tv = 0;
+
     return (
-        <main className="grid grid-cols-[44vw_auto]   ">
-            <div className="flex h-[100%] min-h-screen flex-col  border-l  border-r">
-                <div className=" sticky inset-0 z-10 flex h-[3.5rem] items-center gap-7 bg-white/60 backdrop-blur-md ">
-                    <div onClick={handleClick}>
-                        <div className="m-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full hover:border-2 hover:bg-gray-200 active:bg-gray-300">
-                            <LeftArrow className="h-[65%] w-[65%] " />
+        post !== undefined && (
+            <main className="grid grid-cols-[44vw_auto]   ">
+                <div className="flex h-[100%] min-h-screen flex-col  border-l  border-r">
+                    <div className=" sticky inset-0 z-10 flex h-[3.5rem] items-center gap-7 bg-white/60 backdrop-blur-md ">
+                        <div onClick={handleClick}>
+                            <div className="m-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full hover:border-2 hover:bg-gray-200 active:bg-gray-300">
+                                <LeftArrow className="h-[65%] w-[65%] " />
+                            </div>
                         </div>
+                        <div className="text-[1.6rem] font-bold">Tweet</div>
                     </div>
-                    <div className="text-[1.6rem] font-bold">Tweet</div>
+                    {/* Parent Post */}
+                    <Post
+                        key={post._id}
+                        isComment={false}
+                        postId={post._id}
+                        tweet={post.tweet}
+                        likes={post.likes}
+                        ownerName={post.owner.name}
+                        ownerImage={post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null}
+                        ownerId={post.owner._id}
+                        handle={post.owner.handle}
+                        timeCreated={post.createdAt}
+                        handler={LikeUnlike}
+                        dispatch={dispatchLikeUnlike}
+                        state={state}
+                        ACTIONS={ACTIONS}
+                    />
+
+                    <Suspense fallback={<Loader />}>
+                        <ActiveComment commentId={commentId} postId={post._id} parent={commentId} ref={componentRef} />
+
+                        {comment.children && comment.children.length > 0 && <CommentCard comments={comment.children} postId={comment.children.post} parent={comment.children.parent} fromCommentDetail={true} isParentPresent={true} />}
+                    </Suspense>
                 </div>
-            </div>
-        </main>
+            </main>
+        )
     );
 };
 

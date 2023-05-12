@@ -6,13 +6,13 @@ import { v4 as uuidv4 } from "uuid";
 import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
 import PostComments from "../../../context/Actions/PostComments";
 
-const CommentBox = ({ profile, postId }) => {
+const CommentBox = ({ profile, postId, parent }) => {
     const { dispatchComment, ACTIONS } = useGlobalContext();
     const [comment, setComment] = useState({ id: uuidv4(), text: "" });
     const [isReplyPress, setIsReplyPress] = useState(false); //for clearing the comment box  after the reply button is pressed.
 
     const handleReply = async () => {
-        await PostComments({ dispatchComment, ACTIONS, postId, comment: comment.text });
+        await PostComments({ dispatchComment, ACTIONS, postId, comment: comment.text, parent });
         const newComment = { id: uuidv4(), text: "" };
         setComment(newComment);
         setIsReplyPress(true);

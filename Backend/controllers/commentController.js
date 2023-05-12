@@ -16,6 +16,7 @@ exports.postComment = async (req, res, next) => {
             video: req.body.video,
             owner: req.user._id,
             post: req.params.id,
+            parent: req.body.parent,
         };
 
         let commentIndex = -1;
@@ -32,7 +33,38 @@ exports.postComment = async (req, res, next) => {
                 message: "Oops already wrote this message",
             });
         }
+        if (newData.parent) {
+            const parentComment = await Comments.findById(newData.parent).populate("children");
 
+            if (!parentComment) {
+                return next(new ErrorHandler("parent comment not found", 400));
+            }
+
+            let commentParentIndex = -1;
+            parentComment.children.forEach((item, index) => {
+                if (item.owner.toString() === req.user._id.toString()) {
+                    if (req.body.comment === item.comment) {
+                        commentParentIndex = index;
+                    }
+                }
+            });
+            if (commentParentIndex !== -1) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Oops already wrote this message",
+                });
+            }
+
+            const newCreateComment = await Comments.create(newData);
+
+            parentComment.children.unshift(newCreateComment._id);
+
+            await parentComment.save();
+            return res.status(200).json({
+                success: true,
+                message: "child comment added",
+            });
+        }
         const newCreateComment = await Comments.create(newData);
 
         post.comments.unshift(newCreateComment._id);
@@ -46,7 +78,7 @@ exports.postComment = async (req, res, next) => {
         next(new ErrorHandler(error.message, 500));
     }
 };
-
+//delete all the children of the parent comment if parent is deleted
 exports.deleteComment = async (req, res, next) => {
     try {
         const post = await Posts.findById(req.params.id).populate("comments");
@@ -70,6 +102,7 @@ exports.deleteComment = async (req, res, next) => {
         });
 
         await post.save();
+
         await Comments.deleteOne({ _id: commentID });
 
         return res.status(200).json({
@@ -116,10 +149,14 @@ exports.likeAndUnlikeComment = async (req, res, next) => {
 exports.findCommentById = async (req, res, next) => {
     try {
         const comment = await Comments.findById(req.params.id)
-            .populate("likes post")
+            .populate("likes post owner")
             .populate({
                 path: "post",
-                populate: [{ path: "owner", select: "name handle profile" }],
+                populate: [{ path: "owner likes" }],
+            })
+            .populate({
+                path: "children",
+                populate: [{ path: "owner likes parent children" }],
             });
 
         if (!comment) {

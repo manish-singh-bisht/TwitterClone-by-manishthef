@@ -1,11 +1,11 @@
 import React from "react";
 import axios from "axios";
-const PostComments = async ({ dispatchComment, ACTIONS, postId, comment }) => {
+const PostComments = async ({ dispatchComment, ACTIONS, postId, comment, parent }) => {
     try {
         dispatchComment({ type: ACTIONS.COMMENT_REQUEST });
         const { data } = await axios.post(
             `http://localhost:4000/api/v1/post/comment/${postId}`,
-            { comment },
+            { comment, parent },
 
             {
                 withCredentials: true,

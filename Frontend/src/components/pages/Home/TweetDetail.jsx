@@ -10,9 +10,9 @@ import Loader from "../Loader";
 import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets } from "../../SVGs/SVGs";
 import { usePostTimeInTweetDetail } from "../../../CustomHooks/usePostTime";
 import Avatar from "../Avatar";
-import CommentCard from "./CommentCard";
 
 const ModalForLikesBookmarksRetweets = React.lazy(() => import("../../Modal/ModalForLikesBookmarksRetweets"));
+const CommentCard = React.lazy(() => import("./CommentCard"));
 
 const TweetDetail = () => {
     const { ACTIONS, dispatchLikeUnlike: dispatch, state, stateComment } = useGlobalContext();
@@ -173,33 +173,32 @@ const TweetDetail = () => {
                 <div className="  mx-2 -mt-2 flex gap-20    pl-10">
                     <div className="group flex items-center justify-center gap-2 ">
                         <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
-                            <Comments />
+                            <Comments bigIcon={true} />
                         </button>
                     </div>
 
                     <div className="group flex items-center justify-center gap-2 ">
                         <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-green-100 group-hover:text-green-500">
-                            <Retweets />
+                            <Retweets bigIcon={true} />
                         </button>
                     </div>
                     <div className=" group flex items-center justify-center gap-2  ">
                         <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-red-100 group-hover:text-red-500" onClick={likeHandler}>
-                            {isLiked ? <HeartLike /> : <HeartUnlike />}
+                            {isLiked ? <HeartLike bigIcon={true} /> : <HeartUnlike bigIcon={true} />}
                         </button>
                     </div>
                     <div className="group flex items-center justify-center gap-2 ">
                         <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
-                            <Bookmark />
+                            <Bookmark bigIcon={true} />
                         </button>
                     </div>
                 </div>
-                <div className="mx-4 mt-4  border-t-[0.01rem] opacity-80"></div>
-
-                <CommentCard comments={comments} postId={postId} />
+                <div className="mx-4 mt-4  border-t-[0.01rem] opacity-80"></div>{" "}
+                <Suspense fallback={<Loader />}>
+                    <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} />
+                    <CommentCard comments={comments} postId={postId} fromTweetDetail={true} />
+                </Suspense>
             </div>
-            <Suspense fallback={<Loader />}>
-                <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} />
-            </Suspense>
         </main>
     );
 };

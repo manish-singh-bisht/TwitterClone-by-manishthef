@@ -25,12 +25,12 @@ const commentSchema = new mongoose.Schema({
     },
     parent: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Comment",
+        ref: "Comments",
     },
     children: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Comment",
+            ref: "Comments",
         },
     ],
     likes: [

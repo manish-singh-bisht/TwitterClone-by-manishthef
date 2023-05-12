@@ -7,7 +7,29 @@ import { usePostTime } from "../../../CustomHooks/usePostTime";
 import Avatar from "../Avatar";
 import LikeUnlikePost from "./LikeUnlikePost";
 
-const Post = ({ postId, tweet, ownerName, ownerId, ownerImage: profile, postImage, postVideo, handle, timeCreated, likes = [], comments = [], isDelete = false, isAccount = false, handler, dispatch, state, ACTIONS, isComment }) => {
+const Post = ({
+    postId,
+    tweet,
+    ownerName,
+    ownerId,
+    ownerImage: profile,
+    postImage,
+    postVideo,
+    handle,
+    timeCreated,
+    likes = [],
+    comments = [],
+    isDelete = false,
+    isAccount = false,
+    handler,
+    dispatch,
+    state,
+    ACTIONS,
+    isComment,
+    fromTweetDetail,
+    fromCommentDetail,
+    commentsChildren,
+}) => {
     const formattedTime = usePostTime(Date.parse(timeCreated));
 
     //For Scrolling to particular tweet after left arrow in TweetDetail.jsx/CommentDetail.jsx component is clicked
@@ -24,7 +46,7 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage: profile, postImag
         }
     }, [location]);
 
-    const photos = [];
+    const photos = ["https://source.unsplash.com/random/1200x600", "https://source.unsplash.com/random/900x900"];
 
     //Grid layout for different numbers of image,used below
     let gridClass = "";
@@ -86,7 +108,11 @@ const Post = ({ postId, tweet, ownerName, ownerId, ownerImage: profile, postImag
                     <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
                         <Comments />
                     </button>
-                    <span className="group-hover:text-blue-500">{comments.length > 0 ? comments.length : null}</span>
+                    {fromTweetDetail || fromCommentDetail ? (
+                        <span className="group-hover:text-blue-500">{commentsChildren.length > 0 ? commentsChildren.length : null}</span>
+                    ) : (
+                        <span className="group-hover:text-blue-500">{comments.length > 0 ? comments.length : null}</span>
+                    )}
                 </div>
 
                 <div className="group flex w-[3rem] items-center justify-around">
