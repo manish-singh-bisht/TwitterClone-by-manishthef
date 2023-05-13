@@ -1,14 +1,12 @@
 import React, { Suspense, forwardRef, useCallback, useEffect, useState } from "react";
 import ModalForLikesBookmarksRetweets from "../../Modal/ModalForLikesBookmarksRetweets";
 import Loader from "../Loader";
-import CommentCard from "./CommentCard";
-import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets } from "../../SVGs/SVGs";
+import { Bookmark, Comments, HeartLike, HeartUnlike, Retweets } from "../../SVGs/SVGs";
 import PhotoGallery from "./PhotoGallery";
 import Avatar from "../Avatar";
 import useAnimation from "../../../CustomHooks/useAnimation";
 import CommentBox from "./CommentBox";
 import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
-import CommentLikeUnlike from "../../../context/Actions/CommentLikeUnlike";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { usePostTimeInTweetDetail } from "../../../CustomHooks/usePostTime";
@@ -91,7 +89,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
     return (
         comment !== undefined && (
             <main className="grid   grid-cols-[44vw_auto] ">
-                <div className="flex h-[100%]  scroll-m-[4rem] flex-col" ref={ref}>
+                <div className="flex h-[100%]   flex-col">
                     <div className=" m-2">
                         <div className="flex gap-2">
                             <Avatar profile={comment.owner.profile && comment.owner.profile.image.url ? comment.owner.profile.image.url : null} />
@@ -143,7 +141,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                             <div className="m-4  border-t-[0.01rem] opacity-80"></div>
                         </>
                     ) : null}
-                    <div className="  mx-2 -mt-2 flex gap-20    pl-10">
+                    <div className="  mx-2 -mt-2 flex scroll-mt-32   gap-20 pl-10" ref={ref}>
                         <div className="group flex items-center justify-center gap-2 ">
                             <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
                                 <Comments bigIcon={true} />

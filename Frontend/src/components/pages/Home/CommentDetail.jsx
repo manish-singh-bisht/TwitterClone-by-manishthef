@@ -32,7 +32,6 @@ const CommentDetail = () => {
             if (data.comment.parent !== undefined && !parentCollection.some((item) => item._id === data.comment.parent._id)) {
                 setParentCollection((prevCollection) => [...prevCollection, data.comment.parent]);
             }
-            console.log(parentCollection);
         };
         getCommentById();
 
