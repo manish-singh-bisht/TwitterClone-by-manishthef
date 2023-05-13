@@ -7,27 +7,35 @@ import Post from "./Post";
 import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
 import LikeUnlike from "../../../context/Actions/LikeUnlike";
 import Loader from "../Loader";
+import CommentLikeUnlike from "../../../context/Actions/CommentLikeUnlike";
 
 const CommentCard = React.lazy(() => import("./CommentCard"));
 const ActiveComment = React.lazy(() => import("./ActiveComment"));
 
 const CommentDetail = () => {
-    const componentRef = useRef(null);
-    const { ACTIONS, state, dispatchLikeUnlike, stateComment } = useGlobalContext();
-    //For navigating to a particular section that is to the tweet that openend this component.
+    const componentRef = useRef(null); //when clicking on comment, it scrolls to the comment clicked and not to top.
+    const { ACTIONS, state, dispatchLikeUnlike, stateComment, dispatchCommentLikeUnlike } = useGlobalContext();
+    //For navigating to a particular section that is to the comment that openend this component.
     const navigate = useNavigate();
     const { commentId } = useParams();
 
     const [post, setPost] = useState();
     const [comment, setComment] = useState([]);
+    const [parentCollection, setParentCollection] = useState([]); //for getting the parent/parents
 
     useEffect(() => {
         const getCommentById = async () => {
             const { data } = await axios.get(`http://localhost:4000/api/v1/comment/${commentId}`, { withCredentials: true });
             setPost(data.comment.post);
             setComment(data.comment);
+
+            if (data.comment.parent !== undefined && !parentCollection.some((item) => item._id === data.comment.parent._id)) {
+                setParentCollection((prevCollection) => [...prevCollection, data.comment.parent]);
+            }
+            console.log(parentCollection);
         };
         getCommentById();
+
         componentRef?.current?.scrollIntoView();
     }, [commentId, stateComment]);
 
@@ -92,6 +100,29 @@ const CommentDetail = () => {
                         state={state}
                         ACTIONS={ACTIONS}
                     />
+
+                    {parentCollection &&
+                        parentCollection.length > 0 &&
+                        parentCollection.map((item) => {
+                            return (
+                                <Post
+                                    key={item._id}
+                                    isComment={true}
+                                    postId={item._id}
+                                    tweet={item.comment}
+                                    likes={item.likes}
+                                    ownerName={item.owner.name}
+                                    ownerImage={item.owner.profile && item.owner.profile.image.url ? item.owner.profile.image.url : null}
+                                    ownerId={item.owner._id}
+                                    handle={item.owner.handle}
+                                    timeCreated={item.createdAt}
+                                    dispatch={dispatchCommentLikeUnlike}
+                                    state={state}
+                                    ACTIONS={ACTIONS}
+                                    handler={CommentLikeUnlike}
+                                />
+                            );
+                        })}
 
                     <Suspense fallback={<Loader />}>
                         <ActiveComment commentId={commentId} postId={post._id} parent={commentId} ref={componentRef} />

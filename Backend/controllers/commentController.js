@@ -149,10 +149,14 @@ exports.likeAndUnlikeComment = async (req, res, next) => {
 exports.findCommentById = async (req, res, next) => {
     try {
         const comment = await Comments.findById(req.params.id)
-            .populate("likes post owner")
+            .populate("likes post owner parent")
             .populate({
                 path: "post",
                 populate: [{ path: "owner likes" }],
+            })
+            .populate({
+                path: "parent",
+                populate: [{ path: "owner" }],
             })
             .populate({
                 path: "children",
