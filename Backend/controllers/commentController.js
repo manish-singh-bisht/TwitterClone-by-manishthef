@@ -156,7 +156,7 @@ exports.findCommentById = async (req, res, next) => {
             })
             .populate({
                 path: "parent",
-                populate: [{ path: "owner" }],
+                populate: [{ path: "owner likes" }],
             })
             .populate({
                 path: "children",

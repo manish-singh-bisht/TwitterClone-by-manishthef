@@ -34,6 +34,7 @@ const CommentDetail = () => {
             }
         };
         getCommentById();
+        console.log(parentCollection);
 
         componentRef?.current?.scrollIntoView();
     }, [commentId, stateComment]);
@@ -99,7 +100,7 @@ const CommentDetail = () => {
                         state={state}
                         ACTIONS={ACTIONS}
                     />
-
+                    {/* Parent Comments */}
                     {parentCollection &&
                         parentCollection.length > 0 &&
                         parentCollection.map((item) => {
