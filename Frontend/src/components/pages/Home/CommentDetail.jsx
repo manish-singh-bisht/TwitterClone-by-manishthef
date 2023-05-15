@@ -108,6 +108,7 @@ const CommentDetail = () => {
                                 <Post
                                     key={item._id}
                                     isComment={true}
+                                    fromCommentDetail={true}
                                     postId={item._id}
                                     tweet={item.comment}
                                     likes={item.likes}
@@ -116,6 +117,7 @@ const CommentDetail = () => {
                                     ownerId={item.owner._id}
                                     handle={item.owner.handle}
                                     timeCreated={item.createdAt}
+                                    commentsChildren={item.children}
                                     dispatch={dispatchCommentLikeUnlike}
                                     state={state}
                                     ACTIONS={ACTIONS}
