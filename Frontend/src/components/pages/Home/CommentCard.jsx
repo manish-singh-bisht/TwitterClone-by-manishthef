@@ -22,6 +22,7 @@ const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDet
                         <>
                             <Post
                                 key={comment._id}
+                                comment={[comment]} //this is being passed from CommentDetail and is actually child comments of the active comments. its not actually being passed as props, comments is being passed as prop,comment is an instance of comments map.
                                 isComment={true}
                                 fromTweetDetail={fromTweetDetail}
                                 fromCommentDetail={fromCommentDetail}
@@ -42,7 +43,6 @@ const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDet
                                 ACTIONS={ACTIONS}
                                 handler={CommentLikeUnlike}
                             />
-                            {comment.children && comment.children.length > 0 && <div>replies</div>}
                         </>
                     );
                 })}

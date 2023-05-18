@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useRef, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { LeftArrow } from "../../SVGs/SVGs";
 import Avatar from "../Avatar";
@@ -22,6 +22,8 @@ const CommentDetail = () => {
     const [post, setPost] = useState();
     const [comment, setComment] = useState([]);
     const [parentCollection, setParentCollection] = useState([]); //for getting the parent/parents
+    const [parentCollectionId, setParentCollectionId] = useState([]); //for getting parent/parents id only
+    const [active, setActive] = useState(); //sets the current active comment's id
 
     useEffect(() => {
         const getCommentById = async () => {
@@ -31,14 +33,23 @@ const CommentDetail = () => {
 
             if (data.comment.parent !== undefined && !parentCollection.some((item) => item._id === data.comment.parent._id)) {
                 setParentCollection((prevCollection) => [...prevCollection, data.comment.parent]);
+                setParentCollectionId((prevCollection) => [...prevCollection, data.comment.parent._id]);
             }
         };
+
         getCommentById();
-        console.log(parentCollection);
 
         componentRef?.current?.scrollIntoView();
     }, [commentId, stateComment]);
 
+    //will be used when we click on any previously appeared parent and show only parents previous to active comment and erase all after active comment.
+    useEffect(() => {
+        if (parentCollectionId.includes(active)) {
+            const index = parentCollectionId.indexOf(active);
+            const updatedParentCollection = parentCollection.slice(0, index);
+            setParentCollection(updatedParentCollection);
+        }
+    }, [active]);
     function handleClick() {
         navigate(`/${post.owner.name}/${post._id}`, {
             replace: true,
@@ -74,7 +85,7 @@ const CommentDetail = () => {
     return (
         post !== undefined && (
             <main className="grid grid-cols-[44vw_auto]   ">
-                <div className="flex h-[100%] min-h-screen flex-col  border-l  border-r">
+                <div className=" flex h-[100%] min-h-screen  flex-col  border-l border-r">
                     <div className=" sticky inset-0 z-10 flex h-[3.5rem] items-center gap-7 bg-white/60 backdrop-blur-md ">
                         <div onClick={handleClick}>
                             <div className="m-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full hover:border-2 hover:bg-gray-200 active:bg-gray-300">
@@ -84,45 +95,55 @@ const CommentDetail = () => {
                         <div className="text-[1.6rem] font-bold">Tweet</div>
                     </div>
                     {/* Parent Post */}
-                    <Post
-                        key={post._id}
-                        isComment={false}
-                        postId={post._id}
-                        tweet={post.tweet}
-                        likes={post.likes}
-                        ownerName={post.owner.name}
-                        ownerImage={post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null}
-                        ownerId={post.owner._id}
-                        handle={post.owner.handle}
-                        timeCreated={post.createdAt}
-                        handler={LikeUnlike}
-                        dispatch={dispatchLikeUnlike}
-                        state={state}
-                        ACTIONS={ACTIONS}
-                    />
+                    <div className="relative">
+                        <Post
+                            key={post._id}
+                            isComment={false}
+                            postId={post._id}
+                            tweet={post.tweet}
+                            likes={post.likes}
+                            ownerName={post.owner.name}
+                            ownerImage={post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null}
+                            ownerId={post.owner._id}
+                            handle={post.owner.handle}
+                            timeCreated={post.createdAt}
+                            handler={LikeUnlike}
+                            dispatch={dispatchLikeUnlike}
+                            state={state}
+                            ACTIONS={ACTIONS}
+                        />
+                        <div className="absolute left-[2.37rem] top-[4.2rem]  h-[calc(88.5%)] border-[0.09rem]"></div>
+                    </div>
                     {/* Parent Comments */}
                     {parentCollection &&
                         parentCollection.length > 0 &&
                         parentCollection.map((item) => {
                             return (
-                                <Post
-                                    key={item._id}
-                                    isComment={true}
-                                    fromCommentDetail={true}
-                                    postId={item._id}
-                                    tweet={item.comment}
-                                    likes={item.likes}
-                                    ownerName={item.owner.name}
-                                    ownerImage={item.owner.profile && item.owner.profile.image.url ? item.owner.profile.image.url : null}
-                                    ownerId={item.owner._id}
-                                    handle={item.owner.handle}
-                                    timeCreated={item.createdAt}
-                                    commentsChildren={item.children}
-                                    dispatch={dispatchCommentLikeUnlike}
-                                    state={state}
-                                    ACTIONS={ACTIONS}
-                                    handler={CommentLikeUnlike}
-                                />
+                                <div className="relative">
+                                    <Post
+                                        key={item._id}
+                                        activeHandler={(val) => {
+                                            setActive(val);
+                                        }}
+                                        isParent={true}
+                                        isComment={true}
+                                        fromCommentDetail={true}
+                                        postId={item._id}
+                                        tweet={item.comment}
+                                        likes={item.likes}
+                                        ownerName={item.owner.name}
+                                        ownerImage={item.owner.profile && item.owner.profile.image.url ? item.owner.profile.image.url : null}
+                                        ownerId={item.owner._id}
+                                        handle={item.owner.handle}
+                                        timeCreated={item.createdAt}
+                                        commentsChildren={item.children}
+                                        dispatch={dispatchCommentLikeUnlike}
+                                        state={state}
+                                        ACTIONS={ACTIONS}
+                                        handler={CommentLikeUnlike}
+                                    />
+                                    <div className="absolute left-[2.37rem] top-[4.2rem]  h-[81.5%] border-[0.09rem]"></div>
+                                </div>
                             );
                         })}
 

@@ -102,7 +102,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                             </div>
                         </div>
                         <div className="m-2">
-                            <pre className={` mb-3 max-w-[98%] whitespace-pre-wrap break-words `}>{comment.comment}</pre>
+                            <pre className={` mb-3 max-w-[98%] whitespace-pre-wrap break-words text-2xl`}>{comment.comment}</pre>
                             <div className={`m-[-0.25rem] grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
                                 {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo} index={index} />)}
                             </div>

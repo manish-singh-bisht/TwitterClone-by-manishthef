@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Bookmark, Comments, Retweets } from "../../SVGs/SVGs";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import PhotoGallery from "./PhotoGallery";
@@ -6,6 +6,8 @@ import "./AnimationUsedInPostAndTweetDetail.css";
 import { usePostTime } from "../../../CustomHooks/usePostTime";
 import Avatar from "../Avatar";
 import LikeUnlikePost from "./LikeUnlikePost";
+import CommentLikeUnlike from "../../../context/Actions/CommentLikeUnlike";
+import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
 
 const Post = ({
     postId,
@@ -29,7 +31,11 @@ const Post = ({
     fromTweetDetail,
     fromCommentDetail,
     commentsChildren,
+    activeHandler,
+    isParent,
+    comment, //this is child comments of the active comment and is being passed from commentCard by commentDetail component
 }) => {
+    const { dispatchCommentLikeUnlike } = useGlobalContext();
     const formattedTime = usePostTime(Date.parse(timeCreated));
 
     //For Scrolling to particular tweet after left arrow in TweetDetail.jsx/CommentDetail.jsx component is clicked
@@ -76,6 +82,7 @@ const Post = ({
     const newUrl = !isComment ? `/${ownerName}/${postId}` : `/${ownerName}/comment/${commentId}`;
 
     const handleClick = () => {
+        isParent && activeHandler(commentId);
         navigate(newUrl, { replace: true, state: { tweet, ownerName, handle, timeCreated, ownerId, profile, postImage, postVideo, isDelete, isAccount } });
     };
 
@@ -131,6 +138,77 @@ const Post = ({
                     <span className="group-hover:text-blue-500"></span>
                 </div>
             </div>
+
+            {comment &&
+                comment.length > 0 &&
+                comment.map((item) => {
+                    return (
+                        item &&
+                        item.children.length > 0 &&
+                        item.children.map((item2) => {
+                            if ((fromCommentDetail && item2.owner._id === item.parent.owner) || (fromTweetDetail && item2.owner._id === item.post.owner)) {
+                                const formattedTime = usePostTime(Date.parse(item2.createdAt));
+                                const ownerImage = item2.owner.profile && item2.owner.profile.image.url ? item2.owner.profile.image.url : null;
+                                const commentVideo = item2.video && item2.video.url ? item2.video.url : null;
+                                return (
+                                    <>
+                                        <div className={` bg-red-400 pt-[0.1rem] hover:bg-gray-50`}>
+                                            <div onClick={handleClick} className=" relative m-2 flex cursor-pointer gap-2 hover:bg-gray-50">
+                                                <Avatar profile={ownerImage} />
+                                                <div className="absolute   left-[1.8rem] -top-[16.8rem] h-[calc(100%+0.8rem)] border-[0.09rem]"></div>
+                                                <div className="relative mr-2 flex w-[87%] flex-col  gap-2 ">
+                                                    <Link
+                                                        to={`/user/${item2.owner}`}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                        }}
+                                                        className="absolute flex w-fit  items-center gap-1 text-[1.1rem] font-bold ">
+                                                        <span className="hover:underline">{item2.owner.name}</span>
+                                                        <span className=" text-[0.9rem] font-normal text-gray-700">{`@${item2.owner.handle}`}</span>
+                                                        <span className="mt-[-0.4rem] flex items-center justify-center  text-[0.8rem]">.</span>
+                                                        <span className="flex text-[0.9rem] font-normal text-gray-700">{`${formattedTime}`}</span>
+                                                    </Link>
+                                                    <pre className={` mt-10 max-w-[98%] whitespace-pre-wrap break-words  `}>{item2.comment}</pre>
+                                                    <div className={`grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
+                                                        {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo} index={index} />)}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="my-4 ml-[4.25rem] flex w-[87.5%] gap-20   border-2">
+                                                <div className="group flex w-[3rem] items-center justify-around">
+                                                    <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
+                                                        <Comments />
+                                                    </button>
+
+                                                    <span className="group-hover:text-blue-500">{item2.children.length > 0 ? item2.children.length : null}</span>
+                                                </div>
+
+                                                <div className="group flex w-[3rem] items-center justify-around">
+                                                    <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-green-100 group-hover:text-green-500">
+                                                        <Retweets />
+                                                    </button>
+                                                    <span className="group-hover:text-green-500">{item2.likes.length}</span>
+                                                </div>
+                                                <div className=" group flex w-[3rem] items-center justify-around  ">
+                                                    <LikeUnlikePost likes={item2.likes} ACTIONS={ACTIONS} dispatch={dispatchCommentLikeUnlike} state={state} handler={CommentLikeUnlike} postId={item2._id} />
+                                                </div>
+                                                <div className="group flex w-[3rem] items-center justify-around ">
+                                                    <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
+                                                        <Bookmark />
+                                                    </button>
+                                                    <span className="group-hover:text-blue-500"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </>
+                                );
+                            }
+                            return null;
+                        })
+                    );
+                })}
+
             <hr className="w-full bg-gray-100" />
         </div>
     );
