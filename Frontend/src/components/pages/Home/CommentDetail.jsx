@@ -119,7 +119,7 @@ const CommentDetail = () => {
                         parentCollection.length > 0 &&
                         parentCollection.map((item) => {
                             return (
-                                <div className="relative">
+                                <div className="relative" key={item._id}>
                                     <Post
                                         key={item._id}
                                         activeHandler={(val) => {

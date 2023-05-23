@@ -19,31 +19,29 @@ const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDet
                     const commentVideo = comment.video && comment.video.url ? comment.video.url : null;
 
                     return (
-                        <>
-                            <Post
-                                key={comment._id}
-                                comment={[comment]} //this is being passed from CommentDetail and is actually child comments of the active comments. its not actually being passed as props, comments is being passed as prop,comment is an instance of comments map.
-                                isComment={true}
-                                fromTweetDetail={fromTweetDetail}
-                                fromCommentDetail={fromCommentDetail}
-                                postId={comment._id}
-                                tweet={comment.comment}
-                                postImage={comment.images.url}
-                                postVideo={commentVideo}
-                                likes={comment.likes}
-                                comments={comment.comments}
-                                commentsChildren={comment.children}
-                                ownerName={comment.owner.name}
-                                ownerImage={ownerImage}
-                                ownerId={comment.owner._id}
-                                handle={comment.owner.handle}
-                                timeCreated={comment.createdAt}
-                                dispatch={dispatchCommentLikeUnlike}
-                                state={state}
-                                ACTIONS={ACTIONS}
-                                handler={CommentLikeUnlike}
-                            />
-                        </>
+                        <Post
+                            key={comment._id}
+                            comment={[comment]} //this is being passed from CommentDetail and is actually child comments of the active comments. its not actually being passed as props, comments is being passed as prop,comment is an instance of comments map.
+                            isComment={true}
+                            fromTweetDetail={fromTweetDetail}
+                            fromCommentDetail={fromCommentDetail}
+                            postId={comment._id}
+                            tweet={comment.comment}
+                            postImage={comment.images.url}
+                            postVideo={commentVideo}
+                            likes={comment.likes}
+                            comments={comment.comments}
+                            commentsChildren={comment.children}
+                            ownerName={comment.owner.name}
+                            ownerImage={ownerImage}
+                            ownerId={comment.owner._id}
+                            handle={comment.owner.handle}
+                            timeCreated={comment.createdAt}
+                            dispatch={dispatchCommentLikeUnlike}
+                            state={state}
+                            ACTIONS={ACTIONS}
+                            handler={CommentLikeUnlike}
+                        />
                     );
                 })}
         </>

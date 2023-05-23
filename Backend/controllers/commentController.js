@@ -152,15 +152,34 @@ exports.findCommentById = async (req, res, next) => {
             .populate("likes post owner parent")
             .populate({
                 path: "post",
-                populate: [{ path: "owner likes" }],
+                populate: [
+                    { path: "owner", select: "name handle profile _id" },
+                    { path: "likes", select: "_id" },
+                ],
             })
             .populate({
                 path: "parent",
-                populate: [{ path: "owner likes" }],
+                populate: [
+                    { path: "owner", select: "name handle profile _id" },
+                    { path: "likes", select: "_id" },
+                ],
             })
+
             .populate({
                 path: "children",
-                populate: [{ path: "owner" }, { path: "likes" }, { path: "parent" }, { path: "children", populate: [{ path: "owner" }, { path: "likes" }] }],
+                populate: [
+                    { path: "owner", select: "name handle profile _id" },
+                    { path: "likes", select: "_id" },
+                    { path: "parent" },
+                    {
+                        path: "children",
+                        populate: [
+                            { path: "owner", select: "name handle profile _id" },
+                            { path: "likes", select: "_id" },
+                            { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
+                        ],
+                    },
+                ],
             });
 
         if (!comment) {
@@ -170,6 +189,35 @@ exports.findCommentById = async (req, res, next) => {
             message: "success",
             comment,
         });
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};
+async function fetchReplies(commentId, replies, parentHandle) {
+    const comment = await Comments.findById(commentId).populate("owner");
+    let handle = comment.owner.handle;
+
+    if (!comment) {
+        return replies;
+    }
+
+    replies.push(comment);
+    flag = 1;
+
+    for (const childReply of comment.children) {
+        handle = comment.owner.handle;
+        await fetchReplies(childReply, replies, handle);
+    }
+
+    return replies;
+}
+exports.findRepliesById = async (req, res, next) => {
+    try {
+        // Fetch all replies in the conversation
+
+        const replies = await fetchReplies(req.params.id, [], req.params.handle);
+
+        res.status(200).json({ message: "success", replies });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
     }
