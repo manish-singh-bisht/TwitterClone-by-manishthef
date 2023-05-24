@@ -78,32 +78,45 @@ exports.postComment = async (req, res, next) => {
         next(new ErrorHandler(error.message, 500));
     }
 };
-//delete all the children of the parent comment if parent is deleted
+
 exports.deleteComment = async (req, res, next) => {
     try {
-        const post = await Posts.findById(req.params.id).populate("comments");
+        const post = await Posts.findById(req.params.post).populate("comments");
+        const comment = await Comments.findById(req.params.comment);
+
         if (!post) {
             return next(new ErrorHandler("post not found", 400));
         }
 
-        //owner of post can delete any comment
-
-        const commentID = req.body.commentID;
-        if (commentID === undefined) {
-            return next(new ErrorHandler("commment id required", 400));
+        if (!comment) {
+            return next(new ErrorHandler("commment  not found", 400));
         }
 
-        post.comments.forEach((item, index) => {
-            if (item._id.toString() === req.body.commentID.toString()) {
-                return post.comments.splice(index, 1);
-            } else {
-                return next(new ErrorHandler("commment  not found", 400));
-            }
-        });
+        //if comment is a child of a parent, then removing the child from parent's children array.
+        if (comment.parent) {
+            const parent = await Comments.findById(comment.parent).populate("children");
+            parent.children.forEach((item, index) => {
+                if (item._id.toString() === comment._id.toString()) {
+                    parent.children.splice(index, 1);
+                }
+            });
+            await parent.save();
+        } else {
+            //deleting comment from post,if no parent
+            post.comments.forEach((item, index) => {
+                if (item._id.toString() === req.params.comment.toString()) {
+                    return post.comments.splice(index, 1);
+                }
+            });
 
-        await post.save();
+            await post.save();
+        }
 
-        await Comments.deleteOne({ _id: commentID });
+        //deleting all children of comment,if any.
+        await Comments.deleteMany({ parent: req.params.comment });
+
+        //deleting that comment
+        await Comments.deleteOne({ _id: req.params.comment });
 
         return res.status(200).json({
             success: true,
@@ -193,20 +206,17 @@ exports.findCommentById = async (req, res, next) => {
         next(new ErrorHandler(error.message, 500));
     }
 };
-async function fetchReplies(commentId, replies, parentHandle) {
+async function fetchReplies(commentId, replies) {
     const comment = await Comments.findById(commentId).populate("owner");
-    let handle = comment.owner.handle;
 
     if (!comment) {
         return replies;
     }
 
     replies.push(comment);
-    flag = 1;
 
     for (const childReply of comment.children) {
-        handle = comment.owner.handle;
-        await fetchReplies(childReply, replies, handle);
+        await fetchReplies(childReply, replies);
     }
 
     return replies;
@@ -215,7 +225,7 @@ exports.findRepliesById = async (req, res, next) => {
     try {
         // Fetch all replies in the conversation
 
-        const replies = await fetchReplies(req.params.id, [], req.params.handle);
+        const replies = await fetchReplies(req.params.id, []);
 
         res.status(200).json({ message: "success", replies });
     } catch (error) {

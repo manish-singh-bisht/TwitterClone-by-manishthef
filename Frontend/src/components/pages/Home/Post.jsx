@@ -91,8 +91,8 @@ const Post = ({
         navigate(newUrl, { replace: true, state: { tweet, ownerName, handle, timeCreated, ownerId, profile, postImage, postVideo, isDelete, isAccount } });
     };
 
-    const replyHandler = async (childCommentId, handle) => {
-        const { data } = await axios.get(`http://localhost:4000/api/v1/comment/reply/${childCommentId}/${handle}`, { withCredentials: true });
+    const replyHandler = async (childCommentId) => {
+        const { data } = await axios.get(`http://localhost:4000/api/v1/comment/reply/${childCommentId}`, { withCredentials: true });
         setReplies(data.replies);
         setShowReplies(true);
     };
@@ -158,8 +158,6 @@ const Post = ({
                             {item &&
                                 item.children.length > 0 &&
                                 item.children.map((item2) => {
-                                    console.log("item1", item);
-                                    console.log("item2", item2);
                                     if ((fromCommentDetail && item2.owner._id === item.parent.owner) || (fromTweetDetail && item2.owner._id === item.post.owner)) {
                                         const formattedTimeChildren = usePostTime(Date.parse(item2.createdAt));
                                         const ownerImage = item2.owner.profile && item2.owner.profile.image.url ? item2.owner.profile.image.url : null;
@@ -224,7 +222,7 @@ const Post = ({
                                                                     <button
                                                                         className="w-full border-2 pl-[4.5rem] text-left text-blue-500 hover:bg-gray-50"
                                                                         onClick={() => {
-                                                                            return replyHandler(item3._id, item3.owner.handle);
+                                                                            return replyHandler(item3._id);
                                                                         }}>
                                                                         Show replies
                                                                     </button>
@@ -241,10 +239,11 @@ const Post = ({
                         </div>
                     );
                 })}
-            {showReplies === true &&
+            {showReplies &&
                 replies &&
                 replies.length > 0 &&
                 replies.map((reply) => {
+                    const formattedTimeReply = () => usePostTime(Date.parse(reply.createdAt));
                     const ownerImage = reply.owner.profile && reply.owner.profile.image.url ? reply.owner.profile.image.url : null;
                     const commentVideo = reply.video && reply.video.url ? reply.video.url : null;
                     return (
@@ -263,7 +262,7 @@ const Post = ({
                                             <span className="hover:underline">{reply.owner.name}</span>
                                             <span className=" text-[0.9rem] font-normal text-gray-700">{`@${reply.owner.handle}`}</span>
                                             <span className="mt-[-0.4rem] flex items-center justify-center  text-[0.8rem]">.</span>
-                                            <span className="flex text-[0.9rem] font-normal text-gray-700">{`${Date.parse(reply.createdAt)}`}</span>
+                                            <span className="flex text-[0.9rem] font-normal text-gray-700">{`${formattedTimeReply}`}</span>
                                         </Link>
                                         <pre className={` mt-10 max-w-[98%] whitespace-pre-wrap break-words  `}>{reply.comment}</pre>
                                         <div className={`grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
