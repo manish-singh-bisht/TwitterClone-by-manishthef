@@ -81,50 +81,57 @@ exports.postComment = async (req, res, next) => {
 
 exports.deleteComment = async (req, res, next) => {
     try {
-        const post = await Posts.findById(req.params.post).populate("comments");
-        const comment = await Comments.findById(req.params.comment);
+        const postId = req.params.post;
+        const commentId = req.params.comment;
+
+        const post = await Posts.findById(postId).populate("comments");
 
         if (!post) {
-            return next(new ErrorHandler("post not found", 400));
+            return next(new ErrorHandler("Post not found", 400));
         }
 
-        if (!comment) {
-            return next(new ErrorHandler("commment  not found", 400));
+        const commentToDelete = await Comments.findById(commentId);
+
+        if (!commentToDelete) {
+            return next(new ErrorHandler("Comment not found", 400));
         }
 
-        //if comment is a child of a parent, then removing the child from parent's children array.
-        if (comment.parent) {
-            const parent = await Comments.findById(comment.parent).populate("children");
-            parent.children.forEach((item, index) => {
-                if (item._id.toString() === comment._id.toString()) {
-                    parent.children.splice(index, 1);
-                }
-            });
-            await parent.save();
-        } else {
-            //deleting comment from post,if no parent
-            post.comments.forEach((item, index) => {
-                if (item._id.toString() === req.params.comment.toString()) {
-                    return post.comments.splice(index, 1);
-                }
-            });
+        // Delete the comment and its children recursively
+        await deleteCommentRecursive(commentToDelete);
 
-            await post.save();
-        }
-
-        //deleting all children of comment,if any.
-        await Comments.deleteMany({ parent: req.params.comment });
-
-        //deleting that comment
-        await Comments.deleteOne({ _id: req.params.comment });
+        // Remove the comment from the post's comments array
+        post.comments = post.comments.filter((comment) => comment._id.toString() !== commentId);
+        await post.save();
 
         return res.status(200).json({
             success: true,
-            message: "comment deleted",
+            message: "Comment deleted",
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
     }
+};
+
+const deleteCommentRecursive = async (comment) => {
+    // Delete children recursively
+    for (const childId of comment.children) {
+        const childComment = await Comments.findById(childId);
+        if (childComment) {
+            await deleteCommentRecursive(childComment);
+        }
+    }
+
+    // Remove the comment from its parent's children array
+    if (comment.parent) {
+        const parentComment = await Comments.findById(comment.parent);
+        if (parentComment) {
+            parentComment.children = parentComment.children.filter((childId) => childId.toString() !== comment._id.toString());
+            await parentComment.save();
+        }
+    }
+
+    // Delete the comment itself
+    await Comments.deleteOne({ _id: comment._id });
 };
 
 exports.likeAndUnlikeComment = async (req, res, next) => {
