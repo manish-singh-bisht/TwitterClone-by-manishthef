@@ -1,7 +1,7 @@
-import React, { Suspense, forwardRef, useCallback, useEffect, useState } from "react";
+import React, { Suspense, forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import ModalForLikesBookmarksRetweets from "../../Modal/ModalForLikesBookmarksRetweets";
 import Loader from "../Loader";
-import { Bookmark, Comments, HeartLike, HeartUnlike, Retweets } from "../../SVGs/SVGs";
+import { Bookmark, Comments, HeartLike, HeartUnlike, Retweets, ThreeDots } from "../../SVGs/SVGs";
 import PhotoGallery from "./PhotoGallery";
 import Avatar from "../Avatar";
 import useAnimation from "../../../CustomHooks/useAnimation";
@@ -10,9 +10,19 @@ import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { usePostTimeInTweetDetail } from "../../../CustomHooks/usePostTime";
-
+const MoreOptionMenuModal = React.lazy(() => import("../../Modal/MoreOptionMenuModal"));
 const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
     const { state, stateComment } = useGlobalContext();
+
+    //Modal for more option
+    const [visibility, setVisibility] = useState(false);
+    const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 }); //for getting the position of the button that triggers the modal to open
+    const handleOutsideClickMoreOption = (event) => {
+        if (event.target === event.currentTarget) {
+            setVisibility(false);
+            document.body.style.overflow = "unset";
+        }
+    };
 
     //Modal for like,retweet,Bookmark
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -95,10 +105,25 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                             <Avatar profile={comment.owner.profile && comment.owner.profile.image.url ? comment.owner.profile.image.url : null} />
 
                             <div className="mr-2 flex w-[87%] flex-col gap-2 ">
-                                <Link to={`/user/${comment.owner._id}`} className="flex w-fit flex-col  text-[1.1rem] font-bold ">
-                                    <span className="hover:underline">{comment.owner.name}</span>
-                                    <span className="mt-[-0.3rem] text-[0.9rem] font-normal text-gray-700">{`@${comment.owner.handle}`}</span>
-                                </Link>
+                                <div className="flex">
+                                    <Link to={`/user/${comment.owner._id}`} className="flex w-fit flex-col  text-[1.1rem] font-bold ">
+                                        <span className="hover:underline">{comment.owner.name}</span>
+                                        <span className="mt-[-0.3rem] text-[0.9rem] font-normal text-gray-700">{`@${comment.owner.handle}`}</span>
+                                    </Link>
+                                    <div
+                                        className="ml-[29.3rem] h-min cursor-pointer  rounded-full hover:bg-blue-100  hover:text-blue-500 "
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setVisibility(true);
+                                            const buttonRect = e.target.getBoundingClientRect();
+                                            const top = buttonRect.top + buttonRect.height;
+                                            const left = buttonRect.left;
+                                            setModalPosition({ top, left });
+                                            document.body.style.overflow = "hidden";
+                                        }}>
+                                        <ThreeDots />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div className="m-2">
@@ -169,6 +194,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                 </div>
                 <Suspense fallback={<Loader />}>
                     <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} />
+                    <MoreOptionMenuModal visibility={visibility} handleOutsideClick={handleOutsideClickMoreOption} modalPosition={modalPosition} />
                 </Suspense>
             </main>
         )

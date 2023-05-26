@@ -4,7 +4,7 @@ import UserLogin from "../../context/actions/UserLogin";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import { CrossInLogin, TwitterIconInLogin } from "../SVGs/SVGs";
 
-const LoginOptionModal = ({ onClose, isLoginVisible }) => {
+const LoginOptionModal = ({ onClose, isLoginVisible, handleOutsideClick }) => {
     if (!isLoginVisible) return null;
 
     const [email, setEmail] = useState("");
@@ -16,8 +16,9 @@ const LoginOptionModal = ({ onClose, isLoginVisible }) => {
         await UserLogin({ email, password, dispatch, ACTIONS });
     };
     return (
-        <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm">
-            <div className="flex h-[85vh] w-[45vw] rounded-xl bg-black ">
+        <div className="fixed inset-0 flex items-center justify-center">
+            <div className="fixed  h-full w-full  bg-black opacity-70" onClick={handleOutsideClick}></div>
+            <div className="z-10 flex h-[85vh] w-[45vw] rounded-xl bg-black">
                 <div className="m-[0.39rem] h-fit " onClick={onClose}>
                     <CrossInLogin className=" " />
                 </div>

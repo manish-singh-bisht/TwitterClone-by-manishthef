@@ -2,13 +2,13 @@ import React from "react";
 import { Cross } from "../SVGs/SVGs";
 import { Link } from "react-router-dom";
 
-const ModalForLikesBookmarksRetweets = ({ visibility, onClose, type, list }) => {
+const ModalForLikesBookmarksRetweets = ({ visibility, onClose, type, list, handleOutsideClick }) => {
     if (!visibility) return;
 
     return (
         <>
             <div className="fixed inset-0 z-30 flex  h-[100vh] w-[100vw] items-center justify-center">
-                <div className="fixed  h-[100vh] w-[100vw]  bg-black opacity-40"></div>
+                <div className="fixed  h-[100vh] w-[100vw]  bg-black opacity-40" onClick={handleOutsideClick}></div>
                 <div className="relative  flex h-auto max-h-[40rem]  min-h-[83vh] w-[41vw] flex-col  overflow-y-auto  rounded-xl bg-white ">
                     <div className=" sticky inset-0 mb-3 flex h-fit w-full items-center gap-4 bg-white/60  backdrop-blur-md  ">
                         <div className="  m-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full  p-2 hover:bg-gray-200" onClick={onClose}>

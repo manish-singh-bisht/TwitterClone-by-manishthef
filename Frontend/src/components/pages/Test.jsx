@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Delete, PushPin, UserPlus } from "../SVGs/SVGs";
 
 const Test = () => {
     const navigate = useNavigate();

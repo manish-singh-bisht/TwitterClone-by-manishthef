@@ -18,6 +18,12 @@ const TweetBoxInHome = ({ profile }) => {
         setIsTweetBoxOpen(false);
         document.body.style.overflow = "unset"; //makes the back of modal move again i.e set overflow to normal
     };
+    const handleOutsideClick = (event) => {
+        if (event.target === event.currentTarget) {
+            setIsTweetBoxOpen(false);
+            document.body.style.overflow = "unset";
+        }
+    };
 
     //for keeping the globe and other related to show when editor is in focus for the first time
     const showGlobeHandler = () => {
@@ -97,7 +103,7 @@ const TweetBoxInHome = ({ profile }) => {
                 </div>
             </div>
             <Suspense fallback={<Loader />}>
-                <TweetModal visibility={isTweetBoxOpen} onClose={hideTwitterBox} initialTweetFromOtherPartsOfApp={singleTweet.text} handleIsTweetPressInTweetModalTrue={handleIsTweetPressInTweetModalTrue} />
+                <TweetModal visibility={isTweetBoxOpen} onClose={hideTwitterBox} initialTweetFromOtherPartsOfApp={singleTweet.text} handleIsTweetPressInTweetModalTrue={handleIsTweetPressInTweetModalTrue} handleOutsideClick={handleOutsideClick} />
             </Suspense>
         </>
     );

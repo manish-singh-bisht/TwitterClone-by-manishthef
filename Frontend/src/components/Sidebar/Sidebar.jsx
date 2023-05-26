@@ -13,6 +13,12 @@ const Sidebar = () => {
         setIsTweetBoxOpen(false);
         document.body.style.overflow = "unset"; //makes the back of modal move again i.e set overflow to normal
     };
+    const handleOutsideClick = (event) => {
+        if (event.target === event.currentTarget) {
+            setIsTweetBoxOpen(false);
+            document.body.style.overflow = "unset";
+        }
+    };
 
     return (
         <main className="fixed z-20 flex h-[100vh] w-[24rem] flex-col items-end justify-between    ">
@@ -59,7 +65,7 @@ const Sidebar = () => {
                 </div>
             </div>
             <Suspense fallback={<Loader />}>
-                <TweetModal visibility={isTweetBoxOpen} onClose={hideTwitterBox} initialTweetFromOtherPartsOfApp={null} />
+                <TweetModal visibility={isTweetBoxOpen} onClose={hideTwitterBox} handleOutsideClick={handleOutsideClick} initialTweetFromOtherPartsOfApp={null} />
             </Suspense>
         </main>
     );

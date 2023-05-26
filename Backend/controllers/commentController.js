@@ -214,7 +214,7 @@ exports.findCommentById = async (req, res, next) => {
     }
 };
 async function fetchReplies(commentId, replies) {
-    const comment = await Comments.findById(commentId).populate("owner");
+    const comment = await Comments.findById(commentId).populate("owner likes");
 
     if (!comment) {
         return replies;

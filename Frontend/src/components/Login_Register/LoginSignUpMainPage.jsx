@@ -8,6 +8,12 @@ const LoginSignUpMainPage = () => {
     const hideLogin = () => {
         setIsLoginVisible(false);
     };
+    const handleOutsideClick = (event) => {
+        if (event.target === event.currentTarget) {
+            setIsLoginVisible(false);
+            document.body.style.overflow = "unset";
+        }
+    };
 
     return (
         <>
@@ -34,7 +40,7 @@ const LoginSignUpMainPage = () => {
                                 Log in
                             </div>
 
-                            <LoginOptionModal onClose={hideLogin} isLoginVisible={isLoginVisible} />
+                            <LoginOptionModal onClose={hideLogin} isLoginVisible={isLoginVisible} handleOutsideClick={handleOutsideClick} />
                         </div>
                     </div>
                 </div>

@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback, useEffect, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import PhotoGallery from "./PhotoGallery";
 import LikeUnlike from "../../../context/Actions/LikeUnlike";
@@ -7,15 +7,27 @@ import axios from "axios";
 import useAnimation from "../../../CustomHooks/useAnimation";
 import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
 import Loader from "../Loader";
-import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets } from "../../SVGs/SVGs";
+import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets, ThreeDots } from "../../SVGs/SVGs";
 import { usePostTimeInTweetDetail } from "../../../CustomHooks/usePostTime";
 import Avatar from "../Avatar";
 
 const ModalForLikesBookmarksRetweets = React.lazy(() => import("../../Modal/ModalForLikesBookmarksRetweets"));
 const CommentCard = React.lazy(() => import("./CommentCard"));
+const MoreOptionMenuModal = React.lazy(() => import("../../Modal/MoreOptionMenuModal"));
 
 const TweetDetail = () => {
     const { ACTIONS, dispatchLikeUnlike: dispatch, state, stateComment } = useGlobalContext();
+
+    //Modal for more option
+    const [visibility, setVisibility] = useState(false);
+    const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 }); //for getting the position of the button that triggers the modal to open
+
+    const handleOutsideClickMoreOption = (event) => {
+        if (event.target === event.currentTarget) {
+            setVisibility(false);
+            document.body.style.overflow = "unset";
+        }
+    };
 
     //Modal for like,retweet,Bookmark
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,6 +36,12 @@ const TweetDetail = () => {
     const hideModal = () => {
         setIsModalOpen(false);
         document.body.style.overflow = "unset";
+    };
+    const handleOutsideClick = (event) => {
+        if (event.target === event.currentTarget) {
+            setIsModalOpen(false);
+            document.body.style.overflow = "unset";
+        }
     };
 
     //For navigating to a particular section that is to the tweet that openend this component.
@@ -124,10 +142,25 @@ const TweetDetail = () => {
                         <Avatar profile={profile} />
 
                         <div className="mr-2 flex w-[87%] flex-col gap-2 ">
-                            <Link to={`/user/${ownerId}`} className="flex w-fit flex-col  text-[1.1rem] font-bold ">
-                                <span className="hover:underline">{ownerName}</span>
-                                <span className="mt-[-0.3rem] text-[0.9rem] font-normal text-gray-700">{`@${handle}`}</span>
-                            </Link>
+                            <div className="flex">
+                                <Link to={`/user/${ownerId}`} className="flex w-fit flex-col  text-[1.1rem] font-bold ">
+                                    <span className="hover:underline">{ownerName}</span>
+                                    <span className="mt-[-0.3rem] text-[0.9rem] font-normal text-gray-700">{`@${handle}`}</span>
+                                </Link>
+                                <div
+                                    className="ml-[29.3rem] h-min cursor-pointer  rounded-full hover:bg-blue-100 hover:text-blue-500"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setVisibility(true);
+                                        document.body.style.overflow = "hidden";
+                                        const buttonRect = e.target.getBoundingClientRect();
+                                        const top = buttonRect.top + buttonRect.height;
+                                        const left = buttonRect.left;
+                                        setModalPosition({ top, left });
+                                    }}>
+                                    <ThreeDots />
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div className="m-2">
@@ -195,8 +228,10 @@ const TweetDetail = () => {
                 </div>
                 <div className="mx-4 mt-4  border-t-[0.01rem] opacity-80"></div>{" "}
                 <Suspense fallback={<Loader />}>
-                    <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} />
+                    <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} handleOutsideClick={handleOutsideClick} />
                     <CommentCard comments={comments} postId={postId} fromTweetDetail={true} />
+
+                    <MoreOptionMenuModal visibility={visibility} handleOutsideClick={handleOutsideClickMoreOption} modalPosition={modalPosition} />
                 </Suspense>
             </div>
         </main>

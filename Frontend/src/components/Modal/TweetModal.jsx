@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import Avatar from "../pages/Avatar";
 
-const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, handleIsTweetPressInTweetModalTrue }) => {
+const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, handleIsTweetPressInTweetModalTrue, handleOutsideClick }) => {
     if (!visibility) return;
 
     const { state } = useGlobalContext();
@@ -78,7 +78,7 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
 
     return (
         <div className=" fixed inset-0  z-30 h-[100vh] w-[100vw] ">
-            <div className="fixed  h-full w-full  bg-black opacity-70"></div>
+            <div className="fixed  h-full w-full  bg-black opacity-70" onClick={handleOutsideClick}></div>
 
             <div className="relative left-[28rem] top-[4rem]  flex h-auto max-h-[40rem]  min-h-[18rem] w-[39.3rem] flex-col overflow-y-auto rounded-xl bg-white">
                 <div className=" h-fit w-full ">
