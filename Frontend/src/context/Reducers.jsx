@@ -27,6 +27,10 @@ export const ACTIONS = {
     COMMENT_LIKE_UNLIKE_SUCCESS: "Like Unlike Comment success",
     COMMENT_LIKE_UNLIKE_FAILURE: "Like Unlike Comment failure",
 
+    COMMENT_DELETE_REQUEST: "Delete Comment request",
+    COMMENT_DELETE_SUCCESS: "Delete Comment success",
+    COMMENT_DELETE_FAILURE: "Delete Comment failure",
+
     CLEAR_ERRORS: "clear Errors",
 };
 
@@ -122,6 +126,21 @@ export const commentLikeUnlikeReducer = (state, action) => {
         case ACTIONS.COMMENT_LIKE_UNLIKE_SUCCESS:
             return { ...state, loading: false, message: action.payload, error: "" };
         case ACTIONS.COMMENT_LIKE_UNLIKE_FAILURE:
+            return { ...state, loading: false, message: "", error: action.payload };
+        case ACTIONS.CLEAR_ERRORS:
+            return { ...state, error: "" };
+
+        default:
+            return state;
+    }
+};
+export const commentDeleteReducer = (state, action) => {
+    switch (action.type) {
+        case ACTIONS.COMMENT_DELETE_REQUEST:
+            return { ...state, loading: true, message: "", error: "" };
+        case ACTIONS.COMMENT_DELETE_SUCCESS:
+            return { ...state, loading: false, message: action.payload, error: "" };
+        case ACTIONS.COMMENT_DELETE_FAILURE:
             return { ...state, loading: false, message: "", error: action.payload };
         case ACTIONS.CLEAR_ERRORS:
             return { ...state, error: "" };

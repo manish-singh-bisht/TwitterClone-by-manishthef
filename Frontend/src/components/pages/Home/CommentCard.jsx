@@ -4,7 +4,7 @@ import CommentBox from "./CommentBox";
 import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
 import CommentLikeUnlike from "../../../context/Actions/CommentLikeUnlike";
 
-const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDetail, isParentPresent }) => {
+const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDetail, isParentPresent, POSTID }) => {
     const { ACTIONS, state, dispatchCommentLikeUnlike } = useGlobalContext();
     const profile = state.user && state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null;
 
@@ -25,7 +25,8 @@ const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDet
                             isComment={true}
                             fromTweetDetail={fromTweetDetail}
                             fromCommentDetail={fromCommentDetail}
-                            postId={comment._id}
+                            postId={comment._id} //this is the comment id
+                            POSTID={fromTweetDetail ? postId : POSTID} //this is the post id
                             tweet={comment.comment}
                             postImage={comment.images.url}
                             postVideo={commentVideo}

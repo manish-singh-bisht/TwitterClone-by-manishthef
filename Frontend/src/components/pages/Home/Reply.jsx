@@ -15,14 +15,18 @@ const Reply = ({ replies, handleClick }) => {
 
     ////Modal for more option
     const [visibility, setVisibility] = useState(false);
-    const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 }); //for getting the position of the button that triggers the modal to open
+    const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 }); //for getting the position of the button that triggers the modal to open
+    const [infoToMoreOptionModal, setInfoToMoreOptionModal] = useState({ ownerID: "", commentID: "", postID: "" });
+
     const handleOutsideClick = (event) => {
         if (event.target === event.currentTarget) {
             setVisibility(false);
             document.body.style.overflow = "unset";
         }
     };
-
+    const onCloseMoreOptionModal = () => {
+        setVisibility(false);
+    };
     const photos = ["https://source.unsplash.com/random/1200x600", "https://source.unsplash.com/random/900x900"];
 
     //Grid layout for different numbers of image,used below
@@ -81,7 +85,8 @@ const Reply = ({ replies, handleClick }) => {
                                                     const buttonRect = e.target.getBoundingClientRect();
                                                     const top = buttonRect.top + buttonRect.height;
                                                     const left = buttonRect.left;
-                                                    setModalPosition({ top, left });
+                                                    setButtonPosition({ top, left });
+                                                    setInfoToMoreOptionModal({ ownerID: reply.owner._id, commentID: reply._id, postID: reply.post });
                                                     document.body.style.overflow = "hidden";
                                                 }}>
                                                 <ThreeDots />
@@ -126,7 +131,7 @@ const Reply = ({ replies, handleClick }) => {
                 })}
 
             <Suspense fallback={<Loader />}>
-                <MoreOptionMenuModal visibility={visibility} handleOutsideClick={handleOutsideClick} modalPosition={modalPosition} />
+                <MoreOptionMenuModal visibility={visibility} handleOutsideClick={handleOutsideClick} buttonPosition={buttonPosition} infoToMoreOptionModal={infoToMoreOptionModal} onCloseMoreOptionModal={onCloseMoreOptionModal} />
             </Suspense>
         </>
     );

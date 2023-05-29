@@ -15,6 +15,7 @@ const MoreOptionMenuModal = React.lazy(() => import("../../Modal/MoreOptionMenuM
 
 const Post = ({
     postId,
+    POSTID, //this is the post id when being passed from CommentCard component,and the CommentCard for this situation is being passed from TweetDetail
     tweet,
     ownerName,
     ownerId,
@@ -46,15 +47,19 @@ const Post = ({
     const [replies, setReplies] = useState([]);
     let flag = 0;
 
-    ////Modal for more option
+    //Modal for more option
     const [visibility, setVisibility] = useState(false);
-    const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 }); //for getting the position of the button that triggers the modal to open
+    const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 }); //for getting the position of the button that triggers the modal to open
+    const [infoToMoreOptionModal, setInfoToMoreOptionModal] = useState({ ownerID: "", commentID: "", postID: "" });
 
     const handleOutsideClick = (event) => {
         if (event.target === event.currentTarget) {
             setVisibility(false);
             document.body.style.overflow = "unset";
         }
+    };
+    const onCloseMoreOptionModal = () => {
+        setVisibility(false);
     };
     //For Scrolling to particular tweet after left arrow in TweetDetail.jsx/CommentDetail.jsx component is clicked
     const location = useLocation();
@@ -115,8 +120,8 @@ const Post = ({
             <div onClick={handleClick} className=" m-2 flex cursor-pointer gap-2 hover:bg-gray-50">
                 <Avatar profile={profile} />
 
-                <div className="relative mr-2 flex w-[87%] flex-col  gap-2">
-                    <div className="flex">
+                <div className="relative mr-2 flex w-[87%]  flex-col gap-2  ">
+                    <div className="flex ">
                         <Link
                             to={`/user/${ownerId}`}
                             onClick={(e) => {
@@ -137,7 +142,12 @@ const Post = ({
                                 const buttonRect = e.target.getBoundingClientRect();
                                 const top = buttonRect.top + buttonRect.height;
                                 const left = buttonRect.left;
-                                setModalPosition({ top, left });
+                                setButtonPosition({ top, left });
+                                fromCommentDetail
+                                    ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID })
+                                    : isComment
+                                    ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID })
+                                    : setInfoToMoreOptionModal({ ownerID: ownerId, postID: postId });
                             }}>
                             <ThreeDots />
                         </div>
@@ -195,7 +205,7 @@ const Post = ({
                                                 <div onClick={handleClick} className=" relative m-2 flex cursor-pointer gap-2 hover:bg-gray-50">
                                                     <Avatar profile={ownerImage} />
                                                     <div className="absolute   left-[1.8rem] -top-[16.8rem] h-[calc(100%+0.8rem)] border-[0.09rem]"></div>
-                                                    <div className="relative mr-2 flex w-[87%] flex-col  gap-2 ">
+                                                    <div className="relative mr-2 flex w-[87%] max-w-[87%] flex-col  gap-2 ">
                                                         <div className="flex">
                                                             <Link
                                                                 to={`/user/${item2.owner}`}
@@ -217,7 +227,8 @@ const Post = ({
                                                                     const buttonRect = e.target.getBoundingClientRect();
                                                                     const top = buttonRect.top + buttonRect.height;
                                                                     const left = buttonRect.left;
-                                                                    setModalPosition({ top, left });
+                                                                    setButtonPosition({ top, left });
+                                                                    setInfoToMoreOptionModal({ ownerID: item2.owner._id, commentID: item2._id, postID: item2.post });
                                                                 }}>
                                                                 <ThreeDots />
                                                             </div>
@@ -288,7 +299,7 @@ const Post = ({
             <hr className="w-full bg-gray-100" />
 
             <Suspense fallback={<Loader />}>
-                <MoreOptionMenuModal visibility={visibility} handleOutsideClick={handleOutsideClick} modalPosition={modalPosition} />
+                <MoreOptionMenuModal visibility={visibility} handleOutsideClick={handleOutsideClick} buttonPosition={buttonPosition} infoToMoreOptionModal={infoToMoreOptionModal} onCloseMoreOptionModal={onCloseMoreOptionModal} />
             </Suspense>
         </div>
     );

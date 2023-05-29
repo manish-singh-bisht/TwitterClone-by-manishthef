@@ -1,5 +1,5 @@
 import React, { useReducer } from "react";
-import { UserReducer, ACTIONS, PostOfFollowingReducer, LikeUnlikeReducer, GetPostByIdReducer, commentReducer, commentLikeUnlikeReducer } from "./Reducers";
+import { UserReducer, ACTIONS, PostOfFollowingReducer, LikeUnlikeReducer, GetPostByIdReducer, commentReducer, commentLikeUnlikeReducer, commentDeleteReducer } from "./Reducers";
 
 //creating context
 const AppContext = React.createContext();
@@ -24,6 +24,9 @@ const AppProvider = ({ children }) => {
     const initialLikeUnlikeComment = { loading: false, message: "", error: "" };
     const [stateCommentLikeUnlike, dispatchCommentLikeUnlike] = useReducer(commentLikeUnlikeReducer, initialLikeUnlikeComment);
 
+    const deleteComment = { loading: false, message: "", error: "" };
+    const [stateCommentDelete, dispatchCommentDelete] = useReducer(commentDeleteReducer, deleteComment);
+
     return (
         <AppContext.Provider
             value={{
@@ -40,6 +43,8 @@ const AppProvider = ({ children }) => {
                 dispatchComment,
                 dispatchCommentLikeUnlike,
                 stateCommentLikeUnlike,
+                stateCommentDelete,
+                dispatchCommentDelete,
             }}>
             {children}
         </AppContext.Provider>

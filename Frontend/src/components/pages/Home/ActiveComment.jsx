@@ -16,12 +16,17 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
 
     //Modal for more option
     const [visibility, setVisibility] = useState(false);
-    const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 }); //for getting the position of the button that triggers the modal to open
+    const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 }); //for getting the position of the button that triggers the modal to open
+    const [infoToMoreOptionModal, setInfoToMoreOptionModal] = useState({ ownerID: "", commentID: "", postID: "" });
+
     const handleOutsideClickMoreOption = (event) => {
         if (event.target === event.currentTarget) {
             setVisibility(false);
             document.body.style.overflow = "unset";
         }
+    };
+    const onCloseMoreOptionModal = () => {
+        setVisibility(false);
     };
 
     //Modal for like,retweet,Bookmark
@@ -102,23 +107,27 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                 <div className="flex h-[100%]   flex-col">
                     <div className=" m-2">
                         <div className="flex gap-2">
-                            <Avatar profile={comment.owner.profile && comment.owner.profile.image.url ? comment.owner.profile.image.url : null} />
+                            <div>
+                                {" "}
+                                <Avatar profile={comment.owner.profile && comment.owner.profile.image.url ? comment.owner.profile.image.url : null} />
+                            </div>
 
-                            <div className="mr-2 flex w-[87%] flex-col gap-2 ">
+                            <div className=" flex h-fit w-full flex-col gap-2  ">
                                 <div className="flex">
                                     <Link to={`/user/${comment.owner._id}`} className="flex w-fit flex-col  text-[1.1rem] font-bold ">
                                         <span className="hover:underline">{comment.owner.name}</span>
                                         <span className="mt-[-0.3rem] text-[0.9rem] font-normal text-gray-700">{`@${comment.owner.handle}`}</span>
                                     </Link>
                                     <div
-                                        className="ml-[29.3rem] h-min cursor-pointer  rounded-full hover:bg-blue-100  hover:text-blue-500 "
+                                        className="ml-auto h-min cursor-pointer  rounded-full hover:bg-blue-100  hover:text-blue-500 "
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             setVisibility(true);
                                             const buttonRect = e.target.getBoundingClientRect();
                                             const top = buttonRect.top + buttonRect.height;
                                             const left = buttonRect.left;
-                                            setModalPosition({ top, left });
+                                            setButtonPosition({ top, left });
+                                            setInfoToMoreOptionModal({ ownerID: comment.owner._id, commentID: comment._id, postID: comment.post._id });
                                             document.body.style.overflow = "hidden";
                                         }}>
                                         <ThreeDots />
@@ -194,7 +203,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                 </div>
                 <Suspense fallback={<Loader />}>
                     <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} />
-                    <MoreOptionMenuModal visibility={visibility} handleOutsideClick={handleOutsideClickMoreOption} modalPosition={modalPosition} />
+                    <MoreOptionMenuModal visibility={visibility} handleOutsideClick={handleOutsideClickMoreOption} buttonPosition={buttonPosition} infoToMoreOptionModal={infoToMoreOptionModal} onCloseMoreOptionModal={onCloseMoreOptionModal} />
                 </Suspense>
             </main>
         )

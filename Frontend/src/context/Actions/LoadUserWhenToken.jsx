@@ -14,4 +14,3 @@ const LoadUserWhenToken = async ({ dispatch, ACTIONS }) => {
 };
 
 export default LoadUserWhenToken;
-//  error.response.data.message

@@ -128,7 +128,8 @@ const CommentDetail = () => {
                                         isParent={true}
                                         isComment={true}
                                         fromCommentDetail={true}
-                                        postId={item._id}
+                                        postId={item._id} //this is the parent comment id
+                                        POSTID={post._id} //this is the post id
                                         tweet={item.comment}
                                         likes={item.likes}
                                         ownerName={item.owner.name}
@@ -150,7 +151,7 @@ const CommentDetail = () => {
                     <Suspense fallback={<Loader />}>
                         <ActiveComment commentId={commentId} postId={post._id} parent={commentId} ref={componentRef} />
 
-                        {comment.children && comment.children.length > 0 && <CommentCard comments={comment.children} postId={comment.children.post} parent={comment.children.parent} fromCommentDetail={true} isParentPresent={true} />}
+                        {comment.children && comment.children.length > 0 && <CommentCard comments={comment.children} postId={comment.children.post} parent={comment.children.parent} fromCommentDetail={true} isParentPresent={true} POSTID={post._id} />}
                     </Suspense>
                 </div>
             </main>
