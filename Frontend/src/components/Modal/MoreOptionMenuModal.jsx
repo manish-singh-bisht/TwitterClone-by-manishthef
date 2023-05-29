@@ -8,6 +8,9 @@ import DeleteLogoutModal from "./DeleteLogoutModal";
 const MoreOptionMenuModal = ({ visibility, handleOutsideClick, buttonPosition, infoToMoreOptionModal, onCloseMoreOptionModal }) => {
     if (!visibility) return;
 
+    const modalRef = useRef(null);
+    const { state, dispatchCommentDelete, ACTIONS } = useGlobalContext();
+
     const [visibilityDeleteModal, setVisibilityDeleteModal] = useState(false);
     const handleOutsideClickDeleteModal = (event) => {
         if (event.target === event.currentTarget) {
@@ -17,9 +20,6 @@ const MoreOptionMenuModal = ({ visibility, handleOutsideClick, buttonPosition, i
     const onClose = () => {
         setVisibilityDeleteModal(false);
     };
-
-    const modalRef = useRef(null);
-    const { state, dispatchCommentDelete, ACTIONS } = useGlobalContext();
 
     useEffect(() => {
         const positionModal = () => {

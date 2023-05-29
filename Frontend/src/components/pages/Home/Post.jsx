@@ -60,6 +60,7 @@ const Post = ({
     };
     const onCloseMoreOptionModal = () => {
         setVisibility(false);
+        document.body.style.overflow = "unset";
     };
     //For Scrolling to particular tweet after left arrow in TweetDetail.jsx/CommentDetail.jsx component is clicked
     const location = useLocation();

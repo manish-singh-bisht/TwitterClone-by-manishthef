@@ -31,6 +31,7 @@ const TweetDetail = () => {
     };
     const onCloseMoreOptionModal = () => {
         setVisibility(false);
+        document.body.style.overflow = "unset";
     };
 
     //Modal for like,retweet,Bookmark

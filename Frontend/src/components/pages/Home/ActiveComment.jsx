@@ -27,6 +27,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
     };
     const onCloseMoreOptionModal = () => {
         setVisibility(false);
+        document.body.style.overflow = "unset";
     };
 
     //Modal for like,retweet,Bookmark

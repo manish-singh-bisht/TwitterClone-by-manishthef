@@ -26,6 +26,7 @@ const Reply = ({ replies, handleClick }) => {
     };
     const onCloseMoreOptionModal = () => {
         setVisibility(false);
+        document.body.style.overflow = "unset";
     };
     const photos = ["https://source.unsplash.com/random/1200x600", "https://source.unsplash.com/random/900x900"];
 
