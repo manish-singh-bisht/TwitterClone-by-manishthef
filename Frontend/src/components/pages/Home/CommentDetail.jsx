@@ -14,7 +14,7 @@ const ActiveComment = React.lazy(() => import("./ActiveComment"));
 
 const CommentDetail = () => {
     const componentRef = useRef(null); //when clicking on comment, it scrolls to the comment clicked and not to top.
-    const { ACTIONS, state, dispatchLikeUnlike, stateComment, dispatchCommentLikeUnlike } = useGlobalContext();
+    const { ACTIONS, state, dispatchLikeUnlike, stateComment, stateCommentDelete, dispatchCommentLikeUnlike } = useGlobalContext();
     //For navigating to a particular section that is to the comment that openend this component.
     const navigate = useNavigate();
     const { commentId } = useParams();
@@ -40,7 +40,7 @@ const CommentDetail = () => {
         getCommentById();
 
         componentRef?.current?.scrollIntoView();
-    }, [commentId, stateComment]);
+    }, [commentId, stateComment, stateCommentDelete.message]);
 
     //will be used when we click on any previously appeared parent and show only parents previous to active comment and erase all after active comment.
     useEffect(() => {

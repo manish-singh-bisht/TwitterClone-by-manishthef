@@ -1,7 +1,11 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const DeleteLogoutModal = ({ visibility, handleOutsideClick, fromDelete, deleteHandler, onClose, onCloseMoreOptionModal }) => {
+const DeleteLogoutModal = ({ visibility, handleOutsideClick, fromDelete, deleteHandler, onClose, onCloseMoreOptionModal, fromReplies, deleteReplyHandler, fromActiveComment, infoToDeleteModal, detailsOfActiveComment }) => {
     if (!visibility) return;
+    const navigate = useNavigate();
+    console.log(detailsOfActiveComment);
+
     return (
         <div className="fixed inset-0 z-30 flex h-[100vh] w-[100vw] items-center justify-center">
             <div className="fixed  h-full w-full bg-black opacity-20" onClick={handleOutsideClick}></div>
@@ -13,9 +17,32 @@ const DeleteLogoutModal = ({ visibility, handleOutsideClick, fromDelete, deleteH
                         <button
                             className="flex h-10 w-64 items-center justify-center rounded-3xl bg-red-500  text-[1rem] font-semibold text-white hover:bg-red-600 active:bg-red-700 "
                             onClick={() => {
-                                deleteHandler();
-                                onClose();
-                                onCloseMoreOptionModal();
+                                if (fromReplies) {
+                                    deleteHandler();
+                                    onClose();
+                                    onCloseMoreOptionModal();
+                                    deleteReplyHandler();
+                                } else if (fromActiveComment) {
+                                    deleteHandler();
+                                    onClose();
+                                    onCloseMoreOptionModal();
+                                    navigate(`/${detailsOfActiveComment.post.owner.name}/${infoToDeleteModal.postID}`, {
+                                        state: {
+                                            tweet: detailsOfActiveComment.post.tweet,
+                                            ownerName: detailsOfActiveComment.post.owner.name,
+                                            timeCreated: detailsOfActiveComment.post.createdAt,
+                                            ownerId: detailsOfActiveComment.post.owner._id,
+                                            handle: detailsOfActiveComment.post.owner.handle,
+                                            postImage: detailsOfActiveComment.post.images,
+                                            postVideo: detailsOfActiveComment.post.video && detailsOfActiveComment.post.video.url ? detailsOfActiveComment.post.video.url : null,
+                                            ownerImage: detailsOfActiveComment.post.owner.profile && detailsOfActiveComment.post.owner.profile.image.url ? detailsOfActiveComment.post.owner.profile.image.url : null,
+                                        },
+                                    }); //to tweetdetail
+                                } else {
+                                    deleteHandler();
+                                    onClose();
+                                    onCloseMoreOptionModal();
+                                }
                             }}>
                             Delete
                         </button>

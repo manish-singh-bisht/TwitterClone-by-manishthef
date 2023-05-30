@@ -204,7 +204,15 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                 </div>
                 <Suspense fallback={<Loader />}>
                     <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} />
-                    <MoreOptionMenuModal visibility={visibility} handleOutsideClick={handleOutsideClickMoreOption} buttonPosition={buttonPosition} infoToMoreOptionModal={infoToMoreOptionModal} onCloseMoreOptionModal={onCloseMoreOptionModal} />
+                    <MoreOptionMenuModal
+                        visibility={visibility}
+                        handleOutsideClick={handleOutsideClickMoreOption}
+                        buttonPosition={buttonPosition}
+                        infoToMoreOptionModal={infoToMoreOptionModal}
+                        onCloseMoreOptionModal={onCloseMoreOptionModal}
+                        fromActiveComment={true}
+                        detailsOfActiveComment={comment}
+                    />
                 </Suspense>
             </main>
         )

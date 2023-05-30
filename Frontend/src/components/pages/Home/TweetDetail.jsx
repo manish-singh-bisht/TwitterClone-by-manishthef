@@ -16,7 +16,7 @@ const CommentCard = React.lazy(() => import("./CommentCard"));
 const MoreOptionMenuModal = React.lazy(() => import("../../Modal/MoreOptionMenuModal"));
 
 const TweetDetail = () => {
-    const { ACTIONS, dispatchLikeUnlike: dispatch, state, stateComment } = useGlobalContext();
+    const { ACTIONS, dispatchLikeUnlike: dispatch, state, stateComment, stateCommentDelete } = useGlobalContext();
 
     //Modal for more option
     const [visibility, setVisibility] = useState(false);
@@ -92,7 +92,7 @@ const TweetDetail = () => {
             }
         });
         setComments(data.post.comments);
-    }, [postId, state.user._id, isLiked, stateComment.comment]);
+    }, [postId, state.user._id, isLiked, stateComment.comment, stateCommentDelete.message]);
 
     useEffect(() => {
         fetchData();
