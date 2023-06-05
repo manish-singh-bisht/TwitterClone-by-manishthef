@@ -43,6 +43,11 @@ const commentSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    mentions: [
+        {
+            type: String,
+        },
+    ],
 });
 
 module.exports = mongoose.model("Comments", commentSchema);

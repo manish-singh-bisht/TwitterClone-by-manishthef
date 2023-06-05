@@ -10,6 +10,7 @@ exports.createPost = async (req, res, next) => {
             images: req.body.images,
             video: req.body.video,
             owner: req.user._id,
+            mentions: req.body.mentions,
         };
 
         const createNewPost = await Posts.create(newData);

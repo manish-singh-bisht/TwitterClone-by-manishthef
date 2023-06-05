@@ -1,17 +1,15 @@
 import React, { Suspense, useEffect, useRef, useState } from "react";
-import { Bookmark, Comments, Retweets, ThreeDots } from "../../SVGs/SVGs";
+import { Bookmark, Comments, Retweets, ThreeDots } from "../SVGs/SVGs";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import PhotoGallery from "./PhotoGallery";
 import "./AnimationUsedInPostAndTweetDetail.css";
-import { usePostTime } from "../../../CustomHooks/usePostTime";
-import Avatar from "../Avatar";
+import { usePostTime } from "../../CustomHooks/usePostTime";
+import Avatar from "../Avatar/Avatar";
 import LikeUnlikePost from "./LikeUnlikePost";
-import CommentLikeUnlike from "../../../context/Actions/CommentLikeUnlike";
-import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
 import axios from "axios";
-import Reply from "./Reply";
-import Loader from "../Loader";
-const MoreOptionMenuModal = React.lazy(() => import("../../Modal/MoreOptionMenuModal"));
+import Reply from "../comment/Reply";
+import Loader from "../Loader/Loader";
+const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const Post = ({
     postId,
@@ -38,9 +36,9 @@ const Post = ({
     commentsChildren,
     activeHandler,
     isParent,
-    comment, //this is child comments of the active comment and is being passed from commentCard by commentDetail component
+    comment,
+    mentions, //this is child comments of the active comment and is being passed from commentCard by commentDetail component
 }) => {
-    const { dispatchCommentLikeUnlike, stateCommentDelete } = useGlobalContext();
     const formattedTime = usePostTime(Date.parse(timeCreated));
 
     const [showReplies, setShowReplies] = useState(false);
@@ -64,6 +62,7 @@ const Post = ({
     };
     //For Scrolling to particular tweet after left arrow in TweetDetail.jsx/CommentDetail.jsx component is clicked
     const location = useLocation();
+    const [commentt, setCommentt] = useState();
     useEffect(() => {
         if (location.state && location.state.sectionId) {
             const sectionId = location.state.sectionId;
@@ -74,6 +73,33 @@ const Post = ({
             }
             document.body.style.overflow = "unset";
         }
+        // Regex pattern to find mentions and make them blue,in the display after it is posted
+        const mentionRegex = /(@)(\w+)/g;
+        const parts = tweet.split(mentionRegex);
+        const renderedComment = [];
+        for (let i = 0; i < parts.length; i++) {
+            const part = parts[i];
+            if (part.startsWith("@")) {
+                // Merge the delimiter with the next word
+                const nextPart = parts[i + 1];
+                const mergedPart = nextPart ? part + nextPart : part;
+                // Skip the next part;
+                i++;
+
+                if (mentions.includes(nextPart.toString())) {
+                    renderedComment.push(
+                        <span key={i} className="text-blue-500">
+                            {mergedPart}
+                        </span>
+                    );
+                } else {
+                    renderedComment.push(mergedPart);
+                }
+            } else {
+                renderedComment.push(part);
+            }
+        }
+        setCommentt(renderedComment);
     }, [location]);
 
     const photos = ["https://source.unsplash.com/random/1200x600", "https://source.unsplash.com/random/900x900"];
@@ -168,7 +194,7 @@ const Post = ({
                             <ThreeDots />
                         </div>
                     </div>
-                    <pre className={`  max-w-[98%] whitespace-pre-wrap break-words  `}>{tweet}</pre>
+                    <pre className={`  max-w-[98%] whitespace-pre-wrap break-words  `}>{commentt}</pre>
                     <div className={`grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
                         {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo} index={index} />)}
                     </div>

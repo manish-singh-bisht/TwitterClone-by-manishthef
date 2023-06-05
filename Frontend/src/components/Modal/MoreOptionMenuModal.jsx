@@ -2,8 +2,9 @@ import React, { Suspense, useEffect, useRef, useState } from "react";
 import { Delete, PushPin, UserPlus } from "../SVGs/SVGs";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import DeleteComment from "../../context/Actions/DeleteComment";
-import Loader from "../pages/Loader";
+
 import DeleteLogoutModal from "./DeleteLogoutModal";
+import Loader from "../Loader/Loader";
 
 const MoreOptionMenuModal = ({ visibility, handleOutsideClick, buttonPosition, infoToMoreOptionModal, onCloseMoreOptionModal, fromReplies, fromActiveComment, deleteReplyHandler, detailsOfActiveComment }) => {
     if (!visibility) return;

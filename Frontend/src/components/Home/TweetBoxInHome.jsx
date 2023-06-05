@@ -1,11 +1,11 @@
 import React, { Suspense, useState } from "react";
-import Avatar from "../Avatar";
-import EditorInHome from "../../Editors/EditorInHome";
-import { CircularRadialProgressForTweetTextLimit, Globe } from "../../SVGs/SVGs";
+import Avatar from "../Avatar/Avatar";
+import EditorInHome from "../Editors/EditorInHome";
+import { CircularRadialProgressForTweetTextLimit, Globe } from "../SVGs/SVGs";
 import { v4 as uuidv4 } from "uuid";
-import Loader from "../Loader";
+import Loader from "../Loader/Loader";
 
-const TweetModal = React.lazy(() => import("../../Modal/TweetModal"));
+const TweetModal = React.lazy(() => import("../Modal/TweetModal"));
 
 const TweetBoxInHome = ({ profile }) => {
     const [showGlobe, setShowGlobe] = useState(false);

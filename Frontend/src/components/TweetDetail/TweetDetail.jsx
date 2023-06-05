@@ -1,19 +1,19 @@
-import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import PhotoGallery from "./PhotoGallery";
-import LikeUnlike from "../../../context/Actions/LikeUnlike";
-import "./AnimationUsedInPostAndTweetDetail.css";
+import LikeUnlike from "../../context/Actions/LikeUnlike";
+import "../CommonPostComponent/AnimationUsedInPostAndTweetDetail.css";
 import axios from "axios";
-import useAnimation from "../../../CustomHooks/useAnimation";
-import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
-import Loader from "../Loader";
-import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets, ThreeDots } from "../../SVGs/SVGs";
-import { usePostTimeInTweetDetail } from "../../../CustomHooks/usePostTime";
-import Avatar from "../Avatar";
+import useAnimation from "../../CustomHooks/useAnimation";
+import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
+import Loader from "../Loader/Loader";
+import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets, ThreeDots } from "../SVGs/SVGs";
+import { usePostTimeInTweetDetail } from "../../CustomHooks/usePostTime";
+import Avatar from "../Avatar/Avatar";
+import PhotoGallery from "../CommonPostComponent/PhotoGallery";
 
-const ModalForLikesBookmarksRetweets = React.lazy(() => import("../../Modal/ModalForLikesBookmarksRetweets"));
-const CommentCard = React.lazy(() => import("./CommentCard"));
-const MoreOptionMenuModal = React.lazy(() => import("../../Modal/MoreOptionMenuModal"));
+const ModalForLikesBookmarksRetweets = React.lazy(() => import("../Modal/ModalForLikesBookmarksRetweets"));
+const CommentCard = React.lazy(() => import("../comment/CommentCard"));
+const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const TweetDetail = () => {
     const { ACTIONS, dispatchLikeUnlike: dispatch, state, stateComment, stateCommentDelete } = useGlobalContext();
@@ -76,6 +76,7 @@ const TweetDetail = () => {
 
     //For comments
     const [comments, setComments] = useState([]);
+    const [commentt, setCommentt] = useState();
 
     const fetchData = useCallback(async () => {
         //gets the updated data of likes, when user likes at homepage and then comes to detailpage,the user gets the updated data
@@ -92,6 +93,34 @@ const TweetDetail = () => {
             }
         });
         setComments(data.post.comments);
+
+        // Regex pattern to find mentions and make them blue,in the display after it is posted
+        const mentionRegex = /(@)(\w+)/g;
+        const parts = tweet.split(mentionRegex);
+        const renderedComment = [];
+        for (let i = 0; i < parts.length; i++) {
+            const part = parts[i];
+            if (part.startsWith("@")) {
+                // Merge the delimiter with the next word
+                const nextPart = parts[i + 1];
+                const mergedPart = nextPart ? part + nextPart : part;
+                // Skip the next part;
+                i++;
+
+                if (data.comment.mentions.includes(nextPart.toString())) {
+                    renderedComment.push(
+                        <span key={i} className="text-blue-500">
+                            {mergedPart}
+                        </span>
+                    );
+                } else {
+                    renderedComment.push(mergedPart);
+                }
+            } else {
+                renderedComment.push(part);
+            }
+        }
+        setCommentt(renderedComment);
     }, [postId, state.user._id, isLiked, stateComment.comment, stateCommentDelete.message]);
 
     useEffect(() => {
@@ -172,7 +201,7 @@ const TweetDetail = () => {
                         </div>
                     </div>
                     <div className="m-2">
-                        <pre className={` mb-3 max-w-[98%] whitespace-pre-wrap break-words text-2xl`}>{tweet}</pre>
+                        <pre className={` mb-3 max-w-[98%] whitespace-pre-wrap break-words text-2xl`}>{commentt}</pre>
                         <div className={`m-[-0.25rem] grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
                             {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo} index={index} />)}
                         </div>

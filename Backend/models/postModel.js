@@ -38,6 +38,11 @@ const postSchema = new mongoose.Schema({
             ref: "Comments",
         },
     ],
+    mentions: [
+        {
+            type: String,
+        },
+    ],
 });
 
 module.exports = mongoose.model("Posts", postSchema);

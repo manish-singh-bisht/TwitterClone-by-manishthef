@@ -1,13 +1,12 @@
-import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { LeftArrow } from "../../SVGs/SVGs";
-import Avatar from "../Avatar";
+import { LeftArrow } from "../SVGs/SVGs";
 import axios from "axios";
-import Post from "./Post";
-import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
-import LikeUnlike from "../../../context/Actions/LikeUnlike";
-import Loader from "../Loader";
-import CommentLikeUnlike from "../../../context/Actions/CommentLikeUnlike";
+import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
+import LikeUnlike from "../../context/Actions/LikeUnlike";
+import Loader from "../Loader/Loader";
+import CommentLikeUnlike from "../../context/Actions/CommentLikeUnlike";
+import Post from "../CommonPostComponent/Post";
 
 const CommentCard = React.lazy(() => import("./CommentCard"));
 const ActiveComment = React.lazy(() => import("./ActiveComment"));
@@ -111,6 +110,7 @@ const CommentDetail = () => {
                             dispatch={dispatchLikeUnlike}
                             state={state}
                             ACTIONS={ACTIONS}
+                            mentions={post.mentions}
                         />
                         <div className="absolute left-[2.37rem] top-[4.2rem]  h-[calc(88.5%)] border-[0.09rem]"></div>
                     </div>
@@ -142,6 +142,7 @@ const CommentDetail = () => {
                                         state={state}
                                         ACTIONS={ACTIONS}
                                         handler={CommentLikeUnlike}
+                                        mentions={item.mentions}
                                     />
                                     <div className="absolute left-[2.37rem] top-[4.2rem]  h-[81.5%] border-[0.09rem]"></div>
                                 </div>

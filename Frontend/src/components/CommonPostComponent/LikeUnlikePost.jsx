@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import useAnimation from "../../../CustomHooks/useAnimation";
-import { HeartLike, HeartUnlike } from "../../SVGs/SVGs";
+import useAnimation from "../../CustomHooks/useAnimation";
+import { HeartLike, HeartUnlike } from "../SVGs/SVGs";
 
 const LikeUnlikePost = ({ likes, ACTIONS, dispatch, state, handler, postId }) => {
     //For like and unlike of post

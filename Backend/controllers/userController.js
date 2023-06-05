@@ -199,7 +199,7 @@ exports.profileOfUsers = async (req, res, next) => {
 exports.searchUser = async (req, res, next) => {
     try {
         if (req.params.handle.length >= 0) {
-            const users = await Users.find({ $or: [{ name: { $regex: req.params.handle, $options: "i" } }, { handle: { $regex: req.params.handle, $options: "i" } }] });
+            const users = await Users.find({ $or: [{ name: { $regex: req.params.handle, $options: "i" } }, { handle: { $regex: req.params.handle, $options: "i" } }] }).limit(10);
 
             if (!users) {
                 return next(new ErrorHandler("No such user", 400));

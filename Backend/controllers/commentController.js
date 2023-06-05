@@ -16,6 +16,7 @@ exports.postComment = async (req, res, next) => {
             video: req.body.video,
             owner: req.user._id,
             post: req.params.id,
+            mentions: req.body.mentions,
             parent: req.body.parent,
         };
 

@@ -1,8 +1,8 @@
 import React from "react";
-import Post from "./Post";
 import CommentBox from "./CommentBox";
-import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
-import CommentLikeUnlike from "../../../context/Actions/CommentLikeUnlike";
+import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
+import CommentLikeUnlike from "../../context/Actions/CommentLikeUnlike";
+import Post from "../CommonPostComponent/Post";
 
 const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDetail, isParentPresent, POSTID }) => {
     const { ACTIONS, state, dispatchCommentLikeUnlike } = useGlobalContext();
@@ -42,6 +42,7 @@ const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDet
                             state={state}
                             ACTIONS={ACTIONS}
                             handler={CommentLikeUnlike}
+                            mentions={comment.mentions}
                         />
                     );
                 })}

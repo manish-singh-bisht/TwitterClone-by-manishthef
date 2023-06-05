@@ -1,16 +1,18 @@
-import React, { Suspense, forwardRef, useCallback, useEffect, useRef, useState } from "react";
-import ModalForLikesBookmarksRetweets from "../../Modal/ModalForLikesBookmarksRetweets";
-import Loader from "../Loader";
-import { Bookmark, Comments, HeartLike, HeartUnlike, Retweets, ThreeDots } from "../../SVGs/SVGs";
-import PhotoGallery from "./PhotoGallery";
-import Avatar from "../Avatar";
-import useAnimation from "../../../CustomHooks/useAnimation";
-import CommentBox from "./CommentBox";
-import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
-import axios from "axios";
+import React, { Suspense, forwardRef, useCallback, useEffect, useState } from "react";
+import useAnimation from "../../CustomHooks/useAnimation";
+import { usePostTimeInTweetDetail } from "../../CustomHooks/usePostTime";
+import { Bookmark, Comments, HeartLike, HeartUnlike, Retweets, ThreeDots } from "../SVGs/SVGs";
 import { Link } from "react-router-dom";
-import { usePostTimeInTweetDetail } from "../../../CustomHooks/usePostTime";
-const MoreOptionMenuModal = React.lazy(() => import("../../Modal/MoreOptionMenuModal"));
+import Avatar from "../Avatar/Avatar";
+import PhotoGallery from "../CommonPostComponent/PhotoGallery";
+import CommentBox from "./CommentBox";
+import ModalForLikesBookmarksRetweets from "../Modal/ModalForLikesBookmarksRetweets";
+import Loader from "../Loader/Loader";
+import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
+import axios from "axios";
+
+const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
+
 const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
     const { state, stateComment } = useGlobalContext();
 
@@ -46,6 +48,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
     const [likedBy, setIsLikedBy] = useState([]);
 
     const [comment, setComment] = useState();
+    const [commentt, setCommentt] = useState();
 
     const fetchData = useCallback(async () => {
         const { data } = await axios.get(`http://localhost:4000/api/v1/comment/${commentId}`, { withCredentials: true });
@@ -63,6 +66,34 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
         });
         like.length === 0 && setIsLiked(false);
         setComment(data.comment);
+
+        // Regex pattern to find mentions and make them blue,in the display after it is posted
+        const mentionRegex = /(@)(\w+)/g;
+        const parts = data.comment.comment.split(mentionRegex);
+        const renderedComment = [];
+        for (let i = 0; i < parts.length; i++) {
+            const part = parts[i];
+            if (part.startsWith("@")) {
+                // Merge the delimiter with the next word
+                const nextPart = parts[i + 1];
+                const mergedPart = nextPart ? part + nextPart : part;
+                // Skip the next part;
+                i++;
+
+                if (data.comment.mentions.includes(nextPart.toString())) {
+                    renderedComment.push(
+                        <span key={i} className="text-blue-500">
+                            {mergedPart}
+                        </span>
+                    );
+                } else {
+                    renderedComment.push(mergedPart);
+                }
+            } else {
+                renderedComment.push(part);
+            }
+        }
+        setCommentt(renderedComment);
     }, [commentId, state.user._id, isLiked, stateComment]);
 
     useEffect(() => {
@@ -109,7 +140,6 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                     <div className=" m-2">
                         <div className="flex gap-2">
                             <div>
-                                {" "}
                                 <Avatar profile={comment.owner.profile && comment.owner.profile.image.url ? comment.owner.profile.image.url : null} />
                             </div>
 
@@ -137,7 +167,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                             </div>
                         </div>
                         <div className="m-2">
-                            <pre className={` mb-3 max-w-[98%] whitespace-pre-wrap break-words text-2xl`}>{comment.comment}</pre>
+                            <pre className={` mb-3 max-w-[98%] whitespace-pre-wrap break-words text-2xl`}>{commentt}</pre>
                             <div className={`m-[-0.25rem] grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
                                 {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo} index={index} />)}
                             </div>

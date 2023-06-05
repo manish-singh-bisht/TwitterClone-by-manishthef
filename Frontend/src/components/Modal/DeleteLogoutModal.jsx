@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 const DeleteLogoutModal = ({ visibility, handleOutsideClick, fromDelete, deleteHandler, onClose, onCloseMoreOptionModal, fromReplies, deleteReplyHandler, fromActiveComment, infoToDeleteModal, detailsOfActiveComment }) => {
     if (!visibility) return;
     const navigate = useNavigate();
-    console.log(detailsOfActiveComment);
 
     return (
         <div className="fixed inset-0 z-30 flex h-[100vh] w-[100vw] items-center justify-center">

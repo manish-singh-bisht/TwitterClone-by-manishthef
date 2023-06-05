@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CircularRadialProgressForTweetTextLimit, Cross, Globe } from "../SVGs/SVGs";
 import EditorForTweetModal from "../Editors/EditorForTweetModal";
 import { v4 as uuidv4 } from "uuid";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
-import Avatar from "../pages/Avatar";
+import Avatar from "../Avatar/Avatar";
 
 const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, handleIsTweetPressInTweetModalTrue, handleOutsideClick }) => {
     if (!visibility) return;

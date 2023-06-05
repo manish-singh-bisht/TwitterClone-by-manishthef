@@ -3,14 +3,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoadUserWhenToken from "./context/actions/LoadUserWhenToken";
 
 import Sidebar from "./components/Sidebar/Sidebar";
-import Loader from "./components/pages/Loader";
+import Loader from "./components/Loader/Loader";
 import { useGlobalContext } from "./CustomHooks/useGlobalContext";
 
-const Home = React.lazy(() => import("./components/pages/Home/Home"));
+const Home = React.lazy(() => import("./components/Home/Home"));
 const LoginSignUpMainPage = React.lazy(() => import("./components/Login_Register/LoginSignUpMainPage"));
 const SignUpOption = React.lazy(() => import("./components/Login_Register/SignUpOption"));
-const TweetDetail = React.lazy(() => import("./components/pages/Home/TweetDetail"));
-const CommentDetail = React.lazy(() => import("./components/pages/Home/CommentDetail"));
+const TweetDetail = React.lazy(() => import("./components/TweetDetail/TweetDetail"));
+const CommentDetail = React.lazy(() => import("./components/comment/CommentDetail"));
 const Test = React.lazy(() => import("./components/pages/Test"));
 
 const App = () => {

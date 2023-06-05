@@ -1,17 +1,18 @@
-import React, { Suspense, useRef, useState } from "react";
-import { usePostTime } from "../../../CustomHooks/usePostTime";
-import Avatar from "../Avatar";
+import React, { Suspense, useEffect, useState } from "react";
+import Avatar from "../Avatar/Avatar";
 import { Link } from "react-router-dom";
-import PhotoGallery from "./PhotoGallery";
-import { Bookmark, Comments, Retweets, ThreeDots } from "../../SVGs/SVGs";
-import LikeUnlikePost from "./LikeUnlikePost";
-import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
-import CommentLikeUnlike from "../../../context/Actions/CommentLikeUnlike";
-import Loader from "../Loader";
-const MoreOptionMenuModal = React.lazy(() => import("../../Modal/MoreOptionMenuModal"));
+import { Bookmark, Comments, Retweets, ThreeDots } from "../SVGs/SVGs";
+import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
+import CommentLikeUnlike from "../../context/Actions/CommentLikeUnlike";
+import Loader from "../Loader/Loader";
+import PhotoGallery from "../CommonPostComponent/PhotoGallery";
+import LikeUnlikePost from "../CommonPostComponent/LikeUnlikePost";
+import { usePostTime } from "../../CustomHooks/usePostTime";
+const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) => {
     const { dispatchCommentLikeUnlike, state, ACTIONS } = useGlobalContext();
+    const [commentt, setCommentt] = useState();
 
     ////Modal for more option
     const [visibility, setVisibility] = useState(false);
@@ -51,6 +52,35 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
         default:
             break;
     }
+    useEffect(() => {
+        // Regex pattern to find mentions and make them blue,in the display after it is posted
+        const mentionRegex = /(@)(\w+)/g;
+        const parts = reply.comment.split(mentionRegex);
+        const renderedComment = [];
+        for (let i = 0; i < parts.length; i++) {
+            const part = parts[i];
+            if (part.startsWith("@")) {
+                // Merge the delimiter with the next word
+                const nextPart = parts[i + 1];
+                const mergedPart = nextPart ? part + nextPart : part;
+                // Skip the next part;
+                i++;
+
+                if (reply.mentions.includes(nextPart.toString())) {
+                    renderedComment.push(
+                        <span key={i} className="text-blue-500">
+                            {mergedPart}
+                        </span>
+                    );
+                } else {
+                    renderedComment.push(mergedPart);
+                }
+            } else {
+                renderedComment.push(part);
+            }
+        }
+        setCommentt(renderedComment);
+    }, []);
     const formattedTimeReply = usePostTime(Date.parse(reply.createdAt));
     const ownerImage = reply.owner.profile && reply.owner.profile.image.url ? reply.owner.profile.image.url : null;
     const commentVideo = reply.video && reply.video.url ? reply.video.url : null;
@@ -91,7 +121,7 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
                                 </div>
                             </div>
 
-                            <pre className={`  max-w-[98%] whitespace-pre-wrap break-words  `}>{reply.comment}</pre>
+                            <pre className={`  max-w-[98%] whitespace-pre-wrap break-words  `}>{commentt}</pre>
                             <div className={`grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
                                 {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo} index={index} />)}
                             </div>

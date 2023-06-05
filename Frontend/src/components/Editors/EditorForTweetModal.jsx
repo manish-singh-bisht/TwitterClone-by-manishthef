@@ -64,8 +64,18 @@ const EditorForTweetModal = ({ height, width, placeholder, onClick: click, onCha
 
     useEffect(() => {
         const handleKey = (event) => {
+            const cursorPosition = editor.state.selection.$head.pos;
+
             if (event.key === "@") {
-                editor.commands.setColor("blue");
+                // Check if the character at the current cursor position is "@" and not followed by a non-space character
+                const isAtFirstPosition = cursorPosition === 1;
+                const isPrecededBySpace = cursorPosition > 1 && editor.state.doc.textBetween(cursorPosition - 1, cursorPosition) === " ";
+
+                if (isAtFirstPosition || isPrecededBySpace) {
+                    editor.commands.setColor("blue");
+                } else {
+                    editor.commands.unsetColor("blue");
+                }
             } else if (event.key === " ") {
                 editor.commands.unsetColor("blue");
             }

@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
-import Post from "./Post";
-import PostsOfFollowing from "../../../context/actions/PostsOfFollowing";
-import Loader from "../Loader";
-import { useGlobalContext } from "../../../CustomHooks/useGlobalContext";
+
+import PostsOfFollowing from "../../context/actions/PostsOfFollowing";
+import Loader from "../Loader/Loader";
+import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import TweetBoxInHome from "./TweetBoxInHome";
-import LikeUnlike from "../../../context/Actions/LikeUnlike";
+import LikeUnlike from "../../context/Actions/LikeUnlike";
+import Post from "../CommonPostComponent/Post";
 const Home = () => {
     const { dispatchPostOfFollowing, ACTIONS, statePostOfFollowing, state, dispatchLikeUnlike } = useGlobalContext();
 
@@ -63,6 +64,7 @@ const Home = () => {
                                             dispatch={dispatchLikeUnlike}
                                             state={state}
                                             ACTIONS={ACTIONS}
+                                            mentions={post.mentions}
                                         />
                                     );
                                 })
