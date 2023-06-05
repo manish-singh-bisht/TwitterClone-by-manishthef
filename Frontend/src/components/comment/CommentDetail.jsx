@@ -98,9 +98,11 @@ const CommentDetail = () => {
                         <Post
                             key={post._id}
                             isComment={false}
+                            fromCommentDetail={true}
                             postId={post._id}
                             tweet={post.tweet}
                             likes={post.likes}
+                            commentsChildren={post.comments}
                             ownerName={post.owner.name}
                             ownerImage={post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null}
                             ownerId={post.owner._id}

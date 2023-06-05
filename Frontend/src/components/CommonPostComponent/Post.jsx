@@ -133,7 +133,7 @@ const Post = ({
 
     const handleClick = () => {
         isParent && activeHandler(commentId);
-        navigate(newUrl, { replace: true, state: { tweet, ownerName, handle, timeCreated, ownerId, profile, postImage, postVideo, isDelete, isAccount } });
+        navigate(newUrl, { replace: true, state: { tweet, ownerName, handle, timeCreated, ownerId, profile, postImage, postVideo, isDelete, isAccount, mentions } });
     };
     const replyHandler = async (childCommentId) => {
         const { data } = await axios.get(`http://localhost:4000/api/v1/comment/reply/${childCommentId}`, { withCredentials: true });

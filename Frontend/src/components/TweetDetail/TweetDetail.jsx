@@ -65,7 +65,7 @@ const TweetDetail = () => {
 
     //using data that was sent in the state  from Post
     const location = useLocation();
-    const { tweet, ownerName, ownerId, handle, timeCreated, ownerImage: profile, postImage, postVideo, isDelete, isAccount } = location.state;
+    const { tweet, ownerName, ownerId, handle, timeCreated, ownerImage: profile, postImage, postVideo, isDelete, isAccount, mentions } = location.state;
 
     const formattedTime = usePostTimeInTweetDetail(Date.parse(timeCreated));
 
@@ -107,7 +107,7 @@ const TweetDetail = () => {
                 // Skip the next part;
                 i++;
 
-                if (data.comment.mentions.includes(nextPart.toString())) {
+                if (mentions.includes(nextPart.toString())) {
                     renderedComment.push(
                         <span key={i} className="text-blue-500">
                             {mergedPart}

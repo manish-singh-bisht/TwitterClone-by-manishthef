@@ -31,6 +31,8 @@ export const ACTIONS = {
     COMMENT_DELETE_SUCCESS: "Delete Comment success",
     COMMENT_DELETE_FAILURE: "Delete Comment failure",
 
+    MENTION_COLLECTOR_SUCCESS: "Mention Collector Success",
+
     CLEAR_ERRORS: "clear Errors",
 };
 
@@ -144,6 +146,15 @@ export const commentDeleteReducer = (state, action) => {
             return { ...state, loading: false, message: "", error: action.payload };
         case ACTIONS.CLEAR_ERRORS:
             return { ...state, error: "" };
+
+        default:
+            return state;
+    }
+};
+export const mentionCollectorReducer = (state, action) => {
+    switch (action.type) {
+        case ACTIONS.MENTION_COLLECTOR_SUCCESS:
+            return { mentions: action.payload };
 
         default:
             return state;
