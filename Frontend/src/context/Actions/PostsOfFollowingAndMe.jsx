@@ -8,7 +8,7 @@ const PostsOfFollowingAndMe = async ({ dispatchPostOfFollowingAndMe, ACTIONS }) 
 
         dispatchPostOfFollowingAndMe({ type: ACTIONS.POST_OF_FOLLOWING_AND_ME_SUCCESS, payload: data.posts });
     } catch (error) {
-        dispatchPostOfFollowingAndMe({ type: ACTIONS.POST_OF_FOLLOWING_AND_ME_FAILURE, payload: error.response.data.message });
+        dispatchPostOfFollowingAndMe({ type: ACTIONS.POST_OF_FOLLOWING_AND_ME_FAILURE, payload: error.message });
     }
 };
 

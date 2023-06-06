@@ -65,7 +65,7 @@ const TweetDetail = () => {
 
     //using data that was sent in the state  from Post
     const location = useLocation();
-    const { tweet, ownerName, ownerId, handle, timeCreated, ownerImage: profile, postImage, postVideo, isDelete, isAccount, mentions } = location.state;
+    const { tweet, ownerName, ownerId, handle, timeCreated, ownerImage: profile, postImage, isDelete, isAccount, mentions } = location.state;
 
     const formattedTime = usePostTimeInTweetDetail(Date.parse(timeCreated));
 

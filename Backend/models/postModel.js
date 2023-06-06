@@ -11,11 +11,6 @@ const postSchema = new mongoose.Schema({
         },
     ],
 
-    video: {
-        public_id: String,
-        url: String,
-    },
-
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Users",

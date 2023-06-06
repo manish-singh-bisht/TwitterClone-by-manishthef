@@ -9,7 +9,7 @@ const LoadUserWhenToken = async ({ dispatch, ACTIONS }) => {
 
         dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: data.myProfile });
     } catch (error) {
-        dispatch({ type: ACTIONS.LOAD_FAILURE, payload: error.response.data.message });
+        dispatch({ type: ACTIONS.LOAD_FAILURE, payload: error.message });
     }
 };
 

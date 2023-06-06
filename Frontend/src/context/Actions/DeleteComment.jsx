@@ -7,7 +7,7 @@ const DeleteComment = async ({ dispatchCommentDelete, ACTIONS, postID, commentID
 
         dispatchCommentDelete({ type: ACTIONS.COMMENT_DELETE_SUCCESS, payload: data.message });
     } catch (error) {
-        dispatchCommentDelete({ type: ACTIONS.COMMENT_DELETE_FAILURE, payload: error.response.data.message });
+        dispatchCommentDelete({ type: ACTIONS.COMMENT_DELETE_FAILURE, payload: error.message });
     }
 };
 

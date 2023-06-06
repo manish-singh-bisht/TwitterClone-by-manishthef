@@ -6,7 +6,7 @@ const GetPostById = async ({ dispatchGetPostById, ACTIONS, postId }) => {
         const { data } = await axios.get(`http://localhost:4000/api/v1/${postId}`, { withCredentials: true });
         dispatchGetPostById({ type: ACTIONS.GET_POST_BY_ID_SUCCESS, payload: data.post });
     } catch (error) {
-        dispatchGetPostById({ type: ACTIONS.GET_POST_BY_ID_FAILURE, payload: error.response.data.message });
+        dispatchGetPostById({ type: ACTIONS.GET_POST_BY_ID_FAILURE, payload: error.message });
     }
 };
 

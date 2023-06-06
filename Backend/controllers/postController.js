@@ -8,7 +8,6 @@ exports.createPost = async (req, res, next) => {
         const newData = {
             tweet: req.body.tweet,
             images: req.body.images,
-            video: req.body.video,
             owner: req.user._id,
             mentions: req.body.mentions,
         };

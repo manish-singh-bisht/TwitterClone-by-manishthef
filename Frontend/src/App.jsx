@@ -35,10 +35,10 @@ const App = () => {
                     <Suspense fallback={<Loader />}>
                         <Routes>
                             <Route exact path="/" element={isAuthenticated ? <Home /> : <LoginSignUpMainPage />} />
-                            <Route exact path={`${!isAuthenticated ? `/login` : ``}`} element={<LoginSignUpMainPage />} />
-                            <Route exact path={`${!isAuthenticated ? `/signUp` : ``}`} element={<SignUpOption />} />
-                            <Route exact path="/:ownerName/:postId" element={<TweetDetail />} />
-                            <Route exact path="/:ownerName/comment/:commentId" element={<CommentDetail />} />
+                            <Route exact path="/login" element={isAuthenticated ? <Home /> : <LoginSignUpMainPage />} />
+                            <Route exact path="/signUp" element={isAuthenticated ? <Home /> : <LoginSignUpMainPage />} />
+                            <Route exact path="/:ownerName/:postId" element={isAuthenticated ? <TweetDetail /> : <LoginSignUpMainPage />} />
+                            <Route exact path="/:ownerName/comment/:commentId" element={isAuthenticated ? <CommentDetail /> : <LoginSignUpMainPage />} />
                             <Route exact path="/user/:ownerId" element={<Test />} />
                             <Route exact path="/Explore" element={<Test />} />
                             <Route exact path="/test" element={<Test />} />

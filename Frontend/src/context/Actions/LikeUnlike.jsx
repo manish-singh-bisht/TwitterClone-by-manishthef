@@ -8,7 +8,7 @@ const LikeUnlike = async ({ dispatch, ACTIONS, postId }) => {
 
         dispatch({ type: ACTIONS.LIKE_UNLIKE_SUCCESS, payload: data.message });
     } catch (error) {
-        dispatch({ type: ACTIONS.LIKE_UNLIKE_FAILURE, payload: error.response.data.message });
+        dispatch({ type: ACTIONS.LIKE_UNLIKE_FAILURE, payload: error.message });
     }
 };
 

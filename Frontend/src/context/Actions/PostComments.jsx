@@ -14,7 +14,7 @@ const PostComments = async ({ dispatchComment, ACTIONS, postId, comment, parent,
         );
         dispatchComment({ type: ACTIONS.COMMENT_SUCCESS, payload: data.message });
     } catch (error) {
-        dispatchComment({ type: ACTIONS.COMMENT_FAILURE, payload: error.response.data.message });
+        dispatchComment({ type: ACTIONS.COMMENT_FAILURE, payload: error.message });
     }
 };
 

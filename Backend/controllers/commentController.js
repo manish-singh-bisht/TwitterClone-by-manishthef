@@ -13,7 +13,6 @@ exports.postComment = async (req, res, next) => {
         const newData = {
             comment: req.body.comment,
             images: req.body.images,
-            video: req.body.video,
             owner: req.user._id,
             post: req.params.id,
             mentions: req.body.mentions,

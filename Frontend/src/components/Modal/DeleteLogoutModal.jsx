@@ -33,7 +33,6 @@ const DeleteLogoutModal = ({ visibility, handleOutsideClick, fromDelete, deleteH
                                             ownerId: detailsOfActiveComment.post.owner._id,
                                             handle: detailsOfActiveComment.post.owner.handle,
                                             postImage: detailsOfActiveComment.post.images,
-                                            postVideo: detailsOfActiveComment.post.video && detailsOfActiveComment.post.video.url ? detailsOfActiveComment.post.video.url : null,
                                             ownerImage: detailsOfActiveComment.post.owner.profile && detailsOfActiveComment.post.owner.profile.image.url ? detailsOfActiveComment.post.owner.profile.image.url : null,
                                             mentions: detailsOfActiveComment.post.mentions,
                                         },
