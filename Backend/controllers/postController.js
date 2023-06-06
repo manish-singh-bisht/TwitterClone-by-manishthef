@@ -52,9 +52,18 @@ exports.findPostById = async (req, res, next) => {
         if (!post) {
             return next(new ErrorHandler("Post not found", 404));
         }
+
+        const mentionsHandleCollection = [];
+        post.mentions.forEach((mention) => {
+            mentionsHandleCollection.push(mention);
+        });
+        mentionsHandleCollection.push(post.owner.handle);
+        const uniqueMentionHandleCollection = [...new Set(mentionsHandleCollection)];
+
         return res.status(200).json({
             message: "success",
             post,
+            uniqueMentionHandleCollection,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));

@@ -49,10 +49,11 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
 
     const [comment, setComment] = useState();
     const [commentt, setCommentt] = useState();
+    const [mentionHandleCollection, setMentionHandleCollection] = useState([]);
 
     const fetchData = useCallback(async () => {
         const { data } = await axios.get(`http://localhost:4000/api/v1/comment/${commentId}`, { withCredentials: true });
-
+        setMentionHandleCollection(data.mentionsHandleCollection);
         let like = [];
         like = data.comment.likes;
         setIsLikedBy(like);
@@ -230,7 +231,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                         </div>
                     </div>
                     <div className="mx-4 mt-4  border-t-[0.01rem] opacity-80"></div>
-                    <CommentBox profile={comment.owner.profile && comment.owner.profile.image.url ? comment.owner.profile.image.url : null} postId={postId} parent={parent} />
+                    <CommentBox profile={comment.owner.profile && comment.owner.profile.image.url ? comment.owner.profile.image.url : null} postId={postId} parent={parent} mentionHandleCollection={mentionHandleCollection} />
                 </div>
                 <Suspense fallback={<Loader />}>
                     <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} />

@@ -4,15 +4,21 @@ import EditorForComments from "../Editors/EditorForComments";
 import { CircularRadialProgressForTweetTextLimit } from "../SVGs/SVGs";
 import { v4 as uuidv4 } from "uuid";
 
-const CommentBox = ({ profile, postId, parent }) => {
+const CommentBox = ({ profile, postId, parent, mentionHandleCollection }) => {
     const [comment, setComment] = useState({ id: uuidv4(), text: "" });
     const [isReplyPress, setIsReplyPress] = useState(false); //for clearing the comment box  after the reply button is pressed.
+    const [showReplyingTo, setShowReplyingTo] = useState(false);
+
+    const setShowReplyingToHandler = () => {
+        setShowReplyingTo(true);
+    };
 
     const handleReply = async () => {
         // await PostComments({ dispatchComment, ACTIONS, postId, comment: comment.text, parent });=> this should have been here, but is in the editorForComments component
         const newComment = { id: uuidv4(), text: "" };
         setComment(newComment);
         setIsReplyPress(true);
+        setShowReplyingTo(false);
     };
     const handleCommentChange = (value) => {
         setComment({ ...comment, text: value });
@@ -22,9 +28,20 @@ const CommentBox = ({ profile, postId, parent }) => {
     };
     return (
         <>
-            <div className=" border-b bg-green-600">
-                <div className="m-2 border-2 bg-blue-500"> d</div>
-                <div className="m-2 flex gap-2 bg-red-500">
+            <div className=" border-b ">
+                {showReplyingTo && (
+                    <div className="m-2 ml-[4.7rem] flex gap-1">
+                        <span className="text-gray-500">Replying to</span>
+                        {mentionHandleCollection.map((item, index) => {
+                            return (
+                                <span className="text-blue-500" key={index}>
+                                    @{item}
+                                </span>
+                            );
+                        })}
+                    </div>
+                )}
+                <div className="m-2 flex gap-2 ">
                     <Avatar profile={profile} />
                     <EditorForComments
                         onChange={(value) => {
@@ -34,6 +51,7 @@ const CommentBox = ({ profile, postId, parent }) => {
                         handleIsReplyPressFalse={handleIsReplyPressFalse}
                         postId={postId}
                         parent={parent}
+                        setShowReplyingToHandler={setShowReplyingToHandler}
                     />
                 </div>
                 <div className={` mx-5 mt-1 mb-2 flex justify-end gap-2 `}>

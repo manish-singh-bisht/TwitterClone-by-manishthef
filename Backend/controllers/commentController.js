@@ -206,10 +206,24 @@ exports.findCommentById = async (req, res, next) => {
         if (!comment) {
             return next(new ErrorHandler("Comment not found", 404));
         }
+        const mentionsHandleCollection = await mentionsHandleCollector(req.params.id, []);
         return res.status(200).json({
             message: "success",
             comment,
+            mentionsHandleCollection,
         });
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};
+
+exports.findRepliesById = async (req, res, next) => {
+    try {
+        // Fetch all replies in the conversation
+
+        const replies = await fetchReplies(req.params.id, []);
+
+        res.status(200).json({ message: "success", replies });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
     }
@@ -229,14 +243,32 @@ async function fetchReplies(commentId, replies) {
 
     return replies;
 }
-exports.findRepliesById = async (req, res, next) => {
-    try {
-        // Fetch all replies in the conversation
+async function mentionsHandleCollector(commentId, mentions) {
+    const comment = await Comments.findById(commentId)
+        .populate("owner post")
+        .populate({
+            path: "post",
+            populate: [{ path: "owner", select: "name handle profile _id" }],
+        });
 
-        const replies = await fetchReplies(req.params.id, []);
-
-        res.status(200).json({ message: "success", replies });
-    } catch (error) {
-        next(new ErrorHandler(error.message, 500));
+    if (!comment) {
+        return mentions;
     }
-};
+
+    mentions.push(comment.owner.handle);
+
+    if (comment.post && comment.post.owner) {
+        mentions.push(comment.post.owner.handle);
+    }
+
+    comment.mentions.forEach((mention) => {
+        mentions.push(mention);
+    });
+
+    if (comment.parent) {
+        await mentionsHandleCollector(comment.parent, mentions);
+    }
+
+    const uniqueMentions = [...new Set(mentions)];
+    return uniqueMentions;
+}

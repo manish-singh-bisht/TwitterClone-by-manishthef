@@ -77,10 +77,13 @@ const TweetDetail = () => {
     //For comments
     const [comments, setComments] = useState([]);
     const [commentt, setCommentt] = useState();
+    const [mentionHandleCollection, setMentionHandleCollection] = useState([]);
 
     const fetchData = useCallback(async () => {
         //gets the updated data of likes, when user likes at homepage and then comes to detailpage,the user gets the updated data
         const { data } = await axios.get(`http://localhost:4000/api/v1/${postId}`, { withCredentials: true });
+
+        setMentionHandleCollection(data.uniqueMentionHandleCollection);
         let like = [];
         like = data.post.likes;
         setIsLikedBy(like);
@@ -266,7 +269,7 @@ const TweetDetail = () => {
                 <div className="mx-4 mt-4  border-t-[0.01rem] opacity-80"></div>{" "}
                 <Suspense fallback={<Loader />}>
                     <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} handleOutsideClick={handleOutsideClick} />
-                    <CommentCard comments={comments} postId={postId} fromTweetDetail={true} />
+                    <CommentCard comments={comments} postId={postId} fromTweetDetail={true} mentionHandleCollection={mentionHandleCollection} />
 
                     <MoreOptionMenuModal visibility={visibility} handleOutsideClick={handleOutsideClickMoreOption} buttonPosition={buttonPosition} infoToMoreOptionModal={infoToMoreOptionModal} onCloseMoreOptionModal={onCloseMoreOptionModal} />
                 </Suspense>

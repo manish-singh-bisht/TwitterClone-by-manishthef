@@ -11,8 +11,9 @@ import PostComments from "../../context/Actions/PostComments";
 
 import "./EditorStyles.css";
 
-const EditorForComments = ({ onChange: change, isReplyPress, handleIsReplyPressFalse, postId, parent }) => {
+const EditorForComments = ({ onChange: change, isReplyPress, handleIsReplyPressFalse, postId, parent, setShowReplyingToHandler }) => {
     const [editorContent, setEditorContent] = useState("");
+    const [isFirstTimeFocus, setIsFirstTimeFocus] = useState(true);
     const { dispatchComment, ACTIONS } = useGlobalContext();
 
     const editor = useEditor({
@@ -46,6 +47,12 @@ const EditorForComments = ({ onChange: change, isReplyPress, handleIsReplyPressF
             setEditorContent(editor.getHTML());
             change(editor.getText());
         },
+        onFocus() {
+            if (isFirstTimeFocus) {
+                setShowReplyingToHandler();
+                setIsFirstTimeFocus(false); // Set isFirstTimeFocus to false to prevent running this block again
+            }
+        },
     });
     useEffect(() => {
         const whenIsReplyIsPressed = async () => {
@@ -55,6 +62,7 @@ const EditorForComments = ({ onChange: change, isReplyPress, handleIsReplyPressF
 
                 editor.commands.clearContent(true);
                 handleIsReplyPressFalse();
+                setIsFirstTimeFocus(true);
                 await PostComments({ dispatchComment, ACTIONS, postId, comment: text, parent, mentions: mentions });
             }
         };

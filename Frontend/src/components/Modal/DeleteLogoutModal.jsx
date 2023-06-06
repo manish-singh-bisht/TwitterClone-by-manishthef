@@ -35,6 +35,7 @@ const DeleteLogoutModal = ({ visibility, handleOutsideClick, fromDelete, deleteH
                                             postImage: detailsOfActiveComment.post.images,
                                             postVideo: detailsOfActiveComment.post.video && detailsOfActiveComment.post.video.url ? detailsOfActiveComment.post.video.url : null,
                                             ownerImage: detailsOfActiveComment.post.owner.profile && detailsOfActiveComment.post.owner.profile.image.url ? detailsOfActiveComment.post.owner.profile.image.url : null,
+                                            mentions: detailsOfActiveComment.post.mentions,
                                         },
                                     }); //to tweetdetail
                                 } else {
