@@ -55,9 +55,13 @@ exports.findPostById = async (req, res, next) => {
 
         const mentionsHandleCollection = [];
         post.mentions.forEach((mention) => {
-            mentionsHandleCollection.push(mention);
+            if (mention !== req.user.handle) {
+                mentionsHandleCollection.push(mention);
+            }
         });
-        mentionsHandleCollection.push(post.owner.handle);
+        if (post.owner.handle !== req.user.handle) {
+            mentionsHandleCollection.push(post.owner.handle);
+        }
         const uniqueMentionHandleCollection = [...new Set(mentionsHandleCollection)];
 
         return res.status(200).json({

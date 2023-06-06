@@ -169,6 +169,7 @@ exports.likeAndUnlikeComment = async (req, res, next) => {
 
 exports.findCommentById = async (req, res, next) => {
     try {
+        const loggedInUserHandle = req.user.handle;
         const comment = await Comments.findById(req.params.id)
             .populate("likes post owner parent")
             .populate({
@@ -206,7 +207,7 @@ exports.findCommentById = async (req, res, next) => {
         if (!comment) {
             return next(new ErrorHandler("Comment not found", 404));
         }
-        const mentionsHandleCollection = await mentionsHandleCollector(req.params.id, []);
+        const mentionsHandleCollection = await mentionsHandleCollector(req.params.id, [], loggedInUserHandle);
         return res.status(200).json({
             message: "success",
             comment,
@@ -243,7 +244,7 @@ async function fetchReplies(commentId, replies) {
 
     return replies;
 }
-async function mentionsHandleCollector(commentId, mentions) {
+async function mentionsHandleCollector(commentId, mentions, loggedInUserHandle) {
     const comment = await Comments.findById(commentId)
         .populate("owner post")
         .populate({
@@ -254,19 +255,24 @@ async function mentionsHandleCollector(commentId, mentions) {
     if (!comment) {
         return mentions;
     }
-
-    mentions.push(comment.owner.handle);
+    if (comment.owner.handle !== loggedInUserHandle) {
+        mentions.push(comment.owner.handle);
+    }
 
     if (comment.post && comment.post.owner) {
-        mentions.push(comment.post.owner.handle);
+        if (comment.post.owner.handle !== loggedInUserHandle) {
+            mentions.push(comment.post.owner.handle);
+        }
     }
 
     comment.mentions.forEach((mention) => {
-        mentions.push(mention);
+        if (mention !== loggedInUserHandle) {
+            mentions.push(mention);
+        }
     });
 
     if (comment.parent) {
-        await mentionsHandleCollector(comment.parent, mentions);
+        await mentionsHandleCollector(comment.parent, mentions, loggedInUserHandle);
     }
 
     const uniqueMentions = [...new Set(mentions)];
