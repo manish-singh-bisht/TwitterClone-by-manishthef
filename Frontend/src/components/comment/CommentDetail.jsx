@@ -52,7 +52,15 @@ const CommentDetail = () => {
     function handleClick() {
         navigate(`/${post.owner.name}/${post._id}`, {
             replace: true,
-            state: { sectionId: commentId, tweet: post.tweet, handle: post.owner.handle, ownerName: post.owner.name, timeCreated: post.createdAt, ownerImage: post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null },
+            state: {
+                sectionId: commentId,
+                tweet: post.tweet,
+                handle: post.owner.handle,
+                ownerName: post.owner.name,
+                timeCreated: post.createdAt,
+                ownerImage: post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null,
+                mentions: post.mentions,
+            },
         });
     }
 

@@ -138,7 +138,7 @@ exports.getPostofFollowing = async (req, res, next) => {
         const user = await Users.findById(req.user._id);
 
         //Line below will bring all posts of the users that are being followed by the logged in user.
-        const posts = await Posts.find({ owner: { $in: user.following } }).populate("owner likes comments");
+        const posts = await Posts.find({ owner: { $in: [...user.following, user._id] } }).populate("owner likes comments");
         res.status(200).json({
             success: true,
             posts: posts.reverse(),
