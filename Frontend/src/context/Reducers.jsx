@@ -7,9 +7,9 @@ export const ACTIONS = {
     LOAD_SUCCESS: "load success",
     LOAD_FAILURE: "load failure",
 
-    POST_OF_FOLLOWING_REQUEST: " PostOfFollowing request",
-    POST_OF_FOLLOWING_SUCCESS: " PostOfFollowing success",
-    POST_OF_FOLLOWING_FAILURE: " PostOfFollowing failure",
+    POST_OF_FOLLOWING_AND_ME_REQUEST: " PostOfFollowingAndMe request",
+    POST_OF_FOLLOWING_AND_ME_SUCCESS: " PostOfFollowingAndMe success",
+    POST_OF_FOLLOWING_AND_ME_FAILURE: " PostOfFollowingAndMe failure",
 
     GET_POST_BY_ID_REQUEST: " GetPostById request",
     GET_POST_BY_ID_SUCCESS: " GetPostById success",
@@ -59,13 +59,13 @@ export const UserReducer = (state, action) => {
     }
 };
 
-export const PostOfFollowingReducer = (state, action) => {
+export const PostOfFollowingAndMeReducer = (state, action) => {
     switch (action.type) {
-        case ACTIONS.POST_OF_FOLLOWING_REQUEST:
+        case ACTIONS.POST_OF_FOLLOWING_AND_ME_REQUEST:
             return { ...state, loading: true, posts: [], error: "" };
-        case ACTIONS.POST_OF_FOLLOWING_SUCCESS:
+        case ACTIONS.POST_OF_FOLLOWING_AND_ME_SUCCESS:
             return { ...state, loading: false, posts: action.payload, error: "" };
-        case ACTIONS.POST_OF_FOLLOWING_FAILURE:
+        case ACTIONS.POST_OF_FOLLOWING_AND_ME_FAILURE:
             return { ...state, loading: false, posts: [], error: action.payload };
         case ACTIONS.CLEAR_ERRORS:
             return { ...state, error: "" };

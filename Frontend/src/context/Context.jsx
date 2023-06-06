@@ -1,5 +1,5 @@
 import React, { useReducer } from "react";
-import { UserReducer, ACTIONS, PostOfFollowingReducer, LikeUnlikeReducer, GetPostByIdReducer, commentReducer, commentLikeUnlikeReducer, commentDeleteReducer, mentionCollectorReducer } from "./Reducers";
+import { UserReducer, ACTIONS, LikeUnlikeReducer, GetPostByIdReducer, commentReducer, commentLikeUnlikeReducer, commentDeleteReducer, mentionCollectorReducer, PostOfFollowingAndMeReducer } from "./Reducers";
 
 //creating context
 const AppContext = React.createContext();
@@ -9,8 +9,8 @@ const AppProvider = ({ children }) => {
     const initialState = { loading: false, user: {}, error: "", isAuthenticated: false };
     const [state, dispatch] = useReducer(UserReducer, initialState);
 
-    const initialStatePostOfFollowing = { loading: false, posts: [], error: "" };
-    const [statePostOfFollowing, dispatchPostOfFollowing] = useReducer(PostOfFollowingReducer, initialStatePostOfFollowing);
+    const initialStatePostOfFollowingAndMe = { loading: false, posts: [], error: "" };
+    const [statePostOfFollowingAndMe, dispatchPostOfFollowingAndMe] = useReducer(PostOfFollowingAndMeReducer, initialStatePostOfFollowingAndMe);
 
     const initialStateGetPostById = { loading: false, post: {}, error: "" };
     const [stateGetPostById, dispatchGetPostById] = useReducer(GetPostByIdReducer, initialStateGetPostById);
@@ -36,8 +36,8 @@ const AppProvider = ({ children }) => {
                 ACTIONS,
                 state,
                 dispatch,
-                statePostOfFollowing,
-                dispatchPostOfFollowing,
+                statePostOfFollowingAndMe,
+                dispatchPostOfFollowingAndMe,
                 stateGetPostById,
                 dispatchGetPostById,
                 stateLikeUnlike,

@@ -133,7 +133,7 @@ exports.deletePost = async (req, res, next) => {
     }
 };
 
-exports.getPostofFollowing = async (req, res, next) => {
+exports.getPostofFollowingAndMe = async (req, res, next) => {
     try {
         const user = await Users.findById(req.user._id);
 

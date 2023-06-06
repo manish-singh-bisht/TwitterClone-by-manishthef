@@ -1,24 +1,23 @@
 import React, { useEffect } from "react";
-
-import PostsOfFollowing from "../../context/actions/PostsOfFollowing";
 import Loader from "../Loader/Loader";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import TweetBoxInHome from "./TweetBoxInHome";
 import LikeUnlike from "../../context/Actions/LikeUnlike";
 import Post from "../CommonPostComponent/Post";
+import PostsOfFollowingAndMe from "../../context/Actions/PostsOfFollowingAndMe";
 const Home = () => {
-    const { dispatchPostOfFollowing, ACTIONS, statePostOfFollowing, state, dispatchLikeUnlike } = useGlobalContext();
+    const { dispatchPostOfFollowingAndMe, ACTIONS, statePostOfFollowingAndMe, state, dispatchLikeUnlike } = useGlobalContext();
 
-    const { posts, loading, error } = statePostOfFollowing;
+    const { posts, loading, error } = statePostOfFollowingAndMe;
     const profile = state.user && state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null;
 
     //For getting post of users that the current loggedin user follows.
-    async function PostOfFollowingUsers() {
-        await PostsOfFollowing({ dispatchPostOfFollowing, ACTIONS });
+    async function PostOfFollowingUsersAndMe() {
+        await PostsOfFollowingAndMe({ dispatchPostOfFollowingAndMe, ACTIONS });
     }
 
     useEffect(() => {
-        PostOfFollowingUsers();
+        PostOfFollowingUsersAndMe();
     }, []);
 
     return (
