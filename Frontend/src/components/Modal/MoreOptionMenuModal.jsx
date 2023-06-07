@@ -38,8 +38,8 @@ const MoreOptionMenuModal = ({ visibility, handleOutsideClick, buttonPosition, i
                     left = buttonPosition.left - modalRect.width + 25;
                 }
             } else {
-                top = buttonPosition.top - 53;
-                left = buttonPosition.left;
+                top = buttonPosition.top - 79;
+                left = buttonPosition.left - 30;
             }
 
             // Apply the position to the modal
@@ -61,7 +61,7 @@ const MoreOptionMenuModal = ({ visibility, handleOutsideClick, buttonPosition, i
     return (
         <div className="fixed inset-0 z-30 h-[100vh] w-[100vw] ">
             <div className="fixed z-10  h-full w-full" onClick={handleOutsideClick}></div>
-            <div className=" relative z-30  w-[20rem] rounded-xl border-2 bg-white shadow-md" ref={modalRef}>
+            <div className={`relative z-30   w-[20rem] rounded-xl border-2 bg-white shadow-md`} ref={modalRef}>
                 {!fromSideBar ? (
                     state.user._id === infoToMoreOptionModal.ownerID ? (
                         <>
@@ -88,13 +88,15 @@ const MoreOptionMenuModal = ({ visibility, handleOutsideClick, buttonPosition, i
                     )
                 ) : (
                     <button
-                        className="flex w-full items-center gap-3 rounded-xl p-3  hover:bg-gray-50"
+                        className="flex w-full items-center justify-center gap-3 rounded-xl bg-black  p-3 text-red-500 hover:bg-gray-700 "
                         onClick={(e) => {
                             setVisibilityDeleteModal(true);
                             e.stopPropagation();
                             document.body.style.overflow = "hidden";
                         }}>
-                        <div className="font-bold">Log out {`@${state.user.handle}`}</div>
+                        <div className=" font-bold">
+                            Logout <span className="max-w-[100%] break-words text-white">{`@${state.user.handle}`}</span>
+                        </div>
                     </button>
                 )}
             </div>

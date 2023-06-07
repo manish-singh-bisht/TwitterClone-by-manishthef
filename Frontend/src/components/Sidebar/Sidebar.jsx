@@ -47,12 +47,16 @@ const Sidebar = () => {
         await LogoutUser({ dispatch, ACTIONS });
     };
     const [visibilityMoreOptionModal, setVisibilityMoreOptionModal] = useState(false);
-    const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0, right: 0 });
+    const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
     const handleOutsideClickMoreOptionModal = (event) => {
         if (event.target === event.currentTarget) {
             setVisibilityMoreOptionModal(false);
             document.body.style.overflow = "unset";
         }
+    };
+    const onCloseMoreOptionModal = () => {
+        setVisibilityMoreOptionModal(false);
+        document.body.style.overflow = "unset";
     };
 
     return (
@@ -94,29 +98,38 @@ const Sidebar = () => {
             </div>
             <div
                 ref={logoutBox}
-                className="  my-8 mx-10   flex h-[4.5rem] w-[15.5rem] cursor-pointer  items-center gap-1 rounded-[24rem] border-2 hover:bg-gray-100"
+                className=" mx-10 mb-14   flex  min-h-[4.5rem] w-[15.5rem] cursor-pointer  items-center gap-1 rounded-[24rem]  hover:bg-gray-100"
                 onClick={() => {
                     setVisibilityMoreOptionModal(true);
                     document.body.style.overflow = "hidden";
                     const buttonRect = logoutBox.current.getBoundingClientRect();
                     const top = buttonRect.top;
                     const left = buttonRect.left;
-                    const right = buttonRect.right;
-                    setButtonPosition({ top, left, right });
+                    setButtonPosition({ top, left });
                 }}>
-                <Avatar profile={state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null} />
-
-                <div className="">
-                    <div className="text-[1.05rem] font-semibold">{state.user.name}</div>
-                    <div className="text-gray-500">@{state.user.handle}</div>
+                <div className="w-fit">
+                    <Avatar profile={state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null} />
                 </div>
-                <div className="relative left-20 ">
+
+                <div className="w-full  ">
+                    <div className=" text-[1.05rem] font-semibold">{state.user.name.length > 15 ? `${state.user.name.slice(0, 15)}...` : state.user.name}</div>
+
+                    <div className="max-w-[100%] break-words  text-gray-500">{state.user.handle.length > 15 ? `@${state.user.handle.slice(0, 15)}...` : `@${state.user.handle}`}</div>
+                </div>
+                <div className="relative left-auto pr-1">
                     <ThreeDots />
                 </div>
             </div>
             <Suspense fallback={<Loader />}>
                 <TweetModal visibility={isTweetBoxOpen} onClose={hideTwitterBox} handleOutsideClick={handleOutsideClick} initialTweetFromOtherPartsOfApp={null} />
-                <MoreOptionMenuModal visibility={visibilityMoreOptionModal} handleOutsideClick={handleOutsideClickMoreOptionModal} fromSideBar={true} buttonPosition={buttonPosition} logOutUser={logOutUser} />
+                <MoreOptionMenuModal
+                    visibility={visibilityMoreOptionModal}
+                    handleOutsideClick={handleOutsideClickMoreOptionModal}
+                    fromSideBar={true}
+                    buttonPosition={buttonPosition}
+                    logOutUser={logOutUser}
+                    onCloseMoreOptionModal={onCloseMoreOptionModal}
+                />
             </Suspense>
         </main>
     );

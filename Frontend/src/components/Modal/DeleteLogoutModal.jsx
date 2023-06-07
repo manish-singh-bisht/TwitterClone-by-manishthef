@@ -18,7 +18,7 @@ const DeleteLogoutModal = ({ visibility, handleOutsideClick, fromDelete, deleteH
                     }`}</div>
                     <div className="flex flex-col gap-3 pt-3">
                         <button
-                            className={`flex h-10 w-64 items-center justify-center rounded-3xl ${fromSideBar ? "bg-black active:bg-gray-700" : "bg-red-500 hover:bg-red-600 active:bg-red-700"}  text-[1rem] font-semibold text-white `}
+                            className={`flex h-10 w-64 items-center justify-center rounded-3xl ${fromSideBar ? "bg-black hover:bg-gray-700 active:bg-gray-700" : "bg-red-500 hover:bg-red-600 active:bg-red-700"}  text-[1rem] font-semibold text-white `}
                             onClick={() => {
                                 if (fromReplies) {
                                     deleteHandler();
