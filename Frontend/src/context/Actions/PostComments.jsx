@@ -1,4 +1,3 @@
-import React from "react";
 import axios from "axios";
 const PostComments = async ({ dispatchComment, ACTIONS, postId, comment, parent, mentions }) => {
     try {
@@ -14,7 +13,7 @@ const PostComments = async ({ dispatchComment, ACTIONS, postId, comment, parent,
         );
         dispatchComment({ type: ACTIONS.COMMENT_SUCCESS, payload: data.message });
     } catch (error) {
-        dispatchComment({ type: ACTIONS.COMMENT_FAILURE, payload: error.message });
+        dispatchComment({ type: ACTIONS.COMMENT_FAILURE, payload: error.response.data.message });
     }
 };
 

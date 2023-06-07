@@ -1,15 +1,38 @@
-import React, { useState, Suspense, memo } from "react";
+import React, { useState, Suspense, memo, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import SidebarList from "./SidebarList";
-
-import { BellFilled, BellOutline, BookmarkFilled, BookmarkOutline, HashtagFilled, HashtagOutline, HomeFilled, HomeOutLine, MessageFilled, MessageOutline, MoreFilled, MoreOutline, ProfileFilled, ProfileOutline, TwitterIcon } from "../SVGs/SVGs";
+import {
+    BellFilled,
+    BellOutline,
+    BookmarkFilled,
+    BookmarkOutline,
+    HashtagFilled,
+    HashtagOutline,
+    HomeFilled,
+    HomeOutLine,
+    MessageFilled,
+    MessageOutline,
+    MoreFilled,
+    MoreOutline,
+    ProfileFilled,
+    ProfileOutline,
+    ThreeDots,
+    TwitterIcon,
+} from "../SVGs/SVGs";
 import Loader from "../Loader/Loader";
+import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
+import LogoutUser from "../../context/Actions/LogoutUser";
+import Avatar from "../Avatar/Avatar";
 
 const TweetModal = React.lazy(() => import("../Modal/TweetModal"));
+const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const Sidebar = () => {
     const [tab, setTab] = useState(window.location.pathname);
     const [isTweetBoxOpen, setIsTweetBoxOpen] = useState(false);
+    const { ACTIONS, dispatch, state } = useGlobalContext();
+    const logoutBox = useRef(null);
+
     const hideTwitterBox = () => {
         setIsTweetBoxOpen(false);
         document.body.style.overflow = "unset"; //makes the back of modal move again i.e set overflow to normal
@@ -17,6 +40,17 @@ const Sidebar = () => {
     const handleOutsideClick = (event) => {
         if (event.target === event.currentTarget) {
             setIsTweetBoxOpen(false);
+            document.body.style.overflow = "unset";
+        }
+    };
+    const logOutUser = async () => {
+        await LogoutUser({ dispatch, ACTIONS });
+    };
+    const [visibilityMoreOptionModal, setVisibilityMoreOptionModal] = useState(false);
+    const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0, right: 0 });
+    const handleOutsideClickMoreOptionModal = (event) => {
+        if (event.target === event.currentTarget) {
+            setVisibilityMoreOptionModal(false);
             document.body.style.overflow = "unset";
         }
     };
@@ -58,15 +92,31 @@ const Sidebar = () => {
                     Tweet
                 </div>
             </div>
-            <div className=" my-8 mx-10 flex   h-12 w-60 items-center rounded-[24rem]  hover:bg-gray-200">
-                <span>image</span>
+            <div
+                ref={logoutBox}
+                className="  my-8 mx-10   flex h-[4.5rem] w-[15.5rem] cursor-pointer  items-center gap-1 rounded-[24rem] border-2 hover:bg-gray-100"
+                onClick={() => {
+                    setVisibilityMoreOptionModal(true);
+                    document.body.style.overflow = "hidden";
+                    const buttonRect = logoutBox.current.getBoundingClientRect();
+                    const top = buttonRect.top;
+                    const left = buttonRect.left;
+                    const right = buttonRect.right;
+                    setButtonPosition({ top, left, right });
+                }}>
+                <Avatar profile={state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null} />
+
                 <div className="">
-                    <div>fd</div>
-                    <div>fd</div>
+                    <div className="text-[1.05rem] font-semibold">{state.user.name}</div>
+                    <div className="text-gray-500">@{state.user.handle}</div>
+                </div>
+                <div className="relative left-20 ">
+                    <ThreeDots />
                 </div>
             </div>
             <Suspense fallback={<Loader />}>
                 <TweetModal visibility={isTweetBoxOpen} onClose={hideTwitterBox} handleOutsideClick={handleOutsideClick} initialTweetFromOtherPartsOfApp={null} />
+                <MoreOptionMenuModal visibility={visibilityMoreOptionModal} handleOutsideClick={handleOutsideClickMoreOptionModal} fromSideBar={true} buttonPosition={buttonPosition} logOutUser={logOutUser} />
             </Suspense>
         </main>
     );

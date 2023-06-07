@@ -1,4 +1,3 @@
-import React from "react";
 import axios from "axios";
 const LikeUnlike = async ({ dispatch, ACTIONS, postId }) => {
     try {
@@ -8,7 +7,7 @@ const LikeUnlike = async ({ dispatch, ACTIONS, postId }) => {
 
         dispatch({ type: ACTIONS.LIKE_UNLIKE_SUCCESS, payload: data.message });
     } catch (error) {
-        dispatch({ type: ACTIONS.LIKE_UNLIKE_FAILURE, payload: error.message });
+        dispatch({ type: ACTIONS.LIKE_UNLIKE_FAILURE, payload: error.response.data.message });
     }
 };
 

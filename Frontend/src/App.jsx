@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoadUserWhenToken from "./context/actions/LoadUserWhenToken";
 
 import Sidebar from "./components/Sidebar/Sidebar";
@@ -35,10 +35,10 @@ const App = () => {
                     <Suspense fallback={<Loader />}>
                         <Routes>
                             <Route exact path="/" element={isAuthenticated ? <Home /> : <LoginSignUpMainPage />} />
-                            <Route exact path="/login" element={isAuthenticated ? <Home /> : <LoginSignUpMainPage />} />
-                            <Route exact path="/signUp" element={isAuthenticated ? <Home /> : <LoginSignUpMainPage />} />
-                            <Route exact path="/:ownerName/:postId" element={isAuthenticated ? <TweetDetail /> : <LoginSignUpMainPage />} />
-                            <Route exact path="/:ownerName/comment/:commentId" element={isAuthenticated ? <CommentDetail /> : <LoginSignUpMainPage />} />
+                            <Route exact path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <LoginSignUpMainPage />} />
+                            <Route exact path="/signUp" element={isAuthenticated ? <Navigate to="/" replace /> : <LoginSignUpMainPage />} />
+                            <Route exact path="/:ownerName/:postId" element={isAuthenticated ? <TweetDetail /> : <Navigate to="/login" replace />} />
+                            <Route exact path="/:ownerName/comment/:commentId" element={isAuthenticated ? <CommentDetail /> : <Navigate to="/login" replace />} />
                             <Route exact path="/user/:ownerId" element={<Test />} />
                             <Route exact path="/Explore" element={<Test />} />
                             <Route exact path="/test" element={<Test />} />

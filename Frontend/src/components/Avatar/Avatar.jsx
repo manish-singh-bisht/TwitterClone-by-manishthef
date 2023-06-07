@@ -5,7 +5,7 @@ const Avatar = ({ profile }) => {
         <>
             {profile ? (
                 <div className="m-1 h-[3.2rem] w-[3.2rem] items-center justify-center rounded-full   bg-gray-400">
-                    <img src={profile} alt="profile image" className="h-full w-full rounded-full object-cover" />
+                    <img src={profile} alt="profile image" loading="lazy" className="h-full w-full rounded-full object-cover" />
                 </div>
             ) : (
                 <div className="relative m-1 flex h-[3.2rem] w-[3.2rem] items-center justify-center  rounded-full bg-gray-200">

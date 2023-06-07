@@ -7,6 +7,10 @@ export const ACTIONS = {
     LOAD_SUCCESS: "load success",
     LOAD_FAILURE: "load failure",
 
+    LOGOUT_REQUEST: "logout request",
+    LOGOUT_SUCCESS: "logout success",
+    LOGOUT_FAILURE: "logout failure",
+
     POST_OF_FOLLOWING_AND_ME_REQUEST: " PostOfFollowingAndMe request",
     POST_OF_FOLLOWING_AND_ME_SUCCESS: " PostOfFollowingAndMe success",
     POST_OF_FOLLOWING_AND_ME_FAILURE: " PostOfFollowingAndMe failure",
@@ -51,6 +55,14 @@ export const UserReducer = (state, action) => {
             return { ...state, loading: false, user: action.payload, error: "", isAuthenticated: true };
         case ACTIONS.LOAD_FAILURE:
             return { ...state, loading: false, user: {}, error: action.payload, isAuthenticated: false };
+
+        case ACTIONS.LOGOUT_REQUEST:
+            return { ...state, loading: true, user: {}, error: "", isAuthenticated: false };
+        case ACTIONS.LOGOUT_SUCCESS:
+            return { ...state, loading: false, user: null, error: "", isAuthenticated: false };
+        case ACTIONS.LOGOUT_FAILURE:
+            return { ...state, loading: false, error: action.payload, isAuthenticated: true };
+
         case ACTIONS.CLEAR_ERRORS:
             return { ...state, error: "" };
 

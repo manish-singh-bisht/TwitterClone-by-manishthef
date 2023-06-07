@@ -1,4 +1,3 @@
-import React from "react";
 import axios from "axios";
 
 const LoadUserWhenToken = async ({ dispatch, ACTIONS }) => {
@@ -9,7 +8,7 @@ const LoadUserWhenToken = async ({ dispatch, ACTIONS }) => {
 
         dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: data.myProfile });
     } catch (error) {
-        dispatch({ type: ACTIONS.LOAD_FAILURE, payload: error.message });
+        dispatch({ type: ACTIONS.LOAD_FAILURE, payload: error.response.data.message });
     }
 };
 

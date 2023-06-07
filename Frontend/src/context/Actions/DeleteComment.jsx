@@ -1,4 +1,3 @@
-import React from "react";
 import axios from "axios";
 const DeleteComment = async ({ dispatchCommentDelete, ACTIONS, postID, commentID }) => {
     try {
@@ -7,7 +6,7 @@ const DeleteComment = async ({ dispatchCommentDelete, ACTIONS, postID, commentID
 
         dispatchCommentDelete({ type: ACTIONS.COMMENT_DELETE_SUCCESS, payload: data.message });
     } catch (error) {
-        dispatchCommentDelete({ type: ACTIONS.COMMENT_DELETE_FAILURE, payload: error.message });
+        dispatchCommentDelete({ type: ACTIONS.COMMENT_DELETE_FAILURE, payload: error.response.data.message });
     }
 };
 

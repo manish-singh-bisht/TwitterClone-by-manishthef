@@ -6,7 +6,7 @@ import DeleteComment from "../../context/Actions/DeleteComment";
 import DeleteLogoutModal from "./DeleteLogoutModal";
 import Loader from "../Loader/Loader";
 
-const MoreOptionMenuModal = ({ visibility, handleOutsideClick, buttonPosition, infoToMoreOptionModal, onCloseMoreOptionModal, fromReplies, fromActiveComment, deleteReplyHandler, detailsOfActiveComment }) => {
+const MoreOptionMenuModal = ({ visibility, handleOutsideClick, buttonPosition, infoToMoreOptionModal, onCloseMoreOptionModal, fromReplies, fromActiveComment, deleteReplyHandler, detailsOfActiveComment, fromSideBar, logOutUser }) => {
     if (!visibility) return;
 
     const modalRef = useRef(null);
@@ -29,12 +29,17 @@ const MoreOptionMenuModal = ({ visibility, handleOutsideClick, buttonPosition, i
             let left = 0;
 
             // Calculate the desired position
-            if (state.user._id === infoToMoreOptionModal.ownerID) {
-                top = buttonPosition.top - modalRect.height + 83;
-                left = buttonPosition.left - modalRect.width + 25;
+            if (!fromSideBar) {
+                if (state.user._id === infoToMoreOptionModal.ownerID) {
+                    top = buttonPosition.top - modalRect.height + 83;
+                    left = buttonPosition.left - modalRect.width + 25;
+                } else {
+                    top = buttonPosition.top - modalRect.height + 35;
+                    left = buttonPosition.left - modalRect.width + 25;
+                }
             } else {
-                top = buttonPosition.top - modalRect.height + 35;
-                left = buttonPosition.left - modalRect.width + 25;
+                top = buttonPosition.top - 53;
+                left = buttonPosition.left;
             }
 
             // Apply the position to the modal
@@ -57,27 +62,39 @@ const MoreOptionMenuModal = ({ visibility, handleOutsideClick, buttonPosition, i
         <div className="fixed inset-0 z-30 h-[100vh] w-[100vw] ">
             <div className="fixed z-10  h-full w-full" onClick={handleOutsideClick}></div>
             <div className=" relative z-30  w-[20rem] rounded-xl border-2 bg-white shadow-md" ref={modalRef}>
-                {state.user._id === infoToMoreOptionModal.ownerID ? (
-                    <>
-                        <button
-                            className="flex w-full items-center gap-3 rounded-xl p-3 text-red-400  hover:bg-gray-50"
-                            onClick={(e) => {
-                                setVisibilityDeleteModal(true);
-                                e.stopPropagation();
-                                document.body.style.overflow = "hidden";
-                            }}>
-                            <Delete />
-                            <div className="font-bold ">Delete</div>
-                        </button>
+                {!fromSideBar ? (
+                    state.user._id === infoToMoreOptionModal.ownerID ? (
+                        <>
+                            <button
+                                className="flex w-full items-center gap-3 rounded-xl p-3 text-red-400  hover:bg-gray-50"
+                                onClick={(e) => {
+                                    setVisibilityDeleteModal(true);
+                                    e.stopPropagation();
+                                    document.body.style.overflow = "hidden";
+                                }}>
+                                <Delete />
+                                <div className="font-bold ">Delete</div>
+                            </button>
+                            <button className="flex w-full items-center gap-3 rounded-xl p-3  hover:bg-gray-50">
+                                <PushPin />
+                                <div className="font-bold ">Pin to your Profile</div>
+                            </button>
+                        </>
+                    ) : (
                         <button className="flex w-full items-center gap-3 rounded-xl p-3  hover:bg-gray-50">
-                            <PushPin />
-                            <div className="font-bold ">Pin to your Profile</div>
+                            <UserPlus />
+                            <div className="font-bold ">Follow</div>
                         </button>
-                    </>
+                    )
                 ) : (
-                    <button className="flex w-full items-center gap-3 rounded-xl p-3  hover:bg-gray-50">
-                        <UserPlus />
-                        <div className="font-bold ">Follow</div>
+                    <button
+                        className="flex w-full items-center gap-3 rounded-xl p-3  hover:bg-gray-50"
+                        onClick={(e) => {
+                            setVisibilityDeleteModal(true);
+                            e.stopPropagation();
+                            document.body.style.overflow = "hidden";
+                        }}>
+                        <div className="font-bold">Log out {`@${state.user.handle}`}</div>
                     </button>
                 )}
             </div>
@@ -95,6 +112,8 @@ const MoreOptionMenuModal = ({ visibility, handleOutsideClick, buttonPosition, i
                     fromActiveComment={fromActiveComment}
                     infoToDeleteModal={infoToMoreOptionModal}
                     detailsOfActiveComment={detailsOfActiveComment}
+                    fromSideBar={fromSideBar}
+                    logOutUser={logOutUser}
                 />
             </Suspense>
         </div>
