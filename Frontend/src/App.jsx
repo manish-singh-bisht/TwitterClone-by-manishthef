@@ -12,6 +12,7 @@ const SignUpOption = React.lazy(() => import("./components/Login_Register/SignUp
 const TweetDetail = React.lazy(() => import("./components/TweetDetail/TweetDetail"));
 const CommentDetail = React.lazy(() => import("./components/comment/CommentDetail"));
 const Test = React.lazy(() => import("./components/pages/Test"));
+const ProfilePage = React.lazy(() => import("./components/Profile/ProfilePage"));
 
 const App = () => {
     const {
@@ -42,6 +43,7 @@ const App = () => {
                             <Route exact path="/user/:ownerId" element={<Test />} />
                             <Route exact path="/Explore" element={<Test />} />
                             <Route exact path="/test" element={<Test />} />
+                            <Route exact path="/Profile" element={<ProfilePage />} />
                         </Routes>
                     </Suspense>
                 </div>

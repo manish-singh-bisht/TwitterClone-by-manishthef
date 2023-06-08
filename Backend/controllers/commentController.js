@@ -7,6 +7,7 @@ const ErrorHandler = require("../utils/ErrorHandler");
 exports.postComment = async (req, res, next) => {
     try {
         const post = await Posts.findById(req.params.id).populate("comments");
+        const user = await Users.findById(req.user._id);
         if (!post) {
             return next(new ErrorHandler("post not found", 400));
         }
@@ -58,8 +59,11 @@ exports.postComment = async (req, res, next) => {
             const newCreateComment = await Comments.create(newData);
 
             parentComment.children.unshift(newCreateComment._id);
-
             await parentComment.save();
+
+            user.comments.unshift(newCreateComment._id);
+            await user.save();
+
             return res.status(200).json({
                 success: true,
                 message: "child comment added",
@@ -69,6 +73,9 @@ exports.postComment = async (req, res, next) => {
 
         post.comments.unshift(newCreateComment._id);
         await post.save();
+
+        user.comments.unshift(newCreateComment._id);
+        await user.save();
 
         return res.status(200).json({
             success: true,
@@ -83,6 +90,7 @@ exports.deleteComment = async (req, res, next) => {
     try {
         const postId = req.params.post;
         const commentId = req.params.comment;
+        const user = await Users.findById(req.user._id);
 
         const post = await Posts.findById(postId).populate("comments");
 
@@ -97,7 +105,7 @@ exports.deleteComment = async (req, res, next) => {
         }
 
         // Delete the comment and its children recursively
-        await deleteCommentRecursive(commentToDelete);
+        await deleteCommentRecursive(commentToDelete, user);
 
         // Remove the comment from the post's comments array
         post.comments = post.comments.filter((comment) => comment._id.toString() !== commentId);
@@ -112,12 +120,12 @@ exports.deleteComment = async (req, res, next) => {
     }
 };
 
-const deleteCommentRecursive = async (comment) => {
+const deleteCommentRecursive = async (comment, user) => {
     // Delete children recursively
     for (const childId of comment.children) {
         const childComment = await Comments.findById(childId);
         if (childComment) {
-            await deleteCommentRecursive(childComment);
+            await deleteCommentRecursive(childComment, user);
         }
     }
 
@@ -129,6 +137,10 @@ const deleteCommentRecursive = async (comment) => {
             await parentComment.save();
         }
     }
+
+    // Remove the comment from the user's comments array
+    user.comments = user.comments.filter((item) => item._id.toString() !== comment._id.toString());
+    await user.save();
 
     // Delete the comment itself
     await Comments.deleteOne({ _id: comment._id });

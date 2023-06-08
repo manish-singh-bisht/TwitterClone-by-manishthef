@@ -88,7 +88,7 @@ const MoreOptionMenuModal = ({ visibility, handleOutsideClick, buttonPosition, i
                     )
                 ) : (
                     <button
-                        className="flex w-full items-center justify-center gap-3 rounded-xl bg-black  p-3 text-red-500 hover:bg-gray-700 "
+                        className="flex w-full items-center justify-center gap-3 rounded-xl bg-black  p-3 text-red-500 hover:bg-gray-800 "
                         onClick={(e) => {
                             setVisibilityDeleteModal(true);
                             e.stopPropagation();

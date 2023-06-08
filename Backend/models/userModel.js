@@ -44,6 +44,12 @@ const userSchema = new mongoose.Schema({
             ref: "Posts",
         },
     ],
+    comments: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Comments",
+        },
+    ],
     followers: [
         {
             type: mongoose.Schema.Types.ObjectId,

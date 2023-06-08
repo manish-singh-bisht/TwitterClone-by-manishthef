@@ -1,4 +1,4 @@
-import React, { useState, Suspense, memo, useRef } from "react";
+import React, { useState, Suspense, memo, useRef, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import SidebarList from "./SidebarList";
 import {
@@ -32,6 +32,10 @@ const Sidebar = () => {
     const [isTweetBoxOpen, setIsTweetBoxOpen] = useState(false);
     const { ACTIONS, dispatch, state } = useGlobalContext();
     const logoutBox = useRef(null);
+
+    useEffect(() => {
+        setTab(window.location.pathname);
+    }, [window.location.pathname]);
 
     const hideTwitterBox = () => {
         setIsTweetBoxOpen(false);

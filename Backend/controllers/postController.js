@@ -5,21 +5,37 @@ const ErrorHandler = require("../utils/ErrorHandler");
 
 exports.createPost = async (req, res, next) => {
     try {
+        const user = await Users.findById(req.user._id);
         const newData = {
             tweet: req.body.tweet,
             images: req.body.images,
             owner: req.user._id,
             mentions: req.body.mentions,
+            parent: req.body.parent,
         };
+        if (newData.parent) {
+            const parentTweet = await Posts.findById(newData.parent);
+            const createNewPost = await Posts.create(newData);
+            //Finding user and pushing the post id into the user's post array.
 
+            user.posts.unshift(createNewPost._id);
+            await user.save();
+
+            parentTweet.children.unshift(createNewPost._id);
+            await parentTweet.save();
+
+            return res.status(201).json({
+                success: true,
+                createNewPost,
+            });
+        }
         const createNewPost = await Posts.create(newData);
 
         //Finding user and pushing the post id into the user's post array.
-        const user = await Users.findById(req.user._id);
         user.posts.unshift(createNewPost._id);
         await user.save();
 
-        res.status(201).json({
+        return res.status(201).json({
             success: true,
             createNewPost,
         });
@@ -77,7 +93,7 @@ exports.likeAndUnlikePost = async (req, res, next) => {
     try {
         const post = await Posts.findById(req.params.id);
         if (!post) {
-            return next(new ErrorHandler("Post is not present", 400));
+            return next(new ErrorHandler("Post is not present", 404));
         }
 
         //unlike post
@@ -108,32 +124,44 @@ exports.likeAndUnlikePost = async (req, res, next) => {
 exports.deletePost = async (req, res, next) => {
     try {
         const post = await Posts.findById(req.params.id);
+        const user = await Users.findById(req.user._id);
         if (!post) {
-            return next(new ErrorHandler("Post not found", 400));
+            return next(new ErrorHandler("Post not found", 404));
         }
+        await recursivePostDelete(post, user);
 
-        if (req.user._id.toString() === post.owner.toString()) {
-            await post.deleteOne(post);
-
-            //remove post from user
-            const user = await Users.findById(req.user._id);
-            const index = user.posts.indexOf(req.params.id);
-            user.posts.splice(index, 1);
-            await user.save();
-
-            //deleting all comments in the post
-            await Comments.deleteMany({ post: req.params.id });
-
-            return res.status(200).json({
-                success: true,
-                message: "post deleted",
-            });
-        } else {
-            return next(new ErrorHandler("Unauthorized", 401));
-        }
+        return res.status(200).json({
+            success: true,
+            message: "tweet deleted",
+        });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
     }
+};
+const recursivePostDelete = async (post, user) => {
+    // Delete children recursively
+    for (const childId of post.children) {
+        const childTweet = await Posts.findById(childId);
+        if (childTweet) {
+            await recursivePostDelete(childTweet, user);
+        }
+    }
+    // Remove the post from its parent's children array
+    if (post.parent) {
+        const parentTweet = await Posts.findById(post.parent);
+        if (parentTweet) {
+            parentTweet.children = parentTweet.children.filter((childId) => childId.toString() !== post._id.toString());
+            await parentTweet.save();
+        }
+    }
+    // Remove the post from the user's posts array
+    user.posts = user.posts.filter((item) => item._id.toString() !== post._id.toString());
+    await user.save();
+
+    //deleting all comments in the post
+    await Comments.deleteMany({ post: post._id });
+
+    await post.deleteOne({ _id: post._id });
 };
 
 exports.getPostofFollowingAndMe = async (req, res, next) => {

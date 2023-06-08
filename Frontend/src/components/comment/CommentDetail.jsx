@@ -33,6 +33,14 @@ const CommentDetail = () => {
             if (data.comment.parent !== undefined && !parentCollection.some((item) => item._id === data.comment.parent._id)) {
                 setParentCollection((prevCollection) => [...prevCollection, data.comment.parent]);
                 setParentCollectionId((prevCollection) => [...prevCollection, data.comment.parent._id]);
+            } else {
+                if (parentCollectionId.includes(active)) {
+                    const index = parentCollectionId.indexOf(active);
+                    const updatedParentCollection = parentCollection.slice(0, index);
+                    const updatedParentCollectionId = parentCollectionId.slice(0, index);
+                    setParentCollection(updatedParentCollection);
+                    setParentCollectionId(updatedParentCollectionId);
+                }
             }
         };
 
@@ -41,14 +49,6 @@ const CommentDetail = () => {
         componentRef?.current?.scrollIntoView();
     }, [commentId, stateComment, stateCommentDelete.message]);
 
-    //will be used when we click on any previously appeared parent and show only parents previous to active comment and erase all after active comment.
-    useEffect(() => {
-        if (parentCollectionId.includes(active)) {
-            const index = parentCollectionId.indexOf(active);
-            const updatedParentCollection = parentCollection.slice(0, index);
-            setParentCollection(updatedParentCollection);
-        }
-    }, [active]);
     function handleClick() {
         navigate(`/${post.owner.name}/${post._id}`, {
             replace: true,
