@@ -37,6 +37,14 @@ export const ACTIONS = {
 
     MENTION_COLLECTOR_SUCCESS: "Mention Collector Success",
 
+    POST_TWEET_REQUEST: "Post Tweet request",
+    POST_TWEET_SUCCESS: "Post Tweet success",
+    POST_TWEET_FAILURE: "Post Tweet failure",
+
+    TWEET_DELETE_REQUEST: "Delete Tweet request",
+    TWEET_DELETE_SUCCESS: "Delete Tweet success",
+    TWEET_DELETE_FAILURE: "Delete Tweet failure",
+
     CLEAR_ERRORS: "clear Errors",
 };
 
@@ -167,6 +175,36 @@ export const mentionCollectorReducer = (state, action) => {
     switch (action.type) {
         case ACTIONS.MENTION_COLLECTOR_SUCCESS:
             return { mentions: action.payload };
+
+        default:
+            return state;
+    }
+};
+export const postTweetReducer = (state, action) => {
+    switch (action.type) {
+        case ACTIONS.POST_TWEET_REQUEST:
+            return { ...state, loading: true, tweet: [], error: "" };
+        case ACTIONS.POST_TWEET_SUCCESS:
+            return { ...state, loading: false, tweet: action.payload, error: "" };
+        case ACTIONS.POST_TWEET_FAILURE:
+            return { ...state, loading: false, tweet: [], error: action.payload };
+        case ACTIONS.CLEAR_ERRORS:
+            return { ...state, error: "" };
+
+        default:
+            return state;
+    }
+};
+export const tweetDeleteReducer = (state, action) => {
+    switch (action.type) {
+        case ACTIONS.TWEET_DELETE_REQUEST:
+            return { ...state, loading: true, message: "", error: "" };
+        case ACTIONS.TWEET_DELETE_SUCCESS:
+            return { ...state, loading: false, message: action.payload, error: "" };
+        case ACTIONS.TWEET_DELETE_FAILURE:
+            return { ...state, loading: false, message: "", error: action.payload };
+        case ACTIONS.CLEAR_ERRORS:
+            return { ...state, error: "" };
 
         default:
             return state;

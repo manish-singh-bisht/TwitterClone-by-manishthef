@@ -31,7 +31,7 @@ const CommentBox = ({ profile, postId, parent, mentionHandleCollection }) => {
             <div className=" border-b ">
                 {showReplyingTo && (
                     <div className="m-2 ml-[4.7rem] flex  flex-wrap  gap-1 ">
-                        <span className="text-gray-500">Replying to</span>
+                        {mentionHandleCollection.length > 0 && <span className="text-gray-500">Replying to</span>}
                         {mentionHandleCollection.map((item, index) => {
                             return (
                                 <span className="text-blue-500" key={index}>

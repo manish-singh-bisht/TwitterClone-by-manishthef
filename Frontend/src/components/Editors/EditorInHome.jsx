@@ -8,10 +8,12 @@ import suggestion from "./Mentions/suggestion";
 import Placeholder from "@tiptap/extension-placeholder";
 
 import "./EditorStyles.css";
+import PostTweet from "../../context/Actions/PostTweet";
+import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 
 const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handleIsTweetPressFalse, isTweetPressInTweetModal, handleIsTweetPressInTweetModalFalse }) => {
     const [editorContent, setEditorContent] = useState("");
-
+    const { ACTIONS, dispatchPostTweet } = useGlobalContext();
     const editor = useEditor({
         extensions: [
             StarterKit,
@@ -48,11 +50,19 @@ const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handle
         },
     });
     useEffect(() => {
-        if ((isTweetPress || isTweetPressInTweetModal) && editor) {
-            editor.commands.clearContent(true);
-            handleIsTweetPressFalse();
-            handleIsTweetPressInTweetModalFalse();
-        }
+        const whenIsTweetIsPressed = async () => {
+            if ((isTweetPress || isTweetPressInTweetModal) && editor) {
+                const mentions = getAllNodesAttributesByType(editor.state.doc, "mention");
+                const text = editor.getText();
+                editor.commands.clearContent(true);
+                handleIsTweetPressFalse();
+                handleIsTweetPressInTweetModalFalse();
+                if (isTweetPress && !isTweetPressInTweetModal) {
+                    await PostTweet({ dispatchPostTweet, ACTIONS, tweet: text, parent: null, mentions: mentions });
+                }
+            }
+        };
+        whenIsTweetIsPressed();
     }, [isTweetPress, isTweetPressInTweetModal]);
 
     useEffect(() => {
@@ -87,5 +97,17 @@ const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handle
 
     return <EditorContent editor={editor} />;
 };
+//for getting all the mentions that are real users in backend
+function getAllNodesAttributesByType(doc, nodeType) {
+    const result = [];
+
+    doc.descendants((node) => {
+        if (node.type.name === nodeType) {
+            result.push(node.attrs.id);
+        }
+    });
+
+    return result;
+}
 
 export default EditorInHome;

@@ -6,6 +6,7 @@ const ErrorHandler = require("../utils/ErrorHandler");
 exports.createPost = async (req, res, next) => {
     try {
         const user = await Users.findById(req.user._id);
+
         const newData = {
             tweet: req.body.tweet,
             images: req.body.images,
@@ -169,7 +170,7 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
         const user = await Users.findById(req.user._id);
 
         //Line below will bring all posts of the users that are being followed by the logged in user.
-        const posts = await Posts.find({ owner: { $in: [...user.following, user._id] } }).populate("owner likes comments");
+        const posts = await Posts.find({ owner: { $in: [...user.following, user._id] }, parent: null }).populate("owner likes comments");
         res.status(200).json({
             success: true,
             posts: posts.reverse(),

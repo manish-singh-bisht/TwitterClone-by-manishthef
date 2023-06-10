@@ -1,5 +1,5 @@
 import React, { useReducer } from "react";
-import { UserReducer, ACTIONS, LikeUnlikeReducer, GetPostByIdReducer, commentReducer, commentLikeUnlikeReducer, commentDeleteReducer, mentionCollectorReducer, PostOfFollowingAndMeReducer } from "./Reducers";
+import { UserReducer, ACTIONS, LikeUnlikeReducer, GetPostByIdReducer, commentReducer, commentLikeUnlikeReducer, commentDeleteReducer, mentionCollectorReducer, PostOfFollowingAndMeReducer, postTweetReducer, tweetDeleteReducer } from "./Reducers";
 
 //creating context
 const AppContext = React.createContext();
@@ -30,6 +30,12 @@ const AppProvider = ({ children }) => {
     const mentionCollector = { mentions: [] };
     const [stateMentionCollector, dispatchMentionCollector] = useReducer(mentionCollectorReducer, mentionCollector);
 
+    const initialStatePostTweet = { loading: false, tweet: [], error: "" };
+    const [statePostTweet, dispatchPostTweet] = useReducer(postTweetReducer, initialStatePostTweet);
+
+    const deleteTweet = { loading: false, message: "", error: "" };
+    const [stateTweetDelete, dispatchTweetDelete] = useReducer(tweetDeleteReducer, deleteTweet);
+
     return (
         <AppContext.Provider
             value={{
@@ -50,6 +56,10 @@ const AppProvider = ({ children }) => {
                 dispatchCommentDelete,
                 stateMentionCollector,
                 dispatchMentionCollector,
+                statePostTweet,
+                dispatchPostTweet,
+                stateTweetDelete,
+                dispatchTweetDelete,
             }}>
             {children}
         </AppContext.Provider>

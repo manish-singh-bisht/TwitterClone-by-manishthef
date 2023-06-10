@@ -157,7 +157,7 @@ const Post = ({
     };
 
     return (
-        <div className={` scroll-pt-32  hover:bg-gray-50`} id={postId}>
+        <div className={` scroll-mt-32  hover:bg-gray-50`} id={postId}>
             <div onClick={handleClick} className=" m-2 flex cursor-pointer gap-2 hover:bg-gray-50">
                 <Avatar profile={profile} />
 

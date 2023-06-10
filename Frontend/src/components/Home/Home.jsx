@@ -6,7 +6,7 @@ import LikeUnlike from "../../context/Actions/LikeUnlike";
 import Post from "../CommonPostComponent/Post";
 import PostsOfFollowingAndMe from "../../context/Actions/PostsOfFollowingAndMe";
 const Home = () => {
-    const { dispatchPostOfFollowingAndMe, ACTIONS, statePostOfFollowingAndMe, state, dispatchLikeUnlike } = useGlobalContext();
+    const { dispatchPostOfFollowingAndMe, ACTIONS, statePostOfFollowingAndMe, state, dispatchLikeUnlike, statePostTweet } = useGlobalContext();
 
     const { posts, loading, error } = statePostOfFollowingAndMe;
     const profile = state.user && state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null;
@@ -18,7 +18,7 @@ const Home = () => {
 
     useEffect(() => {
         PostOfFollowingUsersAndMe();
-    }, []);
+    }, [statePostTweet.tweet]);
 
     return (
         <>
