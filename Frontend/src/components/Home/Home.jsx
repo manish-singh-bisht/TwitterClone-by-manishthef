@@ -6,19 +6,21 @@ import LikeUnlike from "../../context/Actions/LikeUnlike";
 import Post from "../CommonPostComponent/Post";
 import PostsOfFollowingAndMe from "../../context/Actions/PostsOfFollowingAndMe";
 const Home = () => {
-    const { dispatchPostOfFollowingAndMe, ACTIONS, statePostOfFollowingAndMe, state, dispatchLikeUnlike, statePostTweet } = useGlobalContext();
+    const { dispatchPostOfFollowingAndMe, ACTIONS, statePostOfFollowingAndMe, state, dispatchLikeUnlike, posts, setPosts } = useGlobalContext();
 
-    const { posts, loading, error } = statePostOfFollowingAndMe;
+    const { loading, error } = statePostOfFollowingAndMe;
+
     const profile = state.user && state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null;
 
     //For getting post of users that the current loggedin user follows.
     async function PostOfFollowingUsersAndMe() {
-        await PostsOfFollowingAndMe({ dispatchPostOfFollowingAndMe, ACTIONS });
+        const data = await PostsOfFollowingAndMe({ dispatchPostOfFollowingAndMe, ACTIONS });
+        setPosts(data);
     }
 
     useEffect(() => {
         PostOfFollowingUsersAndMe();
-    }, [statePostTweet.tweet]);
+    }, []);
 
     return (
         <>

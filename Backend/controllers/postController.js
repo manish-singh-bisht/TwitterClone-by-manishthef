@@ -14,6 +14,8 @@ exports.createPost = async (req, res, next) => {
             mentions: req.body.mentions,
             parent: req.body.parent,
         };
+        const owner = await Users.findById({ _id: newData.owner }).select("name handle _id profile");
+        newData.owner = owner;
         if (newData.parent) {
             const parentTweet = await Posts.findById(newData.parent);
             const createNewPost = await Posts.create(newData);
@@ -48,7 +50,12 @@ exports.createPost = async (req, res, next) => {
 exports.findPostById = async (req, res, next) => {
     try {
         const post = await Posts.findById(req.params.id)
-            .populate("likes comments owner")
+            .populate("comments")
+            .populate({
+                path: "likes",
+                select: "_id handle name profile",
+            })
+            .populate({ path: "owner", select: "_id handle profile name" })
             .populate({
                 path: "comments",
                 populate: [
@@ -170,7 +177,16 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
         const user = await Users.findById(req.user._id);
 
         //Line below will bring all posts of the users that are being followed by the logged in user.
-        const posts = await Posts.find({ owner: { $in: [...user.following, user._id] }, parent: null }).populate("owner likes comments");
+        const posts = await Posts.find({ owner: { $in: [...user.following, user._id] }, parent: null })
+            .populate("comments")
+            .populate({
+                path: "owner",
+                select: "handle name profile",
+            })
+            .populate({
+                path: "likes",
+                select: "_id handle name profile",
+            });
         res.status(200).json({
             success: true,
             posts: posts.reverse(),

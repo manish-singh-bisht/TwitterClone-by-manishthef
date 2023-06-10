@@ -13,6 +13,7 @@ const PostTweet = async ({ dispatchPostTweet, ACTIONS, tweet, parent, mentions }
             }
         );
         dispatchPostTweet({ type: ACTIONS.POST_TWEET_SUCCESS, payload: data.createNewPost });
+        return data.createNewPost;
     } catch (error) {
         dispatchPostTweet({ type: ACTIONS.POST_TWEET_FAILURE, payload: error.response.data.message });
     }

@@ -13,7 +13,7 @@ import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 
 const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handleIsTweetPressFalse, isTweetPressInTweetModal, handleIsTweetPressInTweetModalFalse }) => {
     const [editorContent, setEditorContent] = useState("");
-    const { ACTIONS, dispatchPostTweet } = useGlobalContext();
+    const { ACTIONS, dispatchPostTweet, setPosts } = useGlobalContext();
     const editor = useEditor({
         extensions: [
             StarterKit,
@@ -58,7 +58,8 @@ const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handle
                 handleIsTweetPressFalse();
                 handleIsTweetPressInTweetModalFalse();
                 if (isTweetPress && !isTweetPressInTweetModal) {
-                    await PostTweet({ dispatchPostTweet, ACTIONS, tweet: text, parent: null, mentions: mentions });
+                    const data = await PostTweet({ dispatchPostTweet, ACTIONS, tweet: text, parent: null, mentions: mentions });
+                    setPosts((prev) => [data, ...prev]);
                 }
             }
         };

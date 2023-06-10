@@ -14,7 +14,7 @@ const ActiveComment = React.lazy(() => import("./ActiveComment"));
 const CommentDetail = () => {
     const componentRef = useRef(null); //when clicking on comment, it scrolls to the comment clicked and not to top.
     const { ACTIONS, state, dispatchLikeUnlike, stateComment, stateCommentDelete, dispatchCommentLikeUnlike } = useGlobalContext();
-    //For navigating to a particular section that is to the comment that openend this component.
+    //For navigating to a particular section that is to the comment that openend this component
     const navigate = useNavigate();
     const { commentId } = useParams();
 

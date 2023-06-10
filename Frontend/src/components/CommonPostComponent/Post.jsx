@@ -42,6 +42,7 @@ const Post = ({
 
     const [showReplies, setShowReplies] = useState(false);
     const [replies, setReplies] = useState([]);
+
     let flag = 0;
 
     //Modal for more option

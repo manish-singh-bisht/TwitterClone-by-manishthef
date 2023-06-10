@@ -1,10 +1,12 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useState } from "react";
 import { UserReducer, ACTIONS, LikeUnlikeReducer, GetPostByIdReducer, commentReducer, commentLikeUnlikeReducer, commentDeleteReducer, mentionCollectorReducer, PostOfFollowingAndMeReducer, postTweetReducer, tweetDeleteReducer } from "./Reducers";
 
 //creating context
 const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
+    const [posts, setPosts] = useState([]);
+    const [comments, setComments] = useState([]);
     //reducer setup
     const initialState = { loading: false, user: {}, error: "", isAuthenticated: false };
     const [state, dispatch] = useReducer(UserReducer, initialState);
@@ -39,6 +41,10 @@ const AppProvider = ({ children }) => {
     return (
         <AppContext.Provider
             value={{
+                posts,
+                setPosts,
+                comments,
+                setComments,
                 ACTIONS,
                 state,
                 dispatch,

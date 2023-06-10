@@ -182,7 +182,8 @@ exports.findCommentById = async (req, res, next) => {
     try {
         const loggedInUserHandle = req.user.handle;
         const comment = await Comments.findById(req.params.id)
-            .populate("likes post owner parent")
+            .populate("likes post parent")
+            .populate({ path: "owner", select: "name handle profile _id" })
             .populate({
                 path: "post",
                 populate: [

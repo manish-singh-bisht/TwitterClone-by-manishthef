@@ -65,6 +65,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                 setIsLiked(true);
             }
         });
+
         like.length === 0 && setIsLiked(false);
         setComment(data.comment);
 
