@@ -79,7 +79,7 @@ exports.followingOrFollow = async (req, res, next) => {
         const currentUser = await Users.findById(req.user._id);
 
         if (!userToFollow) {
-            return next(new ErrorHandler("no such user found", 400));
+            return next(new ErrorHandler("no such user found", 404));
         }
 
         if (userToFollow._id.toString() === currentUser._id.toString()) {
@@ -185,7 +185,7 @@ exports.profileOfUsers = async (req, res, next) => {
         const userProfile = await Users.findById(req.params.id).populate("posts");
 
         if (!userProfile) {
-            return next(new ErrorHandler("No such user", 400));
+            return next(new ErrorHandler("No such user", 404));
         }
         res.status(200).json({
             success: true,
@@ -202,7 +202,7 @@ exports.searchUser = async (req, res, next) => {
             const users = await Users.find({ $or: [{ name: { $regex: req.params.handle, $options: "i" } }, { handle: { $regex: req.params.handle, $options: "i" } }] }).limit(10);
 
             if (!users) {
-                return next(new ErrorHandler("No such user", 400));
+                return next(new ErrorHandler("No such user", 404));
             }
             res.status(200).json({
                 success: true,

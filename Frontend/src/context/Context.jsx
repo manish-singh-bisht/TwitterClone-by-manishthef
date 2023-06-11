@@ -6,7 +6,7 @@ const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
     const [posts, setPosts] = useState([]);
-    const [comments, setComments] = useState([]);
+
     //reducer setup
     const initialState = { loading: false, user: {}, error: "", isAuthenticated: false };
     const [state, dispatch] = useReducer(UserReducer, initialState);
@@ -43,8 +43,6 @@ const AppProvider = ({ children }) => {
             value={{
                 posts,
                 setPosts,
-                comments,
-                setComments,
                 ACTIONS,
                 state,
                 dispatch,

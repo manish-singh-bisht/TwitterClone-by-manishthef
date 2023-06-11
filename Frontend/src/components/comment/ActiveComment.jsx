@@ -96,7 +96,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
             }
         }
         setCommentt(renderedComment);
-    }, [commentId, state.user._id, isLiked, stateComment]);
+    }, [commentId, isLiked]);
 
     useEffect(() => {
         fetchData();

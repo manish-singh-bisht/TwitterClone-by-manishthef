@@ -9,7 +9,7 @@ exports.postComment = async (req, res, next) => {
         const post = await Posts.findById(req.params.id).populate("comments");
         const user = await Users.findById(req.user._id);
         if (!post) {
-            return next(new ErrorHandler("post not found", 400));
+            return next(new ErrorHandler("post not found", 404));
         }
         const newData = {
             comment: req.body.comment,
@@ -38,7 +38,7 @@ exports.postComment = async (req, res, next) => {
             const parentComment = await Comments.findById(newData.parent).populate("children");
 
             if (!parentComment) {
-                return next(new ErrorHandler("parent comment not found", 400));
+                return next(new ErrorHandler("parent comment not found", 404));
             }
 
             let commentParentIndex = -1;
@@ -66,7 +66,7 @@ exports.postComment = async (req, res, next) => {
 
             return res.status(200).json({
                 success: true,
-                message: "child comment added",
+                message: "Comment added",
             });
         }
         const newCreateComment = await Comments.create(newData);
@@ -79,7 +79,7 @@ exports.postComment = async (req, res, next) => {
 
         return res.status(200).json({
             success: true,
-            message: "comment added",
+            message: "Comment added",
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
@@ -95,13 +95,13 @@ exports.deleteComment = async (req, res, next) => {
         const post = await Posts.findById(postId).populate("comments");
 
         if (!post) {
-            return next(new ErrorHandler("Post not found", 400));
+            return next(new ErrorHandler("Post not found", 404));
         }
 
         const commentToDelete = await Comments.findById(commentId);
 
         if (!commentToDelete) {
-            return next(new ErrorHandler("Comment not found", 400));
+            return next(new ErrorHandler("Comment not found", 404));
         }
 
         // Delete the comment and its children recursively
@@ -150,7 +150,7 @@ exports.likeAndUnlikeComment = async (req, res, next) => {
     try {
         const comment = await Comments.findById(req.params.id);
         if (!comment) {
-            return next(new ErrorHandler("Comment is not present", 400));
+            return next(new ErrorHandler("Comment is not present", 404));
         }
 
         //unlike comment
@@ -242,7 +242,7 @@ exports.findRepliesById = async (req, res, next) => {
     }
 };
 async function fetchReplies(commentId, replies) {
-    const comment = await Comments.findById(commentId).populate("owner likes");
+    const comment = await Comments.findById(commentId).populate({ path: "owner", select: "_id handle profile name" }).populate({ path: "likes", select: "_id handle profile name" });
 
     if (!comment) {
         return replies;
