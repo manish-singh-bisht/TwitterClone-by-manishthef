@@ -4,34 +4,44 @@ import EditorForTweetModal from "../Editors/EditorForTweetModal";
 import { v4 as uuidv4 } from "uuid";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import Avatar from "../Avatar/Avatar";
+import PostTweet from "../../context/Actions/PostTweet";
 
 const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, handleIsTweetPressInTweetModalTrue, handleOutsideClick }) => {
     if (!visibility) return;
 
-    const { state } = useGlobalContext();
+    const { state, setPosts, dispatchPostTweet, ACTIONS } = useGlobalContext();
     const profile = state.user && state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null;
 
-    const [tweets, setTweets] = useState([{ id: uuidv4(), text: "" }]);
-    const [singleTweet, setSingleTweet] = useState(""); //For the circular progress bar
+    let initialId = uuidv4();
     const [isThreadStarter, setIsThreadStarter] = useState(true);
+    const [parentId, setParentId] = useState(initialId);
+    const [tweets, setTweets] = useState([{ id: initialId, text: "", parent: isThreadStarter ? null : parentId, mentions: null }]);
+    const [singleTweet, setSingleTweet] = useState(""); //For the circular progress bar
+    const [isTweetPress, setIsTweetPress] = useState(false);
+    const [initialTweetFromOtherPartsOfAppPresent, setInitialTweetFromOtherPartsOfAppPresent] = useState(false);
 
     //creates a new tweet if initialTweetFromOtherPartsOfApp!==null and initialTweetFromOtherPartsOfApp value is passed in editor, so that editor can display it.
     useEffect(() => {
         if (initialTweetFromOtherPartsOfApp !== null) {
-            const newTweet = { id: uuidv4(), text: initialTweetFromOtherPartsOfApp };
-            const updatedTweets = [...tweets, newTweet];
+            setInitialTweetFromOtherPartsOfAppPresent(true);
+            initialId = uuidv4();
+            const newTweet = { id: initialId, text: initialTweetFromOtherPartsOfApp.text, parent: null, mentions: null };
+
+            const updatedTweets = [newTweet];
+            setParentId(initialId);
             setTweets(updatedTweets);
             initialTweetFromOtherPartsOfApp = null;
         }
-    }, []);
+        setInitialTweetFromOtherPartsOfAppPresent(false);
+    }, [initialTweetFromOtherPartsOfApp]);
 
     //will be passed in editor
     const height = "min-h-[10rem] ";
     const width = " w-[33rem]";
-    const placeholder = initialTweetFromOtherPartsOfApp !== null ? "Add Another Tweet" : isThreadStarter ? "What's Happening" : "Add Another Tweet";
+    const placeholder = initialTweetFromOtherPartsOfAppPresent ? "What's Happening" : isThreadStarter ? "What's Happening" : "Add Another Tweet";
 
-    const handleChange = (value, id) => {
-        const updatedTweets = tweets.map((tweet) => (tweet.id === id ? { ...tweet, text: value } : tweet));
+    const handleChange = (value, id, mentions) => {
+        const updatedTweets = tweets.map((tweet) => (tweet.id === id ? { ...tweet, text: value, mentions: mentions } : tweet));
         setTweets(updatedTweets);
     };
 
@@ -40,39 +50,41 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
 
         if (updatedTweets.length === 1) {
             setIsThreadStarter(true);
+            updatedTweets[0].parent = null;
         }
+        if (updatedTweets.length > 1) {
+            const lastTweetInThread = updatedTweets[updatedTweets.length - 1];
+            lastTweetInThread.parent = updatedTweets[updatedTweets.length - 2].id;
+        }
+
         setTweets(updatedTweets);
     };
     const addTweet = () => {
-        const newTweet = { id: uuidv4(), text: "" };
+        const newTweet = { id: uuidv4(), text: "", parent: parentId, mentions: null };
         const updatedTweets = [...tweets, newTweet];
+
         setTweets(updatedTweets);
+        setParentId(newTweet.id);
         setIsThreadStarter(false);
     };
 
-    const handleTweet = () => {
-        console.log(tweets);
+    const handleTweet = async () => {
+        let flag = 0;
+        setIsTweetPress(true);
         if (initialTweetFromOtherPartsOfApp) {
             handleIsTweetPressInTweetModalTrue();
         }
+        for (const tweet of tweets) {
+            const data = await PostTweet({ dispatchPostTweet, ACTIONS, tweet: tweet.text, parent: tweet.parent, mentions: tweet.mentions, threadIdForTweetInThread: tweet.id });
+
+            flag === 0 && setPosts((prev) => (data.parent === null ? [data, ...prev] : [...prev]));
+            flag = 1;
+        }
+        flag = 0;
         onClose();
     };
 
-    const [active, setActive] = useState(null);
-
-    const toggleActive = (id) => {
-        setActive(id);
-    };
-    const toggleBox = (id) => {
-        if (active === id) {
-            return `  `;
-        } else {
-            return ``;
-        }
-    };
-
     const whenEditorInFocus = (id) => {
-        toggleActive(id);
         setSingleTweet("");
     };
 
@@ -95,7 +107,7 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
                                     <div className=" ml-3  flex gap-2">
                                         <Avatar profile={profile} />
 
-                                        <div className={`${toggleBox(tweet.id)}  `}>
+                                        <div>
                                             {!isThreadStarter ? (
                                                 <div className="text-right">
                                                     <button
@@ -115,13 +127,15 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
                                                 placeholder={placeholder}
                                                 whenEditorInFocus={() => whenEditorInFocus(tweet.id)}
                                                 onClick={(tweet) => {
-                                                    toggleActive(tweet.id);
                                                     setSingleTweet(tweet);
                                                 }}
-                                                onChange={(value) => {
-                                                    handleChange(value, tweet.id);
+                                                onChange={(value, mentions) => {
+                                                    handleChange(value, tweet.id, mentions);
                                                     setSingleTweet(value);
                                                 }}
+                                                isTweetPress={isTweetPress}
+                                                onClose={onClose}
+                                                tweets={tweets}
                                             />
                                         </div>
                                     </div>
@@ -152,11 +166,15 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
                     {tweets.every((tweet) => {
                         return tweet.text.length > 0 && tweet.text.length <= 280;
                     }) ? (
-                        <button className=" w-fit rounded-3xl bg-blue-500  px-3 py-[0.2rem] font-bold text-white" onClick={handleTweet}>
-                            {initialTweetFromOtherPartsOfApp !== null ? "Tweet all" : isThreadStarter ? "Tweet" : "Tweet all"}
+                        <button
+                            className=" w-fit rounded-3xl bg-blue-500  px-3 py-[0.2rem] font-bold text-white"
+                            onClick={() => {
+                                handleTweet();
+                            }}>
+                            {initialTweetFromOtherPartsOfAppPresent ? "Tweet" : isThreadStarter ? "Tweet" : "Tweet all"}
                         </button>
                     ) : (
-                        <button className="w-fit rounded-3xl bg-gray-500  px-3 py-[0.2rem] font-bold text-white">{initialTweetFromOtherPartsOfApp !== null ? "Tweet all" : isThreadStarter ? "Tweet" : "Tweet all"}</button>
+                        <button className="w-fit rounded-3xl bg-gray-500  px-3 py-[0.2rem] font-bold text-white">{initialTweetFromOtherPartsOfAppPresent ? "Tweet" : isThreadStarter ? "Tweet" : "Tweet all"}</button>
                     )}
                 </div>
             </div>

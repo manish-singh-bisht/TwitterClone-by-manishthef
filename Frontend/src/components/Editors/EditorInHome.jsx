@@ -58,7 +58,8 @@ const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handle
                 handleIsTweetPressFalse();
                 handleIsTweetPressInTweetModalFalse();
                 if (isTweetPress && !isTweetPressInTweetModal) {
-                    const data = await PostTweet({ dispatchPostTweet, ACTIONS, tweet: text, parent: null, mentions: mentions });
+                    const data = await PostTweet({ dispatchPostTweet, ACTIONS, tweet: text, parent: null, mentions: mentions, threadIdForTweetInThread: null });
+                    //the threadIdForTweetInThread here is null because this threadIdForTweetInThread is uuid and not the _id of mongodb,this threadIdForTweetInThread is just created for thread purpose and not for single tweets.
                     setPosts((prev) => [data, ...prev]);
                 }
             }

@@ -16,9 +16,11 @@ const postSchema = new mongoose.Schema({
         ref: "Users",
     },
     parent: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Posts",
+        type: String,
     },
+
+    threadIdForTweetInThread: { type: String },
+
     children: [
         {
             type: mongoose.Schema.Types.ObjectId,

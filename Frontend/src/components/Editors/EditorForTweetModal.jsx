@@ -6,12 +6,14 @@ import StarterKit from "@tiptap/starter-kit";
 import { Mention } from "@tiptap/extension-mention";
 import suggestion from "./Mentions/suggestion";
 import Placeholder from "@tiptap/extension-placeholder";
+import PostTweet from "../../context/Actions/PostTweet";
 
 import "./EditorStyles.css";
+import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 
-const EditorForTweetModal = ({ height, width, placeholder, onClick: click, onChange: change, whenEditorInFocus, initialTweetFromOtherPartsOfApp }) => {
+const EditorForTweetModal = ({ height, width, placeholder, onClick: click, onChange: change, whenEditorInFocus, initialTweetFromOtherPartsOfApp, isTweetPress, onClose, tweets }) => {
     const [editorContent, setEditorContent] = useState("");
-
+    const { ACTIONS, dispatchPostTweet, setPosts } = useGlobalContext();
     const editor = useEditor({
         autofocus: true,
         extensions: [
@@ -43,7 +45,7 @@ const EditorForTweetModal = ({ height, width, placeholder, onClick: click, onCha
 
         onUpdate({ editor }) {
             setEditorContent(editor.getHTML());
-            change(editor.getText());
+            change(editor.getText(), getAllNodesAttributesByType(editor.state.doc, "mention"));
         },
         onFocus({ event }) {
             whenEditorInFocus();
@@ -51,7 +53,7 @@ const EditorForTweetModal = ({ height, width, placeholder, onClick: click, onCha
     });
     useEffect(() => {
         if (initialTweetFromOtherPartsOfApp !== null && editor) {
-            editor.commands.setContent(initialTweetFromOtherPartsOfApp, { emitUpdate: true });
+            editor.commands.setContent(initialTweetFromOtherPartsOfApp.text, { emitUpdate: true });
         }
     }, [editor]);
 
@@ -94,5 +96,16 @@ const EditorForTweetModal = ({ height, width, placeholder, onClick: click, onCha
 
     return <EditorContent editor={editor} onClick={() => click(editor.getText())} />;
 };
+//for getting all the mentions that are real users in backend
+function getAllNodesAttributesByType(doc, nodeType) {
+    const result = [];
 
+    doc.descendants((node) => {
+        if (node.type.name === nodeType) {
+            result.push(node.attrs.id);
+        }
+    });
+
+    return result;
+}
 export default EditorForTweetModal;

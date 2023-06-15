@@ -103,7 +103,13 @@ const TweetBoxInHome = ({ profile }) => {
                 </div>
             </div>
             <Suspense fallback={<Loader />}>
-                <TweetModal visibility={isTweetBoxOpen} onClose={hideTwitterBox} initialTweetFromOtherPartsOfApp={singleTweet.text} handleIsTweetPressInTweetModalTrue={handleIsTweetPressInTweetModalTrue} handleOutsideClick={handleOutsideClick} />
+                <TweetModal
+                    visibility={isTweetBoxOpen}
+                    onClose={hideTwitterBox}
+                    initialTweetFromOtherPartsOfApp={{ text: singleTweet.text }}
+                    handleIsTweetPressInTweetModalTrue={handleIsTweetPressInTweetModalTrue}
+                    handleOutsideClick={handleOutsideClick}
+                />
             </Suspense>
         </>
     );

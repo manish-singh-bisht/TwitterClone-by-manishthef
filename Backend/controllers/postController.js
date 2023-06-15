@@ -5,22 +5,31 @@ const ErrorHandler = require("../utils/ErrorHandler");
 
 exports.createPost = async (req, res, next) => {
     try {
-        const user = await Users.findById(req.user._id);
+        const user = await Users.findById({ _id: req.user._id });
 
+        if (!user) {
+            return next(new ErrorHandler("User not found", 404));
+        }
         const newData = {
             tweet: req.body.tweet,
             images: req.body.images,
             owner: req.user._id,
             mentions: req.body.mentions,
             parent: req.body.parent,
+            threadIdForTweetInThread: req.body.threadIdForTweetInThread,
         };
-        const owner = await Users.findById({ _id: newData.owner }).select("name handle _id profile");
+        const owner = await Users.findById(newData.owner).select("name handle _id profile");
         newData.owner = owner;
-        if (newData.parent) {
-            const parentTweet = await Posts.findById(newData.parent);
-            const createNewPost = await Posts.create(newData);
-            //Finding user and pushing the post id into the user's post array.
 
+        if (newData.parent !== null) {
+            const parentTweet = await Posts.findOne({ threadIdForTweetInThread: newData.parent });
+
+            if (!parentTweet) {
+                return next(new ErrorHandler("parent tweet not found", 404));
+            }
+            const createNewPost = await Posts.create(newData);
+
+            //Finding user and pushing the post id into the user's post array.
             user.posts.unshift(createNewPost._id);
             await user.save();
 
@@ -29,7 +38,6 @@ exports.createPost = async (req, res, next) => {
 
             return res.status(201).json({
                 success: true,
-                createNewPost,
             });
         }
         const createNewPost = await Posts.create(newData);
@@ -156,7 +164,7 @@ const recursivePostDelete = async (post, user) => {
     }
     // Remove the post from its parent's children array
     if (post.parent) {
-        const parentTweet = await Posts.findById(post.parent);
+        const parentTweet = await Posts.findOne({ threadIdForTweetInThread: post.parent });
         if (parentTweet) {
             parentTweet.children = parentTweet.children.filter((childId) => childId.toString() !== post._id.toString());
             await parentTweet.save();
