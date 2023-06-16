@@ -90,7 +90,7 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
                 <div className={`  pt-[0.1rem] hover:bg-gray-50`}>
                     <div onClick={handleClick} className=" relative m-2 flex cursor-pointer gap-2 hover:bg-gray-50">
                         <Avatar profile={ownerImage} />
-                        <div className="absolute   left-[1.8rem] -top-[16.4rem] h-[calc(100%+1rem)] border-[0.09rem]"></div>
+
                         <div className="relative mr-2 flex w-[87%] flex-col  gap-2 ">
                             <div className="flex">
                                 <Link
@@ -121,10 +121,13 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
                                 </div>
                             </div>
 
-                            <pre className={`  max-w-[98%] whitespace-pre-wrap break-words  `}>{commentt}</pre>
-                            <div className={`grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
-                                {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo} index={index} />)}
+                            <div className="relative">
+                                <pre className={`  max-w-[98%] whitespace-pre-wrap break-words  `}>{commentt}</pre>
+                                <div className={`grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
+                                    {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo} index={index} />)}
+                                </div>
                             </div>
+                            {/* <div className="absolute   left-[1.8rem] top-[calc(-100%-0.5rem)] h-[calc(100%+0.5rem)] border-[0.09rem]"></div> */}
                         </div>
                     </div>
 

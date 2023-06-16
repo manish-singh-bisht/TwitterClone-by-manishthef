@@ -23,8 +23,6 @@ const Post = ({
     timeCreated,
     likes = [],
     comments = [],
-    isDelete = false,
-    isAccount = false,
     handler,
     dispatch,
     state,
@@ -35,7 +33,9 @@ const Post = ({
     commentsChildren,
     activeHandler,
     isParent,
+    fromHome,
     comment,
+    threadChildren,
     mentions, //this is child comments of the active comment and is being passed from commentCard by commentDetail component
 }) => {
     const formattedTime = usePostTime(Date.parse(timeCreated));
@@ -133,7 +133,7 @@ const Post = ({
 
     const handleClick = () => {
         isParent && activeHandler(commentId);
-        navigate(newUrl, { replace: true, state: { tweet, ownerName, handle, timeCreated, ownerId, profile, postImage, isDelete, isAccount, mentions } });
+        navigate(newUrl, { replace: true, state: { tweet, ownerName, handle, timeCreated, ownerId, profile, postImage, mentions } });
     };
     const replyHandler = async (childCommentId) => {
         const { data } = await axios.get(`http://localhost:4000/api/v1/comment/reply/${childCommentId}`, { withCredentials: true });
@@ -159,8 +159,10 @@ const Post = ({
 
     return (
         <div className={` scroll-mt-32  hover:bg-gray-50`} id={postId}>
-            <div onClick={handleClick} className=" m-2 flex cursor-pointer gap-2 hover:bg-gray-50">
+            <div onClick={handleClick} className="relative  m-2 flex cursor-pointer gap-2 hover:bg-gray-50">
                 <Avatar profile={profile} />
+                {fromHome && threadChildren && threadChildren.length > 0 && <div className="absolute left-[1.8rem] top-[3.65rem] h-full min-h-[5rem] w-fit border-2"></div>}
+                {!fromHome && commentsChildren.length > 0 && <div className="absolute   top-[3.66rem] left-[1.8rem]  h-[103%] border-2 "></div>}
 
                 <div className="relative mr-2 flex w-[87%]  flex-col gap-2  ">
                     <div className="flex ">
@@ -201,7 +203,7 @@ const Post = ({
                 </div>
             </div>
 
-            <div className="my-4 ml-[4.25rem] flex w-[87.5%] gap-20   border-2">
+            <div className="mt-4 mb-2 ml-[4.25rem] flex w-[87.5%] gap-20   border-2">
                 <div className="group flex w-[3rem] items-center justify-around">
                     <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
                         <Comments />
@@ -229,18 +231,38 @@ const Post = ({
                     <span className="group-hover:text-blue-500"></span>
                 </div>
             </div>
-
+            {fromHome && threadChildren && threadChildren.length > 0 && (
+                <button className="flex h-12 w-full  items-center gap-2  hover:bg-gray-200">
+                    <div className="">
+                        {profile ? (
+                            <div className="m-1 h-[2.6rem] w-[2.6rem] items-center justify-center rounded-full   bg-gray-400">
+                                <img src={profile} alt="profile image" loading="lazy" className="h-full w-full rounded-full object-cover" />
+                            </div>
+                        ) : (
+                            <div className="relative m-1 ml-[1.15rem]  flex h-[2.6rem] w-[2.6rem] items-center justify-center  rounded-full bg-gray-200">
+                                <svg className="  h-8 w-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
+                                </svg>
+                            </div>
+                        )}
+                    </div>
+                    <div className="  text-left  ">
+                        <div className="  text-blue-500">Show Thread</div>
+                    </div>
+                </button>
+            )}
             {comment &&
                 comment.length > 0 &&
                 comment.map((item) => {
                     return (
-                        <div key={item._id}>
+                        <div key={item._id} className="relative">
+                            {showReplies && <div className="absolute left-[2.3rem] top-[4.3rem] h-[86%] border-2 "></div>}
                             {item &&
                                 item.children.length > 0 &&
                                 item.children.map((item2) => {
                                     if ((fromCommentDetail && item2.owner._id === item.parent.owner) || (fromTweetDetail && item2.owner._id === item.post.owner)) {
                                         return (
-                                            <div key={item2._id}>
+                                            <div key={item2._id} className="relative ">
                                                 <Reply reply={item2} handleClick={handleClick} />
                                                 {item2.children &&
                                                     item2.children.length > 0 &&
@@ -274,16 +296,23 @@ const Post = ({
                 replies &&
                 replies.length > 0 &&
                 replies.map((reply) => {
+                    const isLastElement = reply === replies[replies.length - 1];
+
                     return (
-                        <Reply
-                            key={reply._id}
-                            reply={reply}
-                            handleClick={handleClick}
-                            setReplyIdHandler={(id) => {
-                                setReplyIdHandler(id);
-                            }}
-                            deleteReplyHandler={deleteReplyHandler}
-                        />
+                        <>
+                            <div className="relative -mt-2">
+                                {!isLastElement && <div className="absolute left-[2.3rem] top-[4.2rem] h-[86.5%] border-2"></div>}
+                                <Reply
+                                    key={reply._id}
+                                    reply={reply}
+                                    handleClick={handleClick}
+                                    setReplyIdHandler={(id) => {
+                                        setReplyIdHandler(id);
+                                    }}
+                                    deleteReplyHandler={deleteReplyHandler}
+                                />
+                            </div>
+                        </>
                     );
                 })}
 

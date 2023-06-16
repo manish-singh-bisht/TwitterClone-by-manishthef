@@ -64,6 +64,8 @@ const Home = () => {
                                             state={state}
                                             ACTIONS={ACTIONS}
                                             mentions={post.mentions}
+                                            fromHome={true}
+                                            threadChildren={post.children}
                                         />
                                     );
                                 })
