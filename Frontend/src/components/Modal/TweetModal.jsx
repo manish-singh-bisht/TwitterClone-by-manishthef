@@ -55,6 +55,9 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
         if (updatedTweets.length > 1) {
             const lastTweetInThread = updatedTweets[updatedTweets.length - 1];
             lastTweetInThread.parent = updatedTweets[updatedTweets.length - 2].id;
+            if (updatedTweets[0].parent) {
+                updatedTweets[0].parent = null;
+            }
         }
 
         setTweets(updatedTweets);
@@ -74,10 +77,15 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
         if (initialTweetFromOtherPartsOfApp) {
             handleIsTweetPressInTweetModalTrue();
         }
+
         for (const tweet of tweets) {
             const data = await PostTweet({ dispatchPostTweet, ACTIONS, tweet: tweet.text, parent: tweet.parent, mentions: tweet.mentions, threadIdForTweetInThread: tweet.id });
 
-            flag === 0 && setPosts((prev) => (data.parent === null ? [data, ...prev] : [...prev]));
+            if (tweets.length > 1) {
+                flag === 0 && setPosts((prev) => (data.parent === null ? [{ ...data, children: [tweets[1].id] }, ...prev] : [...prev]));
+            } else {
+                flag === 0 && setPosts((prev) => (data.parent === null ? [data, ...prev] : [...prev]));
+            }
             flag = 1;
         }
         flag = 0;
