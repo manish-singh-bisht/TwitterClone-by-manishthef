@@ -255,14 +255,15 @@ const Post = ({
                 comment.length > 0 &&
                 comment.map((item) => {
                     return (
-                        <div key={item._id} className="relative">
-                            {showReplies && <div className="absolute left-[2.3rem] top-[4.3rem] h-[86%] border-2 "></div>}
+                        <div key={item._id} className="relative -mt-1">
                             {item &&
                                 item.children.length > 0 &&
                                 item.children.map((item2) => {
+                                    const isLastElement = item.children[item.children.length - 1];
                                     if ((fromCommentDetail && item2.owner._id === item.parent.owner) || (fromTweetDetail && item2.owner._id === item.post.owner)) {
                                         return (
                                             <div key={item2._id} className="relative ">
+                                                {((!showReplies && item2 !== isLastElement) || showReplies) && <div className="absolute left-[2.3rem] top-[4.3rem] h-[86%] border-2 "></div>}
                                                 <Reply reply={item2} handleClick={handleClick} />
                                                 {item2.children &&
                                                     item2.children.length > 0 &&
@@ -300,8 +301,8 @@ const Post = ({
 
                     return (
                         <>
-                            <div className="relative -mt-2">
-                                {!isLastElement && <div className="absolute left-[2.3rem] top-[4.2rem] h-[86.5%] border-2"></div>}
+                            <div className="relative -mt-[0.01rem]">
+                                {!isLastElement && <div className="absolute left-[2.3rem] top-[4.2rem] h-[86.5%] border-2 "></div>}
                                 <Reply
                                     key={reply._id}
                                     reply={reply}
