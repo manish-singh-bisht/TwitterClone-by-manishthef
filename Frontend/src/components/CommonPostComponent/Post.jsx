@@ -102,7 +102,7 @@ const Post = ({
         setCommentt(renderedComment);
     }, [location]);
 
-    const photos = ["https://source.unsplash.com/random/1200x600", "https://source.unsplash.com/random/900x900"];
+    const photos = [];
 
     //Grid layout for different numbers of image,used below
     let gridClass = "";
@@ -148,12 +148,10 @@ const Post = ({
     const setReplyIdHandler = (id) => {
         setReplyId(id);
     };
+
     const deleteReplyHandler = () => {
-        const filteredReplies = replies.filter((reply) => {
-            if (replyId !== undefined) {
-                return reply._id !== replyId;
-            }
-        });
+        const index = replies.indexOf(replyId);
+        const filteredReplies = replies.splice(0, index);
         setReplies(filteredReplies);
     };
 
@@ -264,7 +262,15 @@ const Post = ({
                                         return (
                                             <div key={item2._id} className="relative ">
                                                 {((!showReplies && item2 !== isLastElement) || showReplies) && <div className="absolute left-[2.3rem] top-[4.3rem] h-[86%] border-2 "></div>}
-                                                <Reply reply={item2} handleClick={handleClick} />
+
+                                                <Reply
+                                                    reply={item2}
+                                                    handleClick={handleClick}
+                                                    setReplyIdHandler={(id) => {
+                                                        setReplyIdHandler(id);
+                                                    }}
+                                                    deleteReplyHandler={deleteReplyHandler}
+                                                />
                                                 {item2.children &&
                                                     item2.children.length > 0 &&
                                                     item2.children.map((item3) => {
@@ -301,7 +307,7 @@ const Post = ({
 
                     return (
                         <>
-                            <div className="relative -mt-[0.01rem]">
+                            <div className="relative -mt-[0.01rem]" key={reply._id}>
                                 {!isLastElement && <div className="absolute left-[2.3rem] top-[4.2rem] h-[86.5%] border-2 "></div>}
                                 <Reply
                                     key={reply._id}
@@ -320,7 +326,14 @@ const Post = ({
             <hr className="w-full bg-gray-100" />
 
             <Suspense fallback={<Loader />}>
-                <MoreOptionMenuModal visibility={visibility} handleOutsideClick={handleOutsideClick} buttonPosition={buttonPosition} infoToMoreOptionModal={infoToMoreOptionModal} onCloseMoreOptionModal={onCloseMoreOptionModal} />
+                <MoreOptionMenuModal
+                    visibility={visibility}
+                    handleOutsideClick={handleOutsideClick}
+                    buttonPosition={buttonPosition}
+                    infoToMoreOptionModal={infoToMoreOptionModal}
+                    onCloseMoreOptionModal={onCloseMoreOptionModal}
+                    fromCommentDetail={fromCommentDetail}
+                />
             </Suspense>
         </div>
     );

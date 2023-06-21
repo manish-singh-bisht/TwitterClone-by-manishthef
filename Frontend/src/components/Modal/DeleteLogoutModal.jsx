@@ -1,7 +1,22 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const DeleteLogoutModal = ({ visibility, handleOutsideClick, fromDelete, deleteHandler, onClose, onCloseMoreOptionModal, fromReplies, deleteReplyHandler, fromActiveComment, infoToDeleteModal, detailsOfActiveComment, fromSideBar, logOutUser }) => {
+const DeleteLogoutModal = ({
+    visibility,
+    handleOutsideClick,
+    fromDelete,
+    deleteHandler,
+    onClose,
+    onCloseMoreOptionModal,
+    fromReplies,
+    deleteReplyHandler,
+    fromActiveComment,
+    infoToDeleteModal,
+    detailsOfActiveComment,
+    fromSideBar,
+    logOutUser,
+    fromCommentDetail,
+}) => {
     if (!visibility) return;
     const navigate = useNavigate();
 
@@ -45,6 +60,13 @@ const DeleteLogoutModal = ({ visibility, handleOutsideClick, fromDelete, deleteH
                                     logOutUser();
                                     onClose();
                                     onCloseMoreOptionModal();
+                                } else if (fromCommentDetail) {
+                                    deleteHandler();
+                                    onClose();
+                                    onCloseMoreOptionModal();
+                                    navigate(`/`, {
+                                        replace: true,
+                                    });
                                 } else {
                                     deleteHandler();
                                     onClose();

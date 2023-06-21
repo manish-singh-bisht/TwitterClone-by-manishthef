@@ -6,7 +6,20 @@ import DeleteComment from "../../context/Actions/DeleteComment";
 import DeleteLogoutModal from "./DeleteLogoutModal";
 import Loader from "../Loader/Loader";
 
-const MoreOptionMenuModal = ({ visibility, handleOutsideClick, buttonPosition, infoToMoreOptionModal, onCloseMoreOptionModal, fromReplies, fromActiveComment, deleteReplyHandler, detailsOfActiveComment, fromSideBar, logOutUser }) => {
+const MoreOptionMenuModal = ({
+    visibility,
+    handleOutsideClick,
+    buttonPosition,
+    infoToMoreOptionModal,
+    onCloseMoreOptionModal,
+    fromReplies,
+    fromActiveComment,
+    deleteReplyHandler,
+    detailsOfActiveComment,
+    fromSideBar,
+    logOutUser,
+    fromCommentDetail,
+}) => {
     if (!visibility) return;
 
     const modalRef = useRef(null);
@@ -116,6 +129,7 @@ const MoreOptionMenuModal = ({ visibility, handleOutsideClick, buttonPosition, i
                     detailsOfActiveComment={detailsOfActiveComment}
                     fromSideBar={fromSideBar}
                     logOutUser={logOutUser}
+                    fromCommentDetail={fromCommentDetail}
                 />
             </Suspense>
         </div>

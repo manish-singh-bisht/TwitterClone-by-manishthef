@@ -140,11 +140,11 @@ exports.likeAndUnlikePost = async (req, res, next) => {
 exports.deletePost = async (req, res, next) => {
     try {
         const post = await Posts.findById(req.params.id);
-        const user = await Users.findById(req.user._id);
+
         if (!post) {
             return next(new ErrorHandler("Post not found", 404));
         }
-        await recursivePostDelete(post, user);
+        await recursivePostDelete(post);
 
         return res.status(200).json({
             success: true,
@@ -154,14 +154,15 @@ exports.deletePost = async (req, res, next) => {
         next(new ErrorHandler(error.message, 500));
     }
 };
-const recursivePostDelete = async (post, user) => {
+const recursivePostDelete = async (post) => {
     // Delete children recursively
     for (const childId of post.children) {
         const childTweet = await Posts.findById(childId);
         if (childTweet) {
-            await recursivePostDelete(childTweet, user);
+            await recursivePostDelete(childTweet);
         }
     }
+    const user = await Users.findById({ _id: post.owner });
     // Remove the post from its parent's children array
     if (post.parent) {
         const parentTweet = await Posts.findOne({ threadIdForTweetInThread: post.parent });

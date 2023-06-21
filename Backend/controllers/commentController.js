@@ -90,9 +90,8 @@ exports.deleteComment = async (req, res, next) => {
     try {
         const postId = req.params.post;
         const commentId = req.params.comment;
-        const user = await Users.findById(req.user._id);
 
-        const post = await Posts.findById(postId).populate("comments");
+        const post = await Posts.findById(postId);
 
         if (!post) {
             return next(new ErrorHandler("Post not found", 404));
@@ -105,7 +104,7 @@ exports.deleteComment = async (req, res, next) => {
         }
 
         // Delete the comment and its children recursively
-        await deleteCommentRecursive(commentToDelete, user);
+        await deleteCommentRecursive(commentToDelete);
 
         // Remove the comment from the post's comments array
         post.comments = post.comments.filter((comment) => comment._id.toString() !== commentId);
@@ -120,15 +119,15 @@ exports.deleteComment = async (req, res, next) => {
     }
 };
 
-const deleteCommentRecursive = async (comment, user) => {
+const deleteCommentRecursive = async (comment) => {
     // Delete children recursively
     for (const childId of comment.children) {
         const childComment = await Comments.findById(childId);
         if (childComment) {
-            await deleteCommentRecursive(childComment, user);
+            await deleteCommentRecursive(childComment);
         }
     }
-
+    const user = await Users.findById({ _id: comment.owner });
     // Remove the comment from its parent's children array
     if (comment.parent) {
         const parentComment = await Comments.findById(comment.parent);

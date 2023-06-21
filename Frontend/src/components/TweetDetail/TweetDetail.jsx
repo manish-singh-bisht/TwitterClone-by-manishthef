@@ -124,7 +124,7 @@ const TweetDetail = () => {
             }
         }
         setCommentt(renderedComment);
-    }, [isLiked, stateComment.comment, stateCommentDelete.message]);
+    }, [isLiked, stateComment.comment, stateCommentDelete]);
 
     useEffect(() => {
         fetchData();

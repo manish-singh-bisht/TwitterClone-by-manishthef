@@ -14,7 +14,7 @@ import axios from "axios";
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
-    const { state, stateComment } = useGlobalContext();
+    const { state } = useGlobalContext();
 
     //Modal for more option
     const [visibility, setVisibility] = useState(false);
@@ -110,7 +110,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
         await axios.get(`http://localhost:4000/api/v1/post/comment/${commentId}`, { withCredentials: true });
     };
 
-    const photos = ["https://source.unsplash.com/random/1200x600", "https://source.unsplash.com/random/900x900"];
+    const photos = [];
     //Grid layout for different numbers of image,used below
     let gridClass = "";
     switch (photos.length) {
