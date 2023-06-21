@@ -122,7 +122,7 @@ const CommentDetail = () => {
                             ACTIONS={ACTIONS}
                             mentions={post.mentions}
                         />
-                        {/* <div className="absolute left-[2.37rem] top-[4.2rem] h-[calc(100%-3.85rem)]   w-fit border-2"></div> */}
+                        <div className="absolute left-[2.37rem] top-[4.2rem] h-[calc(100%-3.85rem)]   w-fit border-2"></div>
                     </div>
                     {/* Parent Comments */}
                     {parentCollection &&
@@ -154,7 +154,7 @@ const CommentDetail = () => {
                                         handler={CommentLikeUnlike}
                                         mentions={item.mentions}
                                     />
-                                    {/* <div className="absolute left-[2.37rem] top-[4.2rem]  h-[calc(100%-3.8rem)] border-2"></div> */}
+                                    <div className="absolute left-[2.37rem] top-[4.2rem]  h-[calc(100%-3.8rem)] border-2"></div>
                                 </div>
                             );
                         })}

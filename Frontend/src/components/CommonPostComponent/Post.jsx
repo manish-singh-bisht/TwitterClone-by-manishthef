@@ -160,7 +160,23 @@ const Post = ({
             <div onClick={handleClick} className="relative  m-2 flex cursor-pointer gap-2 hover:bg-gray-50">
                 <Avatar profile={profile} />
                 {fromHome && threadChildren && threadChildren.length > 0 && <div className="absolute left-[1.8rem] top-[3.65rem] h-full min-h-[5rem] w-fit border-2"></div>}
-                {!fromHome && commentsChildren.length > 0 && <div className="absolute   top-[3.66rem] left-[1.8rem]  h-[103%] border-2 "></div>}
+                {!fromHome &&
+                    comment &&
+                    comment.length > 0 &&
+                    comment.map((item) => {
+                        return (
+                            <div key={item._id}>
+                                {item &&
+                                    item.owner._id !== item.post.owner &&
+                                    item.children.length > 0 &&
+                                    item.children.map((item2) => {
+                                        if ((fromCommentDetail && item2.owner._id === item.parent.owner && item2.owner._id !== item.owner._id) || (fromTweetDetail && item2.owner._id === item.post.owner)) {
+                                            return <div key={item2._id} className="absolute   top-[3.66rem] left-[1.8rem]  h-[103%] border-2 "></div>;
+                                        }
+                                    })}
+                            </div>
+                        );
+                    })}
 
                 <div className="relative mr-2 flex w-[87%]  flex-col gap-2  ">
                     <div className="flex ">
@@ -252,16 +268,18 @@ const Post = ({
             {comment &&
                 comment.length > 0 &&
                 comment.map((item) => {
+                    console.log(item);
                     return (
-                        <div key={item._id} className="relative -mt-1">
+                        <div key={item._id} className="relative -mt-1 ">
                             {item &&
+                                item.owner._id !== item.post.owner &&
                                 item.children.length > 0 &&
                                 item.children.map((item2) => {
                                     const isLastElement = item.children[item.children.length - 1];
-                                    if ((fromCommentDetail && item2.owner._id === item.parent.owner) || (fromTweetDetail && item2.owner._id === item.post.owner)) {
+                                    if ((fromCommentDetail && item2.owner._id === item.parent.owner && item2.owner._id !== item.owner._id) || (fromTweetDetail && item2.owner._id === item.post.owner)) {
                                         return (
                                             <div key={item2._id} className="relative ">
-                                                {((!showReplies && item2 !== isLastElement) || showReplies) && <div className="absolute left-[2.3rem] top-[4.3rem] h-[86%] border-2 "></div>}
+                                                {((!showReplies && item2 !== isLastElement) || showReplies) && <div className="absolute left-[2.3rem] top-[4.3rem] h-[86%] border-2 border-gray-900 "></div>}
 
                                                 <Reply
                                                     reply={item2}
