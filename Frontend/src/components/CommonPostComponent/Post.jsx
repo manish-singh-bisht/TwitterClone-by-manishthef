@@ -9,6 +9,7 @@ import LikeUnlikePost from "./LikeUnlikePost";
 import axios from "axios";
 import Reply from "../comment/Reply";
 import Loader from "../Loader/Loader";
+import isTaxID from "validator/lib/isTaxID";
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const Post = ({
@@ -33,10 +34,11 @@ const Post = ({
     commentsChildren,
     activeHandler,
     isParent,
+    isThread: passedIsThread,
     fromHome,
-    comment,
+    comment, //this is child comments of the active comment and is being passed from commentCard by commentDetail component
     threadChildren,
-    mentions, //this is child comments of the active comment and is being passed from commentCard by commentDetail component
+    mentions,
 }) => {
     const formattedTime = usePostTime(Date.parse(timeCreated));
 
@@ -129,11 +131,23 @@ const Post = ({
     //For navigating to TweetDetail/CommentDetail with data
     const navigate = useNavigate();
     const commentId = postId;
+
     const newUrl = !isComment ? `/${ownerName}/${postId}` : `/${ownerName}/comment/${commentId}`;
 
-    const handleClick = () => {
+    const handleClick = (isThread = passedIsThread) => {
+        const stateObject = {
+            tweet: tweet,
+            ownerName: ownerName,
+            handle: handle,
+            timeCreated: timeCreated,
+            ownerId: ownerId,
+            profile: profile,
+            postImage: postImage,
+            mentions: mentions,
+            isThread: isThread,
+        };
         isParent && activeHandler(commentId);
-        navigate(newUrl, { replace: true, state: { tweet, ownerName, handle, timeCreated, ownerId, profile, postImage, mentions } });
+        navigate(newUrl, { replace: true, state: stateObject });
     };
     const replyHandler = async (childCommentId) => {
         const { data } = await axios.get(`http://localhost:4000/api/v1/comment/reply/${childCommentId}`, { withCredentials: true });
@@ -157,7 +171,15 @@ const Post = ({
 
     return (
         <div className={` scroll-mt-32  hover:bg-gray-50`} id={postId}>
-            <div onClick={handleClick} className="relative  m-2 flex cursor-pointer gap-2 hover:bg-gray-50">
+            <div
+                onClick={() => {
+                    if (!passedIsThread) {
+                        handleClick(false);
+                    } else {
+                        handleClick();
+                    }
+                }}
+                className="relative  m-2 flex cursor-pointer gap-2 hover:bg-gray-50">
                 <Avatar profile={profile} />
                 {fromHome && threadChildren && threadChildren.length > 0 && <div className="absolute left-[1.8rem] top-[3.65rem] h-full min-h-[5rem] w-fit border-2"></div>}
                 {!fromHome &&
@@ -178,7 +200,16 @@ const Post = ({
                         );
                     })}
 
-                <div className="relative mr-2 flex w-[87%]  flex-col gap-2  ">
+                <div
+                    className="relative mr-2 flex w-[87%]  flex-col gap-2  "
+                    onClick={
+                        fromHome && threadChildren && threadChildren.length > 0
+                            ? (e) => {
+                                  e.stopPropagation();
+                                  handleClick(true);
+                              }
+                            : null
+                    }>
                     <div className="flex ">
                         <Link
                             to={`/user/${ownerId}`}
@@ -246,7 +277,12 @@ const Post = ({
                 </div>
             </div>
             {fromHome && threadChildren && threadChildren.length > 0 && (
-                <button className="flex h-12 w-full  items-center gap-2  hover:bg-gray-200">
+                <button
+                    className="flex h-12 w-full  items-center gap-2  hover:bg-gray-200"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleClick(true);
+                    }}>
                     <div className="">
                         {profile ? (
                             <div className="m-1 h-[2.6rem] w-[2.6rem] items-center justify-center rounded-full   bg-gray-400">
@@ -268,7 +304,6 @@ const Post = ({
             {comment &&
                 comment.length > 0 &&
                 comment.map((item) => {
-                    console.log(item);
                     return (
                         <div key={item._id} className="relative -mt-1 ">
                             {item &&

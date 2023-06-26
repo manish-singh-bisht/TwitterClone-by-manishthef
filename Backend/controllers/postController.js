@@ -204,3 +204,58 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
         next(new ErrorHandler(error.message, 500));
     }
 };
+exports.findThread = async (req, res, next) => {
+    try {
+        const thread = await fetchThread(req.params.id, [], req.user.handle);
+
+        res.status(200).json({ message: "success", thread });
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};
+async function fetchThread(postId, thread, userHandle) {
+    const post = await Posts.findById(postId)
+        .populate("comments")
+        .populate({
+            path: "likes",
+            select: "_id handle name profile",
+        })
+        .populate({ path: "owner", select: "_id handle profile name" })
+        .populate({
+            path: "comments",
+            populate: [
+                { path: "owner", select: "name handle profile _id" },
+                { path: "post" },
+                { path: "likes", select: "_id" },
+                {
+                    path: "children",
+                    populate: [
+                        { path: "owner", select: "name handle profile _id" },
+                        { path: "likes", select: "_id" },
+                        { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
+                    ],
+                },
+            ],
+        });
+
+    if (!post) {
+        return thread;
+    }
+    const mentionsHandleCollection = [];
+    post.mentions.forEach((mention) => {
+        if (mention !== userHandle) {
+            mentionsHandleCollection.push(mention);
+        }
+    });
+    if (post.owner.handle !== userHandle) {
+        mentionsHandleCollection.push(post.owner.handle);
+    }
+    const uniqueMentionHandleCollection = [...new Set(mentionsHandleCollection)];
+    thread.push({ post, uniqueMentionHandleCollection: uniqueMentionHandleCollection });
+
+    for (const child of post.children) {
+        await fetchThread(child, thread, userHandle);
+    }
+
+    return thread;
+}

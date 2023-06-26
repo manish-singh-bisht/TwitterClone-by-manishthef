@@ -60,6 +60,7 @@ const CommentDetail = () => {
                 timeCreated: post.createdAt,
                 ownerImage: post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null,
                 mentions: post.mentions,
+                isThread: post.children?.length > 0 ? true : false,
             },
         });
     }
@@ -121,6 +122,7 @@ const CommentDetail = () => {
                             state={state}
                             ACTIONS={ACTIONS}
                             mentions={post.mentions}
+                            isThread={post.children?.length > 0 ? true : false}
                         />
                         <div className="absolute left-[2.37rem] top-[4.2rem] h-[calc(100%-3.85rem)]   w-fit border-2"></div>
                     </div>

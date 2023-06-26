@@ -65,7 +65,7 @@ const TweetDetail = () => {
 
     //using data that was sent in the state  from Post
     const location = useLocation();
-    const { tweet, ownerName, ownerId, handle, timeCreated, ownerImage: profile, postImage, isDelete, isAccount, mentions } = location.state;
+    const { tweet, ownerName, ownerId, handle, timeCreated, ownerImage: profile, postImage, mentions, isThread } = location.state;
 
     const formattedTime = usePostTimeInTweetDetail(Date.parse(timeCreated));
 
@@ -79,13 +79,22 @@ const TweetDetail = () => {
     const [commentt, setCommentt] = useState();
     const [mentionHandleCollection, setMentionHandleCollection] = useState([]);
 
+    const [thread, setThread] = useState([]);
     const fetchData = useCallback(async () => {
         //gets the updated data of likes, when user likes at homepage and then comes to detailpage,the user gets the updated data
-        const { data } = await axios.get(`http://localhost:4000/api/v1/${postId}`, { withCredentials: true });
+        let value;
+        if (isThread) {
+            const { data } = await axios.get(`http://localhost:4000/api/v1/${postId}/thread`, { withCredentials: true });
+            setThread(data.thread.slice(1));
+            value = data.thread[0];
+        } else {
+            const { data } = await axios.get(`http://localhost:4000/api/v1/${postId}`, { withCredentials: true });
+            value = data;
+        }
 
-        setMentionHandleCollection(data.uniqueMentionHandleCollection);
+        setMentionHandleCollection(value.uniqueMentionHandleCollection);
         let like = [];
-        like = data.post.likes;
+        like = value.post.likes;
         setIsLikedBy(like);
         setLiked(like.length);
 
@@ -95,7 +104,7 @@ const TweetDetail = () => {
                 setIsLiked(true);
             }
         });
-        setComments(data.post.comments);
+        setComments(value.post.comments);
 
         // Regex pattern to find mentions and make them blue,in the display after it is posted
         const mentionRegex = /(@)(\w+)/g;
@@ -124,7 +133,7 @@ const TweetDetail = () => {
             }
         }
         setCommentt(renderedComment);
-    }, [isLiked, stateComment.comment, stateCommentDelete]);
+    }, [isLiked, stateComment.comment, stateCommentDelete, postId]);
 
     useEffect(() => {
         fetchData();
@@ -172,7 +181,7 @@ const TweetDetail = () => {
                             <LeftArrow className="h-[65%] w-[65%] " />
                         </div>
                     </div>
-                    <div className="text-[1.6rem] font-bold">Tweet</div>
+                    <div className="text-[1.6rem] font-bold">{thread.length > 0 ? "Thread" : "Tweet"}</div>
                 </div>
                 <div className=" m-2">
                     <div className="flex gap-2">
@@ -266,10 +275,11 @@ const TweetDetail = () => {
                         </button>
                     </div>
                 </div>
-                <div className="mx-4 mt-4  border-t-[0.01rem] opacity-80"></div>{" "}
+                <div className="mx-4 mt-4  border-t-[0.01rem] opacity-80"></div>
+
                 <Suspense fallback={<Loader />}>
                     <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} handleOutsideClick={handleOutsideClick} />
-                    <CommentCard comments={comments} postId={postId} fromTweetDetail={true} mentionHandleCollection={mentionHandleCollection} />
+                    {<CommentCard comments={comments} postId={postId} fromTweetDetail={true} mentionHandleCollection={mentionHandleCollection} isThread={isThread} thread={thread} />}
 
                     <MoreOptionMenuModal visibility={visibility} handleOutsideClick={handleOutsideClickMoreOption} buttonPosition={buttonPosition} infoToMoreOptionModal={infoToMoreOptionModal} onCloseMoreOptionModal={onCloseMoreOptionModal} />
                 </Suspense>
