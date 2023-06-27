@@ -5,6 +5,8 @@ import DeleteComment from "../../context/Actions/DeleteComment";
 
 import DeleteLogoutModal from "./DeleteLogoutModal";
 import Loader from "../Loader/Loader";
+import DeletePost from "../../context/Actions/DeletePost";
+import { useNavigate } from "react-router-dom";
 
 const MoreOptionMenuModal = ({
     visibility,
@@ -19,12 +21,14 @@ const MoreOptionMenuModal = ({
     fromSideBar,
     logOutUser,
     fromCommentDetail,
+    fromHome,
+    fromTweetDetail,
 }) => {
     if (!visibility) return;
 
     const modalRef = useRef(null);
-    const { state, dispatchCommentDelete, ACTIONS } = useGlobalContext();
-
+    const { state, dispatchCommentDelete, ACTIONS, setPosts, dispatchTweetDelete } = useGlobalContext();
+    const navigate = useNavigate();
     const [visibilityDeleteModal, setVisibilityDeleteModal] = useState(false);
     const handleOutsideClickDeleteModal = (event) => {
         if (event.target === event.currentTarget) {
@@ -68,7 +72,18 @@ const MoreOptionMenuModal = ({
     const deleteHandler = async () => {
         const postID = infoToMoreOptionModal.postID;
         const commentID = infoToMoreOptionModal.commentID;
-        await DeleteComment({ dispatchCommentDelete, ACTIONS, postID, commentID });
+
+        if (fromHome) {
+            const post = await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
+            setPosts((prev) => prev.filter((item) => item._id !== post._id));
+        } else if (fromTweetDetail && commentID === undefined) {
+            const post = await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
+            navigate(`/`, {
+                replace: true,
+            });
+        } else {
+            await DeleteComment({ dispatchCommentDelete, ACTIONS, postID, commentID });
+        }
     };
 
     return (

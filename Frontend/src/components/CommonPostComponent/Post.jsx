@@ -386,6 +386,8 @@ const Post = ({
                     infoToMoreOptionModal={infoToMoreOptionModal}
                     onCloseMoreOptionModal={onCloseMoreOptionModal}
                     fromCommentDetail={fromCommentDetail}
+                    fromHome={fromHome}
+                    fromTweetDetail={fromTweetDetail}
                 />
             </Suspense>
         </div>

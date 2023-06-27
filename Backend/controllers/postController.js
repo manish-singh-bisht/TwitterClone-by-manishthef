@@ -149,6 +149,7 @@ exports.deletePost = async (req, res, next) => {
         return res.status(200).json({
             success: true,
             message: "tweet deleted",
+            post,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
@@ -175,10 +176,40 @@ const recursivePostDelete = async (post) => {
     user.posts = user.posts.filter((item) => item._id.toString() !== post._id.toString());
     await user.save();
 
+    // Delete comments and their children recursively
+    for (const commentId of post.comments) {
+        await deleteCommentRecursive(commentId);
+    }
     //deleting all comments in the post
     await Comments.deleteMany({ post: post._id });
 
     await post.deleteOne({ _id: post._id });
+};
+
+const deleteCommentRecursive = async (commentId) => {
+    const comment = await Comments.findById(commentId);
+    if (comment) {
+        // Delete children recursively
+        for (const childId of comment.children) {
+            const childComment = await Comments.findById(childId);
+            if (childComment) {
+                await deleteCommentRecursive(childComment);
+            }
+        }
+        const user = await Users.findById({ _id: comment.owner });
+        // Remove the comment from its parent's children array
+        if (comment.parent) {
+            const parentComment = await Comments.findById(comment.parent);
+            if (parentComment) {
+                parentComment.children = parentComment.children.filter((childId) => childId.toString() !== comment._id.toString());
+                await parentComment.save();
+            }
+        }
+
+        // Remove the comment from the user's comments array
+        user.comments = user.comments.filter((item) => item._id.toString() !== comment._id.toString());
+        await user.save();
+    }
 };
 
 exports.getPostofFollowingAndMe = async (req, res, next) => {
@@ -187,7 +218,7 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
 
         //Line below will bring all posts of the users that are being followed by the logged in user.
         const posts = await Posts.find({ owner: { $in: [...user.following, user._id] }, parent: null })
-            .populate("comments")
+
             .populate({
                 path: "owner",
                 select: "handle name profile",
@@ -204,6 +235,7 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
         next(new ErrorHandler(error.message, 500));
     }
 };
+
 exports.findThread = async (req, res, next) => {
     try {
         const thread = await fetchThread(req.params.id, [], req.user.handle);

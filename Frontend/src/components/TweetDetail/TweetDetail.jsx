@@ -281,7 +281,14 @@ const TweetDetail = () => {
                     <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} handleOutsideClick={handleOutsideClick} />
                     {<CommentCard comments={comments} postId={postId} fromTweetDetail={true} mentionHandleCollection={mentionHandleCollection} isThread={isThread} thread={thread} />}
 
-                    <MoreOptionMenuModal visibility={visibility} handleOutsideClick={handleOutsideClickMoreOption} buttonPosition={buttonPosition} infoToMoreOptionModal={infoToMoreOptionModal} onCloseMoreOptionModal={onCloseMoreOptionModal} />
+                    <MoreOptionMenuModal
+                        visibility={visibility}
+                        handleOutsideClick={handleOutsideClickMoreOption}
+                        buttonPosition={buttonPosition}
+                        infoToMoreOptionModal={infoToMoreOptionModal}
+                        onCloseMoreOptionModal={onCloseMoreOptionModal}
+                        fromTweetDetail={true}
+                    />
                 </Suspense>
             </div>
         </main>

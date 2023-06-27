@@ -107,7 +107,7 @@ const CommentDetail = () => {
                         <Post
                             key={post._id}
                             isComment={false}
-                            fromCommentDetail={true}
+                            fromTweetDetail={true}
                             postId={post._id}
                             tweet={post.tweet}
                             likes={post.likes}
