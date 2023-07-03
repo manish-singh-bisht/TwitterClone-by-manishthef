@@ -193,6 +193,10 @@ const recursivePostDelete = async (post) => {
     //deleting all comments in the post
     await Comments.deleteMany({ post: post._id });
 
+    //deleting images from cloud
+    for (const image of post.images) {
+        await cloudinary.v2.uploader.destroy(image.public_id);
+    }
     await post.deleteOne({ _id: post._id });
 };
 
@@ -214,6 +218,11 @@ const deleteCommentRecursive = async (commentId) => {
                 parentComment.children = parentComment.children.filter((childId) => childId.toString() !== comment._id.toString());
                 await parentComment.save();
             }
+        }
+
+        //deleting images from cloud
+        for (const image of comment.images) {
+            await cloudinary.v2.uploader.destroy(image.public_id);
         }
 
         // Remove the comment from the user's comments array

@@ -150,6 +150,10 @@ const deleteCommentRecursive = async (comment) => {
     user.comments = user.comments.filter((item) => item._id.toString() !== comment._id.toString());
     await user.save();
 
+    //deleting images from cloud
+    for (const image of comment.images) {
+        await cloudinary.v2.uploader.destroy(image.public_id);
+    }
     // Delete the comment itself
     await Comments.deleteOne({ _id: comment._id });
 };
