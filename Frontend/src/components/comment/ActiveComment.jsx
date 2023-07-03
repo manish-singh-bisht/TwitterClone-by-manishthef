@@ -50,6 +50,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
     const [comment, setComment] = useState();
     const [commentt, setCommentt] = useState();
     const [mentionHandleCollection, setMentionHandleCollection] = useState([]);
+    const [photos, setPhotos] = useState();
 
     const fetchData = useCallback(async () => {
         const { data } = await axios.get(`http://localhost:4000/api/v1/comment/${commentId}`, { withCredentials: true });
@@ -59,6 +60,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
         setIsLikedBy(like);
         setLiked(like.length);
 
+        setPhotos(data.comment.images);
         //For keeping the heart red or unred even after refreshing the page
         like.forEach((item) => {
             if (item._id === state.user._id) {
@@ -110,10 +112,9 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
         await axios.get(`http://localhost:4000/api/v1/post/comment/${commentId}`, { withCredentials: true });
     };
 
-    const photos = [];
     //Grid layout for different numbers of image,used below
     let gridClass = "";
-    switch (photos.length) {
+    switch (photos?.length) {
         case 0:
             gridClass = "";
             break;
@@ -170,8 +171,8 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                         </div>
                         <div className="m-2">
                             <pre className={` mb-3 max-w-[98%] whitespace-pre-wrap break-words text-2xl`}>{commentt}</pre>
-                            <div className={`m-[-0.25rem] grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
-                                {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo} index={index} />)}
+                            <div className={`m-[-0.25rem] grid max-w-[98%]  ${gridClass}  ${photos?.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos?.length > 0 ? `border-[0.05rem]` : ``}`}>
+                                {photos?.length > 0 && photos?.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo.url} index={index} />)}
                             </div>
                         </div>
                     </div>

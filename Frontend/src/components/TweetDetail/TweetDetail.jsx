@@ -147,7 +147,7 @@ const TweetDetail = () => {
         await LikeUnlike({ dispatch, ACTIONS, postId });
     };
 
-    const photos = ["https://source.unsplash.com/random/1200x600", "https://source.unsplash.com/random/900x900"];
+    const photos = postImage ? postImage : [];
     //Grid layout for different numbers of image,used below
     let gridClass = "";
     switch (photos.length) {
@@ -215,7 +215,7 @@ const TweetDetail = () => {
                     <div className="m-2">
                         <pre className={` mb-3 max-w-[98%] whitespace-pre-wrap break-words text-2xl`}>{commentt}</pre>
                         <div className={`m-[-0.25rem] grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
-                            {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo} index={index} />)}
+                            {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo.url} index={index} />)}
                         </div>
                     </div>
                 </div>

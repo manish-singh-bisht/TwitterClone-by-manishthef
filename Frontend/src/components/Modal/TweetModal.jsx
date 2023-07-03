@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import Avatar from "../Avatar/Avatar";
 import PostTweet from "../../context/Actions/PostTweet";
+import { MediaUploadPanelLong } from "../CommonPostComponent/MediaUploadPanel";
 
 const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, handleIsTweetPressInTweetModalTrue, handleOutsideClick }) => {
     if (!visibility) return;
@@ -79,7 +80,7 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
         }
 
         for (const tweet of tweets) {
-            const data = await PostTweet({ dispatchPostTweet, ACTIONS, tweet: tweet.text, parent: tweet.parent, mentions: tweet.mentions, threadIdForTweetInThread: tweet.id });
+            const data = await PostTweet({ dispatchPostTweet, ACTIONS, tweet: tweet.text, parent: tweet.parent, mentions: tweet.mentions, threadIdForTweetInThread: tweet.id, images: [] });
 
             if (tweets.length > 1) {
                 flag === 0 && setPosts((prev) => (data.parent === null ? [{ ...data, children: [tweets[1].id] }, ...prev] : [...prev]));
@@ -159,31 +160,37 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
                     </div>
                 </div>
                 <div className=" ml-[4.6rem] mt-3 w-[85%] border-[0.01rem] bg-gray-300"></div>
-                <div className={` my-3 mx-5 flex justify-end gap-2 `}>
-                    {tweets.every((tweet) => {
-                        return tweet.text.length > 0;
-                    }) && (
-                        <div className="flex gap-1">
-                            <div className={`  h-[2.3rem] w-fit `}>{<CircularRadialProgressForTweetTextLimit tweetCount={singleTweet.length} maxCount={280} />}</div>
-                            <div className="min-h-full border-l-2"></div>
-                            <button className=" h-9 w-9  rounded-full border-2 border-gray-200 font-bold text-blue-500 hover:bg-blue-100" onClick={addTweet}>
-                                +
+                <div className="flex h-fit items-center justify-between ">
+                    <div className="ml-16">
+                        <MediaUploadPanelLong fromTweetModal={true} />
+                    </div>
+                    <div className={` my-3 mx-5 flex justify-end gap-2 `}>
+                        {tweets.every((tweet) => {
+                            return tweet.text.length > 0;
+                        }) && (
+                            <div className="flex gap-1">
+                                <div className={`  h-[2.3rem] w-fit `}>{<CircularRadialProgressForTweetTextLimit tweetCount={singleTweet.length} maxCount={280} />}</div>
+                                <div className="min-h-full border-l-2"></div>
+                                <button className=" h-9 w-9  rounded-full border-2 border-gray-200 font-bold text-blue-500 hover:bg-blue-100" onClick={addTweet}>
+                                    +
+                                </button>
+                            </div>
+                        )}
+
+                        {tweets.every((tweet) => {
+                            return tweet.text.length > 0 && tweet.text.length <= 280;
+                        }) ? (
+                            <button
+                                className=" w-fit rounded-3xl bg-blue-500  px-3 py-[0.2rem] font-bold text-white"
+                                onClick={() => {
+                                    handleTweet();
+                                }}>
+                                {initialTweetFromOtherPartsOfAppPresent ? "Tweet" : isThreadStarter ? "Tweet" : "Tweet all"}
                             </button>
-                        </div>
-                    )}
-                    {tweets.every((tweet) => {
-                        return tweet.text.length > 0 && tweet.text.length <= 280;
-                    }) ? (
-                        <button
-                            className=" w-fit rounded-3xl bg-blue-500  px-3 py-[0.2rem] font-bold text-white"
-                            onClick={() => {
-                                handleTweet();
-                            }}>
-                            {initialTweetFromOtherPartsOfAppPresent ? "Tweet" : isThreadStarter ? "Tweet" : "Tweet all"}
-                        </button>
-                    ) : (
-                        <button className="w-fit rounded-3xl bg-gray-500  px-3 py-[0.2rem] font-bold text-white">{initialTweetFromOtherPartsOfAppPresent ? "Tweet" : isThreadStarter ? "Tweet" : "Tweet all"}</button>
-                    )}
+                        ) : (
+                            <button className="w-fit rounded-3xl bg-gray-500  px-3 py-[0.2rem] font-bold text-white">{initialTweetFromOtherPartsOfAppPresent ? "Tweet" : isThreadStarter ? "Tweet" : "Tweet all"}</button>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

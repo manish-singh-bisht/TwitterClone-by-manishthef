@@ -45,13 +45,13 @@ const Home = () => {
                             {posts && posts.length > 0 ? (
                                 posts.map((post) => {
                                     const ownerImage = post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null;
-
+                                    const imageInPost = post.images ? post.images : null;
                                     return (
                                         <Post
                                             key={post._id}
                                             postId={post._id}
                                             tweet={post.tweet}
-                                            postImage={post.images.url}
+                                            postImage={imageInPost}
                                             likes={post.likes}
                                             comments={post.comments}
                                             ownerName={post.owner.name}

@@ -29,11 +29,10 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
         setVisibility(false);
         document.body.style.overflow = "unset";
     };
-    const photos = ["https://source.unsplash.com/random/1200x600", "https://source.unsplash.com/random/900x900"];
 
     //Grid layout for different numbers of image,used below
     let gridClass = "";
-    switch (photos.length) {
+    switch (reply.images.length) {
         case 0:
             gridClass = "";
             break;
@@ -123,8 +122,8 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
 
                             <div className="relative">
                                 <pre className={`  max-w-[98%] whitespace-pre-wrap break-words  `}>{commentt}</pre>
-                                <div className={`grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
-                                    {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo} index={index} />)}
+                                <div className={`grid max-w-[98%]  ${gridClass}  ${reply.images.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${reply.images.length > 0 ? `border-[0.05rem]` : ``}`}>
+                                    {reply.images.length > 0 && reply.images.map((photo, index) => <PhotoGallery key={index} photos={reply.images} photo={photo.url} index={index} />)}
                                 </div>
                             </div>
                             {/* <div className="absolute   left-[1.8rem] top-[calc(-100%-0.5rem)] h-[calc(100%+0.5rem)] border-[0.09rem]"></div> */}

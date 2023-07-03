@@ -2,10 +2,19 @@ const Comments = require("../models/commentModel");
 const Posts = require("../models/postModel");
 const Users = require("../models/userModel");
 const ErrorHandler = require("../utils/ErrorHandler");
-
+const cloudinary = require("cloudinary");
 //adding comment on a post
 exports.postComment = async (req, res, next) => {
     try {
+        const images = req.body.images;
+
+        const uploadedImages = await Promise.all(
+            images.map((image) =>
+                cloudinary.v2.uploader.upload(image, {
+                    folder: "twitterClone",
+                })
+            )
+        );
         const post = await Posts.findById(req.params.id).populate("comments");
         const user = await Users.findById(req.user._id);
         if (!post) {
@@ -13,7 +22,7 @@ exports.postComment = async (req, res, next) => {
         }
         const newData = {
             comment: req.body.comment,
-            images: req.body.images,
+            images: uploadedImages,
             owner: req.user._id,
             post: req.params.id,
             mentions: req.body.mentions,

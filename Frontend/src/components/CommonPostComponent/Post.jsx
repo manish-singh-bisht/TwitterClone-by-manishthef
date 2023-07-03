@@ -9,7 +9,6 @@ import LikeUnlikePost from "./LikeUnlikePost";
 import axios from "axios";
 import Reply from "../comment/Reply";
 import Loader from "../Loader/Loader";
-import isTaxID from "validator/lib/isTaxID";
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const Post = ({
@@ -104,7 +103,7 @@ const Post = ({
         setCommentt(renderedComment);
     }, [location]);
 
-    const photos = [];
+    const photos = postImage ? postImage : [];
 
     //Grid layout for different numbers of image,used below
     let gridClass = "";
@@ -170,7 +169,7 @@ const Post = ({
     };
 
     return (
-        <div className={` scroll-mt-32  hover:bg-gray-50`} id={postId}>
+        <div className={` scroll-mt-32  hover:bg-gray-50`} id={postId} key={postId}>
             <div
                 onClick={() => {
                     if (!passedIsThread) {
@@ -243,7 +242,7 @@ const Post = ({
                     </div>
                     <pre className={`  max-w-[98%] whitespace-pre-wrap break-words  `}>{commentt}</pre>
                     <div className={`grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
-                        {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo} index={index} />)}
+                        {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo.url ? photo.url : photo} index={index} mark={false} />)}
                     </div>
                 </div>
             </div>
@@ -314,7 +313,7 @@ const Post = ({
                                     if ((fromCommentDetail && item2.owner._id === item.parent.owner && item2.owner._id !== item.owner._id) || (fromTweetDetail && item2.owner._id === item.post.owner)) {
                                         return (
                                             <div key={item2._id} className="relative ">
-                                                {((!showReplies && item2 !== isLastElement) || showReplies) && <div className="absolute left-[2.3rem] top-[4.3rem] h-[86%] border-2 border-gray-900 "></div>}
+                                                {((!showReplies && item2 !== isLastElement) || showReplies) && <div className="absolute left-[2.3rem] top-[4.3rem] h-[86%] border-2  "></div>}
 
                                                 <Reply
                                                     reply={item2}

@@ -2,9 +2,19 @@ const Comments = require("../models/commentModel");
 const Posts = require("../models/postModel");
 const Users = require("../models/userModel");
 const ErrorHandler = require("../utils/ErrorHandler");
+const cloudinary = require("cloudinary");
 
 exports.createPost = async (req, res, next) => {
     try {
+        const images = req.body.images;
+
+        const uploadedImages = await Promise.all(
+            images.map((image) =>
+                cloudinary.v2.uploader.upload(image, {
+                    folder: "twitterClone",
+                })
+            )
+        );
         const user = await Users.findById({ _id: req.user._id });
 
         if (!user) {
@@ -12,7 +22,7 @@ exports.createPost = async (req, res, next) => {
         }
         const newData = {
             tweet: req.body.tweet,
-            images: req.body.images,
+            images: uploadedImages,
             owner: req.user._id,
             mentions: req.body.mentions,
             parent: req.body.parent,

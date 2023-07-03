@@ -4,10 +4,12 @@ import EditorInHome from "../Editors/EditorInHome";
 import { CircularRadialProgressForTweetTextLimit, Globe } from "../SVGs/SVGs";
 import { v4 as uuidv4 } from "uuid";
 import Loader from "../Loader/Loader";
+import { MediaUploadPanelLong } from "../CommonPostComponent/MediaUploadPanel";
 
 const TweetModal = React.lazy(() => import("../Modal/TweetModal"));
 
 const TweetBoxInHome = ({ profile }) => {
+    const [selectedImages, setSelectedImages] = useState([]);
     const [showGlobe, setShowGlobe] = useState(false);
     const [singleTweet, setSingleTweet] = useState({ id: uuidv4(), text: "" });
     const [isTweetBoxOpen, setIsTweetBoxOpen] = useState(false);
@@ -48,6 +50,10 @@ const TweetBoxInHome = ({ profile }) => {
     const handleIsTweetPressInTweetModalTrue = () => {
         setIsTweetPressInTweetModal(true);
     };
+    const deleteImages = (image) => {
+        setSelectedImages((prev) => prev.filter((item) => item !== image));
+    };
+
     return (
         <>
             <div className="  min-h-[7.5rem] border-b">
@@ -64,6 +70,9 @@ const TweetBoxInHome = ({ profile }) => {
                         handleIsTweetPressFalse={handleIsTweetPressFalse}
                         isTweetPressInTweetModal={isTweetPressInTweetModal}
                         handleIsTweetPressInTweetModalFalse={handleIsTweetPressInTweetModalFalse}
+                        deleteImages={deleteImages}
+                        selectedImages={selectedImages}
+                        setSelectedImages={setSelectedImages}
                     />
                 </div>
                 {showGlobe && (
@@ -77,29 +86,33 @@ const TweetBoxInHome = ({ profile }) => {
                         <div className=" ml-[4.6rem] mt-3 w-[85%] border-[0.01rem] bg-gray-300"></div>
                     </>
                 )}
-
-                <div className={` mx-5 mt-3 mb-2 flex justify-end gap-2 `}>
-                    {singleTweet.text.length > 0 && (
-                        <div className="flex gap-1">
-                            <div className={`  h-[2.3rem] w-fit `}>{<CircularRadialProgressForTweetTextLimit tweetCount={singleTweet.text.length} maxCount={280} />}</div>
-                            <div className="min-h-full border-l-2"></div>
-                            <button
-                                className=" h-9 w-9  rounded-full border-2 border-gray-200 font-bold text-blue-500 hover:bg-blue-100"
-                                onClick={() => {
-                                    setIsTweetBoxOpen(true);
-                                    document.body.style.overflow = "hidden"; //makes the back of modal not move  i.e set overflow to hidden
-                                }}>
-                                +
+                <div className="flex h-fit items-center justify-between ">
+                    <div className="ml-16">
+                        <MediaUploadPanelLong setSelectedImages={setSelectedImages} selectedImages={selectedImages} />
+                    </div>
+                    <div className={` mx-5 mt-3 mb-2 flex w-fit justify-end gap-2`}>
+                        {singleTweet.text.length > 0 && (
+                            <div className="flex gap-1">
+                                <div className={`  h-[2.3rem] w-fit `}>{<CircularRadialProgressForTweetTextLimit tweetCount={singleTweet.text.length} maxCount={280} />}</div>
+                                <div className="min-h-full border-l-2"></div>
+                                <button
+                                    className=" h-9 w-9  rounded-full border-2 border-gray-200 font-bold text-blue-500 hover:bg-blue-100"
+                                    onClick={() => {
+                                        setIsTweetBoxOpen(true);
+                                        document.body.style.overflow = "hidden"; //makes the back of modal not move  i.e set overflow to hidden
+                                    }}>
+                                    +
+                                </button>
+                            </div>
+                        )}
+                        {singleTweet.text.length > 0 && singleTweet.text.length <= 280 ? (
+                            <button className=" w-fit rounded-3xl bg-blue-500  px-3 py-[0.2rem] font-bold text-white" onClick={handleTweet}>
+                                Tweet
                             </button>
-                        </div>
-                    )}
-                    {singleTweet.text.length > 0 && singleTweet.text.length <= 280 ? (
-                        <button className=" w-fit rounded-3xl bg-blue-500  px-3 py-[0.2rem] font-bold text-white" onClick={handleTweet}>
-                            Tweet
-                        </button>
-                    ) : (
-                        <button className="w-fit rounded-3xl bg-gray-500  px-3 py-[0.2rem] font-bold text-white">Tweet </button>
-                    )}
+                        ) : (
+                            <button className="w-fit rounded-3xl bg-gray-500  px-3 py-[0.2rem] font-bold text-white">Tweet </button>
+                        )}
+                    </div>
                 </div>
             </div>
             <Suspense fallback={<Loader />}>

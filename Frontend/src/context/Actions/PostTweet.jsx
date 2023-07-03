@@ -1,11 +1,11 @@
 import axios from "axios";
 
-const PostTweet = async ({ dispatchPostTweet, ACTIONS, tweet, parent, mentions, threadIdForTweetInThread }) => {
+const PostTweet = async ({ dispatchPostTweet, ACTIONS, tweet, parent, mentions, threadIdForTweetInThread, images }) => {
     try {
         dispatchPostTweet({ type: ACTIONS.POST_TWEET_REQUEST });
         const { data } = await axios.post(
             `http://localhost:4000/api/v1/post/upload`,
-            { tweet, parent, mentions, threadIdForTweetInThread },
+            { tweet, parent, mentions, threadIdForTweetInThread, images },
 
             {
                 withCredentials: true,

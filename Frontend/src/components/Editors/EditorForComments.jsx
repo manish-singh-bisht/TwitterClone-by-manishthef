@@ -10,8 +10,9 @@ import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import PostComments from "../../context/Actions/PostComments";
 
 import "./EditorStyles.css";
+import PhotoGallery from "../CommonPostComponent/PhotoGallery";
 
-const EditorForComments = ({ onChange: change, isReplyPress, handleIsReplyPressFalse, postId, parent, setShowReplyingToHandler }) => {
+const EditorForComments = ({ onChange: change, isReplyPress, handleIsReplyPressFalse, postId, parent, setShowReplyingToHandler, selectedImages, deleteImages, setSelectedImages }) => {
     const [editorContent, setEditorContent] = useState("");
     const [isFirstTimeFocus, setIsFirstTimeFocus] = useState(true);
     const { dispatchComment, ACTIONS } = useGlobalContext();
@@ -63,7 +64,8 @@ const EditorForComments = ({ onChange: change, isReplyPress, handleIsReplyPressF
                 editor.commands.clearContent(true);
                 handleIsReplyPressFalse();
                 setIsFirstTimeFocus(true);
-                await PostComments({ dispatchComment, ACTIONS, postId, comment: text, parent, mentions: mentions });
+                await PostComments({ dispatchComment, ACTIONS, postId, comment: text, parent, mentions: mentions, images: selectedImages });
+                setSelectedImages([]);
             }
         };
         whenIsReplyIsPressed();
@@ -111,8 +113,35 @@ const EditorForComments = ({ onChange: change, isReplyPress, handleIsReplyPressF
 
         return result;
     }
-
-    return <EditorContent editor={editor} />;
+    //Grid layout for different numbers of image,used below
+    let gridClass = "";
+    switch (selectedImages.length) {
+        case 0:
+            gridClass = "";
+            break;
+        case 1:
+            gridClass = "w-full h-full";
+            break;
+        case 2:
+            gridClass = "grid-cols-2 grid-rows-1";
+            break;
+        case 3:
+            gridClass = "grid-cols-2 grid-rows-2";
+            break;
+        case 4:
+            gridClass = "grid-cols-2 grid-rows-2";
+            break;
+        default:
+            break;
+    }
+    return (
+        <div>
+            <EditorContent editor={editor} />
+            <div className={`m-[-0.25rem] mt-8 grid max-w-[98%]  ${gridClass}  ${selectedImages.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${selectedImages.length > 0 ? `border-[0.05rem]` : ``}`}>
+                {selectedImages.length > 0 && selectedImages.map((photo, index) => <PhotoGallery key={index} photos={selectedImages} photo={photo} index={index} deleteImages={deleteImages} mark={true} />)}
+            </div>
+        </div>
+    );
 };
 
 export default EditorForComments;

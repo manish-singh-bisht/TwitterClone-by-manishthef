@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import TextStyle from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import { EditorContent, useEditor } from "@tiptap/react";
@@ -6,12 +6,12 @@ import StarterKit from "@tiptap/starter-kit";
 import { Mention } from "@tiptap/extension-mention";
 import suggestion from "./Mentions/suggestion";
 import Placeholder from "@tiptap/extension-placeholder";
-
 import "./EditorStyles.css";
 import PostTweet from "../../context/Actions/PostTweet";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
+import PhotoGallery from "../CommonPostComponent/PhotoGallery";
 
-const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handleIsTweetPressFalse, isTweetPressInTweetModal, handleIsTweetPressInTweetModalFalse }) => {
+const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handleIsTweetPressFalse, isTweetPressInTweetModal, handleIsTweetPressInTweetModalFalse, selectedImages, deleteImages, setSelectedImages }) => {
     const [editorContent, setEditorContent] = useState("");
     const { ACTIONS, dispatchPostTweet, setPosts } = useGlobalContext();
     const editor = useEditor({
@@ -58,9 +58,13 @@ const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handle
                 handleIsTweetPressFalse();
                 handleIsTweetPressInTweetModalFalse();
                 if (isTweetPress && !isTweetPressInTweetModal) {
-                    const data = await PostTweet({ dispatchPostTweet, ACTIONS, tweet: text, parent: null, mentions: mentions, threadIdForTweetInThread: null });
+                    const data = await PostTweet({ dispatchPostTweet, ACTIONS, tweet: text, parent: null, mentions: mentions, threadIdForTweetInThread: null, images: selectedImages });
                     //the threadIdForTweetInThread here is null because this threadIdForTweetInThread is uuid and not the _id of mongodb,this threadIdForTweetInThread is just created for thread purpose and not for single tweets.
+                    if (selectedImages.length > 0 && data !== undefined) {
+                        data.images = selectedImages;
+                    }
                     setPosts((prev) => [data, ...prev]);
+                    setSelectedImages([]);
                 }
             }
         };
@@ -96,8 +100,35 @@ const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handle
     if (!editor) {
         return null;
     }
-
-    return <EditorContent editor={editor} />;
+    //Grid layout for different numbers of image,used below
+    let gridClass = "";
+    switch (selectedImages.length) {
+        case 0:
+            gridClass = "";
+            break;
+        case 1:
+            gridClass = "w-full h-full";
+            break;
+        case 2:
+            gridClass = "grid-cols-2 grid-rows-1";
+            break;
+        case 3:
+            gridClass = "grid-cols-2 grid-rows-2";
+            break;
+        case 4:
+            gridClass = "grid-cols-2 grid-rows-2";
+            break;
+        default:
+            break;
+    }
+    return (
+        <div>
+            <EditorContent editor={editor} />
+            <div className={`m-[-0.25rem] mt-8 grid max-w-[98%]  ${gridClass}  ${selectedImages.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${selectedImages.length > 0 ? `border-[0.05rem]` : ``}`}>
+                {selectedImages.length > 0 && selectedImages.map((photo, index) => <PhotoGallery key={index} photos={selectedImages} photo={photo} index={index} deleteImages={deleteImages} mark={true} />)}
+            </div>
+        </div>
+    );
 };
 //for getting all the mentions that are real users in backend
 function getAllNodesAttributesByType(doc, nodeType) {

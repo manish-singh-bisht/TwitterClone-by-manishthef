@@ -59,6 +59,7 @@ const CommentDetail = () => {
                 ownerName: post.owner.name,
                 timeCreated: post.createdAt,
                 ownerImage: post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null,
+                postImage: post.images ? post.images : null,
                 mentions: post.mentions,
                 isThread: post.children?.length > 0 ? true : false,
             },
@@ -111,6 +112,7 @@ const CommentDetail = () => {
                             postId={post._id}
                             tweet={post.tweet}
                             likes={post.likes}
+                            postImage={post.images ? post.images : null}
                             commentsChildren={post.comments}
                             ownerName={post.owner.name}
                             ownerImage={post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null}
@@ -147,6 +149,7 @@ const CommentDetail = () => {
                                         ownerName={item.owner.name}
                                         ownerImage={item.owner.profile && item.owner.profile.image.url ? item.owner.profile.image.url : null}
                                         ownerId={item.owner._id}
+                                        postImage={item.images ? item.images : null}
                                         handle={item.owner.handle}
                                         timeCreated={item.createdAt}
                                         commentsChildren={item.children}

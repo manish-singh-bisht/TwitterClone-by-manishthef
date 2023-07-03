@@ -1,10 +1,10 @@
 import axios from "axios";
-const PostComments = async ({ dispatchComment, ACTIONS, postId, comment, parent, mentions }) => {
+const PostComments = async ({ dispatchComment, ACTIONS, postId, comment, parent, mentions, images }) => {
     try {
         dispatchComment({ type: ACTIONS.COMMENT_REQUEST });
         const { data } = await axios.post(
             `http://localhost:4000/api/v1/post/comment/${postId}`,
-            { comment, parent, mentions },
+            { comment, parent, mentions, images },
 
             {
                 withCredentials: true,
