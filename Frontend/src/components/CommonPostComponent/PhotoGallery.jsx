@@ -141,7 +141,7 @@ const PhotoGallery = ({ photos, photo, index, deleteImages, mark }) => {
         }
     } else {
         return (
-            <div className={`relative ${imageHeight > 30 * 16 ? "h-[30rem]" : "h-fit"}`}>
+            <div className={`relative max-h-[30rem]`}>
                 {mark && (
                     <>
                         <button className="absolute m-1 rounded-full bg-black text-white" onClick={(e) => crossHandler(e, photo)}>
