@@ -122,7 +122,7 @@ const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handle
             break;
     }
     return (
-        <div>
+        <div className="h-fit">
             <EditorContent editor={editor} />
             <div className={`m-[-0.25rem] mt-8 grid max-w-[98%]  ${gridClass}  ${selectedImages.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${selectedImages.length > 0 ? `border-[0.05rem]` : ``}`}>
                 {selectedImages.length > 0 && selectedImages.map((photo, index) => <PhotoGallery key={index} photos={selectedImages} photo={photo} index={index} deleteImages={deleteImages} mark={true} />)}

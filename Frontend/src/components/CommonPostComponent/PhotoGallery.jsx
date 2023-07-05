@@ -1,11 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Cross } from "../SVGs/SVGs";
 
 const PhotoGallery = ({ photos, photo, index, deleteImages, mark }) => {
+    const [imageHeight, setImageHeight] = useState(0);
     const crossHandler = (e, photo) => {
         e.stopPropagation();
         deleteImages(photo);
+    };
+
+    const imageHeightChecker = (e) => {
+        const height = e.target.naturalHeight;
+        setImageHeight(height);
     };
 
     if (photos.length > 1) {
@@ -135,13 +141,13 @@ const PhotoGallery = ({ photos, photo, index, deleteImages, mark }) => {
         }
     } else {
         return (
-            <div className="relative h-[30rem]">
+            <div className={`relative ${imageHeight > 30 * 16 ? "h-[30rem]" : "h-fit"}`}>
                 {mark && (
                     <>
                         <button className="absolute m-1 rounded-full bg-black text-white" onClick={(e) => crossHandler(e, photo)}>
                             <Cross />
                         </button>
-                        <img src={photo} loading="lazy" alt="first image ,if only one photo" className="h-full  w-full rounded-xl object-fill " />
+                        <img src={photo} loading="lazy" alt="first image ,if only one photo" className={`h-full  w-full rounded-xl ${imageHeight > 30 * 16 ? "object-cover object-center" : "object-fill"}`} onLoad={(e) => imageHeightChecker(e)} />
                     </>
                 )}
                 {!mark && (
@@ -151,7 +157,7 @@ const PhotoGallery = ({ photos, photo, index, deleteImages, mark }) => {
                         onClick={(e) => {
                             e.stopPropagation();
                         }}>
-                        <img src={photo} loading="lazy" alt="first image ,if only one photo" className="h-full  w-full rounded-xl object-fill " />
+                        <img src={photo} loading="lazy" alt="first image ,if only one photo" className={`h-full  w-full rounded-xl ${imageHeight > 30 * 16 ? "object-cover object-center" : "object-fill"}`} onLoad={(e) => imageHeightChecker(e)} />
                     </Link>
                 )}
             </div>
