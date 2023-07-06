@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Cross } from "../SVGs/SVGs";
-import { Blurhash } from "react-blurhash";
 
 const PhotoGallery = ({ photos, photo, index, deleteImages, mark }) => {
     const [imageHeight, setImageHeight] = useState(0);

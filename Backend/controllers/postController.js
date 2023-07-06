@@ -3,18 +3,33 @@ const Posts = require("../models/postModel");
 const Users = require("../models/userModel");
 const ErrorHandler = require("../utils/ErrorHandler");
 const cloudinary = require("cloudinary");
+const sharp = require("sharp");
 
 exports.createPost = async (req, res, next) => {
     try {
         const images = req.body.images;
 
         const uploadedImages = await Promise.all(
-            images.map((image) =>
-                cloudinary.v2.uploader.upload(image, {
+            images.map(async (image) => {
+                const base64Buffer = Buffer.from(image.substring(22), "base64");
+
+                const { format, width } = await sharp(base64Buffer).metadata(); // Auto detect image format
+
+                const compressedBuffer = await sharp(base64Buffer)
+                    .toFormat(format) // Preserve the original image format
+                    .resize({ width: Math.floor(width * 0.5) })
+                    .webp({ quality: 50, chromaSubsampling: "4:2:0" }) // Set compression quality (0-100)
+                    .toBuffer();
+
+                const compressedBase64 = compressedBuffer.toString("base64");
+
+                const result = await cloudinary.v2.uploader.upload(`data:image/jpeg;base64,${compressedBase64}`, {
                     folder: "twitterClone",
-                })
-            )
+                });
+                return result;
+            })
         );
+
         const user = await Users.findById({ _id: req.user._id });
 
         if (!user) {
