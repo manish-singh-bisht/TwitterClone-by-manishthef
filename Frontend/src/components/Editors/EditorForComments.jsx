@@ -14,6 +14,7 @@ import PhotoGallery from "../CommonPostComponent/PhotoGallery";
 
 const EditorForComments = ({ onChange: change, isReplyPress, handleIsReplyPressFalse, postId, parent, setShowReplyingToHandler, selectedImages, deleteImages, setSelectedImages }) => {
     const [editorContent, setEditorContent] = useState("");
+    const [isSent, setIsSent] = useState(false);
     const [isFirstTimeFocus, setIsFirstTimeFocus] = useState(true);
     const { dispatchComment, ACTIONS } = useGlobalContext();
 
@@ -58,14 +59,16 @@ const EditorForComments = ({ onChange: change, isReplyPress, handleIsReplyPressF
     useEffect(() => {
         const whenIsReplyIsPressed = async () => {
             if (isReplyPress && editor) {
+                setIsSent(true);
                 const mentions = getAllNodesAttributesByType(editor.state.doc, "mention");
                 const text = editor.getText();
 
-                editor.commands.clearContent(true);
                 handleIsReplyPressFalse();
                 setIsFirstTimeFocus(true);
                 await PostComments({ dispatchComment, ACTIONS, postId, comment: text, parent, mentions: mentions, images: selectedImages });
+                editor.commands.clearContent(true);
                 setSelectedImages([]);
+                setIsSent(false);
             }
         };
         whenIsReplyIsPressed();
@@ -136,6 +139,7 @@ const EditorForComments = ({ onChange: change, isReplyPress, handleIsReplyPressF
     }
     return (
         <div className="h-fit">
+            {isSent && <div className="tweet-sent-animation"></div>}
             <EditorContent editor={editor} />
             <div className={`m-[-0.25rem] mt-8 grid max-w-[98%]  ${gridClass}  ${selectedImages.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${selectedImages.length > 0 ? `border-[0.05rem]` : ``}`}>
                 {selectedImages.length > 0 && selectedImages.map((photo, index) => <PhotoGallery key={index} photos={selectedImages} photo={photo} index={index} deleteImages={deleteImages} mark={true} />)}

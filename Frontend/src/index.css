@@ -34,3 +34,28 @@
         transform: translateX(100%);
     }
 }
+.tweet-sent-animation {
+    position: relative;
+    height: 2px;
+    background-color: #1da1f2;
+}
+
+.tweet-sent-animation::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background-color: #1da1f2;
+    animation: tweetSentAnimation 1s linear forwards;
+}
+
+@keyframes tweetSentAnimation {
+    0% {
+        width: 0;
+    }
+    100% {
+        width: 100%;
+    }
+}

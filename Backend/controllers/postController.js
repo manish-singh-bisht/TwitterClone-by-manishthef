@@ -13,12 +13,12 @@ exports.createPost = async (req, res, next) => {
             images.map(async (image) => {
                 const base64Buffer = Buffer.from(image.substring(22), "base64");
 
-                const { format, width } = await sharp(base64Buffer).metadata(); // Auto detect image format
+                const { format, width } = await sharp(base64Buffer).metadata();
 
                 const compressedBuffer = await sharp(base64Buffer)
-                    .toFormat(format) // Preserve the original image format
+                    .toFormat(format)
                     .resize({ width: Math.floor(width * 0.5) })
-                    .webp({ quality: 50, chromaSubsampling: "4:2:0" }) // Set compression quality (0-100)
+                    .webp({ quality: 50, chromaSubsampling: "4:4:4" })
                     .toBuffer();
 
                 const compressedBase64 = compressedBuffer.toString("base64");

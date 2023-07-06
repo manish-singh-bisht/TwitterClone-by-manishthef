@@ -14,6 +14,7 @@ import PhotoGallery from "../CommonPostComponent/PhotoGallery";
 const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handleIsTweetPressFalse, isTweetPressInTweetModal, handleIsTweetPressInTweetModalFalse, selectedImages, deleteImages, setSelectedImages }) => {
     const [editorContent, setEditorContent] = useState("");
     const { ACTIONS, dispatchPostTweet, setPosts } = useGlobalContext();
+    const [isSent, setIsSent] = useState(false);
     const editor = useEditor({
         extensions: [
             StarterKit,
@@ -54,7 +55,8 @@ const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handle
             if ((isTweetPress || isTweetPressInTweetModal) && editor) {
                 const mentions = getAllNodesAttributesByType(editor.state.doc, "mention");
                 const text = editor.getText();
-                editor.commands.clearContent(true);
+
+                setIsSent(true);
                 handleIsTweetPressFalse();
                 handleIsTweetPressInTweetModalFalse();
                 if (isTweetPress && !isTweetPressInTweetModal) {
@@ -64,8 +66,10 @@ const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handle
                         data.images = selectedImages;
                     }
                     setPosts((prev) => [data, ...prev]);
-                    setSelectedImages([]);
                 }
+                setIsSent(false);
+                editor.commands.clearContent(true);
+                setSelectedImages([]);
             }
         };
         whenIsTweetIsPressed();
@@ -123,6 +127,7 @@ const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handle
     }
     return (
         <div className="h-fit">
+            {isSent && <div className="tweet-sent-animation"></div>}
             <EditorContent editor={editor} />
             <div className={`m-[-0.25rem] mt-8 grid max-w-[98%]  ${gridClass}  ${selectedImages.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${selectedImages.length > 0 ? `border-[0.05rem]` : ``}`}>
                 {selectedImages.length > 0 && selectedImages.map((photo, index) => <PhotoGallery key={index} photos={selectedImages} photo={photo} index={index} deleteImages={deleteImages} mark={true} />)}
