@@ -74,8 +74,8 @@ const MoreOptionMenuModal = ({
         const commentID = infoToMoreOptionModal.commentID;
 
         if (fromHome) {
+            setPosts((prev) => prev.filter((item) => item._id !== postID));
             const post = await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
-            setPosts((prev) => prev.filter((item) => item._id !== post._id));
         } else if (fromTweetDetail && commentID === undefined) {
             const post = await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
             navigate(`/`, {
