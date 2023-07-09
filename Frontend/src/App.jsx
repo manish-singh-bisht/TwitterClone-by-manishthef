@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoadUserWhenToken from "./context/actions/LoadUserWhenToken";
-
+import { ToastContainer } from "react-toastify";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Loader from "./components/Loader/Loader";
 import { useGlobalContext } from "./CustomHooks/useGlobalContext";
@@ -48,6 +48,7 @@ const App = () => {
                     </Suspense>
                 </div>
             </div>
+            <ToastContainer />
         </BrowserRouter>
     );
 };

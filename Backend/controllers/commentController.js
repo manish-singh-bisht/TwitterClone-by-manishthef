@@ -55,7 +55,7 @@ exports.postComment = async (req, res, next) => {
         if (commentIndex !== -1) {
             return res.status(400).json({
                 success: false,
-                message: "Oops already wrote this message",
+                message: "Whoops! You already said that.",
             });
         }
         if (newData.parent) {
@@ -76,7 +76,7 @@ exports.postComment = async (req, res, next) => {
             if (commentParentIndex !== -1) {
                 return res.status(400).json({
                     success: false,
-                    message: "Oops already wrote this message",
+                    message: "Whoops! You already said that.",
                 });
             }
 
@@ -90,7 +90,7 @@ exports.postComment = async (req, res, next) => {
 
             return res.status(200).json({
                 success: true,
-                message: "Comment added",
+                message: "Your Tweet was sent.",
             });
         }
         const newCreateComment = await Comments.create(newData);
@@ -103,7 +103,7 @@ exports.postComment = async (req, res, next) => {
 
         return res.status(200).json({
             success: true,
-            message: "Comment added",
+            message: "Your Tweet was sent.",
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
@@ -136,7 +136,7 @@ exports.deleteComment = async (req, res, next) => {
 
         return res.status(200).json({
             success: true,
-            message: "Comment deleted",
+            message: "Your Tweet was deleted",
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));

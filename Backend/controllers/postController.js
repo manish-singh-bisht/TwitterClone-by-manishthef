@@ -73,6 +73,7 @@ exports.createPost = async (req, res, next) => {
 
         return res.status(201).json({
             success: true,
+            message: "Your Tweet was sent.",
             createNewPost,
         });
     } catch (error) {
@@ -173,7 +174,7 @@ exports.deletePost = async (req, res, next) => {
 
         return res.status(200).json({
             success: true,
-            message: "tweet deleted",
+            message: "Your Tweet was deleted",
             post,
         });
     } catch (error) {
