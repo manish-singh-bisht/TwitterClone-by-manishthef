@@ -5,6 +5,7 @@ import { ToastContainer } from "react-toastify";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Loader from "./components/Loader/Loader";
 import { useGlobalContext } from "./CustomHooks/useGlobalContext";
+import ExtendedMedia from "./components/CommonPostComponent/ExtendedMedia";
 
 const Home = React.lazy(() => import("./components/Home/Home"));
 const LoginSignUpMainPage = React.lazy(() => import("./components/Login_Register/LoginSignUpMainPage"));
@@ -43,6 +44,7 @@ const App = () => {
                             <Route exact path="/user/:ownerId" element={<Test />} />
                             <Route exact path="/Explore" element={<Test />} />
                             <Route exact path="/test" element={<Test />} />
+                            <Route exact path="/ExtendedMediaModal" element={<ExtendedMedia />} />
                             <Route exact path="/Profile" element={<ProfilePage />} />
                         </Routes>
                     </Suspense>

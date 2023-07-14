@@ -242,7 +242,7 @@ const Post = ({
                     </div>
                     <pre className={`  max-w-[98%] whitespace-pre-wrap break-words  `}>{commentt}</pre>
                     <div className={`grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
-                        {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo.url ? photo.url : photo} index={index} mark={false} />)}
+                        {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo.url ? photo.url : photo} index={index} mark={false} postId={postId} url={window.location.pathname} />)}
                     </div>
                 </div>
             </div>

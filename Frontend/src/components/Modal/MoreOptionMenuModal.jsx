@@ -7,6 +7,7 @@ import DeleteLogoutModal from "./DeleteLogoutModal";
 import Loader from "../Loader/Loader";
 import DeletePost from "../../context/Actions/DeletePost";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const MoreOptionMenuModal = ({
     visibility,
@@ -75,9 +76,51 @@ const MoreOptionMenuModal = ({
 
         if (fromHome) {
             setPosts((prev) => prev.filter((item) => item._id !== postID));
+            const toastConfig = {
+                position: "bottom-center",
+                autoClose: 2000,
+                hideProgressBar: true,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                closeButton: false,
+                style: {
+                    backgroundColor: "#1DA1F2",
+                    border: "none",
+                    boxShadow: "none",
+                    width: "fit-content",
+                    zIndex: 9999,
+                    color: "white",
+                    padding: "0px 16px",
+                    minHeight: "3rem",
+                },
+            };
+            toast("Your Tweet was deleted", toastConfig);
             const post = await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
         } else if (fromTweetDetail && commentID === undefined) {
+            const toastConfig = {
+                position: "bottom-center",
+                autoClose: 2000,
+                hideProgressBar: true,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                closeButton: false,
+                style: {
+                    backgroundColor: "#1DA1F2",
+                    border: "none",
+                    boxShadow: "none",
+                    width: "fit-content",
+                    zIndex: 9999,
+                    color: "white",
+                    padding: "0px 16px",
+                    minHeight: "3rem",
+                },
+            };
             const post = await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
+            toast("Your Tweet was deleted", toastConfig);
             navigate(`/`, {
                 replace: true,
             });

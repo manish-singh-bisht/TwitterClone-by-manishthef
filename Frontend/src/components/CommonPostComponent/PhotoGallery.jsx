@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { Cross } from "../SVGs/SVGs";
+import { Link } from "react-router-dom";
 
-const PhotoGallery = ({ photos, photo, index, deleteImages, mark }) => {
+const PhotoGallery = ({ photos, photo, index, deleteImages, mark, postId, url }) => {
     const [imageHeight, setImageHeight] = useState(0);
     const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -24,6 +24,8 @@ const PhotoGallery = ({ photos, photo, index, deleteImages, mark }) => {
         setImageHeight(height);
     };
 
+    const stateObject = { photos: photos, photo: photo, postId: postId, url: url };
+
     if (photos.length > 1) {
         if (index === 0) {
             return (
@@ -43,7 +45,8 @@ const PhotoGallery = ({ photos, photo, index, deleteImages, mark }) => {
                     )}
                     {!mark && (
                         <Link
-                            to={"/test"}
+                            to={"/ExtendedMediaModal"}
+                            state={stateObject}
                             className=" "
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -86,7 +89,8 @@ const PhotoGallery = ({ photos, photo, index, deleteImages, mark }) => {
                     )}
                     {!mark && (
                         <Link
-                            to={"/test"}
+                            to={"/ExtendedMediaModal"}
+                            state={stateObject}
                             className=" "
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -127,7 +131,8 @@ const PhotoGallery = ({ photos, photo, index, deleteImages, mark }) => {
                     )}
                     {!mark && (
                         <Link
-                            to={"/test"}
+                            to={"/ExtendedMediaModal"}
+                            state={stateObject}
                             className=" "
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -166,7 +171,8 @@ const PhotoGallery = ({ photos, photo, index, deleteImages, mark }) => {
                     )}
                     {!mark && (
                         <Link
-                            to={"/test"}
+                            to={"/ExtendedMediaModal"}
+                            state={stateObject}
                             className=" "
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -186,33 +192,42 @@ const PhotoGallery = ({ photos, photo, index, deleteImages, mark }) => {
         }
     } else {
         return (
-            <div className={`relative max-h-[30rem]`}>
-                {mark && (
-                    <>
-                        <button className="absolute m-1 rounded-full bg-black text-white" onClick={(e) => crossHandler(e, photo)}>
-                            <Cross />
-                        </button>
-                        <img src={photo} loading="lazy" alt="first image ,if only one photo" className={`h-full  w-full rounded-xl ${imageHeight > 30 * 16 ? "object-cover object-center" : "object-fill"}`} onLoad={(e) => imageHeightChecker(e)} />
-                    </>
-                )}
-                {!mark && (
-                    <Link
-                        to={"/test"}
-                        className=" "
-                        onClick={(e) => {
-                            e.stopPropagation();
-                        }}>
-                        {imageLoaded ? (
-                            <img src={photo} loading="lazy" alt="first image ,if only one photo" className={`h-full  w-full rounded-xl  ${imageHeight > 30 * 16 ? "object-cover object-center" : "object-fill"}`} onLoad={(e) => imageHeightChecker(e)} />
-                        ) : (
-                            <div className="relative overflow-hidden">
-                                <div className={` h-[30rem] w-full bg-[#f8f8f8]`}></div>
-                                <div className="blurhash-shimmer"></div>
-                            </div>
-                        )}
-                    </Link>
-                )}
-            </div>
+            <>
+                <div className={`relative max-h-[30rem]`}>
+                    {mark && (
+                        <>
+                            <button className="absolute m-1 rounded-full bg-black text-white" onClick={(e) => crossHandler(e, photo)}>
+                                <Cross />
+                            </button>
+                            <img src={photo} loading="lazy" alt="first image ,if only one photo" className={`h-full  w-full rounded-xl ${imageHeight > 30 * 16 ? "object-cover object-center" : "object-fill"}`} onLoad={(e) => imageHeightChecker(e)} />
+                        </>
+                    )}
+                    {!mark && (
+                        <Link
+                            to={"/ExtendedMediaModal"}
+                            state={stateObject}
+                            className={``}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                            }}>
+                            {imageLoaded ? (
+                                <img
+                                    src={photo}
+                                    loading="lazy"
+                                    alt="first image ,if only one photo"
+                                    className={`h-full  w-full rounded-xl  ${imageHeight > 30 * 16 ? "object-cover object-center" : "object-fill"}`}
+                                    onLoad={(e) => imageHeightChecker(e)}
+                                />
+                            ) : (
+                                <div className="relative overflow-hidden">
+                                    <div className={` h-[30rem] w-full bg-[#f8f8f8]`}></div>
+                                    <div className="blurhash-shimmer"></div>
+                                </div>
+                            )}
+                        </Link>
+                    )}
+                </div>
+            </>
         );
     }
 };
