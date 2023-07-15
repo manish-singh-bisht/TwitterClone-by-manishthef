@@ -218,13 +218,16 @@ exports.findCommentById = async (req, res, next) => {
     try {
         const loggedInUserHandle = req.user.handle;
         const comment = await Comments.findById(req.params.id)
-            .populate("likes post parent")
-            .populate({ path: "owner", select: "name handle profile _id" })
+            .populate("post parent")
+            .populate({ path: "retweets", select: "name handle profile _id" })
+            .populate({ path: "likes", select: "name handle  _id" })
+            .populate({ path: "owner", select: "name handle _id" })
             .populate({
                 path: "post",
                 populate: [
                     { path: "owner", select: "name handle profile _id" },
                     { path: "likes", select: "_id" },
+                    { path: "retweets", select: "_id" },
                 ],
             })
             .populate({
@@ -232,6 +235,7 @@ exports.findCommentById = async (req, res, next) => {
                 populate: [
                     { path: "owner", select: "name handle profile _id" },
                     { path: "likes", select: "_id" },
+                    { path: "retweets", select: "_id" },
                 ],
             })
 
@@ -240,12 +244,14 @@ exports.findCommentById = async (req, res, next) => {
                 populate: [
                     { path: "owner", select: "name handle profile _id" },
                     { path: "likes", select: "_id" },
+                    { path: "retweets", select: "_id" },
                     { path: "parent" },
                     {
                         path: "children",
                         populate: [
                             { path: "owner", select: "name handle profile _id" },
                             { path: "likes", select: "_id" },
+                            { path: "retweets", select: "_id" },
                             { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
                         ],
                     },
@@ -278,7 +284,7 @@ exports.findRepliesById = async (req, res, next) => {
     }
 };
 async function fetchReplies(commentId, replies) {
-    const comment = await Comments.findById(commentId).populate({ path: "owner", select: "_id handle profile name" }).populate({ path: "likes", select: "_id handle profile name" });
+    const comment = await Comments.findById(commentId).populate({ path: "owner", select: "_id handle profile name" }).populate({ path: "likes", select: "_id handle profile name" }).populate({ path: "retweets", select: "_id handle profile name" });
 
     if (!comment) {
         return replies;
@@ -326,3 +332,36 @@ async function mentionsHandleCollector(commentId, mentions, loggedInUserHandle) 
     const uniqueMentions = [...new Set(mentions)];
     return uniqueMentions;
 }
+
+exports.retweetComment = async (req, res, next) => {
+    try {
+        const comment = await Comments.findById(req.params.comment);
+
+        if (!comment) {
+            return next(new ErrorHandler("Post is not present", 404));
+        }
+
+        //undo retweetComment
+        if (comment.retweets.includes(req.user._id)) {
+            const index = comment.retweets.indexOf(req.user._id);
+            comment.retweets.splice(index, 1);
+            await comment.save();
+
+            return res.status(200).json({
+                success: true,
+                message: "undo retweetComment successfully",
+            });
+        } else {
+            //retweetComment
+
+            comment.retweets.push(req.user._id);
+            await comment.save();
+            return res.status(200).json({
+                success: true,
+                message: "retweetComment successfully",
+            });
+        }
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};

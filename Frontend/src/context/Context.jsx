@@ -1,5 +1,19 @@
 import React, { useReducer, useState } from "react";
-import { UserReducer, ACTIONS, LikeUnlikeReducer, GetPostByIdReducer, commentReducer, commentLikeUnlikeReducer, commentDeleteReducer, mentionCollectorReducer, PostOfFollowingAndMeReducer, postTweetReducer, tweetDeleteReducer } from "./Reducers";
+import {
+    UserReducer,
+    ACTIONS,
+    LikeUnlikeReducer,
+    GetPostByIdReducer,
+    commentReducer,
+    commentLikeUnlikeReducer,
+    commentDeleteReducer,
+    mentionCollectorReducer,
+    PostOfFollowingAndMeReducer,
+    postTweetReducer,
+    tweetDeleteReducer,
+    RetweetCommentReducer,
+    RetweetPostReducer,
+} from "./Reducers";
 
 //creating context
 const AppContext = React.createContext();
@@ -19,6 +33,12 @@ const AppProvider = ({ children }) => {
 
     const initialStateLikeUnlike = { loading: false, message: "", error: "" };
     const [stateLikeUnlike, dispatchLikeUnlike] = useReducer(LikeUnlikeReducer, initialStateLikeUnlike);
+
+    const initialStateRetweetPost = { loading: false, message: "", error: "" };
+    const [stateRetweetPost, dispatchRetweetPost] = useReducer(RetweetPostReducer, initialStateRetweetPost);
+
+    const initialStateRetweetComment = { loading: false, message: "", error: "" };
+    const [stateRetweetComment, dispatchRetweetComment] = useReducer(RetweetCommentReducer, initialStateRetweetComment);
 
     const initialComment = { loading: false, comment: "", error: "" };
     const [stateComment, dispatchComment] = useReducer(commentReducer, initialComment);
@@ -50,6 +70,10 @@ const AppProvider = ({ children }) => {
                 dispatchPostOfFollowingAndMe,
                 stateGetPostById,
                 dispatchGetPostById,
+                stateRetweetPost,
+                stateRetweetComment,
+                dispatchRetweetComment,
+                dispatchRetweetPost,
                 stateLikeUnlike,
                 dispatchLikeUnlike,
                 stateComment,

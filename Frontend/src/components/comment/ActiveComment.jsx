@@ -1,7 +1,7 @@
 import React, { Suspense, forwardRef, useCallback, useEffect, useState } from "react";
 import useAnimation from "../../CustomHooks/useAnimation";
 import { usePostTimeInTweetDetail } from "../../CustomHooks/usePostTime";
-import { Bookmark, Comments, HeartLike, HeartUnlike, Retweets, ThreeDots } from "../SVGs/SVGs";
+import { Bookmark, Comments, HeartLike, HeartUnlike, Retweets, RetweetsGreen, ThreeDots } from "../SVGs/SVGs";
 import { Link } from "react-router-dom";
 import Avatar from "../Avatar/Avatar";
 import PhotoGallery from "../CommonPostComponent/PhotoGallery";
@@ -10,6 +10,7 @@ import ModalForLikesBookmarksRetweets from "../Modal/ModalForLikesBookmarksRetwe
 import Loader from "../Loader/Loader";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import axios from "axios";
+import RetweetComment from "../../context/Actions/RetweetComment";
 
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
@@ -24,6 +25,12 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
     const handleOutsideClickMoreOption = (event) => {
         if (event.target === event.currentTarget) {
             setVisibility(false);
+            document.body.style.overflow = "unset";
+        }
+    };
+    const handleOutsideClick = (event) => {
+        if (event.target === event.currentTarget) {
+            setIsModalOpen(false);
             document.body.style.overflow = "unset";
         }
     };
@@ -45,7 +52,12 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
     //For like and unlike of comment
     const [isLiked, setIsLiked] = useState(false);
     const [liked, setLiked] = useState(null);
-    const [likedBy, setIsLikedBy] = useState([]);
+    const [likedBy, setLikedBy] = useState([]);
+
+    //For retweet of comment
+    const [isRetweet, setIsRetweet] = useState(false);
+    const [retweet, setRetweet] = useState(null);
+    const [retweetBy, setRetweetBy] = useState([]);
 
     const [comment, setComment] = useState();
     const [commentt, setCommentt] = useState();
@@ -57,8 +69,11 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
         setMentionHandleCollection(data.mentionsHandleCollection);
         let like = [];
         like = data.comment.likes;
-        setIsLikedBy(like);
+        setLikedBy(like);
         setLiked(like.length);
+
+        setRetweetBy(data.comment.retweets);
+        setRetweet(data.comment.retweets.length);
 
         setPhotos(data.comment.images);
         //For keeping the heart red or unred even after refreshing the page
@@ -67,8 +82,13 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                 setIsLiked(true);
             }
         });
-
+        data.comment.retweets.forEach((item) => {
+            if (item._id === state.user._id) {
+                setIsRetweet(true);
+            }
+        });
         like.length === 0 && setIsLiked(false);
+        data.comment.retweets.length === 0 && setIsRetweet(false);
         setComment(data.comment);
 
         // Regex pattern to find mentions and make them blue,in the display after it is posted
@@ -98,7 +118,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
             }
         }
         setCommentt(renderedComment);
-    }, [commentId, isLiked]);
+    }, [commentId, isLiked, isRetweet]);
 
     useEffect(() => {
         fetchData();
@@ -111,7 +131,13 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
         handleLikesAnimation();
         await axios.get(`http://localhost:4000/api/v1/post/comment/${commentId}`, { withCredentials: true });
     };
+    //ANIMATION FOR THE NUMBER NEXT TO RETWEET USING CUSTOM HOOK
+    const [animationRetweet, retweetValue, handleRetweetAnimation] = useAnimation(isRetweet, setIsRetweet, retweet, setRetweet);
 
+    const retweetHandler = async () => {
+        handleRetweetAnimation();
+        await axios.get(`http://localhost:4000/api/v1/post/${commentId}/retweet`, { withCredentials: true });
+    };
     //Grid layout for different numbers of image,used below
     let gridClass = "";
     switch (photos?.length) {
@@ -178,14 +204,22 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                     </div>
                     <div className="mx-4  "> {formattedTime}</div>
                     <div className="m-4  border-t-[0.01rem] opacity-80"></div>
-                    {likedValue > 0 || tv > 0 ? (
+                    {likedValue > 0 || retweetValue > 0 ? (
                         <>
                             <div className="mx-4 flex gap-8  font-bold">
-                                {tv > 0 && (
-                                    <div className="cursor-pointer">
-                                        <span className={`${animationLikes}`}>1</span> <span className={` text-[0.9rem] font-normal hover:underline`}>Retweets</span>
+                                {retweetValue > 0 ? (
+                                    <div
+                                        className="cursor-pointer"
+                                        onClick={() => {
+                                            setIsModalOpen(true);
+                                            document.body.style.overflow = "hidden";
+                                            setType("Retweeted");
+                                            setList(retweetBy);
+                                        }}>
+                                        {retweetValue > 0 ? <span className={`${animationRetweet} mr-1`}>{retweetValue}</span> : null}
+                                        <span className={`text-[0.9rem] font-normal hover:underline`}>Retweets</span>
                                     </div>
-                                )}
+                                ) : null}
                                 <div className="cursor-pointer">
                                     <span className={`${animationLikes}`}>1</span> <span className={`text-[0.9rem] font-normal hover:underline`}>Quotes</span>
                                 </div>
@@ -217,8 +251,8 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                         </div>
 
                         <div className="group flex items-center justify-center gap-2 ">
-                            <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-green-100 group-hover:text-green-500">
-                                <Retweets bigIcon={true} />
+                            <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-green-100 group-hover:text-green-500" onClick={retweetHandler}>
+                                {isRetweet ? <RetweetsGreen bigIcon={true} /> : <Retweets bigIcon={true} />}
                             </button>
                         </div>
                         <div className=" group flex items-center justify-center gap-2  ">
@@ -236,7 +270,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                     <CommentBox profile={comment.owner.profile && comment.owner.profile.image.url ? comment.owner.profile.image.url : null} postId={postId} parent={parent} mentionHandleCollection={mentionHandleCollection} />
                 </div>
                 <Suspense fallback={<Loader />}>
-                    <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} />
+                    <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} handleOutsideClick={handleOutsideClick} />
                     <MoreOptionMenuModal
                         visibility={visibility}
                         handleOutsideClick={handleOutsideClickMoreOption}

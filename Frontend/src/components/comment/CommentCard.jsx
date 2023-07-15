@@ -4,9 +4,11 @@ import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import CommentLikeUnlike from "../../context/Actions/CommentLikeUnlike";
 import Post from "../CommonPostComponent/Post";
 import LikeUnlike from "../../context/Actions/LikeUnlike";
+import RetweetPost from "../../context/Actions/RetweetPost";
+import RetweetComment from "../../context/Actions/RetweetComment";
 
 const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDetail, isParentPresent, POSTID, mentionHandleCollection, isThread, thread }) => {
-    const { ACTIONS, state, dispatchCommentLikeUnlike, dispatch } = useGlobalContext();
+    const { ACTIONS, state, dispatchCommentLikeUnlike, dispatch, dispatchRetweetPost, dispatchRetweetComment } = useGlobalContext();
     const profile = state.user && state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null;
 
     return (
@@ -31,6 +33,7 @@ const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDet
                                         tweet={item.post.tweet}
                                         postImage={item.images ? item.images : null}
                                         likes={item.post.likes}
+                                        retweets={item.post.retweets}
                                         comments={item.post.comments}
                                         commentsChildren={item.post.comments}
                                         ownerName={item.post.owner.name}
@@ -42,6 +45,8 @@ const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDet
                                         state={state}
                                         ACTIONS={ACTIONS}
                                         handler={LikeUnlike}
+                                        dispatchRetweet={dispatchRetweetPost}
+                                        handlerRetweet={RetweetPost}
                                         mentions={item.post.mentions}
                                     />
                                 </div>
@@ -66,6 +71,7 @@ const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDet
                             tweet={comment.comment}
                             postImage={comment.images}
                             likes={comment.likes}
+                            retweets={comment.retweets}
                             comments={comment.comments}
                             commentsChildren={comment.children}
                             ownerName={comment.owner.name}
@@ -74,6 +80,8 @@ const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDet
                             handle={comment.owner.handle}
                             timeCreated={comment.createdAt}
                             dispatch={dispatchCommentLikeUnlike}
+                            dispatchRetweet={dispatchRetweetComment}
+                            handlerRetweet={RetweetComment}
                             state={state}
                             ACTIONS={ACTIONS}
                             handler={CommentLikeUnlike}

@@ -45,7 +45,7 @@ const PhotoGallery = ({ photos, photo, index, deleteImages, mark, postId, url })
                     )}
                     {!mark && (
                         <Link
-                            to={"/ExtendedMediaModal"}
+                            to={"/ExtendedMedia"}
                             state={stateObject}
                             className=" "
                             onClick={(e) => {
@@ -89,7 +89,7 @@ const PhotoGallery = ({ photos, photo, index, deleteImages, mark, postId, url })
                     )}
                     {!mark && (
                         <Link
-                            to={"/ExtendedMediaModal"}
+                            to={"/ExtendedMedia"}
                             state={stateObject}
                             className=" "
                             onClick={(e) => {
@@ -131,7 +131,7 @@ const PhotoGallery = ({ photos, photo, index, deleteImages, mark, postId, url })
                     )}
                     {!mark && (
                         <Link
-                            to={"/ExtendedMediaModal"}
+                            to={"/ExtendedMedia"}
                             state={stateObject}
                             className=" "
                             onClick={(e) => {
@@ -171,7 +171,7 @@ const PhotoGallery = ({ photos, photo, index, deleteImages, mark, postId, url })
                     )}
                     {!mark && (
                         <Link
-                            to={"/ExtendedMediaModal"}
+                            to={"/ExtendedMedia"}
                             state={stateObject}
                             className=" "
                             onClick={(e) => {
@@ -204,7 +204,7 @@ const PhotoGallery = ({ photos, photo, index, deleteImages, mark, postId, url })
                     )}
                     {!mark && (
                         <Link
-                            to={"/ExtendedMediaModal"}
+                            to={"/ExtendedMedia"}
                             state={stateObject}
                             className={``}
                             onClick={(e) => {

@@ -6,17 +6,18 @@ import axios from "axios";
 import useAnimation from "../../CustomHooks/useAnimation";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import Loader from "../Loader/Loader";
-import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets, ThreeDots } from "../SVGs/SVGs";
+import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets, RetweetsGreen, ThreeDots } from "../SVGs/SVGs";
 import { usePostTimeInTweetDetail } from "../../CustomHooks/usePostTime";
 import Avatar from "../Avatar/Avatar";
 import PhotoGallery from "../CommonPostComponent/PhotoGallery";
+import RetweetPost from "../../context/Actions/RetweetPost";
 
 const ModalForLikesBookmarksRetweets = React.lazy(() => import("../Modal/ModalForLikesBookmarksRetweets"));
 const CommentCard = React.lazy(() => import("../comment/CommentCard"));
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const TweetDetail = () => {
-    const { ACTIONS, dispatchLikeUnlike: dispatch, state, stateComment, stateCommentDelete } = useGlobalContext();
+    const { ACTIONS, dispatchLikeUnlike: dispatch, state, stateComment, stateCommentDelete, dispatchRetweetPost: dispatchRetweet } = useGlobalContext();
 
     //Modal for more option
     const [visibility, setVisibility] = useState(false);
@@ -72,7 +73,7 @@ const TweetDetail = () => {
     //For like and unlike of post
     const [isLiked, setIsLiked] = useState(false);
     const [liked, setLiked] = useState(null);
-    const [likedBy, setIsLikedBy] = useState([]);
+    const [likedBy, setLikedBy] = useState([]);
 
     //For comments
     const [comments, setComments] = useState([]);
@@ -80,6 +81,12 @@ const TweetDetail = () => {
     const [mentionHandleCollection, setMentionHandleCollection] = useState([]);
 
     const [thread, setThread] = useState([]);
+
+    //For retweet of post
+    const [isRetweet, setIsRetweet] = useState(false);
+    const [retweet, setRetweet] = useState(null);
+    const [retweetBy, setRetweetBy] = useState([]);
+
     const fetchData = useCallback(async () => {
         //gets the updated data of likes, when user likes at homepage and then comes to detailpage,the user gets the updated data
         let value;
@@ -95,13 +102,25 @@ const TweetDetail = () => {
         setMentionHandleCollection(value.uniqueMentionHandleCollection);
         let like = [];
         like = value.post.likes;
-        setIsLikedBy(like);
+        setLikedBy(like);
         setLiked(like.length);
 
         //For keeping the heart red or unred even after refreshing the page
         like.forEach((item) => {
             if (item._id === state.user._id) {
                 setIsLiked(true);
+            }
+        });
+
+        let retweet = [];
+        retweet = value.post.retweets;
+        setRetweetBy(retweet);
+        setRetweet(retweet.length);
+
+        //For keeping the heart red or unred even after refreshing the page
+        retweet.forEach((item) => {
+            if (item._id === state.user._id) {
+                setIsRetweet(true);
             }
         });
         setComments(value.post.comments);
@@ -133,7 +152,7 @@ const TweetDetail = () => {
             }
         }
         setCommentt(renderedComment);
-    }, [isLiked, stateComment.comment, stateCommentDelete, postId]);
+    }, [isLiked, isRetweet, stateComment.comment, stateCommentDelete, postId]);
 
     useEffect(() => {
         fetchData();
@@ -146,8 +165,16 @@ const TweetDetail = () => {
         handleLikesAnimation();
         await LikeUnlike({ dispatch, ACTIONS, postId });
     };
+    //ANIMATION FOR THE NUMBER NEXT TO RETWEET USING CUSTOM HOOK
+    const [animationRetweet, retweetValue, handleRetweetAnimation] = useAnimation(isRetweet, setIsRetweet, retweet, setRetweet);
+
+    const retweetHandler = async () => {
+        handleRetweetAnimation();
+        await RetweetPost({ dispatchRetweet, ACTIONS, postId });
+    };
 
     const photos = postImage ? postImage : [];
+
     //Grid layout for different numbers of image,used below
     let gridClass = "";
     switch (photos.length) {
@@ -169,8 +196,6 @@ const TweetDetail = () => {
         default:
             break;
     }
-
-    const tv = 0;
 
     return (
         <main className="grid grid-cols-[44vw_auto]   ">
@@ -221,14 +246,22 @@ const TweetDetail = () => {
                 </div>
                 <div className="mx-4  "> {formattedTime}</div>
                 <div className="m-4  border-t-[0.01rem] opacity-80"></div>
-                {likedValue > 0 || tv > 0 ? (
+                {likedValue > 0 || retweetValue > 0 ? (
                     <>
                         <div className="mx-4 flex gap-8  font-bold">
-                            {tv > 0 && (
-                                <div className="cursor-pointer">
-                                    <span className={`${animationLikes}`}>1</span> <span className={` text-[0.9rem] font-normal hover:underline`}>Retweets</span>
+                            {retweetValue > 0 ? (
+                                <div
+                                    className="cursor-pointer"
+                                    onClick={() => {
+                                        setIsModalOpen(true);
+                                        document.body.style.overflow = "hidden";
+                                        setType("Retweeted");
+                                        setList(retweetBy);
+                                    }}>
+                                    {retweetValue > 0 ? <span className={`${animationRetweet} mr-1`}>{retweetValue}</span> : null}
+                                    <span className={`text-[0.9rem] font-normal hover:underline`}>Retweets</span>
                                 </div>
-                            )}
+                            ) : null}
                             <div className="cursor-pointer">
                                 <span className={`${animationLikes}`}>1</span> <span className={`text-[0.9rem] font-normal hover:underline`}>Quotes</span>
                             </div>
@@ -260,8 +293,8 @@ const TweetDetail = () => {
                     </div>
 
                     <div className="group flex items-center justify-center gap-2 ">
-                        <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-green-100 group-hover:text-green-500">
-                            <Retweets bigIcon={true} />
+                        <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-green-100 group-hover:text-green-500" onClick={retweetHandler}>
+                            {isRetweet ? <RetweetsGreen bigIcon={true} /> : <Retweets bigIcon={true} />}
                         </button>
                     </div>
                     <div className=" group flex items-center justify-center gap-2  ">

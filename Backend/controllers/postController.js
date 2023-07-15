@@ -98,6 +98,10 @@ exports.findPostById = async (req, res, next) => {
                 path: "likes",
                 select: "_id handle name profile",
             })
+            .populate({
+                path: "retweets",
+                select: "_id handle name profile",
+            })
             .populate({ path: "owner", select: "_id handle profile name" })
             .populate({
                 path: "comments",
@@ -105,11 +109,13 @@ exports.findPostById = async (req, res, next) => {
                     { path: "owner", select: "name handle profile _id" },
                     { path: "post" },
                     { path: "likes", select: "_id" },
+                    { path: "retweets", select: "_id" },
                     {
                         path: "children",
                         populate: [
                             { path: "owner", select: "name handle profile _id" },
                             { path: "likes", select: "_id" },
+                            { path: "retweets", select: "_id" },
                             { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
                         ],
                     },
@@ -270,6 +276,10 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
             .populate({
                 path: "likes",
                 select: "_id handle name profile",
+            })
+            .populate({
+                path: "retweets",
+                select: "_id handle name profile",
             });
         res.status(200).json({
             success: true,
@@ -296,6 +306,10 @@ async function fetchThread(postId, thread, userHandle) {
             path: "likes",
             select: "_id handle name profile",
         })
+        .populate({
+            path: "retweets",
+            select: "_id handle name profile",
+        })
         .populate({ path: "owner", select: "_id handle profile name" })
         .populate({
             path: "comments",
@@ -303,11 +317,13 @@ async function fetchThread(postId, thread, userHandle) {
                 { path: "owner", select: "name handle profile _id" },
                 { path: "post" },
                 { path: "likes", select: "_id" },
+                { path: "retweets", select: "_id" },
                 {
                     path: "children",
                     populate: [
                         { path: "owner", select: "name handle profile _id" },
                         { path: "likes", select: "_id" },
+                        { path: "retweets", select: "_id" },
                         { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
                     ],
                 },
@@ -335,3 +351,36 @@ async function fetchThread(postId, thread, userHandle) {
 
     return thread;
 }
+
+exports.retweetPost = async (req, res, next) => {
+    try {
+        const post = await Posts.findById(req.params.id);
+
+        if (!post) {
+            return next(new ErrorHandler("Post is not present", 404));
+        }
+
+        //undo retweetPost
+        if (post.retweets.includes(req.user._id)) {
+            const index = post.retweets.indexOf(req.user._id);
+            post.retweets.splice(index, 1);
+            await post.save();
+
+            return res.status(200).json({
+                success: true,
+                message: "undo retweetPost successfully",
+            });
+        } else {
+            //retweetPost
+
+            post.retweets.push(req.user._id);
+            await post.save();
+            return res.status(200).json({
+                success: true,
+                message: "retweetPost successfully",
+            });
+        }
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};

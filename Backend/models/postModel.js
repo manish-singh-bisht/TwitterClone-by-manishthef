@@ -44,6 +44,12 @@ const postSchema = new mongoose.Schema({
             ref: "Comments",
         },
     ],
+    retweets: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Users",
+        },
+    ],
     mentions: [
         {
             type: String,

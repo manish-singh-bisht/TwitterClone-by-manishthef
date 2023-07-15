@@ -45,6 +45,14 @@ export const ACTIONS = {
     TWEET_DELETE_SUCCESS: "Delete Tweet success",
     TWEET_DELETE_FAILURE: "Delete Tweet failure",
 
+    RETWEET_COMMENT_REQUEST: "Retweet Comment request",
+    RETWEET_COMMENT_SUCCESS: "Retweet Comment success",
+    RETWEET_COMMENT_FAILURE: "Retweet Comment Failure",
+
+    RETWEET_POST_REQUEST: "Retweet Post request",
+    RETWEET_POST_SUCCESS: "Retweet Post success",
+    RETWEET_POST_FAILURE: "Retweet Post Failure",
+
     CLEAR_ERRORS: "clear Errors",
 };
 
@@ -202,6 +210,36 @@ export const tweetDeleteReducer = (state, action) => {
         case ACTIONS.TWEET_DELETE_SUCCESS:
             return { ...state, loading: false, message: action.payload, error: "" };
         case ACTIONS.TWEET_DELETE_FAILURE:
+            return { ...state, loading: false, message: "", error: action.payload };
+        case ACTIONS.CLEAR_ERRORS:
+            return { ...state, error: "" };
+
+        default:
+            return state;
+    }
+};
+export const RetweetPostReducer = (state, action) => {
+    switch (action.type) {
+        case ACTIONS.RETWEET_POST_REQUEST:
+            return { ...state, loading: true, message: "", error: "" };
+        case ACTIONS.RETWEET_POST_SUCCESS:
+            return { ...state, loading: false, message: action.payload, error: "" };
+        case ACTIONS.RETWEET_POST_FAILURE:
+            return { ...state, loading: false, message: "", error: action.payload };
+        case ACTIONS.CLEAR_ERRORS:
+            return { ...state, error: "" };
+
+        default:
+            return state;
+    }
+};
+export const RetweetCommentReducer = (state, action) => {
+    switch (action.type) {
+        case ACTIONS.RETWEET_COMMENT_REQUEST:
+            return { ...state, loading: true, message: "", error: "" };
+        case ACTIONS.RETWEET_COMMENT_SUCCESS:
+            return { ...state, loading: false, message: action.payload, error: "" };
+        case ACTIONS.RETWEET_COMMENT_FAILURE:
             return { ...state, loading: false, message: "", error: action.payload };
         case ACTIONS.CLEAR_ERRORS:
             return { ...state, error: "" };

@@ -8,10 +8,12 @@ import Loader from "../Loader/Loader";
 import PhotoGallery from "../CommonPostComponent/PhotoGallery";
 import LikeUnlikePost from "../CommonPostComponent/LikeUnlikePost";
 import { usePostTime } from "../../CustomHooks/usePostTime";
+import Retweet from "../CommonPostComponent/Retweet";
+import RetweetComment from "../../context/Actions/RetweetComment";
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) => {
-    const { dispatchCommentLikeUnlike, state, ACTIONS } = useGlobalContext();
+    const { dispatchCommentLikeUnlike, state, ACTIONS, dispatchRetweetComment } = useGlobalContext();
     const [commentt, setCommentt] = useState();
 
     ////Modal for more option
@@ -121,7 +123,7 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
                             </div>
 
                             <div className="relative">
-                                <pre className={`  max-w-[98%] whitespace-pre-wrap break-words  `}>{commentt}</pre>
+                                <pre className={`  max-w-[98%] whitespace-pre-wrap break-words   `}>{commentt}</pre>
                                 <div className={`grid max-w-[98%]  ${gridClass}  ${reply.images.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${reply.images.length > 0 ? `border-[0.05rem]` : ``}`}>
                                     {reply.images.length > 0 && reply.images.map((photo, index) => <PhotoGallery key={index} photos={reply.images} photo={photo.url} index={index} />)}
                                 </div>
@@ -139,11 +141,8 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
                             <span className="group-hover:text-blue-500">{reply.children.length > 0 ? reply.children.length : null}</span>
                         </div>
 
-                        <div className="group flex w-[3rem] items-center justify-around">
-                            <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-green-100 group-hover:text-green-500">
-                                <Retweets />
-                            </button>
-                            <span className="group-hover:text-green-500">{reply.likes.length}</span>
+                        <div className=" group flex w-[3rem] items-center justify-around  ">
+                            <Retweet retweets={reply.retweets} ACTIONS={ACTIONS} dispatchRetweet={dispatchRetweetComment} state={state} handlerRetweet={RetweetComment} postId={reply._id} />
                         </div>
                         <div className=" group flex w-[3rem] items-center justify-around  ">
                             <LikeUnlikePost likes={reply.likes} ACTIONS={ACTIONS} dispatch={dispatchCommentLikeUnlike} state={state} handler={CommentLikeUnlike} postId={reply._id} />

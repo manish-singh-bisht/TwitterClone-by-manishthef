@@ -35,6 +35,12 @@ const commentSchema = new mongoose.Schema({
             ref: "Users",
         },
     ],
+    retweets: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Users",
+        },
+    ],
     createdAt: {
         type: Date,
         default: Date.now,

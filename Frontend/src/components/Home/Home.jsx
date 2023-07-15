@@ -5,8 +5,9 @@ import TweetBoxInHome from "./TweetBoxInHome";
 import LikeUnlike from "../../context/Actions/LikeUnlike";
 import Post from "../CommonPostComponent/Post";
 import PostsOfFollowingAndMe from "../../context/Actions/PostsOfFollowingAndMe";
+import RetweetPost from "../../context/Actions/RetweetPost";
 const Home = () => {
-    const { dispatchPostOfFollowingAndMe, ACTIONS, statePostOfFollowingAndMe, state, dispatchLikeUnlike, posts, setPosts } = useGlobalContext();
+    const { dispatchPostOfFollowingAndMe, ACTIONS, statePostOfFollowingAndMe, state, dispatchLikeUnlike, posts, setPosts, dispatchRetweetPost } = useGlobalContext();
 
     const { loading, error } = statePostOfFollowingAndMe;
 
@@ -53,6 +54,7 @@ const Home = () => {
                                             tweet={post.tweet}
                                             postImage={imageInPost}
                                             likes={post.likes}
+                                            retweets={post.retweets}
                                             comments={post.comments}
                                             ownerName={post.owner.name}
                                             ownerImage={ownerImage}
@@ -61,6 +63,8 @@ const Home = () => {
                                             timeCreated={post.createdAt}
                                             handler={LikeUnlike}
                                             dispatch={dispatchLikeUnlike}
+                                            dispatchRetweet={dispatchRetweetPost}
+                                            handlerRetweet={RetweetPost}
                                             state={state}
                                             ACTIONS={ACTIONS}
                                             mentions={post.mentions}

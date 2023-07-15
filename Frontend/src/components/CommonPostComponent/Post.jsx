@@ -9,6 +9,7 @@ import LikeUnlikePost from "./LikeUnlikePost";
 import axios from "axios";
 import Reply from "../comment/Reply";
 import Loader from "../Loader/Loader";
+import Retweet from "./Retweet";
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const Post = ({
@@ -22,9 +23,12 @@ const Post = ({
     handle,
     timeCreated,
     likes = [],
+    retweets = [],
     comments = [],
     handler,
     dispatch,
+    dispatchRetweet,
+    handlerRetweet,
     state,
     ACTIONS,
     isComment,
@@ -258,12 +262,8 @@ const Post = ({
                         <span className="group-hover:text-blue-500">{comments.length > 0 ? comments.length : null}</span>
                     )}
                 </div>
-
-                <div className="group flex w-[3rem] items-center justify-around">
-                    <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-green-100 group-hover:text-green-500">
-                        <Retweets />
-                    </button>
-                    <span className="group-hover:text-green-500">{likes.length}</span>
+                <div className=" group flex w-[3rem] items-center justify-around  ">
+                    <Retweet retweets={retweets} ACTIONS={ACTIONS} dispatchRetweet={dispatchRetweet} state={state} handlerRetweet={handlerRetweet} postId={postId} />
                 </div>
                 <div className=" group flex w-[3rem] items-center justify-around  ">
                     <LikeUnlikePost likes={likes} ACTIONS={ACTIONS} dispatch={dispatch} state={state} handler={handler} postId={postId} />

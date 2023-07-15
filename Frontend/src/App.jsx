@@ -44,7 +44,7 @@ const App = () => {
                             <Route exact path="/user/:ownerId" element={<Test />} />
                             <Route exact path="/Explore" element={<Test />} />
                             <Route exact path="/test" element={<Test />} />
-                            <Route exact path="/ExtendedMediaModal" element={<ExtendedMedia />} />
+                            <Route exact path="/ExtendedMedia" element={<ExtendedMedia />} />
                             <Route exact path="/Profile" element={<ProfilePage />} />
                         </Routes>
                     </Suspense>
