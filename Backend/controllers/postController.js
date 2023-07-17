@@ -100,7 +100,7 @@ exports.findPostById = async (req, res, next) => {
             })
             .populate({
                 path: "retweets",
-                select: "user -createdAt -_id",
+
                 populate: {
                     path: "user",
 
@@ -114,13 +114,13 @@ exports.findPostById = async (req, res, next) => {
                     { path: "owner", select: "name handle profile _id" },
                     { path: "post" },
                     { path: "likes", select: "_id" },
-                    { path: "retweets", select: "user -createdAt -_id", populate: { path: "user", select: "_id" } },
+                    { path: "retweets", populate: { path: "user", select: "_id" } },
                     {
                         path: "children",
                         populate: [
                             { path: "owner", select: "name handle profile _id" },
                             { path: "likes", select: "_id" },
-                            { path: "retweets", select: "user -createdAt -_id", populate: { path: "user", select: "_id" } },
+                            { path: "retweets", populate: { path: "user", select: "_id" } },
                             { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
                         ],
                     },
@@ -283,7 +283,7 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
             })
             .populate({
                 path: "retweets",
-                select: "user -createdAt -_id",
+
                 populate: {
                     path: "user",
                     select: "_id handle name profile",
@@ -339,7 +339,7 @@ async function fetchThread(postId, thread, userHandle) {
         })
         .populate({
             path: "retweets",
-            select: "user -createdAt -_id",
+
             populate: {
                 path: "user",
                 select: "_id handle name profile",
@@ -352,13 +352,13 @@ async function fetchThread(postId, thread, userHandle) {
                 { path: "owner", select: "name handle profile _id" },
                 { path: "post" },
                 { path: "likes", select: "_id" },
-                { path: "retweets", select: "user -createdAt -_id", populate: { path: "user", select: "_id" } },
+                { path: "retweets", populate: { path: "user", select: "_id" } },
                 {
                     path: "children",
                     populate: [
                         { path: "owner", select: "name handle profile _id" },
                         { path: "likes", select: "_id" },
-                        { path: "retweets", select: "user -createdAt -_id", populate: { path: "user", select: "_id" } },
+                        { path: "retweets", populate: { path: "user", select: "_id" } },
                         { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
                     ],
                 },

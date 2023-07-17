@@ -221,7 +221,7 @@ exports.findCommentById = async (req, res, next) => {
             .populate("post parent")
             .populate({
                 path: "retweets",
-                select: "-createdAt -_id",
+
                 populate: {
                     path: "user",
                     select: "_id handle name profile",
@@ -234,7 +234,7 @@ exports.findCommentById = async (req, res, next) => {
                 populate: [
                     { path: "owner", select: "name handle profile _id" },
                     { path: "likes", select: "_id" },
-                    { path: "retweets", select: "-createdAt -_id", populate: { path: "user", select: "_id" } },
+                    { path: "retweets", populate: { path: "user", select: "_id" } },
                 ],
             })
             .populate({
@@ -242,7 +242,7 @@ exports.findCommentById = async (req, res, next) => {
                 populate: [
                     { path: "owner", select: "name handle profile _id" },
                     { path: "likes", select: "_id" },
-                    { path: "retweets", select: "-createdAt -_id", populate: { path: "user", select: "_id" } },
+                    { path: "retweets", populate: { path: "user", select: "_id" } },
                 ],
             })
 
@@ -251,14 +251,14 @@ exports.findCommentById = async (req, res, next) => {
                 populate: [
                     { path: "owner", select: "name handle profile _id" },
                     { path: "likes", select: "_id" },
-                    { path: "retweets", select: "-createdAt -_id", populate: { path: "user", select: "_id" } },
+                    { path: "retweets", populate: { path: "user", select: "_id" } },
                     { path: "parent" },
                     {
                         path: "children",
                         populate: [
                             { path: "owner", select: "name handle profile _id" },
                             { path: "likes", select: "_id" },
-                            { path: "retweets", select: "-createdAt -_id", populate: { path: "user", select: "_id" } },
+                            { path: "retweets", populate: { path: "user", select: "_id" } },
                             { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
                         ],
                     },
@@ -296,7 +296,7 @@ async function fetchReplies(commentId, replies) {
         .populate({ path: "likes", select: "_id handle profile name" })
         .populate({
             path: "retweets",
-            select: "-createdAt -_id",
+
             populate: {
                 path: "user",
                 select: "_id handle name profile",
