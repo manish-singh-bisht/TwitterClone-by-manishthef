@@ -28,7 +28,7 @@ const LikeUnlikePost = ({ likes, ACTIONS, dispatch, state, handler, postId }) =>
             <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-red-100 group-hover:text-red-500" onClick={likeHandler}>
                 {isLiked ? <HeartLike /> : <HeartUnlike />}
             </button>
-            <span className={`group-hover:text-red-500 ${animationLikes}`}>{likedValue > 0 ? likedValue : null}</span>
+            <span className={` ${isLiked && "text-red-500"} group-hover:text-red-500 ${animationLikes}`}>{likedValue > 0 ? likedValue : null}</span>
         </>
     );
 };

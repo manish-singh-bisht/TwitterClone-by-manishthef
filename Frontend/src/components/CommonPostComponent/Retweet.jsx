@@ -17,7 +17,7 @@ const Retweet = ({ retweets, ACTIONS, dispatchRetweet, state, handlerRetweet, po
 
     useEffect(() => {
         retweets.forEach((item) => {
-            if (item._id === state.user._id) {
+            if (item.user._id === state.user._id) {
                 setIsRetweet(true);
             }
         });
@@ -27,7 +27,7 @@ const Retweet = ({ retweets, ACTIONS, dispatchRetweet, state, handlerRetweet, po
             <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-green-100 group-hover:text-green-500" onClick={retweetHandler}>
                 {isRetweet ? <RetweetsGreen /> : <Retweets />}
             </button>
-            <span className={`group-hover:text-green-500 ${animationRetweet}`}>{retweetValue > 0 ? retweetValue : null}</span>
+            <span className={`${isRetweet && "text-green-500"} group-hover:text-green-500 ${animationRetweet}`}>{retweetValue > 0 ? retweetValue : null}</span>
         </>
     );
 };

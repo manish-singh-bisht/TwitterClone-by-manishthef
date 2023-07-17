@@ -219,7 +219,14 @@ exports.findCommentById = async (req, res, next) => {
         const loggedInUserHandle = req.user.handle;
         const comment = await Comments.findById(req.params.id)
             .populate("post parent")
-            .populate({ path: "retweets", select: "name handle profile _id" })
+            .populate({
+                path: "retweets",
+                select: "-createdAt -_id",
+                populate: {
+                    path: "user",
+                    select: "_id handle name profile",
+                },
+            })
             .populate({ path: "likes", select: "name handle  _id" })
             .populate({ path: "owner", select: "name handle _id" })
             .populate({
@@ -227,7 +234,7 @@ exports.findCommentById = async (req, res, next) => {
                 populate: [
                     { path: "owner", select: "name handle profile _id" },
                     { path: "likes", select: "_id" },
-                    { path: "retweets", select: "_id" },
+                    { path: "retweets", select: "-createdAt -_id", populate: { path: "user", select: "_id" } },
                 ],
             })
             .populate({
@@ -235,7 +242,7 @@ exports.findCommentById = async (req, res, next) => {
                 populate: [
                     { path: "owner", select: "name handle profile _id" },
                     { path: "likes", select: "_id" },
-                    { path: "retweets", select: "_id" },
+                    { path: "retweets", select: "-createdAt -_id", populate: { path: "user", select: "_id" } },
                 ],
             })
 
@@ -244,14 +251,14 @@ exports.findCommentById = async (req, res, next) => {
                 populate: [
                     { path: "owner", select: "name handle profile _id" },
                     { path: "likes", select: "_id" },
-                    { path: "retweets", select: "_id" },
+                    { path: "retweets", select: "-createdAt -_id", populate: { path: "user", select: "_id" } },
                     { path: "parent" },
                     {
                         path: "children",
                         populate: [
                             { path: "owner", select: "name handle profile _id" },
                             { path: "likes", select: "_id" },
-                            { path: "retweets", select: "_id" },
+                            { path: "retweets", select: "-createdAt -_id", populate: { path: "user", select: "_id" } },
                             { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
                         ],
                     },
@@ -284,7 +291,17 @@ exports.findRepliesById = async (req, res, next) => {
     }
 };
 async function fetchReplies(commentId, replies) {
-    const comment = await Comments.findById(commentId).populate({ path: "owner", select: "_id handle profile name" }).populate({ path: "likes", select: "_id handle profile name" }).populate({ path: "retweets", select: "_id handle profile name" });
+    const comment = await Comments.findById(commentId)
+        .populate({ path: "owner", select: "_id handle profile name" })
+        .populate({ path: "likes", select: "_id handle profile name" })
+        .populate({
+            path: "retweets",
+            select: "-createdAt -_id",
+            populate: {
+                path: "user",
+                select: "_id handle name profile",
+            },
+        });
 
     if (!comment) {
         return replies;
@@ -341,24 +358,25 @@ exports.retweetComment = async (req, res, next) => {
             return next(new ErrorHandler("Post is not present", 404));
         }
 
-        //undo retweetComment
-        if (comment.retweets.includes(req.user._id)) {
-            const index = comment.retweets.indexOf(req.user._id);
-            comment.retweets.splice(index, 1);
+        const retweetIndex = comment.retweets.findIndex((retweet) => retweet.user.toString() === req.user._id.toString());
+
+        if (retweetIndex !== -1) {
+            // Undo retweetPost
+            comment.retweets.splice(retweetIndex, 1);
             await comment.save();
 
             return res.status(200).json({
                 success: true,
-                message: "undo retweetComment successfully",
+                message: "Undo retweetPost successfully",
             });
         } else {
-            //retweetComment
-
-            comment.retweets.push(req.user._id);
+            // RetweetPost
+            comment.retweets.push({ user: req.user._id });
             await comment.save();
+
             return res.status(200).json({
                 success: true,
-                message: "retweetComment successfully",
+                message: "RetweetPost successfully",
             });
         }
     } catch (error) {

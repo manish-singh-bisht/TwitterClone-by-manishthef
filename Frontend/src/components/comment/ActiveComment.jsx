@@ -72,7 +72,11 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
         setLikedBy(like);
         setLiked(like.length);
 
-        setRetweetBy(data.comment.retweets);
+        const retweetUserPropertiesArray = data.comment.retweets.map((item) => {
+            return item.user;
+        });
+
+        setRetweetBy(retweetUserPropertiesArray);
         setRetweet(data.comment.retweets.length);
 
         setPhotos(data.comment.images);
@@ -83,7 +87,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
             }
         });
         data.comment.retweets.forEach((item) => {
-            if (item._id === state.user._id) {
+            if (item.user._id === state.user._id) {
                 setIsRetweet(true);
             }
         });

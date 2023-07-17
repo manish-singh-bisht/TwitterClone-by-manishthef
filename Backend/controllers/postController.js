@@ -100,7 +100,12 @@ exports.findPostById = async (req, res, next) => {
             })
             .populate({
                 path: "retweets",
-                select: "_id handle name profile",
+                select: "user -createdAt -_id",
+                populate: {
+                    path: "user",
+
+                    select: "_id handle name profile",
+                },
             })
             .populate({ path: "owner", select: "_id handle profile name" })
             .populate({
@@ -109,13 +114,13 @@ exports.findPostById = async (req, res, next) => {
                     { path: "owner", select: "name handle profile _id" },
                     { path: "post" },
                     { path: "likes", select: "_id" },
-                    { path: "retweets", select: "_id" },
+                    { path: "retweets", select: "user -createdAt -_id", populate: { path: "user", select: "_id" } },
                     {
                         path: "children",
                         populate: [
                             { path: "owner", select: "name handle profile _id" },
                             { path: "likes", select: "_id" },
-                            { path: "retweets", select: "_id" },
+                            { path: "retweets", select: "user -createdAt -_id", populate: { path: "user", select: "_id" } },
                             { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
                         ],
                     },
@@ -266,9 +271,8 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
     try {
         const user = await Users.findById(req.user._id);
 
-        //Line below will bring all posts of the users that are being followed by the logged in user.
+        //Line below will bring all posts of the users that are being followed by the logged in user along with the loggedIn user's post.
         const posts = await Posts.find({ owner: { $in: [...user.following, user._id] }, parent: null })
-
             .populate({
                 path: "owner",
                 select: "handle name profile",
@@ -279,11 +283,38 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
             })
             .populate({
                 path: "retweets",
-                select: "_id handle name profile",
-            });
+                select: "user -createdAt -_id",
+                populate: {
+                    path: "user",
+                    select: "_id handle name profile",
+                },
+            })
+            .sort({ createdAt: -1 });
+
+        // //Line below will bring all retweets of the users that are being followed by the logged in user along with the loggedIn user's retweets.
+        // const retweets = await Posts.find({ retweets: { user: { $in: [...user.following, user._id] } }, parent: null })
+        //     .populate({
+        //         path: "owner",
+        //         select: "handle name profile",
+        //     })
+        //     .populate({
+        //         path: "likes",
+        //         select: "_id handle name profile",
+        //     })
+        //     .populate({
+        //         path: "retweets",
+        //         populate: {
+        //             path: "user",
+        //             select: "_id handle name profile",
+        //         },
+        //     })
+        //     .sort({ createdAt: -1 });
+
+        // const combined = [...retweets, ...posts];
+
         res.status(200).json({
             success: true,
-            posts: posts.reverse(),
+            posts: posts,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
@@ -308,7 +339,11 @@ async function fetchThread(postId, thread, userHandle) {
         })
         .populate({
             path: "retweets",
-            select: "_id handle name profile",
+            select: "user -createdAt -_id",
+            populate: {
+                path: "user",
+                select: "_id handle name profile",
+            },
         })
         .populate({ path: "owner", select: "_id handle profile name" })
         .populate({
@@ -317,13 +352,13 @@ async function fetchThread(postId, thread, userHandle) {
                 { path: "owner", select: "name handle profile _id" },
                 { path: "post" },
                 { path: "likes", select: "_id" },
-                { path: "retweets", select: "_id" },
+                { path: "retweets", select: "user -createdAt -_id", populate: { path: "user", select: "_id" } },
                 {
                     path: "children",
                     populate: [
                         { path: "owner", select: "name handle profile _id" },
                         { path: "likes", select: "_id" },
-                        { path: "retweets", select: "_id" },
+                        { path: "retweets", select: "user -createdAt -_id", populate: { path: "user", select: "_id" } },
                         { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
                     ],
                 },
@@ -360,24 +395,25 @@ exports.retweetPost = async (req, res, next) => {
             return next(new ErrorHandler("Post is not present", 404));
         }
 
-        //undo retweetPost
-        if (post.retweets.includes(req.user._id)) {
-            const index = post.retweets.indexOf(req.user._id);
-            post.retweets.splice(index, 1);
+        const retweetIndex = post.retweets.findIndex((retweet) => retweet.user.toString() === req.user._id.toString());
+
+        if (retweetIndex !== -1) {
+            // Undo retweetPost
+            post.retweets.splice(retweetIndex, 1);
             await post.save();
 
             return res.status(200).json({
                 success: true,
-                message: "undo retweetPost successfully",
+                message: "Undo retweetPost successfully",
             });
         } else {
-            //retweetPost
-
-            post.retweets.push(req.user._id);
+            // RetweetPost
+            post.retweets.push({ user: req.user._id });
             await post.save();
+
             return res.status(200).json({
                 success: true,
-                message: "retweetPost successfully",
+                message: "RetweetPost successfully",
             });
         }
     } catch (error) {

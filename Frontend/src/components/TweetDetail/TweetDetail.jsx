@@ -114,12 +114,16 @@ const TweetDetail = () => {
 
         let retweet = [];
         retweet = value.post.retweets;
-        setRetweetBy(retweet);
+        const retweetUserPropertiesArray = retweet.map((item) => {
+            return item.user;
+        });
+
+        setRetweetBy(retweetUserPropertiesArray);
         setRetweet(retweet.length);
 
         //For keeping the heart red or unred even after refreshing the page
         retweet.forEach((item) => {
-            if (item._id === state.user._id) {
+            if (item.user._id === state.user._id) {
                 setIsRetweet(true);
             }
         });
