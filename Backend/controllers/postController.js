@@ -288,30 +288,27 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
             })
             .sort({ createdAt: -1 });
 
-        // //Line below will bring all retweets of the users that are being followed by the logged in user along with the loggedIn user's retweets.
-        // const retweets = await Posts.find({ retweets: { user: { $in: [...user.following, user._id] } }, parent: null })
-        //     .populate({
-        //         path: "owner",
-        //         select: "handle name profile",
-        //     })
-        //     .populate({
-        //         path: "likes",
-        //         select: "_id handle name profile",
-        //     })
-        //     .populate({
-        //         path: "retweets",
-        //         populate: {
-        //             path: "user",
-        //             select: "_id handle name profile",
-        //         },
-        //     })
-        //     .sort({ createdAt: -1 });
+        //Line below will bring all retweets of the users that are being followed by the logged in user along with the loggedIn user's retweets.
+        const retweets = await Retweets.find({ userRetweeted: { $in: [...user.following] } })
+            .populate({
+                path: "originalPost",
+                populate: [
+                    { path: "owner", select: "handle name profile" },
+                    { path: "likes", select: "_id handle name profile" },
+                    { path: "retweets", select: "_id handle name profile" },
+                ],
+            })
+            .populate({
+                path: "userRetweeted",
+                select: "_id name",
+            });
 
-        // const combined = [...retweets, ...posts];
+        const combined = [...retweets, ...posts];
+        combined.sort((a, b) => b.createdAt - a.createdAt);
 
         res.status(200).json({
             success: true,
-            posts: posts,
+            posts: combined,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));

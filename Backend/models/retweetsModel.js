@@ -7,7 +7,11 @@ const retweetsSchema = new mongoose.Schema({
     },
     originalPost: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Posts",
+        refPath: "onModel",
+    },
+    onModel: {
+        type: String,
+        enum: ["Posts", "Comments"],
     },
     createdAt: {
         type: Date,

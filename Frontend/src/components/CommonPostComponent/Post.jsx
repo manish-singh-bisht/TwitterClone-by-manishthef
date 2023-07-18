@@ -42,6 +42,7 @@ const Post = ({
     comment, //this is child comments of the active comment and is being passed from commentCard by commentDetail component
     threadChildren,
     mentions,
+    ownerRetweet,
 }) => {
     const formattedTime = usePostTime(Date.parse(timeCreated));
 
@@ -80,6 +81,7 @@ const Post = ({
         }
         // Regex pattern to find mentions and make them blue,in the display after it is posted
         const mentionRegex = /(@)(\w+)/g;
+
         const parts = tweet.split(mentionRegex);
         const renderedComment = [];
         for (let i = 0; i < parts.length; i++) {
@@ -174,6 +176,12 @@ const Post = ({
 
     return (
         <div className={` scroll-mt-32  hover:bg-gray-50`} id={postId} key={postId}>
+            {ownerRetweet && (
+                <div className="mx-10 mt-1 flex items-center gap-4 text-[0.86rem] font-bold text-gray-500">
+                    <Retweets />
+                    <div>{`${ownerRetweet.name} retweeted`}</div>
+                </div>
+            )}
             <div
                 onClick={() => {
                     if (!passedIsThread) {
@@ -250,7 +258,6 @@ const Post = ({
                     </div>
                 </div>
             </div>
-
             <div className="mt-4 mb-2 ml-[4.25rem] flex w-[87.5%] gap-20   border-2">
                 <div className="group flex w-[3rem] items-center justify-around">
                     <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
@@ -374,9 +381,7 @@ const Post = ({
                         </>
                     );
                 })}
-
             <hr className="w-full bg-gray-100" />
-
             <Suspense fallback={<Loader />}>
                 <MoreOptionMenuModal
                     visibility={visibility}

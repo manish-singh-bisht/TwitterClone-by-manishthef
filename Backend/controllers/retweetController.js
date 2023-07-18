@@ -27,7 +27,7 @@ exports.retweetPost = async (req, res, next) => {
             });
         }
 
-        await Retweets.create({ originalPost: req.params.id, userRetweeted: user });
+        await Retweets.create({ originalPost: req.params.id, userRetweeted: user, onModel: "Posts" });
         post.retweets.push(user);
 
         await post.save();
@@ -64,7 +64,7 @@ exports.retweetComment = async (req, res, next) => {
             });
         }
 
-        await Retweets.create({ originalPost: comment._id, userRetweeted: user });
+        await Retweets.create({ originalPost: comment._id, userRetweeted: user, onModel: "Comments" });
         comment.retweets.push(user);
         await comment.save();
 

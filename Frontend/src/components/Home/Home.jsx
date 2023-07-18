@@ -9,7 +9,7 @@ import RetweetPost from "../../context/Actions/RetweetPost";
 const Home = () => {
     const { dispatchPostOfFollowingAndMe, ACTIONS, statePostOfFollowingAndMe, state, dispatchLikeUnlike, posts, setPosts, dispatchRetweetPost } = useGlobalContext();
 
-    const { loading, error } = statePostOfFollowingAndMe;
+    const { loading } = statePostOfFollowingAndMe;
 
     const profile = state.user && state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null;
 
@@ -44,14 +44,17 @@ const Home = () => {
                         <div className={` flex h-[100%] flex-col border-l border-r`}>
                             <TweetBoxInHome profile={profile} />
                             {posts && posts.length > 0 ? (
-                                posts.map((post) => {
+                                posts.map((item) => {
+                                    const post = item.originalPost ? item.originalPost : item;
+                                    const ownerRetweet = item.userRetweeted ? item.userRetweeted : null;
                                     const ownerImage = post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null;
                                     const imageInPost = post.images ? post.images : null;
                                     return (
                                         <Post
                                             key={post._id}
                                             postId={post._id}
-                                            tweet={post.tweet}
+                                            tweet={post.tweet || post.comment}
+                                            ownerRetweet={ownerRetweet}
                                             postImage={imageInPost}
                                             likes={post.likes}
                                             retweets={post.retweets}
