@@ -18,7 +18,7 @@ const ExtendedMedia = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     useEffect(() => {
         photos.map((item, index) => {
-            if (photo === item.url) {
+            if (photo === item.url || photo === item) {
                 setCurrentImageIndex(index);
             }
         });
@@ -43,7 +43,7 @@ const ExtendedMedia = () => {
                         <div
                             className=" mt-[-250%] cursor-pointer  rounded-full p-2 text-white hover:bg-white hover:text-black "
                             onClick={prevImage}
-                            style={{ visibility: photos.length > 1 && photos[currentImageIndex].url !== photos[0].url ? "visible" : "hidden" }}>
+                            style={{ visibility: photos.length > 1 && (photos[currentImageIndex].url !== photos[0].url || photos[currentImageIndex] !== photos[0]) ? "visible" : "hidden" }}>
                             <LeftArrow />
                         </div>
                     </div>
@@ -56,7 +56,7 @@ const ExtendedMedia = () => {
 
                 <div className="  flex h-screen w-fit flex-col items-center justify-center ">
                     <div
-                        style={{ visibility: photos.length > 1 && photos[currentImageIndex].url !== photos[photos.length - 1].url ? "visible" : "hidden" }}
+                        style={{ visibility: photos.length > 1 && (photos[currentImageIndex].url !== photos[photos.length - 1].url || photos[currentImageIndex] !== photos[photos.length - 1]) ? "visible" : "hidden" }}
                         className=" mt-[-100%] cursor-pointer  rounded-full p-2 text-white hover:bg-white hover:text-black "
                         onClick={nextImage}>
                         <RightArrow />
