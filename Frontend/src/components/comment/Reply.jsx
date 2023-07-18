@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect, useState } from "react";
 import Avatar from "../Avatar/Avatar";
 import { Link } from "react-router-dom";
-import { Bookmark, Comments, Retweets, ThreeDots } from "../SVGs/SVGs";
+import { Bookmark, Comments, ThreeDots } from "../SVGs/SVGs";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import CommentLikeUnlike from "../../context/Actions/CommentLikeUnlike";
 import Loader from "../Loader/Loader";

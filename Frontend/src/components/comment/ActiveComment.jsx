@@ -72,11 +72,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
         setLikedBy(like);
         setLiked(like.length);
 
-        const retweetUserPropertiesArray = data.comment.retweets.map((item) => {
-            return item.user;
-        });
-
-        setRetweetBy(retweetUserPropertiesArray);
+        setRetweetBy(data.comment.retweets);
         setRetweet(data.comment.retweets.length);
 
         setPhotos(data.comment.images);
@@ -87,7 +83,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
             }
         });
         data.comment.retweets.forEach((item) => {
-            if (item.user._id === state.user._id) {
+            if (item._id === state.user._id) {
                 setIsRetweet(true);
             }
         });
@@ -140,7 +136,15 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
 
     const retweetHandler = async () => {
         handleRetweetAnimation();
-        await axios.get(`http://localhost:4000/api/v1/post/${commentId}/retweet`, { withCredentials: true });
+        await axios.post(
+            `http://localhost:4000/api/v1/comment/${commentId}`,
+            { user: state.user._id },
+
+            {
+                withCredentials: true,
+                headers: { "Content-Type": "application/json" },
+            }
+        );
     };
     //Grid layout for different numbers of image,used below
     let gridClass = "";

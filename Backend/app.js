@@ -1,5 +1,4 @@
 const express = require("express");
-const { urlencoded } = require("express");
 const errorMiddleware = require("./middlewares/error");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -16,10 +15,13 @@ app.use(cookieParser());
 const userRoute = require("./routes/userRoute");
 const postRoute = require("./routes/postRoute");
 const commentRoute = require("./routes/commentRoute");
+const retweetsRoute = require("./routes/retweetsRoute");
+
 //routes
 app.use("/api/v1", userRoute);
 app.use("/api/v1", postRoute);
 app.use("/api/v1", commentRoute);
+app.use("/api/v1", retweetsRoute);
 
 //error middleware
 app.use(errorMiddleware);

@@ -12,12 +12,12 @@ const Retweet = ({ retweets, ACTIONS, dispatchRetweet, state, handlerRetweet, po
 
     const retweetHandler = async () => {
         handleRetweetAnimation();
-        await handlerRetweet({ dispatchRetweet, ACTIONS, postId });
+        await handlerRetweet({ dispatchRetweet, ACTIONS, postId, user: state.user._id });
     };
 
     useEffect(() => {
         retweets.forEach((item) => {
-            if (item.user._id === state.user._id) {
+            if (item._id === state.user._id) {
                 setIsRetweet(true);
             }
         });

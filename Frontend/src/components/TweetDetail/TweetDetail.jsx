@@ -114,16 +114,13 @@ const TweetDetail = () => {
 
         let retweet = [];
         retweet = value.post.retweets;
-        const retweetUserPropertiesArray = retweet.map((item) => {
-            return item.user;
-        });
 
-        setRetweetBy(retweetUserPropertiesArray);
+        setRetweetBy(retweet);
         setRetweet(retweet.length);
 
         //For keeping the heart red or unred even after refreshing the page
         retweet.forEach((item) => {
-            if (item.user._id === state.user._id) {
+            if (item._id === state.user._id) {
                 setIsRetweet(true);
             }
         });
@@ -174,7 +171,7 @@ const TweetDetail = () => {
 
     const retweetHandler = async () => {
         handleRetweetAnimation();
-        await RetweetPost({ dispatchRetweet, ACTIONS, postId });
+        await RetweetPost({ dispatchRetweet, ACTIONS, postId, user: state.user._id });
     };
 
     const photos = postImage ? postImage : [];

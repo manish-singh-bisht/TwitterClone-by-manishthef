@@ -98,15 +98,9 @@ exports.findPostById = async (req, res, next) => {
                 path: "likes",
                 select: "_id handle name profile",
             })
-            .populate({
-                path: "retweets",
 
-                populate: {
-                    path: "user",
+            .populate({ path: "retweets", select: "name handle profile _id" })
 
-                    select: "_id handle name profile",
-                },
-            })
             .populate({ path: "owner", select: "_id handle profile name" })
             .populate({
                 path: "comments",
@@ -114,13 +108,13 @@ exports.findPostById = async (req, res, next) => {
                     { path: "owner", select: "name handle profile _id" },
                     { path: "post" },
                     { path: "likes", select: "_id" },
-                    { path: "retweets", populate: { path: "user", select: "_id" } },
+                    { path: "retweets", select: "_id" },
                     {
                         path: "children",
                         populate: [
                             { path: "owner", select: "name handle profile _id" },
                             { path: "likes", select: "_id" },
-                            { path: "retweets", populate: { path: "user", select: "_id" } },
+                            { path: "retweets", select: "_id" },
                             { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
                         ],
                     },
@@ -283,11 +277,7 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
             })
             .populate({
                 path: "retweets",
-
-                populate: {
-                    path: "user",
-                    select: "_id handle name profile",
-                },
+                select: "_id handle name profile",
             })
             .sort({ createdAt: -1 });
 
@@ -339,11 +329,7 @@ async function fetchThread(postId, thread, userHandle) {
         })
         .populate({
             path: "retweets",
-
-            populate: {
-                path: "user",
-                select: "_id handle name profile",
-            },
+            select: "_id handle name profile",
         })
         .populate({ path: "owner", select: "_id handle profile name" })
         .populate({
@@ -352,13 +338,13 @@ async function fetchThread(postId, thread, userHandle) {
                 { path: "owner", select: "name handle profile _id" },
                 { path: "post" },
                 { path: "likes", select: "_id" },
-                { path: "retweets", populate: { path: "user", select: "_id" } },
+                { path: "retweets", select: "_id" },
                 {
                     path: "children",
                     populate: [
                         { path: "owner", select: "name handle profile _id" },
                         { path: "likes", select: "_id" },
-                        { path: "retweets", populate: { path: "user", select: "_id" } },
+                        { path: "retweets", select: "_id" },
                         { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
                     ],
                 },
@@ -386,37 +372,3 @@ async function fetchThread(postId, thread, userHandle) {
 
     return thread;
 }
-
-exports.retweetPost = async (req, res, next) => {
-    try {
-        const post = await Posts.findById(req.params.id);
-
-        if (!post) {
-            return next(new ErrorHandler("Post is not present", 404));
-        }
-
-        const retweetIndex = post.retweets.findIndex((retweet) => retweet.user.toString() === req.user._id.toString());
-
-        if (retweetIndex !== -1) {
-            // Undo retweetPost
-            post.retweets.splice(retweetIndex, 1);
-            await post.save();
-
-            return res.status(200).json({
-                success: true,
-                message: "Undo retweetPost successfully",
-            });
-        } else {
-            // RetweetPost
-            post.retweets.push({ user: req.user._id });
-            await post.save();
-
-            return res.status(200).json({
-                success: true,
-                message: "RetweetPost successfully",
-            });
-        }
-    } catch (error) {
-        next(new ErrorHandler(error.message, 500));
-    }
-};
