@@ -1,6 +1,7 @@
 const Comments = require("../models/commentModel");
 const Posts = require("../models/postModel");
 const Users = require("../models/userModel");
+const Retweets = require("../models/retweetsModel");
 const ErrorHandler = require("../utils/ErrorHandler");
 const cloudinary = require("cloudinary");
 const sharp = require("sharp");
@@ -173,6 +174,9 @@ const deleteCommentRecursive = async (comment) => {
     // Remove the comment from the user's comments array
     user.comments = user.comments.filter((item) => item._id.toString() !== comment._id.toString());
     await user.save();
+
+    //delete all retweets instances for the comment
+    await Retweets.deleteMany({ originalPost: comment._id });
 
     //deleting images from cloud
     for (const image of comment.images) {

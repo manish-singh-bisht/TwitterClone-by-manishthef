@@ -1,6 +1,7 @@
 const Comments = require("../models/commentModel");
 const Posts = require("../models/postModel");
 const Users = require("../models/userModel");
+const Retweets = require("../models/retweetsModel");
 const ErrorHandler = require("../utils/ErrorHandler");
 const cloudinary = require("cloudinary");
 const sharp = require("sharp");
@@ -204,6 +205,7 @@ const recursivePostDelete = async (post) => {
         }
     }
     const user = await Users.findById({ _id: post.owner });
+
     // Remove the post from its parent's children array
     if (post.parent) {
         const parentTweet = await Posts.findOne({ threadIdForTweetInThread: post.parent });
@@ -215,6 +217,9 @@ const recursivePostDelete = async (post) => {
     // Remove the post from the user's posts array
     user.posts = user.posts.filter((item) => item._id.toString() !== post._id.toString());
     await user.save();
+
+    //delete all retweets instances for the post
+    await Retweets.deleteMany({ originalPost: post._id });
 
     // Delete comments and their children recursively
     for (const commentId of post.comments) {
@@ -249,6 +254,8 @@ const deleteCommentRecursive = async (commentId) => {
                 await parentComment.save();
             }
         }
+        //delete all retweets instances for the post's comments
+        await Retweets.deleteMany({ originalPost: comment._id });
 
         //deleting images from cloud
         for (const image of comment.images) {
