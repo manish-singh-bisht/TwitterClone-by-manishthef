@@ -43,6 +43,7 @@ const Post = ({
     threadChildren,
     mentions,
     ownerRetweet,
+    isCommentRetweet,
 }) => {
     const formattedTime = usePostTime(Date.parse(timeCreated));
 
@@ -137,7 +138,7 @@ const Post = ({
     const navigate = useNavigate();
     const commentId = postId;
 
-    const newUrl = !isComment ? `/${ownerName}/${postId}` : `/${ownerName}/comment/${commentId}`;
+    const newUrl = isCommentRetweet ? `/${ownerName}/comment/${commentId}` : !isComment ? `/${ownerName}/${postId}` : `/${ownerName}/comment/${commentId}`;
 
     const handleClick = (isThread = passedIsThread) => {
         const stateObject = {

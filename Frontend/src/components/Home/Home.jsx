@@ -6,8 +6,11 @@ import LikeUnlike from "../../context/Actions/LikeUnlike";
 import Post from "../CommonPostComponent/Post";
 import PostsOfFollowingAndMe from "../../context/Actions/PostsOfFollowingAndMe";
 import RetweetPost from "../../context/Actions/RetweetPost";
+import RetweetComment from "../../context/Actions/RetweetComment";
+import CommentLikeUnlike from "../../context/Actions/CommentLikeUnlike";
+
 const Home = () => {
-    const { dispatchPostOfFollowingAndMe, ACTIONS, statePostOfFollowingAndMe, state, dispatchLikeUnlike, posts, setPosts, dispatchRetweetPost } = useGlobalContext();
+    const { dispatchPostOfFollowingAndMe, ACTIONS, statePostOfFollowingAndMe, state, dispatchLikeUnlike, posts, setPosts, dispatchRetweetPost, dispatchRetweetComment, dispatchCommentLikeUnlike } = useGlobalContext();
 
     const { loading } = statePostOfFollowingAndMe;
 
@@ -49,12 +52,15 @@ const Home = () => {
                                     const ownerRetweet = item.userRetweeted ? item.userRetweeted : null;
                                     const ownerImage = post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null;
                                     const imageInPost = post.images ? post.images : null;
+
+                                    //if item.originalPost is true then it means that is a comment retweet,else its a post or a post retweet.
                                     return (
                                         <Post
                                             key={post._id}
                                             postId={post._id}
                                             tweet={post.tweet || post.comment}
                                             ownerRetweet={ownerRetweet}
+                                            isCommentRetweet={item.originalPost ? true : false}
                                             postImage={imageInPost}
                                             likes={post.likes}
                                             retweets={post.retweets}
@@ -64,10 +70,10 @@ const Home = () => {
                                             ownerId={post.owner._id}
                                             handle={post.owner.handle}
                                             timeCreated={post.createdAt}
-                                            handler={LikeUnlike}
-                                            dispatch={dispatchLikeUnlike}
-                                            dispatchRetweet={dispatchRetweetPost}
-                                            handlerRetweet={RetweetPost}
+                                            handler={item.originalPost ? CommentLikeUnlike : LikeUnlike}
+                                            dispatch={item.originalPost ? dispatchCommentLikeUnlike : dispatchLikeUnlike}
+                                            dispatchRetweet={item.originalPost ? dispatchRetweetComment : dispatchRetweetPost}
+                                            handlerRetweet={item.originalPost ? RetweetComment : RetweetPost}
                                             state={state}
                                             ACTIONS={ACTIONS}
                                             mentions={post.mentions}
