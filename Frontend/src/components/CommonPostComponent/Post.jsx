@@ -14,7 +14,7 @@ const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModa
 
 const Post = ({
     postId,
-    POSTID, //this is the post id when being passed from CommentCard component,and the CommentCard for this situation is being passed from TweetDetail
+    POSTID, //this is the post id when being passed from CommentCard component,and the CommentCard for this situation is being passed from TweetDetail,also for comment retweet from home component
     tweet,
     ownerName,
     ownerId,
@@ -193,7 +193,7 @@ const Post = ({
                 }}
                 className="relative  m-2 flex cursor-pointer gap-2 hover:bg-gray-50">
                 <Avatar profile={profile} />
-                {fromHome && threadChildren && threadChildren.length > 0 && <div className="absolute left-[1.8rem] top-[3.65rem] h-full min-h-[5rem] w-fit border-2"></div>}
+                {fromHome && threadChildren && threadChildren.length > 0 && !isCommentRetweet && <div className="absolute left-[1.8rem] top-[3.65rem] h-full min-h-[5rem] w-fit border-2"></div>}
                 {!fromHome &&
                     comment &&
                     comment.length > 0 &&
@@ -246,6 +246,8 @@ const Post = ({
                                 setButtonPosition({ top, left });
                                 fromCommentDetail
                                     ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID })
+                                    : isCommentRetweet
+                                    ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID })
                                     : isComment
                                     ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID })
                                     : setInfoToMoreOptionModal({ ownerID: ownerId, postID: postId });
@@ -283,7 +285,7 @@ const Post = ({
                     <span className="group-hover:text-blue-500"></span>
                 </div>
             </div>
-            {fromHome && threadChildren && threadChildren.length > 0 && (
+            {fromHome && threadChildren && threadChildren.length > 0 && !isCommentRetweet && (
                 <button
                     className="flex h-12 w-full  items-center gap-2  hover:bg-gray-200"
                     onClick={(e) => {
@@ -392,6 +394,7 @@ const Post = ({
                     onCloseMoreOptionModal={onCloseMoreOptionModal}
                     fromCommentDetail={fromCommentDetail}
                     fromHome={fromHome}
+                    isCommentRetweet={isCommentRetweet}
                     fromTweetDetail={fromTweetDetail}
                 />
             </Suspense>

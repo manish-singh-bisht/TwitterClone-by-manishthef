@@ -65,7 +65,11 @@ const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handle
                     if (selectedImages.length > 0 && data !== undefined) {
                         data.images = selectedImages;
                     }
-                    setPosts((prev) => [data, ...prev]);
+                    if (data !== undefined) {
+                        setPosts((prev) => [data, ...prev]);
+                    } else {
+                        setPosts((prev) => [...prev]);
+                    }
                 }
                 setIsSent(false);
                 editor.commands.clearContent(true);

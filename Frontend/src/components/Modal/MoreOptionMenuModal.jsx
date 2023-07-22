@@ -8,6 +8,7 @@ import Loader from "../Loader/Loader";
 import DeletePost from "../../context/Actions/DeletePost";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const MoreOptionMenuModal = ({
     visibility,
@@ -24,6 +25,7 @@ const MoreOptionMenuModal = ({
     fromCommentDetail,
     fromHome,
     fromTweetDetail,
+    isCommentRetweet,
 }) => {
     if (!visibility) return;
 
@@ -72,10 +74,25 @@ const MoreOptionMenuModal = ({
 
     const deleteHandler = async () => {
         const postID = infoToMoreOptionModal.postID;
+        let tempPostId = postID;
         const commentID = infoToMoreOptionModal.commentID;
 
         if (fromHome) {
-            setPosts((prev) => prev.filter((item) => item._id !== postID));
+            setPosts((prev) =>
+                prev.filter((item) => {
+                    if (item.onModel === "Comments") {
+                        tempPostId = "";
+                        return item.originalPost._id !== commentID;
+                    }
+                    if (item.onModel === "Posts") {
+                        return item.originalPost._id !== tempPostId;
+                    }
+                    if (item.onModel === undefined) {
+                        return item._id !== tempPostId;
+                    }
+                })
+            );
+
             const toastConfig = {
                 position: "bottom-center",
                 autoClose: 2000,
@@ -97,7 +114,11 @@ const MoreOptionMenuModal = ({
                 },
             };
             toast("Your Tweet was deleted", toastConfig);
-            const post = await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
+            if (isCommentRetweet) {
+                await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+            } else {
+                await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
+            }
         } else if (fromTweetDetail && commentID === undefined) {
             const toastConfig = {
                 position: "bottom-center",

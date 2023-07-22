@@ -39,8 +39,31 @@ const PostTweet = async ({ dispatchPostTweet, ACTIONS, tweet, parent, mentions, 
         toast(data.message, toastConfig);
         dispatchPostTweet({ type: ACTIONS.POST_TWEET_SUCCESS, payload: data.createNewPost });
         return data.createNewPost;
-    } catch (error) {
-        dispatchPostTweet({ type: ACTIONS.POST_TWEET_FAILURE, payload: error.response.data.message });
+    } catch (err) {
+        const toastConfig = {
+            position: "bottom-center",
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: false,
+            progress: undefined,
+            closeButton: false,
+            style: {
+                backgroundColor: "#1DA1F2",
+                border: "none",
+                boxShadow: "none",
+                width: "fit-content",
+                zIndex: 9999,
+                color: "white",
+                padding: "0px 16px",
+                minHeight: "3rem",
+            },
+        };
+        if (err.response) {
+            toast(err.response.data.message, toastConfig);
+            dispatchPostTweet({ type: ACTIONS.POST_TWEET_FAILURE, payload: err.response.data.message });
+        }
     }
 };
 

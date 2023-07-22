@@ -86,8 +86,8 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
     const ownerImage = reply.owner.profile && reply.owner.profile.image.url ? reply.owner.profile.image.url : null;
 
     return (
-        <>
-            <div key={reply._id}>
+        <div key={reply._id}>
+            <div>
                 <div className={`  pt-[0.1rem] hover:bg-gray-50`}>
                     <div onClick={handleClick} className=" relative m-2 flex cursor-pointer gap-2 hover:bg-gray-50">
                         <Avatar profile={ownerImage} />
@@ -168,7 +168,7 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
                     fromReplies={true}
                 />
             </Suspense>
-        </>
+        </div>
     );
 };
 

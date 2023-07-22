@@ -53,27 +53,29 @@ const Home = () => {
                                     const ownerImage = post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null;
                                     const imageInPost = post.images ? post.images : null;
 
-                                    //if item.originalPost is true then it means that is a comment retweet,else its a post or a post retweet.
+                                    //item.originalPost?.comment ,ensures that its a comment retweet, because in post model for the post text it is "tweet" and in comment model for the post text it is "comment".
+
                                     return (
                                         <Post
-                                            key={post._id}
+                                            key={`${post._id}+${item.createdAt}`}
                                             postId={post._id}
+                                            POSTID={item.originalPost?.comment ? item.originalPost?.post : null}
                                             tweet={post.tweet || post.comment}
                                             ownerRetweet={ownerRetweet}
-                                            isCommentRetweet={item.originalPost ? true : false}
-                                            postImage={imageInPost}
+                                            isCommentRetweet={item.originalPost?.comment ? true : false}
                                             likes={post.likes}
+                                            postImage={imageInPost}
                                             retweets={post.retweets}
-                                            comments={post.comments}
+                                            comments={item.originalPost?.comment ? post.children : post.comments}
                                             ownerName={post.owner.name}
                                             ownerImage={ownerImage}
                                             ownerId={post.owner._id}
                                             handle={post.owner.handle}
                                             timeCreated={post.createdAt}
-                                            handler={item.originalPost ? CommentLikeUnlike : LikeUnlike}
-                                            dispatch={item.originalPost ? dispatchCommentLikeUnlike : dispatchLikeUnlike}
-                                            dispatchRetweet={item.originalPost ? dispatchRetweetComment : dispatchRetweetPost}
-                                            handlerRetweet={item.originalPost ? RetweetComment : RetweetPost}
+                                            handler={item.originalPost?.comment ? CommentLikeUnlike : LikeUnlike}
+                                            dispatch={item.originalPost?.comment ? dispatchCommentLikeUnlike : dispatchLikeUnlike}
+                                            dispatchRetweet={item.originalPost?.comment ? dispatchRetweetComment : dispatchRetweetPost}
+                                            handlerRetweet={item.originalPost?.comment ? RetweetComment : RetweetPost}
                                             state={state}
                                             ACTIONS={ACTIONS}
                                             mentions={post.mentions}
