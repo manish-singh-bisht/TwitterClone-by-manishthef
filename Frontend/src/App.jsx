@@ -14,6 +14,7 @@ const TweetDetail = React.lazy(() => import("./components/TweetDetail/TweetDetai
 const CommentDetail = React.lazy(() => import("./components/comment/CommentDetail"));
 const Test = React.lazy(() => import("./components/pages/Test"));
 const ProfilePage = React.lazy(() => import("./components/Profile/ProfilePage"));
+const BookMarkPage = React.lazy(() => import("./components/BookMarkPage/BookMarkPage"));
 
 const App = () => {
     const {
@@ -31,8 +32,8 @@ const App = () => {
 
     return (
         <BrowserRouter>
-            <div className={`${isAuthenticated ? "grid grid-cols-[24rem_auto] " : ""}`}>
-                <div>{isAuthenticated && <Sidebar />}</div>
+            <div className={`${isAuthenticated ? "grid grid-cols-[24rem_44vw_auto]  " : ""}`}>
+                <div className="">{isAuthenticated && <Sidebar />}</div>
                 <div>
                     <Suspense fallback={<Loader />}>
                         <Routes>
@@ -46,6 +47,7 @@ const App = () => {
                             <Route exact path="/test" element={<Test />} />
                             <Route exact path="/ExtendedMedia" element={<ExtendedMedia />} />
                             <Route exact path="/Profile" element={<ProfilePage />} />
+                            <Route exact path="/Bookmark" element={isAuthenticated ? <BookMarkPage /> : <Navigate to="/login" replace />} />
                         </Routes>
                     </Suspense>
                 </div>

@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect, useRef, useState } from "react";
-import { Bookmark, Comments, Retweets, ThreeDots } from "../SVGs/SVGs";
+import { Comments, Retweets, ThreeDots } from "../SVGs/SVGs";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import PhotoGallery from "./PhotoGallery";
 import "./AnimationUsedInPostAndTweetDetail.css";
@@ -10,6 +10,7 @@ import axios from "axios";
 import Reply from "../comment/Reply";
 import Loader from "../Loader/Loader";
 import Retweet from "./Retweet";
+import BookMark from "./BookMark";
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const Post = ({
@@ -25,6 +26,7 @@ const Post = ({
     likes = [],
     retweets = [],
     comments = [],
+    bookmarks = [],
     handler,
     dispatch,
     dispatchRetweet,
@@ -44,6 +46,8 @@ const Post = ({
     mentions,
     ownerRetweet,
     isCommentRetweet,
+    dispatchBookmark,
+    handlerBookmark,
 }) => {
     const formattedTime = usePostTime(Date.parse(timeCreated));
 
@@ -278,11 +282,8 @@ const Post = ({
                 <div className=" group flex w-[3rem] items-center justify-around  ">
                     <LikeUnlikePost likes={likes} ACTIONS={ACTIONS} dispatch={dispatch} state={state} handler={handler} postId={postId} />
                 </div>
-                <div className="group flex w-[3rem] items-center justify-around ">
-                    <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
-                        <Bookmark />
-                    </button>
-                    <span className="group-hover:text-blue-500"></span>
+                <div className=" group flex w-[3rem] items-center justify-around  ">
+                    <BookMark bookmarks={bookmarks} ACTIONS={ACTIONS} dispatchBookmark={dispatchBookmark} state={state} handlerBookmark={handlerBookmark} postId={postId} />
                 </div>
             </div>
             {fromHome && threadChildren && threadChildren.length > 0 && !isCommentRetweet && (

@@ -6,18 +6,19 @@ import axios from "axios";
 import useAnimation from "../../CustomHooks/useAnimation";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import Loader from "../Loader/Loader";
-import { Bookmark, Comments, HeartLike, HeartUnlike, LeftArrow, Retweets, RetweetsGreen, ThreeDots } from "../SVGs/SVGs";
+import { Comments, HeartLike, HeartUnlike, LeftArrow, Retweets, RetweetsGreen, ThreeDots, UndoBookmark, Bookmark } from "../SVGs/SVGs";
 import { usePostTimeInTweetDetail } from "../../CustomHooks/usePostTime";
 import Avatar from "../Avatar/Avatar";
 import PhotoGallery from "../CommonPostComponent/PhotoGallery";
 import RetweetPost from "../../context/Actions/RetweetPost";
+import PostBookmark from "../../context/Actions/PostBookmark";
 
 const ModalForLikesBookmarksRetweets = React.lazy(() => import("../Modal/ModalForLikesBookmarksRetweets"));
 const CommentCard = React.lazy(() => import("../comment/CommentCard"));
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const TweetDetail = () => {
-    const { ACTIONS, dispatchLikeUnlike: dispatch, state, stateComment, stateCommentDelete, dispatchRetweetPost: dispatchRetweet } = useGlobalContext();
+    const { ACTIONS, dispatchLikeUnlike: dispatch, state, stateComment, stateCommentDelete, dispatchRetweetPost: dispatchRetweet, dispatchBookmarkTweet: dispatchBookmark } = useGlobalContext();
 
     //Modal for more option
     const [visibility, setVisibility] = useState(false);
@@ -87,6 +88,10 @@ const TweetDetail = () => {
     const [retweet, setRetweet] = useState(null);
     const [retweetBy, setRetweetBy] = useState([]);
 
+    //For bookmark
+    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [bookmarked, setBookmarked] = useState(null); // no bookmarkedBy for bookmark as in for like and retweet
+
     const fetchData = useCallback(async () => {
         //gets the updated data of likes, when user likes at homepage and then comes to detailpage,the user gets the updated data
         let value;
@@ -118,10 +123,20 @@ const TweetDetail = () => {
         setRetweetBy(retweet);
         setRetweet(retweet.length);
 
-        //For keeping the heart red or unred even after refreshing the page
         retweet.forEach((item) => {
             if (item._id === state.user._id) {
                 setIsRetweet(true);
+            }
+        });
+
+        let bookmark = [];
+        bookmark = value.post.bookmarks;
+
+        setBookmarked(bookmark.length);
+
+        bookmark.forEach((item) => {
+            if (item._id === state.user._id) {
+                setIsBookmarked(true);
             }
         });
         setComments(value.post.comments);
@@ -153,7 +168,7 @@ const TweetDetail = () => {
             }
         }
         setCommentt(renderedComment);
-    }, [isLiked, isRetweet, stateComment.comment, stateCommentDelete, postId]);
+    }, [isLiked, isRetweet, stateComment.comment, stateCommentDelete, postId, isBookmarked]);
 
     useEffect(() => {
         fetchData();
@@ -174,6 +189,13 @@ const TweetDetail = () => {
         await RetweetPost({ dispatchRetweet, ACTIONS, postId, user: state.user._id });
     };
 
+    //ANIMATION FOR THE NUMBER NEXT TO BOOKMARK USING CUSTOM HOOK
+    const [animationBookmarked, bookmarkedValue, handleBookmarkedAnimation] = useAnimation(isBookmarked, setIsBookmarked, bookmarked, setBookmarked);
+
+    const bookmarkedHandler = async () => {
+        handleBookmarkedAnimation();
+        await PostBookmark({ dispatchBookmark, ACTIONS, postId });
+    };
     const photos = postImage ? postImage : [];
 
     //Grid layout for different numbers of image,used below
@@ -247,7 +269,7 @@ const TweetDetail = () => {
                 </div>
                 <div className="mx-4  "> {formattedTime}</div>
                 <div className="m-4  border-t-[0.01rem] opacity-80"></div>
-                {likedValue > 0 || retweetValue > 0 ? (
+                {likedValue > 0 || retweetValue > 0 || bookmarkedValue > 0 ? (
                     <>
                         <div className="mx-4 flex gap-8  font-bold">
                             {retweetValue > 0 ? (
@@ -260,12 +282,10 @@ const TweetDetail = () => {
                                         setList(retweetBy);
                                     }}>
                                     {retweetValue > 0 ? <span className={`${animationRetweet} mr-1`}>{retweetValue}</span> : null}
-                                    <span className={`text-[0.9rem] font-normal hover:underline`}>Retweets</span>
+                                    <span className={`text-[0.9rem] font-normal hover:underline`}> {retweetValue === 1 ? "Retweet" : "Retweets"}</span>
                                 </div>
                             ) : null}
-                            <div className="cursor-pointer">
-                                <span className={`${animationLikes}`}>1</span> <span className={`text-[0.9rem] font-normal hover:underline`}>Quotes</span>
-                            </div>
+
                             {likedValue > 0 ? (
                                 <div
                                     className="cursor-pointer"
@@ -276,12 +296,16 @@ const TweetDetail = () => {
                                         setList(likedBy);
                                     }}>
                                     {likedValue > 0 ? <span className={`${animationLikes} mr-1`}>{likedValue}</span> : null}
-                                    <span className={`text-[0.9rem] font-normal hover:underline`}>Likes</span>
+                                    <span className={`text-[0.9rem] font-normal hover:underline`}>{likedValue === 1 ? "Like" : "Likes"}</span>
                                 </div>
                             ) : null}
-                            <div className="cursor-pointer">
-                                <span className={`${animationLikes}`}>1</span> <span className={` text-[0.9rem] font-normal hover:underline`}>Bookmarks</span>
-                            </div>
+
+                            {bookmarkedValue > 0 ? (
+                                <div className="cursor-pointer ">
+                                    {bookmarkedValue > 0 ? <span className={`${animationBookmarked} mr-1`}>{bookmarkedValue}</span> : null}
+                                    <span className={`text-[0.9rem] font-normal hover:underline`}> {bookmarkedValue === 1 ? "Bookmark" : "Bookmarks"}</span>
+                                </div>
+                            ) : null}
                         </div>
                         <div className="m-4  border-t-[0.01rem] opacity-80"></div>
                     </>
@@ -304,8 +328,8 @@ const TweetDetail = () => {
                         </button>
                     </div>
                     <div className="group flex items-center justify-center gap-2 ">
-                        <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
-                            <Bookmark bigIcon={true} />
+                        <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500" onClick={bookmarkedHandler}>
+                            {isBookmarked ? <Bookmark bigIcon={true} /> : <UndoBookmark bigIcon={true} />}
                         </button>
                     </div>
                 </div>

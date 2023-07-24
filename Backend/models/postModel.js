@@ -50,6 +50,12 @@ const postSchema = new mongoose.Schema({
             ref: "Users",
         },
     ],
+    bookmarks: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Users",
+        },
+    ],
     mentions: [
         {
             type: String,

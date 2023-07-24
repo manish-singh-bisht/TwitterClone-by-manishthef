@@ -41,6 +41,12 @@ const commentSchema = new mongoose.Schema({
             ref: "Users",
         },
     ],
+    bookmarks: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Users",
+        },
+    ],
     createdAt: {
         type: Date,
         default: Date.now,

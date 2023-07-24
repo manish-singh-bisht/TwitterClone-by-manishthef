@@ -227,6 +227,10 @@ exports.findCommentById = async (req, res, next) => {
                 path: "retweets",
                 select: "_id handle name profile",
             })
+            .populate({
+                path: "bookmarks",
+                select: "_id",
+            })
             .populate({ path: "likes", select: "name handle  _id" })
             .populate({ path: "owner", select: "name handle _id" })
             .populate({
@@ -234,6 +238,7 @@ exports.findCommentById = async (req, res, next) => {
                 populate: [
                     { path: "owner", select: "name handle profile _id" },
                     { path: "likes", select: "_id" },
+                    { path: "bookmarks", select: "_id" },
                     { path: "retweets", select: "_id" },
                 ],
             })
@@ -242,6 +247,7 @@ exports.findCommentById = async (req, res, next) => {
                 populate: [
                     { path: "owner", select: "name handle profile _id" },
                     { path: "likes", select: "_id" },
+                    { path: "bookmarks", select: "_id" },
                     { path: "retweets", select: "_id" },
                 ],
             })
@@ -252,6 +258,7 @@ exports.findCommentById = async (req, res, next) => {
                     { path: "owner", select: "name handle profile _id" },
                     { path: "likes", select: "_id" },
                     { path: "retweets", select: "_id" },
+                    { path: "bookmarks", select: "_id" },
                     { path: "parent" },
                     {
                         path: "children",
@@ -259,6 +266,7 @@ exports.findCommentById = async (req, res, next) => {
                             { path: "owner", select: "name handle profile _id" },
                             { path: "likes", select: "_id" },
                             { path: "retweets", select: "_id" },
+                            { path: "bookmarks", select: "_id" },
                             { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
                         ],
                     },
@@ -291,10 +299,17 @@ exports.findRepliesById = async (req, res, next) => {
     }
 };
 async function fetchReplies(commentId, replies) {
-    const comment = await Comments.findById(commentId).populate({ path: "owner", select: "_id handle profile name" }).populate({ path: "likes", select: "_id handle profile name" }).populate({
-        path: "retweets",
-        select: "_id handle name profile",
-    });
+    const comment = await Comments.findById(commentId)
+        .populate({ path: "owner", select: "_id handle profile name" })
+        .populate({ path: "likes", select: "_id handle profile name" })
+        .populate({
+            path: "retweets",
+            select: "_id handle name profile",
+        })
+        .populate({
+            path: "bookmarks",
+            select: "_id",
+        });
 
     if (!comment) {
         return replies;
@@ -342,3 +357,34 @@ async function mentionsHandleCollector(commentId, mentions, loggedInUserHandle) 
     const uniqueMentions = [...new Set(mentions)];
     return uniqueMentions;
 }
+exports.commentBookmark = async (req, res, next) => {
+    try {
+        const comment = await Comments.findById(req.params.id);
+        if (!comment) {
+            return next(new ErrorHandler("Comment is not present", 404));
+        }
+
+        //undo bookmark comment
+        if (comment.bookmarks.includes(req.user._id)) {
+            const index = comment.bookmarks.indexOf(req.user._id);
+            comment.bookmarks.splice(index, 1);
+            await comment.save();
+
+            return res.status(200).json({
+                success: true,
+                message: "Tweet removed from your Bookmarks",
+            });
+        } else {
+            //bookmarked comment
+
+            comment.bookmarks.push(req.user._id);
+            await comment.save();
+            return res.status(200).json({
+                success: true,
+                message: "Tweet added to your Bookmarks",
+            });
+        }
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};

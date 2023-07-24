@@ -9,13 +9,15 @@ import CommentLikeUnlike from "../../context/Actions/CommentLikeUnlike";
 import Post from "../CommonPostComponent/Post";
 import RetweetPost from "../../context/Actions/RetweetPost";
 import RetweetComment from "../../context/Actions/RetweetComment";
+import PostBookmark from "../../context/Actions/PostBookmark";
+import CommentBookmark from "../../context/Actions/CommentBookmark";
 
 const CommentCard = React.lazy(() => import("./CommentCard"));
 const ActiveComment = React.lazy(() => import("./ActiveComment"));
 
 const CommentDetail = () => {
     const componentRef = useRef(null); //when clicking on comment, it scrolls to the comment clicked and not to top.
-    const { ACTIONS, state, dispatchLikeUnlike, stateComment, stateCommentDelete, dispatchCommentLikeUnlike, dispatchRetweetPost, dispatchRetweetComment } = useGlobalContext();
+    const { ACTIONS, state, dispatchLikeUnlike, stateComment, stateCommentDelete, dispatchCommentLikeUnlike, dispatchRetweetPost, dispatchRetweetComment, dispatchBookmarkTweet, dispatchBookmarkComment } = useGlobalContext();
 
     //For navigating to a particular section that is to the comment that openend this component
     const navigate = useNavigate();
@@ -91,6 +93,7 @@ const CommentDetail = () => {
                             tweet={post.tweet}
                             likes={post.likes}
                             retweets={post.retweets}
+                            bookmarks={post.bookmarks}
                             postImage={post.images ? post.images : null}
                             commentsChildren={post.comments}
                             ownerName={post.owner.name}
@@ -105,6 +108,8 @@ const CommentDetail = () => {
                             state={state}
                             ACTIONS={ACTIONS}
                             mentions={post.mentions}
+                            handlerBookmark={PostBookmark}
+                            dispatchBookmark={dispatchBookmarkTweet}
                             isThread={post.children?.length > 0 ? true : false}
                         />
                         <div className="absolute left-[2.37rem] top-[4.2rem] h-[calc(100%-3.85rem)]   w-fit border-2"></div>
@@ -127,6 +132,7 @@ const CommentDetail = () => {
                                         POSTID={post._id} //this is the post id
                                         tweet={item.comment}
                                         likes={item.likes}
+                                        bookmarks={item.bookmarks}
                                         retweets={item.retweets}
                                         ownerName={item.owner.name}
                                         ownerImage={item.owner.profile && item.owner.profile.image.url ? item.owner.profile.image.url : null}
@@ -142,6 +148,8 @@ const CommentDetail = () => {
                                         dispatchRetweet={dispatchRetweetComment}
                                         handlerRetweet={RetweetComment}
                                         mentions={item.mentions}
+                                        handlerBookmark={CommentBookmark}
+                                        dispatchBookmark={dispatchBookmarkComment}
                                     />
                                     <div className="absolute left-[2.37rem] top-[4.2rem]  h-[calc(100%-3.8rem)] border-2"></div>
                                 </div>

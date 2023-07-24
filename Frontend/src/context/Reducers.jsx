@@ -53,6 +53,14 @@ export const ACTIONS = {
     RETWEET_POST_SUCCESS: "Retweet Post success",
     RETWEET_POST_FAILURE: "Retweet Post Failure",
 
+    BOOKMARK_POST_REQUEST: "Bookmark Post request",
+    BOOKMARK_POST_SUCCESS: "Bookmark Post success",
+    BOOKMARK_POST_FAILURE: "Bookmark Post Failure",
+
+    BOOKMARK_COMMENT_REQUEST: "Bookmark Comment request",
+    BOOKMARK_COMMENT_SUCCESS: "Bookmark Comment success",
+    BOOKMARK_COMMENT_FAILURE: "Bookmark Comment Failure",
+
     CLEAR_ERRORS: "clear Errors",
 };
 
@@ -240,6 +248,36 @@ export const RetweetCommentReducer = (state, action) => {
         case ACTIONS.RETWEET_COMMENT_SUCCESS:
             return { ...state, loading: false, message: action.payload, error: "" };
         case ACTIONS.RETWEET_COMMENT_FAILURE:
+            return { ...state, loading: false, message: "", error: action.payload };
+        case ACTIONS.CLEAR_ERRORS:
+            return { ...state, error: "" };
+
+        default:
+            return state;
+    }
+};
+export const commentBookmarkReducer = (state, action) => {
+    switch (action.type) {
+        case ACTIONS.BOOKMARK_COMMENT_REQUEST:
+            return { ...state, loading: true, message: "", error: "" };
+        case ACTIONS.BOOKMARK_COMMENT_SUCCESS:
+            return { ...state, loading: false, message: action.payload, error: "" };
+        case ACTIONS.BOOKMARK_COMMENT_FAILURE:
+            return { ...state, loading: false, message: "", error: action.payload };
+        case ACTIONS.CLEAR_ERRORS:
+            return { ...state, error: "" };
+
+        default:
+            return state;
+    }
+};
+export const tweetBookmarkReducer = (state, action) => {
+    switch (action.type) {
+        case ACTIONS.BOOKMARK_POST_REQUEST:
+            return { ...state, loading: true, message: "", error: "" };
+        case ACTIONS.BOOKMARK_POST_SUCCESS:
+            return { ...state, loading: false, message: action.payload, error: "" };
+        case ACTIONS.BOOKMARK_POST_FAILURE:
             return { ...state, loading: false, message: "", error: action.payload };
         case ACTIONS.CLEAR_ERRORS:
             return { ...state, error: "" };

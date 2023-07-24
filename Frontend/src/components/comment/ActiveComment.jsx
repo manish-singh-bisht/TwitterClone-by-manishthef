@@ -1,7 +1,7 @@
 import React, { Suspense, forwardRef, useCallback, useEffect, useState } from "react";
 import useAnimation from "../../CustomHooks/useAnimation";
 import { usePostTimeInTweetDetail } from "../../CustomHooks/usePostTime";
-import { Bookmark, Comments, HeartLike, HeartUnlike, Retweets, RetweetsGreen, ThreeDots } from "../SVGs/SVGs";
+import { Bookmark, Comments, HeartLike, HeartUnlike, Retweets, RetweetsGreen, ThreeDots, UndoBookmark } from "../SVGs/SVGs";
 import { Link } from "react-router-dom";
 import Avatar from "../Avatar/Avatar";
 import PhotoGallery from "../CommonPostComponent/PhotoGallery";
@@ -11,6 +11,7 @@ import Loader from "../Loader/Loader";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import axios from "axios";
 import RetweetComment from "../../context/Actions/RetweetComment";
+import { toast } from "react-toastify";
 
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
@@ -59,6 +60,10 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
     const [retweet, setRetweet] = useState(null);
     const [retweetBy, setRetweetBy] = useState([]);
 
+    //For bookmark
+    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [bookmarked, setBookmarked] = useState(null); // no bookmarkedBy for bookmark as in for like and retweet
+
     const [comment, setComment] = useState();
     const [commentt, setCommentt] = useState();
     const [mentionHandleCollection, setMentionHandleCollection] = useState([]);
@@ -71,6 +76,10 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
         like = data.comment.likes;
         setLikedBy(like);
         setLiked(like.length);
+
+        let bookmark = [];
+        bookmark = data.comment.bookmarks;
+        setBookmarked(bookmark.length);
 
         setRetweetBy(data.comment.retweets);
         setRetweet(data.comment.retweets.length);
@@ -87,7 +96,15 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                 setIsRetweet(true);
             }
         });
+
+        bookmark.forEach((item) => {
+            if (item._id === state.user._id) {
+                setIsBookmarked(true);
+            }
+        });
+
         like.length === 0 && setIsLiked(false);
+        bookmark.length === 0 && setIsBookmarked(false);
         data.comment.retweets.length === 0 && setIsRetweet(false);
         setComment(data.comment);
 
@@ -118,7 +135,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
             }
         }
         setCommentt(renderedComment);
-    }, [commentId, isLiked, isRetweet]);
+    }, [commentId, isLiked, isRetweet, isBookmarked]);
 
     useEffect(() => {
         fetchData();
@@ -146,6 +163,35 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
             }
         );
     };
+
+    const [animationBookmarked, bookmarkedValue, handleBookmarkedAnimation] = useAnimation(isBookmarked, setIsBookmarked, bookmarked, setBookmarked);
+
+    const bookmarkedHandler = async () => {
+        handleBookmarkedAnimation();
+        const { data } = await axios.get(`http://localhost:4000/api/v1/comment/${commentId}/bookmark`, { withCredentials: true });
+        const toastConfig = {
+            position: "bottom-center",
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: false,
+            progress: undefined,
+            closeButton: false,
+            style: {
+                backgroundColor: "#1DA1F2",
+                border: "none",
+                boxShadow: "none",
+                width: "fit-content",
+                zIndex: 9999,
+                color: "white",
+                padding: "0px 16px",
+                minHeight: "3rem",
+            },
+        };
+
+        toast(data.message, toastConfig);
+    };
     //Grid layout for different numbers of image,used below
     let gridClass = "";
     switch (photos?.length) {
@@ -168,7 +214,6 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
             break;
     }
 
-    const tv = 0;
     const formattedTime = usePostTimeInTweetDetail(Date.parse(comment?.createdAt));
     return (
         comment !== undefined && (
@@ -212,7 +257,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                     </div>
                     <div className="mx-4  "> {formattedTime}</div>
                     <div className="m-4  border-t-[0.01rem] opacity-80"></div>
-                    {likedValue > 0 || retweetValue > 0 ? (
+                    {likedValue > 0 || retweetValue > 0 || bookmarkedValue > 0 ? (
                         <>
                             <div className="mx-4 flex gap-8  font-bold">
                                 {retweetValue > 0 ? (
@@ -225,12 +270,9 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                                             setList(retweetBy);
                                         }}>
                                         {retweetValue > 0 ? <span className={`${animationRetweet} mr-1`}>{retweetValue}</span> : null}
-                                        <span className={`text-[0.9rem] font-normal hover:underline`}>Retweets</span>
+                                        <span className={`text-[0.9rem] font-normal hover:underline`}>{retweetValue === 1 ? "Retweet" : "Retweets"}</span>
                                     </div>
                                 ) : null}
-                                <div className="cursor-pointer">
-                                    <span className={`${animationLikes}`}>1</span> <span className={`text-[0.9rem] font-normal hover:underline`}>Quotes</span>
-                                </div>
                                 {likedValue > 0 ? (
                                     <div
                                         className="cursor-pointer"
@@ -241,12 +283,16 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                                             setList(likedBy);
                                         }}>
                                         {likedValue > 0 ? <span className={`${animationLikes} mr-1`}>{likedValue}</span> : null}
-                                        <span className={`text-[0.9rem] font-normal hover:underline`}>Likes</span>
+                                        <span className={`text-[0.9rem] font-normal hover:underline`}>{likedValue === 1 ? "Like" : "Likes"}</span>
                                     </div>
                                 ) : null}
-                                <div className="cursor-pointer">
-                                    <span className={`${animationLikes}`}>1</span> <span className={` text-[0.9rem] font-normal hover:underline`}>Bookmarks</span>
-                                </div>
+
+                                {bookmarkedValue > 0 ? (
+                                    <div className="cursor-pointer ">
+                                        {bookmarkedValue > 0 ? <span className={`${animationBookmarked} mr-1`}>{bookmarkedValue}</span> : null}
+                                        <span className={`text-[0.9rem] font-normal hover:underline`}> {bookmarkedValue === 1 ? "Bookmark" : "Bookmarks"}</span>
+                                    </div>
+                                ) : null}
                             </div>
                             <div className="m-4  border-t-[0.01rem] opacity-80"></div>
                         </>
@@ -268,9 +314,9 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                                 {isLiked ? <HeartLike bigIcon={true} /> : <HeartUnlike bigIcon={true} />}
                             </button>
                         </div>
-                        <div className="group flex items-center justify-center gap-2 ">
-                            <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
-                                <Bookmark bigIcon={true} />
+                        <div className=" group flex items-center justify-center gap-2  ">
+                            <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-blue-100 group-hover:text-blue-500" onClick={bookmarkedHandler}>
+                                {isBookmarked ? <Bookmark bigIcon={true} /> : <UndoBookmark bigIcon={true} />}
                             </button>
                         </div>
                     </div>

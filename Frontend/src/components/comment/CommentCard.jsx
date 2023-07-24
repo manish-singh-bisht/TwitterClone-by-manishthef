@@ -6,9 +6,11 @@ import Post from "../CommonPostComponent/Post";
 import LikeUnlike from "../../context/Actions/LikeUnlike";
 import RetweetPost from "../../context/Actions/RetweetPost";
 import RetweetComment from "../../context/Actions/RetweetComment";
+import PostBookmark from "../../context/Actions/PostBookmark";
+import CommentBookmark from "../../context/Actions/CommentBookmark";
 
 const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDetail, isParentPresent, POSTID, mentionHandleCollection, isThread, thread }) => {
-    const { ACTIONS, state, dispatchCommentLikeUnlike, dispatch, dispatchRetweetPost, dispatchRetweetComment } = useGlobalContext();
+    const { ACTIONS, state, dispatchCommentLikeUnlike, dispatch, dispatchRetweetPost, dispatchRetweetComment, dispatchBookmarkComment, dispatchBookmarkTweet } = useGlobalContext();
     const profile = state.user && state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null;
 
     return (
@@ -34,6 +36,7 @@ const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDet
                                         postImage={item.images ? item.images : null}
                                         likes={item.post.likes}
                                         retweets={item.post.retweets}
+                                        bookmarks={item.post.bookmarks}
                                         comments={item.post.comments}
                                         commentsChildren={item.post.comments}
                                         ownerName={item.post.owner.name}
@@ -48,6 +51,8 @@ const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDet
                                         dispatchRetweet={dispatchRetweetPost}
                                         handlerRetweet={RetweetPost}
                                         mentions={item.post.mentions}
+                                        handlerBookmark={PostBookmark}
+                                        dispatchBookmark={dispatchBookmarkTweet}
                                     />
                                 </div>
                             );
@@ -72,6 +77,7 @@ const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDet
                             postImage={comment.images}
                             likes={comment.likes}
                             retweets={comment.retweets}
+                            bookmarks={comment.bookmarks}
                             comments={comment.comments}
                             commentsChildren={comment.children}
                             ownerName={comment.owner.name}
@@ -86,6 +92,8 @@ const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDet
                             ACTIONS={ACTIONS}
                             handler={CommentLikeUnlike}
                             mentions={comment.mentions}
+                            handlerBookmark={CommentBookmark}
+                            dispatchBookmark={dispatchBookmarkComment}
                         />
                     );
                 })}

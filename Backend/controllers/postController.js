@@ -99,7 +99,10 @@ exports.findPostById = async (req, res, next) => {
                 path: "likes",
                 select: "_id handle name profile",
             })
-
+            .populate({
+                path: "bookmarks",
+                select: "_id",
+            })
             .populate({ path: "retweets", select: "name handle profile _id" })
 
             .populate({ path: "owner", select: "_id handle profile name" })
@@ -110,12 +113,14 @@ exports.findPostById = async (req, res, next) => {
                     { path: "post" },
                     { path: "likes", select: "_id" },
                     { path: "retweets", select: "_id" },
+                    { path: "bookmarks", select: "_id" },
                     {
                         path: "children",
                         populate: [
                             { path: "owner", select: "name handle profile _id" },
                             { path: "likes", select: "_id" },
                             { path: "retweets", select: "_id" },
+                            { path: "bookmarks", select: "_id" },
                             { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
                         ],
                     },
@@ -286,6 +291,10 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
                 path: "retweets",
                 select: "_id handle name profile",
             })
+            .populate({
+                path: "bookmarks",
+                select: "_id",
+            })
             .sort({ createdAt: -1 });
 
         //Line below will bring all retweets of the users that are being followed by the logged in user along with the loggedIn user's retweets.
@@ -295,6 +304,7 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
                 populate: [
                     { path: "owner", select: "handle name profile" },
                     { path: "likes", select: "_id handle name profile" },
+                    { path: "bookmarks", select: "_id" },
                     { path: "retweets", select: "_id handle name profile" },
                 ],
             })
@@ -335,6 +345,10 @@ async function fetchThread(postId, thread, userHandle) {
             path: "retweets",
             select: "_id handle name profile",
         })
+        .populate({
+            path: "bookmarks",
+            select: "_id",
+        })
         .populate({ path: "owner", select: "_id handle profile name" })
         .populate({
             path: "comments",
@@ -342,6 +356,7 @@ async function fetchThread(postId, thread, userHandle) {
                 { path: "owner", select: "name handle profile _id" },
                 { path: "post" },
                 { path: "likes", select: "_id" },
+                { path: "bookmarks", select: "_id" },
                 { path: "retweets", select: "_id" },
                 {
                     path: "children",
@@ -349,6 +364,7 @@ async function fetchThread(postId, thread, userHandle) {
                         { path: "owner", select: "name handle profile _id" },
                         { path: "likes", select: "_id" },
                         { path: "retweets", select: "_id" },
+                        { path: "bookmarks", select: "_id" },
                         { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
                     ],
                 },
@@ -376,3 +392,35 @@ async function fetchThread(postId, thread, userHandle) {
 
     return thread;
 }
+
+exports.bookmarkPosts = async (req, res, next) => {
+    try {
+        const post = await Posts.findById(req.params.id);
+        if (!post) {
+            return next(new ErrorHandler("Post is not present", 404));
+        }
+
+        //undo bookmark post
+        if (post.bookmarks.includes(req.user._id)) {
+            const index = post.bookmarks.indexOf(req.user._id);
+            post.bookmarks.splice(index, 1);
+            await post.save();
+
+            return res.status(200).json({
+                success: true,
+                message: "Tweet removed from your Bookmarks",
+            });
+        } else {
+            //post bookmarked
+
+            post.bookmarks.push(req.user._id);
+            await post.save();
+            return res.status(200).json({
+                success: true,
+                message: "Tweet added to your Bookmarks",
+            });
+        }
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};

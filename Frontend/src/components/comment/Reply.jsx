@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect, useState } from "react";
 import Avatar from "../Avatar/Avatar";
 import { Link } from "react-router-dom";
-import { Bookmark, Comments, ThreeDots } from "../SVGs/SVGs";
+import { Comments, ThreeDots } from "../SVGs/SVGs";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import CommentLikeUnlike from "../../context/Actions/CommentLikeUnlike";
 import Loader from "../Loader/Loader";
@@ -9,11 +9,13 @@ import PhotoGallery from "../CommonPostComponent/PhotoGallery";
 import LikeUnlikePost from "../CommonPostComponent/LikeUnlikePost";
 import { usePostTime } from "../../CustomHooks/usePostTime";
 import Retweet from "../CommonPostComponent/Retweet";
+import BookMark from "../CommonPostComponent/BookMark";
 import RetweetComment from "../../context/Actions/RetweetComment";
+import CommentBookmark from "../../context/Actions/CommentBookmark";
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) => {
-    const { dispatchCommentLikeUnlike, state, ACTIONS, dispatchRetweetComment } = useGlobalContext();
+    const { dispatchCommentLikeUnlike, state, ACTIONS, dispatchRetweetComment, dispatchBookmarkComment } = useGlobalContext();
     const [commentt, setCommentt] = useState();
 
     ////Modal for more option
@@ -147,11 +149,8 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
                         <div className=" group flex w-[3rem] items-center justify-around  ">
                             <LikeUnlikePost likes={reply.likes} ACTIONS={ACTIONS} dispatch={dispatchCommentLikeUnlike} state={state} handler={CommentLikeUnlike} postId={reply._id} />
                         </div>
-                        <div className="group flex w-[3rem] items-center justify-around ">
-                            <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
-                                <Bookmark />
-                            </button>
-                            <span className="group-hover:text-blue-500"></span>
+                        <div className=" group flex w-[3rem] items-center justify-around  ">
+                            <BookMark bookmarks={reply.bookmarks} ACTIONS={ACTIONS} dispatchBookmark={dispatchBookmarkComment} state={state} handlerBookmark={CommentBookmark} postId={reply._id} />
                         </div>
                     </div>
                 </div>

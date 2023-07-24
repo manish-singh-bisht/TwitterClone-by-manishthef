@@ -13,6 +13,8 @@ import {
     tweetDeleteReducer,
     RetweetCommentReducer,
     RetweetPostReducer,
+    commentBookmarkReducer,
+    tweetBookmarkReducer,
 } from "./Reducers";
 
 //creating context
@@ -58,6 +60,12 @@ const AppProvider = ({ children }) => {
     const deleteTweet = { loading: false, message: "", error: "" };
     const [stateTweetDelete, dispatchTweetDelete] = useReducer(tweetDeleteReducer, deleteTweet);
 
+    const bookmarkTweet = { loading: false, message: "", error: "" };
+    const [stateBookmarkTweet, dispatchBookmarkTweet] = useReducer(tweetBookmarkReducer, bookmarkTweet);
+
+    const bookmarkComment = { loading: false, message: "", error: "" };
+    const [stateBookmarkComment, dispatchBookmarkComment] = useReducer(commentBookmarkReducer, bookmarkComment);
+
     return (
         <AppContext.Provider
             value={{
@@ -84,6 +92,10 @@ const AppProvider = ({ children }) => {
                 dispatchCommentDelete,
                 stateMentionCollector,
                 dispatchMentionCollector,
+                stateBookmarkComment,
+                dispatchBookmarkComment,
+                stateBookmarkTweet,
+                dispatchBookmarkTweet,
                 statePostTweet,
                 dispatchPostTweet,
                 stateTweetDelete,
