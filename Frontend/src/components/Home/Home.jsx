@@ -9,9 +9,11 @@ import RetweetPost from "../../context/Actions/RetweetPost";
 import RetweetComment from "../../context/Actions/RetweetComment";
 import CommentLikeUnlike from "../../context/Actions/CommentLikeUnlike";
 import PostBookmark from "../../context/Actions/PostBookmark";
+import CommentBookmark from "../../context/Actions/CommentBookmark";
 
 const Home = () => {
-    const { dispatchPostOfFollowingAndMe, ACTIONS, statePostOfFollowingAndMe, state, dispatchLikeUnlike, posts, setPosts, dispatchRetweetPost, dispatchRetweetComment, dispatchCommentLikeUnlike, dispatchBookmarkTweet } = useGlobalContext();
+    const { dispatchPostOfFollowingAndMe, ACTIONS, statePostOfFollowingAndMe, dispatchBookmarkComment, state, dispatchLikeUnlike, posts, setPosts, dispatchRetweetPost, dispatchRetweetComment, dispatchCommentLikeUnlike, dispatchBookmarkTweet } =
+        useGlobalContext();
 
     const { loading } = statePostOfFollowingAndMe;
 
@@ -77,8 +79,8 @@ const Home = () => {
                                             dispatch={item.originalPost?.comment ? dispatchCommentLikeUnlike : dispatchLikeUnlike}
                                             dispatchRetweet={item.originalPost?.comment ? dispatchRetweetComment : dispatchRetweetPost}
                                             handlerRetweet={item.originalPost?.comment ? RetweetComment : RetweetPost}
-                                            handlerBookmark={PostBookmark}
-                                            dispatchBookmark={dispatchBookmarkTweet}
+                                            handlerBookmark={item.originalPost?.comment ? CommentBookmark : PostBookmark}
+                                            dispatchBookmark={item.originalPost?.comment ? dispatchBookmarkComment : dispatchBookmarkTweet}
                                             state={state}
                                             bookmarks={post.bookmarks}
                                             ACTIONS={ACTIONS}

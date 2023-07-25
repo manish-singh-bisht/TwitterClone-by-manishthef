@@ -297,7 +297,7 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
             })
             .sort({ createdAt: -1 });
 
-        //Line below will bring all retweets of the users that are being followed by the logged in user along with the loggedIn user's retweets.
+        //Line below will bring all retweets of the users that are being followed by the logged in user.
         const retweets = await Retweets.find({ userRetweeted: { $in: [...user.following] } })
             .populate({
                 path: "originalPost",
@@ -420,6 +420,78 @@ exports.bookmarkPosts = async (req, res, next) => {
                 message: "Tweet added to your Bookmarks",
             });
         }
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};
+
+exports.getBookMarks = async (req, res, next) => {
+    try {
+        const user = await Users.findById(req.params.id);
+
+        const posts = await Posts.find({ bookmarks: user._id })
+            .populate({
+                path: "owner",
+                select: "handle name profile",
+            })
+            .populate({
+                path: "likes",
+                select: "_id handle name profile",
+            })
+            .populate({
+                path: "retweets",
+                select: "_id handle name profile",
+            })
+            .populate({
+                path: "bookmarks",
+                select: "_id",
+            })
+            .sort({ createdAt: -1 });
+
+        const comments = await Comments.find({ bookmarks: user._id })
+            .populate({
+                path: "owner",
+                select: "handle name profile",
+            })
+            .populate({
+                path: "likes",
+                select: "_id handle name profile",
+            })
+            .populate({
+                path: "retweets",
+                select: "_id handle name profile",
+            })
+            .populate({
+                path: "bookmarks",
+                select: "_id",
+            })
+            .sort({ createdAt: -1 });
+
+        const combined = [...comments, ...posts];
+        combined.sort((a, b) => b.createdAt - a.createdAt);
+
+        res.status(200).json({
+            success: true,
+            bookmarks: combined,
+        });
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};
+exports.deleteAllBookmarks = async (req, res, next) => {
+    try {
+        const user = await Users.findById(req.params.id);
+
+        // Remove bookmarks from Posts
+        await Posts.updateMany({ bookmarks: user._id }, { $pull: { bookmarks: user._id } });
+
+        // Remove bookmarks from Comments
+        await Comments.updateMany({ bookmarks: user._id }, { $pull: { bookmarks: user._id } });
+
+        res.status(200).json({
+            success: true,
+            message: "All bookmarks have been deleted for the user.",
+        });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
     }

@@ -13,7 +13,7 @@ import PhotoGallery from "../CommonPostComponent/PhotoGallery";
 import RetweetPost from "../../context/Actions/RetweetPost";
 import PostBookmark from "../../context/Actions/PostBookmark";
 
-const ModalForLikesBookmarksRetweets = React.lazy(() => import("../Modal/ModalForLikesBookmarksRetweets"));
+const ModalForLikesRetweets = React.lazy(() => import("../Modal/ModalForLikesRetweets"));
 const CommentCard = React.lazy(() => import("../comment/CommentCard"));
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
@@ -336,7 +336,7 @@ const TweetDetail = () => {
                 <div className="mx-4 mt-4  border-t-[0.01rem] opacity-80"></div>
 
                 <Suspense fallback={<Loader />}>
-                    <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} handleOutsideClick={handleOutsideClick} />
+                    <ModalForLikesRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} handleOutsideClick={handleOutsideClick} />
                     {<CommentCard comments={comments} postId={postId} fromTweetDetail={true} mentionHandleCollection={mentionHandleCollection} isThread={isThread} thread={thread} />}
 
                     <MoreOptionMenuModal

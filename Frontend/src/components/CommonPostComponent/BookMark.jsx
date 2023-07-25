@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import useAnimation from "../../CustomHooks/useAnimation";
 import { Bookmark, UndoBookmark } from "../SVGs/SVGs";
 
-const BookMark = ({ bookmarks, ACTIONS, dispatchBookmark, state, handlerBookmark, postId }) => {
+const BookMark = ({ bookmarks, ACTIONS, dispatchBookmark, state, handlerBookmark, postId, fromBookmarks = false, removeBookmark = null }) => {
     //For bookmarking of post
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [bookmarked, setBookmarked] = useState(bookmarks.length);
@@ -11,6 +11,9 @@ const BookMark = ({ bookmarks, ACTIONS, dispatchBookmark, state, handlerBookmark
 
     const bookmarkedHandler = async () => {
         handleBookmarkedAnimation();
+        if (fromBookmarks) {
+            removeBookmark(postId);
+        }
         await handlerBookmark({ dispatchBookmark, ACTIONS, postId });
     };
 

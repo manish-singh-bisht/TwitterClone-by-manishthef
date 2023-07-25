@@ -6,11 +6,10 @@ import { Link } from "react-router-dom";
 import Avatar from "../Avatar/Avatar";
 import PhotoGallery from "../CommonPostComponent/PhotoGallery";
 import CommentBox from "./CommentBox";
-import ModalForLikesBookmarksRetweets from "../Modal/ModalForLikesBookmarksRetweets";
+import ModalForLikesRetweets from "../Modal/ModalForLikesRetweets";
 import Loader from "../Loader/Loader";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import axios from "axios";
-import RetweetComment from "../../context/Actions/RetweetComment";
 import { toast } from "react-toastify";
 
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
@@ -324,7 +323,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                     <CommentBox profile={comment.owner.profile && comment.owner.profile.image.url ? comment.owner.profile.image.url : null} postId={postId} parent={parent} mentionHandleCollection={mentionHandleCollection} />
                 </div>
                 <Suspense fallback={<Loader />}>
-                    <ModalForLikesBookmarksRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} handleOutsideClick={handleOutsideClick} />
+                    <ModalForLikesRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} handleOutsideClick={handleOutsideClick} />
                     <MoreOptionMenuModal
                         visibility={visibility}
                         handleOutsideClick={handleOutsideClickMoreOption}

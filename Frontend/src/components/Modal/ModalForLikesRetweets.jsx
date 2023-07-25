@@ -2,7 +2,7 @@ import React from "react";
 import { Cross } from "../SVGs/SVGs";
 import { Link } from "react-router-dom";
 
-const ModalForLikesBookmarksRetweets = ({ visibility, onClose, type, list, handleOutsideClick }) => {
+const ModalForLikesRetweets = ({ visibility, onClose, type, list, handleOutsideClick }) => {
     if (!visibility) return;
 
     return (
@@ -53,4 +53,4 @@ const ModalForLikesBookmarksRetweets = ({ visibility, onClose, type, list, handl
     );
 };
 
-export default ModalForLikesBookmarksRetweets;
+export default ModalForLikesRetweets;

@@ -26,6 +26,11 @@ const MoreOptionMenuModal = ({
     fromHome,
     fromTweetDetail,
     isCommentRetweet,
+    fromBookmarks,
+    deleteAllBookmarks,
+    setVisibilityBookmark,
+    fromBookmarksForDeletingCommentPost,
+    removeBookmark,
 }) => {
     if (!visibility) return;
 
@@ -49,7 +54,7 @@ const MoreOptionMenuModal = ({
             let left = 0;
 
             // Calculate the desired position
-            if (!fromSideBar) {
+            if (!fromSideBar && !fromBookmarks) {
                 if (state.user._id === infoToMoreOptionModal.ownerID) {
                     top = buttonPosition.top - modalRect.height + 83;
                     left = buttonPosition.left - modalRect.width + 25;
@@ -58,8 +63,13 @@ const MoreOptionMenuModal = ({
                     left = buttonPosition.left - modalRect.width + 25;
                 }
             } else {
-                top = buttonPosition.top - 79;
-                left = buttonPosition.left - 30;
+                if (fromBookmarks) {
+                    top = buttonPosition.top - 24;
+                    left = buttonPosition.left - 140;
+                } else {
+                    top = buttonPosition.top - 79;
+                    left = buttonPosition.left - 30;
+                }
             }
 
             // Apply the position to the modal
@@ -77,6 +87,31 @@ const MoreOptionMenuModal = ({
         let tempPostId = postID;
         const commentID = infoToMoreOptionModal.commentID;
 
+        if (fromBookmarksForDeletingCommentPost && commentID === undefined) {
+            const toastConfig = {
+                position: "bottom-center",
+                autoClose: 2000,
+                hideProgressBar: true,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                closeButton: false,
+                style: {
+                    backgroundColor: "#1DA1F2",
+                    border: "none",
+                    boxShadow: "none",
+                    width: "fit-content",
+                    zIndex: 9999,
+                    color: "white",
+                    padding: "0px 16px",
+                    minHeight: "3rem",
+                },
+            };
+            toast("Your Tweet was deleted", toastConfig);
+            removeBookmark(postID);
+            await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
+        }
         if (fromHome) {
             setPosts((prev) =>
                 prev.filter((item) => {
@@ -146,6 +181,9 @@ const MoreOptionMenuModal = ({
                 replace: true,
             });
         } else {
+            if (fromBookmarksForDeletingCommentPost) {
+                removeBookmark(commentID);
+            }
             await DeleteComment({ dispatchCommentDelete, ACTIONS, postID, commentID });
         }
     };
@@ -153,8 +191,8 @@ const MoreOptionMenuModal = ({
     return (
         <div className="fixed inset-0 z-30 h-[100vh] w-[100vw] ">
             <div className="fixed z-10  h-full w-full" onClick={handleOutsideClick}></div>
-            <div className={`relative z-30   w-[20rem] rounded-xl border-2 bg-white shadow-md`} ref={modalRef}>
-                {!fromSideBar ? (
+            <div className={`relative z-30   ${fromBookmarks ? "w-fit" : "w-[20rem]"} rounded-xl border-2 bg-white shadow-md`} ref={modalRef}>
+                {!fromSideBar && !fromBookmarks ? (
                     state.user._id === infoToMoreOptionModal.ownerID ? (
                         <>
                             <button
@@ -178,6 +216,15 @@ const MoreOptionMenuModal = ({
                             <div className="font-bold ">Follow</div>
                         </button>
                     )
+                ) : fromBookmarks ? (
+                    <button
+                        className="flex w-full items-center gap-3 rounded-xl   p-3 text-red-400  hover:bg-gray-50"
+                        onClick={() => {
+                            setVisibilityBookmark(false);
+                            deleteAllBookmarks();
+                        }}>
+                        <div className="font-bold ">Clear all Bookmarks</div>
+                    </button>
                 ) : (
                     <button
                         className="flex w-full items-center justify-center gap-3 rounded-xl bg-black  p-3 text-red-500 hover:bg-gray-800 "

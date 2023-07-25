@@ -15,7 +15,7 @@ const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModa
 
 const Post = ({
     postId,
-    POSTID, //this is the post id when being passed from CommentCard component,and the CommentCard for this situation is being passed from TweetDetail,also for comment retweet from home component
+    POSTID, //this is the post id when being passed from CommentCard component,and the CommentCard for this situation is being passed from TweetDetail,also for comment retweet from home component,also for comment bookmark.
     tweet,
     ownerName,
     ownerId,
@@ -48,6 +48,9 @@ const Post = ({
     isCommentRetweet,
     dispatchBookmark,
     handlerBookmark,
+    fromBookmarks,
+    removeBookmark,
+    isCommentBookmark,
 }) => {
     const formattedTime = usePostTime(Date.parse(timeCreated));
 
@@ -142,7 +145,7 @@ const Post = ({
     const navigate = useNavigate();
     const commentId = postId;
 
-    const newUrl = isCommentRetweet ? `/${ownerName}/comment/${commentId}` : !isComment ? `/${ownerName}/${postId}` : `/${ownerName}/comment/${commentId}`;
+    const newUrl = isCommentRetweet || isCommentBookmark ? `/${ownerName}/comment/${commentId}` : !isComment ? `/${ownerName}/${postId}` : `/${ownerName}/comment/${commentId}`;
 
     const handleClick = (isThread = passedIsThread) => {
         const stateObject = {
@@ -252,6 +255,8 @@ const Post = ({
                                     ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID })
                                     : isCommentRetweet
                                     ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID })
+                                    : isCommentBookmark
+                                    ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID })
                                     : isComment
                                     ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID })
                                     : setInfoToMoreOptionModal({ ownerID: ownerId, postID: postId });
@@ -283,7 +288,7 @@ const Post = ({
                     <LikeUnlikePost likes={likes} ACTIONS={ACTIONS} dispatch={dispatch} state={state} handler={handler} postId={postId} />
                 </div>
                 <div className=" group flex w-[3rem] items-center justify-around  ">
-                    <BookMark bookmarks={bookmarks} ACTIONS={ACTIONS} dispatchBookmark={dispatchBookmark} state={state} handlerBookmark={handlerBookmark} postId={postId} />
+                    <BookMark bookmarks={bookmarks} ACTIONS={ACTIONS} dispatchBookmark={dispatchBookmark} state={state} handlerBookmark={handlerBookmark} postId={postId} fromBookmarks={fromBookmarks} removeBookmark={(id) => removeBookmark(id)} />
                 </div>
             </div>
             {fromHome && threadChildren && threadChildren.length > 0 && !isCommentRetweet && (
@@ -397,6 +402,8 @@ const Post = ({
                     fromHome={fromHome}
                     isCommentRetweet={isCommentRetweet}
                     fromTweetDetail={fromTweetDetail}
+                    fromBookmarksForDeletingCommentPost={fromBookmarks ? true : false}
+                    removeBookmark={(id) => removeBookmark(id)}
                 />
             </Suspense>
         </div>
