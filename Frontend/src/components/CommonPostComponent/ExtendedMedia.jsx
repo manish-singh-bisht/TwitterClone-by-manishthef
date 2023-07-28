@@ -17,11 +17,16 @@ const ExtendedMedia = () => {
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     useEffect(() => {
+        document.body.style.overflow = "hidden";
         photos.map((item, index) => {
             if (photo === item.url || photo === item) {
                 setCurrentImageIndex(index);
             }
         });
+
+        return () => {
+            document.body.style.overflow = "unset";
+        };
     }, []);
     const nextImage = () => {
         setCurrentImageIndex((prev) => prev + 1);

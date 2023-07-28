@@ -222,7 +222,7 @@ const TweetDetail = () => {
 
     return (
         <main className="grid grid-cols-[44vw_auto]   ">
-            <div className="flex h-[100%] min-h-screen flex-col  border-l  border-r">
+            <div className="flex max-h-[full] min-h-[1400px] flex-col  border-l  border-r">
                 <div className=" sticky inset-0 z-10 flex h-[3.5rem] items-center gap-7 bg-white/60 backdrop-blur-md ">
                     <div onClick={handleClick}>
                         <div className="m-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full hover:border-2 hover:bg-gray-200 active:bg-gray-300">
@@ -244,7 +244,7 @@ const TweetDetail = () => {
                                     <span className="mt-[-0.3rem] text-[0.9rem] font-normal text-gray-700">{`@${handle}`}</span>
                                 </Link>
                                 <div
-                                    className="ml-auto h-min cursor-pointer  rounded-full hover:bg-blue-100 hover:text-blue-500"
+                                    className="ml-auto mr-[0.25rem] h-min cursor-pointer  rounded-full hover:bg-blue-100 hover:text-blue-500"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         setVisibility(true);

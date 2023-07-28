@@ -6,6 +6,7 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import Loader from "./components/Loader/Loader";
 import { useGlobalContext } from "./CustomHooks/useGlobalContext";
 import ExtendedMedia from "./components/CommonPostComponent/ExtendedMedia";
+import SidebarRight from "./components/Sidebar/SidebarRight";
 
 const Home = React.lazy(() => import("./components/Home/Home"));
 const LoginSignUpMainPage = React.lazy(() => import("./components/Login_Register/LoginSignUpMainPage"));
@@ -32,7 +33,7 @@ const App = () => {
 
     return (
         <BrowserRouter>
-            <div className={`${isAuthenticated ? "grid grid-cols-[24rem_44vw_auto]  " : ""}`}>
+            <div className={`${isAuthenticated ? "grid grid-cols-[21rem_44vw_auto] gap-9 " : ""}`}>
                 <div className="">{isAuthenticated && <Sidebar />}</div>
                 <div>
                     <Suspense fallback={<Loader />}>
@@ -51,6 +52,7 @@ const App = () => {
                         </Routes>
                     </Suspense>
                 </div>
+                <div className="">{isAuthenticated && <SidebarRight />}</div>
             </div>
             <ToastContainer />
         </BrowserRouter>

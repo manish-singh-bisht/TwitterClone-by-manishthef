@@ -217,9 +217,9 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
     return (
         comment !== undefined && (
             <main className="grid   grid-cols-[44vw_auto] ">
-                <div className="flex h-[100%]   flex-col">
+                <div className="flex h-[100%] flex-col  ">
                     <div className=" m-2">
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 ">
                             <div>
                                 <Avatar profile={comment.owner.profile && comment.owner.profile.image.url ? comment.owner.profile.image.url : null} />
                             </div>
@@ -231,7 +231,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                                         <span className="mt-[-0.3rem] text-[0.9rem] font-normal text-gray-700">{`@${comment.owner.handle}`}</span>
                                     </Link>
                                     <div
-                                        className="ml-auto h-min cursor-pointer  rounded-full hover:bg-blue-100  hover:text-blue-500 "
+                                        className="ml-auto mr-[0.35rem] h-min cursor-pointer  rounded-full hover:bg-blue-100  hover:text-blue-500 "
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             setVisibility(true);

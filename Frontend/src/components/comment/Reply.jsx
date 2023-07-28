@@ -108,7 +108,7 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
                                     <span className="flex text-[0.9rem] font-normal text-gray-700">{`${formattedTimeReply}`}</span>
                                 </Link>
                                 <div
-                                    className="ml-[34.2rem] rounded-full hover:bg-blue-100 hover:text-blue-500 "
+                                    className="ml-[auto] -mr-[0.7rem] rounded-full hover:bg-blue-100 hover:text-blue-500 "
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         setVisibility(true);

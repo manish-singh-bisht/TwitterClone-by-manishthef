@@ -64,7 +64,7 @@ const Sidebar = () => {
     };
 
     return (
-        <main className="fixed z-20 flex h-[100vh] w-[24rem] flex-col items-end justify-between    ">
+        <main className="fixed z-20 flex h-[100vh] w-[21rem] flex-col items-end justify-between    ">
             <div className=" flex w-3/4 select-none flex-col  gap-1 ">
                 <NavLink to="/" className={({ isActive }) => (isActive ? "w-fit " : " w-fit ")} onClick={() => setTab("/")}>
                     <TwitterIcon className="" />
@@ -102,7 +102,7 @@ const Sidebar = () => {
             </div>
             <div
                 ref={logoutBox}
-                className=" mx-10 mb-14   flex  min-h-[4.5rem] w-[15.5rem] cursor-pointer  items-center gap-1 rounded-[24rem]  hover:bg-gray-100"
+                className=" mx-[0.4rem] mb-14   flex  min-h-[4.5rem] w-[15.5rem] cursor-pointer  items-center gap-1 rounded-[24rem]  hover:bg-gray-100"
                 onClick={() => {
                     setVisibilityMoreOptionModal(true);
                     document.body.style.overflow = "hidden";

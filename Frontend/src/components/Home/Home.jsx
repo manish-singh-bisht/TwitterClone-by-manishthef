@@ -47,7 +47,7 @@ const Home = () => {
                     </div>
 
                     <main className="grid grid-cols-[44vw_auto]  ">
-                        <div className={` flex h-[100%] flex-col border-l border-r`}>
+                        <div className={` flex max-h-[full] min-h-[1400px] flex-col border-l border-r`}>
                             <TweetBoxInHome profile={profile} />
                             {posts && posts.length > 0 ? (
                                 posts.map((item) => {

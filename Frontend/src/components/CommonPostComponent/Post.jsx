@@ -198,8 +198,10 @@ const Post = ({
                         handleClick();
                     }
                 }}
-                className="relative  m-2 flex cursor-pointer gap-2 hover:bg-gray-50">
-                <Avatar profile={profile} />
+                className="relative  m-2 flex cursor-pointer    hover:bg-gray-50">
+                <div className="mr-[0.5rem]">
+                    <Avatar profile={profile} />
+                </div>
                 {fromHome && threadChildren && threadChildren.length > 0 && !isCommentRetweet && <div className="absolute left-[1.8rem] top-[3.65rem] h-full min-h-[5rem] w-fit border-2"></div>}
                 {!fromHome &&
                     comment &&
@@ -220,7 +222,7 @@ const Post = ({
                     })}
 
                 <div
-                    className="relative mr-2 flex w-[87%]  flex-col gap-2  "
+                    className="relative mr-2 flex w-[87%] flex-col  gap-2   "
                     onClick={
                         fromHome && threadChildren && threadChildren.length > 0
                             ? (e) => {
@@ -229,7 +231,7 @@ const Post = ({
                               }
                             : null
                     }>
-                    <div className="flex ">
+                    <div className="flex  ">
                         <Link
                             to={`/user/${ownerId}`}
                             onClick={(e) => {
@@ -242,7 +244,7 @@ const Post = ({
                             <span className="flex text-[0.9rem] font-normal text-gray-700">{`${formattedTime}`}</span>
                         </Link>
                         <div
-                            className="ml-[34.2rem] rounded-full hover:bg-blue-100 hover:text-blue-500 "
+                            className="ml-[auto] -mr-[0.7rem] rounded-full  hover:bg-blue-100 hover:text-blue-500 "
                             onClick={(e) => {
                                 e.stopPropagation();
                                 setVisibility(true);
