@@ -198,13 +198,22 @@ exports.profileOfUsers = async (req, res, next) => {
 //search profile/user
 exports.searchUser = async (req, res, next) => {
     try {
-        if (req.params.handle.length >= 0) {
+        if (req.params.handle.length === 0) {
+            res.status(200).json({
+                success: true,
+                users: [],
+            });
+        }
+        if (req.params.handle.length > 0) {
             const users = await Users.find({ $or: [{ name: { $regex: req.params.handle, $options: "i" } }, { handle: { $regex: req.params.handle, $options: "i" } }] }).limit(10);
 
-            if (!users) {
-                return next(new ErrorHandler("No such user", 404));
+            if (users.length === 0) {
+                return res.status(200).json({
+                    success: true,
+                    message: "No Such User",
+                });
             }
-            res.status(200).json({
+            return res.status(200).json({
                 success: true,
                 users,
             });

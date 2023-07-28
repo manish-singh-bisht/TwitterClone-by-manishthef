@@ -2,6 +2,9 @@ import { useState } from "react";
 import Avatar from "../Avatar/Avatar";
 import { SearchIcon, ThreeDots } from "../SVGs/SVGs";
 import StickyBox from "react-sticky-box";
+import axios from "axios";
+import Loader from "../Loader/Loader";
+
 export default function SidebarRight() {
     // let sidebar = document.getElementsByClassName("sidebar")[0];
     // let sidebarContent = document.getElementsByClassName("contentWrapper")[0];
@@ -21,16 +24,91 @@ export default function SidebarRight() {
     //     }
     // };
 
+    const [userSearched, setUserSearched] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [active, setActive] = useState(false);
+
+    const debounceFunction = (cb, delay = 700) => {
+        let timeout;
+        return (...args) => {
+            if (timeout) clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                cb(...args);
+            }, delay);
+        };
+    };
+    const searchHandler = debounceFunction(async (e) => {
+        const valueTyped = e.target.value;
+        if (!valueTyped.trim()) {
+            setUserSearched([]);
+            setLoading(false);
+            return;
+        }
+
+        const { data } = await axios.get(`http://localhost:4000/api/v1/search/${valueTyped}`, { withCredentials: true });
+        if (data.users) {
+            setUserSearched(data.users);
+        } else {
+            setUserSearched({ message: data.message });
+        }
+        setLoading(false);
+    }, 700);
+
     return (
         <StickyBox>
             <div className={``}>
                 <div className={``}>
-                    <div className="sticky top-0   flex h-[3.3rem]  w-full items-center    bg-white ">
-                        <div className=" flex h-[2.75rem]  w-[350px] items-center gap-3 rounded-full bg-[#e7eaeb] pl-4">
+                    <div className="sticky top-0  flex   min-h-[3.5rem] w-full flex-col  bg-white   pt-1   ">
+                        <div className=" flex min-h-[2.75rem]  w-[350px] items-center gap-3 rounded-full bg-[#e7eaeb] pl-4">
                             <SearchIcon className="  h-[20px] w-[20px]" />
-                            <input type="text" placeholder="Search Twitter" className="h-full w-full bg-transparent text-black outline-none placeholder:text-black" />
+                            <input
+                                type="text"
+                                placeholder="Search Twitter"
+                                className="h-full w-full bg-transparent text-black outline-none placeholder:text-black"
+                                onFocus={() => setActive(true)}
+                                onBlur={(e) => {
+                                    setActive(false);
+                                    setUserSearched([]);
+                                    e.target.value = "";
+                                }}
+                                onChange={(e) => {
+                                    setLoading(true);
+                                    searchHandler(e);
+                                }}
+                            />
                         </div>
+                        {loading ? (
+                            <Loader />
+                        ) : active && !loading ? (
+                            <div className="min-h-24  max-h-[20rem] w-[350px]  overflow-y-auto rounded-xl border-2  bg-white text-center drop-shadow-lg">
+                                {userSearched.length === 0 ? (
+                                    <div className="mt-4  h-24 text-gray-600">Try searching for people</div>
+                                ) : (
+                                    <>
+                                        {userSearched.message ? (
+                                            <div className="mt-4  h-24 text-gray-600 underline">{userSearched.message}</div>
+                                        ) : (
+                                            <div className="flex flex-col ">
+                                                {userSearched.map((item) => {
+                                                    return (
+                                                        <button className="flex items-start gap-1 p-3 hover:bg-gray-50" key={item._id}>
+                                                            <Avatar profile={item.profile && item.profile.image && item.profile.image.url ? item.profile.image.url : null} />
+                                                            <div className="flex flex-col items-start">
+                                                                <span className="font-bold hover:underline">{item.name.length > 30 ? item.name.slice(0, 30).trim() + "..." : item.name}</span>
+                                                                <span className="mt-[-0.2rem] text-gray-600">@{item.handle}</span>
+                                                                {/* //one for following */}
+                                                            </div>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+                        ) : null}
                     </div>
+
                     <div className="    w-[350px] flex-col items-center  overflow-hidden">
                         <div className="mt-3 w-full rounded-xl bg-[#F7F9F9] p-3 pb-3">
                             <p className="mb-2 text-[1.5rem] font-bold">What's happening</p>

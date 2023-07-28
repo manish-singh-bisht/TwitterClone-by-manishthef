@@ -69,7 +69,7 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
                 // Skip the next part;
                 i++;
 
-                if (reply.mentions.includes(nextPart.toString())) {
+                if (reply.mentions.includes(nextPart?.toString())) {
                     renderedComment.push(
                         <span key={i} className="text-blue-500">
                             {mergedPart}

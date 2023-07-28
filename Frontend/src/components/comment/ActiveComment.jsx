@@ -120,7 +120,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                 // Skip the next part;
                 i++;
 
-                if (data.comment.mentions.includes(nextPart.toString())) {
+                if (data.comment.mentions.includes(nextPart?.toString())) {
                     renderedComment.push(
                         <span key={i} className="text-blue-500">
                             {mergedPart}

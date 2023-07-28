@@ -101,7 +101,7 @@ const Post = ({
                 // Skip the next part;
                 i++;
 
-                if (mentions.includes(nextPart.toString())) {
+                if (mentions.includes(nextPart?.toString())) {
                     renderedComment.push(
                         <span key={i} className="text-blue-500">
                             {mergedPart}
