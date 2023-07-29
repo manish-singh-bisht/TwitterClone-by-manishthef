@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { LeftArrow } from "../SVGs/SVGs";
-import axios, { all } from "axios";
+import axios from "axios";
 import Avatar from "../Avatar/Avatar";
+import { useNavigate } from "react-router-dom";
 
 const Connect = () => {
     const [allUsers, setAllUsers] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -17,11 +19,14 @@ const Connect = () => {
         }
     }, []);
 
+    const leftArrowHandler = () => {
+        navigate("/");
+    };
     return (
         <div className=" max-h-[full] min-h-[1400px]  border-l border-r">
             <div className=" sticky inset-0 z-10 flex h-[3.5rem] items-center gap-5 bg-white/60 backdrop-blur-md ">
                 <div>
-                    <div className="m-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full hover:border-2 hover:bg-gray-200 active:bg-gray-300">
+                    <div className="m-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full hover:border-2 hover:bg-gray-200 active:bg-gray-300" onClick={leftArrowHandler}>
                         <LeftArrow className="h-[65%] w-[65%] " />
                     </div>
                 </div>
