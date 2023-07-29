@@ -4,6 +4,7 @@ import { SearchIcon, ThreeDots } from "../SVGs/SVGs";
 import StickyBox from "react-sticky-box";
 import axios from "axios";
 import Loader from "../Loader/Loader";
+import { useNavigate } from "react-router-dom";
 
 export default function SidebarRight() {
     // let sidebar = document.getElementsByClassName("sidebar")[0];
@@ -23,7 +24,7 @@ export default function SidebarRight() {
     //         sidebarContent.style.position = "";
     //     }
     // };
-
+    const navigate = useNavigate();
     const [userSearched, setUserSearched] = useState([]);
     const [loading, setLoading] = useState(false);
     const [active, setActive] = useState(false);
@@ -129,7 +130,13 @@ export default function SidebarRight() {
                                 <TrendingFollow name={"Elon Musk"} username={"elonmusk"} profilePicture={"https://source.unsplash.com/random/1200x600"} />
                                 <TrendingFollow name={"Kim Kardashian"} username={"kimkardashian"} profilePicture={"https://source.unsplash.com/random/1200x600"} />
                             </div>
-                            <button className="w-full rounded-bl-xl rounded-br-xl p-3 text-left text-blue-500 hover:bg-gray-200">Show more</button>
+                            <button
+                                onClick={() => {
+                                    navigate("/Connect");
+                                }}
+                                className="w-full rounded-bl-xl rounded-br-xl p-3 text-left text-blue-500 hover:bg-gray-200">
+                                Show more
+                            </button>
                         </div>
                     </div>
                 </div>

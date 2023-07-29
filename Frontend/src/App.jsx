@@ -16,6 +16,7 @@ const CommentDetail = React.lazy(() => import("./components/comment/CommentDetai
 const Test = React.lazy(() => import("./components/pages/Test"));
 const ProfilePage = React.lazy(() => import("./components/Profile/ProfilePage"));
 const BookMarkPage = React.lazy(() => import("./components/BookMarkPage/BookMarkPage"));
+const Connect = React.lazy(() => import("./components/ConnectPeople/Connect"));
 
 const App = () => {
     const {
@@ -48,6 +49,7 @@ const App = () => {
                             <Route exact path="/test" element={<Test />} />
                             <Route exact path="/ExtendedMedia" element={<ExtendedMedia />} />
                             <Route exact path="/Profile" element={<ProfilePage />} />
+                            <Route exact path="/Connect" element={isAuthenticated ? <Connect /> : <Navigate to="/login" replace />} />
                             <Route exact path="/Bookmark" element={isAuthenticated ? <BookMarkPage /> : <Navigate to="/login" replace />} />
                         </Routes>
                     </Suspense>

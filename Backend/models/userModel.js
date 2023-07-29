@@ -62,6 +62,10 @@ const userSchema = new mongoose.Schema({
             ref: "Users",
         },
     ],
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
 //hashing before saving the password

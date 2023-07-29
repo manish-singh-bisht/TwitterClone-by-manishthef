@@ -226,7 +226,7 @@ exports.searchUser = async (req, res, next) => {
 //gets all users in database
 exports.getAllUsers = async (req, res, next) => {
     try {
-        const users = await Users.find();
+        const users = await Users.find().select("handle name _id description profile");
         res.status(200).json({
             success: true,
             users,
