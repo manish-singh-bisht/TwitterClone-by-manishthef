@@ -12,7 +12,9 @@ const Connect = () => {
             const { data } = await axios.get(`http://localhost:4000/api/v1/users`, { withCredentials: true });
             setAllUsers(data.users);
         };
-        getAllusers();
+        if (window.location.pathname !== "/connect") {
+            getAllusers();
+        }
     }, []);
 
     return (
