@@ -36,7 +36,7 @@ const Connect = () => {
 
             {allUsers.map((user) => {
                 return (
-                    <button className="flex w-full items-center justify-between  py-2 px-3 hover:bg-gray-50">
+                    <button className="flex w-full items-center justify-between  py-2 px-3 hover:bg-gray-50" key={user._id}>
                         <div className="flex items-start gap-2 ">
                             <div>
                                 <Avatar profile={user.profile && user.profile.image && user.profile.image.url ? user.profile.image.url : null} />
@@ -47,7 +47,7 @@ const Connect = () => {
                                 <div className="mt-[0.5rem] text-left ">{user.description}</div>
                             </div>
                         </div>
-                        <button className="rounded-full bg-black px-4 py-1 font-semibold text-white hover:text-gray-300 active:text-gray-400 ">Follow</button>
+                        <div className="rounded-full bg-black px-4 py-1 font-semibold text-white hover:text-gray-300 active:text-gray-400 ">Follow</div>
                     </button>
                 );
             })}
