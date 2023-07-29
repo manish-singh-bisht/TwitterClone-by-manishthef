@@ -61,6 +61,10 @@ export const ACTIONS = {
     BOOKMARK_COMMENT_SUCCESS: "Bookmark Comment success",
     BOOKMARK_COMMENT_FAILURE: "Bookmark Comment Failure",
 
+    FOLLOW_USER_REQUEST: "Follow User request",
+    FOLLOW_USER_SUCCESS: "Follow User success",
+    FOLLOW_USER_FAILURE: "Follow User Failure",
+
     CLEAR_ERRORS: "clear Errors",
 };
 
@@ -278,6 +282,21 @@ export const tweetBookmarkReducer = (state, action) => {
         case ACTIONS.BOOKMARK_POST_SUCCESS:
             return { ...state, loading: false, message: action.payload, error: "" };
         case ACTIONS.BOOKMARK_POST_FAILURE:
+            return { ...state, loading: false, message: "", error: action.payload };
+        case ACTIONS.CLEAR_ERRORS:
+            return { ...state, error: "" };
+
+        default:
+            return state;
+    }
+};
+export const followUserReducer = (state, action) => {
+    switch (action.type) {
+        case ACTIONS.FOLLOW_USER_REQUEST:
+            return { ...state, loading: true, message: "", error: "" };
+        case ACTIONS.FOLLOW_USER_SUCCESS:
+            return { ...state, loading: false, message: action.payload, error: "" };
+        case ACTIONS.FOLLOW_USER_FAILURE:
             return { ...state, loading: false, message: "", error: action.payload };
         case ACTIONS.CLEAR_ERRORS:
             return { ...state, error: "" };

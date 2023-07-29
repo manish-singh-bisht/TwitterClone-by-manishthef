@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect, useRef, useState } from "react";
-import { Delete, PushPin, UserPlus } from "../SVGs/SVGs";
+import { Delete, PushPin, UserMinus, UserPlus } from "../SVGs/SVGs";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import DeleteComment from "../../context/Actions/DeleteComment";
 
@@ -9,6 +9,7 @@ import DeletePost from "../../context/Actions/DeletePost";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
+import FollowUser from "../../context/Actions/FollowUser";
 
 const MoreOptionMenuModal = ({
     visibility,
@@ -35,7 +36,8 @@ const MoreOptionMenuModal = ({
     if (!visibility) return;
 
     const modalRef = useRef(null);
-    const { state, dispatchCommentDelete, ACTIONS, setPosts, dispatchTweetDelete } = useGlobalContext();
+    const [isAlreadyFollowing, setIsAlreadyFollowing] = useState({ bool: false, handle: null, ownerid: null });
+    const { state, dispatchCommentDelete, dispatch, ACTIONS, setPosts, dispatchTweetDelete, posts, dispatchFollowUser } = useGlobalContext();
     const navigate = useNavigate();
     const [visibilityDeleteModal, setVisibilityDeleteModal] = useState(false);
     const handleOutsideClickDeleteModal = (event) => {
@@ -80,7 +82,32 @@ const MoreOptionMenuModal = ({
         if (visibility && buttonPosition) {
             positionModal();
         }
+        followedOrNot();
     }, [visibility, buttonPosition]);
+
+    const followedOrNot = async () => {
+        const postID = infoToMoreOptionModal.postID;
+        const post = posts.filter((item) => {
+            if (item.originalPost && item.originalPost._id === postID) {
+                return item.originalPost.owner._id;
+            } else if (item._id === postID) {
+                return item.owner._id;
+            }
+        });
+        const ownerID = post[0].originalPost?.owner._id || post[0].owner._id;
+        if (state.user.following.includes(ownerID)) {
+            setIsAlreadyFollowing({ bool: true, handle: post[0].originalPost?.owner.handle || post[0].owner.handle, ownerid: ownerID });
+        } else {
+            setIsAlreadyFollowing({ bool: false, handle: post[0].originalPost?.owner.handle || post[0].owner.handle, ownerid: ownerID });
+        }
+    };
+
+    const followUnfollowHandler = async () => {
+        const id = isAlreadyFollowing.ownerid;
+        await FollowUser({ dispatchFollowUser, ACTIONS, id });
+        const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
+        await dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: data.myProfile });
+    };
 
     const deleteHandler = async () => {
         const postID = infoToMoreOptionModal.postID;
@@ -211,9 +238,14 @@ const MoreOptionMenuModal = ({
                             </button>
                         </>
                     ) : (
-                        <button className="flex w-full items-center gap-3 rounded-xl p-3  hover:bg-gray-50">
-                            <UserPlus />
-                            <div className="font-bold ">Follow</div>
+                        <button
+                            className="flex w-full items-center gap-3 rounded-xl p-3  hover:bg-gray-50"
+                            onClick={() => {
+                                followUnfollowHandler();
+                                onCloseMoreOptionModal();
+                            }}>
+                            {isAlreadyFollowing.bool ? <UserMinus /> : <UserPlus />}
+                            <div className="font-bold ">{isAlreadyFollowing.bool ? `Unfollow @${isAlreadyFollowing.handle}` : `Follow @${isAlreadyFollowing.handle}`}</div>
                         </button>
                     )
                 ) : fromBookmarks ? (

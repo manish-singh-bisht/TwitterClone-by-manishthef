@@ -15,6 +15,7 @@ import {
     RetweetPostReducer,
     commentBookmarkReducer,
     tweetBookmarkReducer,
+    followUserReducer,
 } from "./Reducers";
 
 //creating context
@@ -66,6 +67,9 @@ const AppProvider = ({ children }) => {
     const bookmarkComment = { loading: false, message: "", error: "" };
     const [stateBookmarkComment, dispatchBookmarkComment] = useReducer(commentBookmarkReducer, bookmarkComment);
 
+    const initialStateFollowUser = { loading: false, message: "", error: "" };
+    const [stateFollowUser, dispatchFollowUser] = useReducer(followUserReducer, initialStateFollowUser);
+
     return (
         <AppContext.Provider
             value={{
@@ -84,6 +88,8 @@ const AppProvider = ({ children }) => {
                 dispatchRetweetPost,
                 stateLikeUnlike,
                 dispatchLikeUnlike,
+                stateFollowUser,
+                dispatchFollowUser,
                 stateComment,
                 dispatchComment,
                 dispatchCommentLikeUnlike,
