@@ -105,7 +105,7 @@ exports.findPostById = async (req, res, next) => {
             })
             .populate({ path: "retweets", select: "name handle profile _id" })
 
-            .populate({ path: "owner", select: "_id handle profile name" })
+            .populate({ path: "owner", select: "_id handle profile name description" })
             .populate({
                 path: "comments",
                 populate: [
@@ -349,11 +349,11 @@ async function fetchThread(postId, thread, userHandle) {
             path: "bookmarks",
             select: "_id",
         })
-        .populate({ path: "owner", select: "_id handle profile name" })
+        .populate({ path: "owner", select: "_id handle profile name description" })
         .populate({
             path: "comments",
             populate: [
-                { path: "owner", select: "name handle profile _id" },
+                { path: "owner", select: "name handle profile _id description" },
                 { path: "post" },
                 { path: "likes", select: "_id" },
                 { path: "bookmarks", select: "_id" },

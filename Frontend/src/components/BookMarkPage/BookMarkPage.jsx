@@ -14,7 +14,7 @@ import CommentBookmark from "../../context/Actions/CommentBookmark";
 
 const BookMarkPage = () => {
     // this is just for showing the posts that were bookmarked by the logged in user, to see how the number of the bookmark is being changed or from where the api call is being made to mark a post as bookmark, refer to Frontend\src\components\CommonPostComponent\BookMark.jsx.
-    const { state, ACTIONS, dispatchCommentLikeUnlike, dispatchLikeUnlike, dispatchRetweetPost, dispatchRetweetComment, dispatchBookmarkComment, dispatchBookmarkTweet } = useGlobalContext();
+    const { state, ACTIONS, setUsersForRightSidebar, dispatchCommentLikeUnlike, dispatchLikeUnlike, dispatchRetweetPost, dispatchRetweetComment, dispatchBookmarkComment, dispatchBookmarkTweet } = useGlobalContext();
 
     //Modal for more option
     const [visibility, setVisibility] = useState(false);
@@ -35,6 +35,8 @@ const BookMarkPage = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+        setUsersForRightSidebar(null);
         const functionToGetAllBookmarks = async () => {
             setLoading(true);
             const { data } = await axios.get(`http://localhost:4000/api/v1/getBookmarks/${state.user._id}`, { withCredentials: true });

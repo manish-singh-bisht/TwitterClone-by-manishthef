@@ -1,12 +1,13 @@
-import { useState } from "react";
+import React, { memo, useState } from "react";
 import Avatar from "../Avatar/Avatar";
 import { SearchIcon, ThreeDots } from "../SVGs/SVGs";
 import StickyBox from "react-sticky-box";
 import axios from "axios";
 import Loader from "../Loader/Loader";
 import { useNavigate } from "react-router-dom";
+import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 
-export default function SidebarRight() {
+const SidebarRight = () => {
     // let sidebar = document.getElementsByClassName("sidebar")[0];
     // let sidebarContent = document.getElementsByClassName("contentWrapper")[0];
 
@@ -28,6 +29,9 @@ export default function SidebarRight() {
     const [userSearched, setUserSearched] = useState([]);
     const [loading, setLoading] = useState(false);
     const [active, setActive] = useState(false);
+
+    const { usersForRightSidebar } = useGlobalContext();
+    console.log(usersForRightSidebar);
 
     const debounceFunction = (cb, delay = 700) => {
         let timeout;
@@ -59,7 +63,7 @@ export default function SidebarRight() {
         <StickyBox>
             <div className={``}>
                 <div className={``}>
-                    <div className="sticky top-0  flex   min-h-[3.5rem] w-full flex-col  bg-white   pt-1   ">
+                    <div className="sticky top-0  z-10   flex min-h-[3.5rem] w-full  flex-col bg-white  pt-1   ">
                         <div className=" flex min-h-[2.75rem]  w-[350px] items-center gap-3 rounded-full bg-[#e7eaeb] pl-4">
                             <SearchIcon className="  h-[20px] w-[20px]" />
                             <input
@@ -96,7 +100,7 @@ export default function SidebarRight() {
                                                             <Avatar profile={item.profile && item.profile.image && item.profile.image.url ? item.profile.image.url : null} />
                                                             <div className="flex flex-col items-start">
                                                                 <span className="font-bold hover:underline">{item.name.length > 30 ? item.name.slice(0, 30).trim() + "..." : item.name}</span>
-                                                                <span className="mt-[-0.2rem] text-gray-600">@{item.handle}</span>
+                                                                <span className="mt-[-0.2rem] text-gray-600">@{item.handle.length > 26 ? item.handle.slice(0, 26).trim() + "..." : item.handle}</span>
                                                                 {/* //one for following */}
                                                             </div>
                                                         </button>
@@ -109,6 +113,22 @@ export default function SidebarRight() {
                             </div>
                         ) : null}
                     </div>
+                    {usersForRightSidebar && (
+                        <div className="my-2    w-[350px] flex-col items-center  overflow-hidden rounded-xl border-[0.1px] border-gray-200 ">
+                            <div className=" w-full rounded-xl  ">
+                                <div className="  px-3 pt-2 pb-[0.4rem] text-[1.5rem] font-bold">Relevant People</div>
+                                {usersForRightSidebar.post?.owner && (
+                                    <TrendingFollow name={usersForRightSidebar.post.owner.name} username={usersForRightSidebar.post.owner.handle} profilePicture={null} description={usersForRightSidebar.post.owner.description} />
+                                )}
+                                {usersForRightSidebar.parent?.owner && usersForRightSidebar.parent?.owner._id !== usersForRightSidebar.post?.owner._id && (
+                                    <TrendingFollow name={usersForRightSidebar.parent.owner.name} username={usersForRightSidebar.parent.owner.handle} profilePicture={null} description={usersForRightSidebar.parent.owner.description} />
+                                )}
+                                {usersForRightSidebar.owner && usersForRightSidebar.owner._id !== usersForRightSidebar.post?.owner._id && usersForRightSidebar.parent?.owner._id !== usersForRightSidebar.owner._id && (
+                                    <TrendingFollow name={usersForRightSidebar.owner.name} username={usersForRightSidebar.owner.handle} profilePicture={null} description={usersForRightSidebar.owner.description} />
+                                )}
+                            </div>
+                        </div>
+                    )}
 
                     <div className="    w-[350px] flex-col items-center  overflow-hidden">
                         <div className="mt-3 w-full rounded-xl bg-[#F7F9F9] p-3 pb-3">
@@ -123,29 +143,31 @@ export default function SidebarRight() {
                             <TrendingTopic topic={"Nobody Wants To Do it Because It's Hard. I Can and I will.Maybe not Today,not Tomorrow But I will for Sure."} number={"430K"} />
                             <TrendingTopic topic={"𝕏"} number={"54K"} />
                         </div>
-                        <div className="mt-5 mb-5   rounded-xl bg-[#F7F9F9] ">
-                            <p className="px-3  pt-3 text-[1.31rem] font-bold">Who to follow</p>
-                            <div className="flex flex-col py-2">
-                                <TrendingFollow name={"Iman Musa"} username={"imanmcodes"} profilePicture={"https://source.unsplash.com/random/1200x600"} />
-                                <TrendingFollow name={"Elon Musk"} username={"elonmusk"} profilePicture={"https://source.unsplash.com/random/1200x600"} />
-                                <TrendingFollow name={"Kim Kardashian"} username={"kimkardashian"} profilePicture={"https://source.unsplash.com/random/1200x600"} />
+                        {!usersForRightSidebar && (
+                            <div className="mt-5 mb-5   rounded-xl bg-[#F7F9F9] ">
+                                <p className="px-3  pt-3 text-[1.31rem] font-bold">Who to follow</p>
+                                <div className="flex flex-col py-2">
+                                    <TrendingFollow name={"Iman Musa"} username={"imanmcodes"} profilePicture={"https://source.unsplash.com/random/1200x600"} description={null} />
+                                    <TrendingFollow name={"Elon Musk"} username={"elonmusk"} profilePicture={"https://source.unsplash.com/random/1200x600"} description={null} />
+                                    <TrendingFollow name={"Kim Kardashian"} username={"kimkardashian"} profilePicture={"https://source.unsplash.com/random/1200x600"} description={null} />
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        navigate("/Connect");
+                                    }}
+                                    className="w-full rounded-bl-xl rounded-br-xl p-3 text-left text-blue-500 hover:bg-gray-200">
+                                    Show more
+                                </button>
                             </div>
-                            <button
-                                onClick={() => {
-                                    navigate("/Connect");
-                                }}
-                                className="w-full rounded-bl-xl rounded-br-xl p-3 text-left text-blue-500 hover:bg-gray-200">
-                                Show more
-                            </button>
-                        </div>
+                        )}
                     </div>
                 </div>
             </div>
         </StickyBox>
     );
-}
+};
 
-function TrendingTopic({ topic, number }) {
+const TrendingTopic = memo(({ topic, number }) => {
     return (
         <div className="flex cursor-pointer flex-col py-3 text-sm">
             <div className=" flex justify-between text-[13px] text-gray-700">
@@ -156,19 +178,25 @@ function TrendingTopic({ topic, number }) {
             <span className="text-[0.83rem] text-gray-700">{number} Tweets</span>
         </div>
     );
-}
+});
 
-function TrendingFollow({ name, username, profilePicture }) {
+const TrendingFollow = memo(({ name, username, profilePicture, description }) => {
     return (
-        <div className="flex w-full items-center justify-between  py-2 px-3 hover:bg-gray-200">
-            <div className="flex items-center gap-2">
+        <div className="flex w-[350px] items-start pt-3 hover:cursor-pointer hover:bg-gray-100 ">
+            <div className="">
                 <Avatar profile={profilePicture} />
-                <div className="flex flex-col items-start ">
-                    <div className="text-[1.03rem] font-semibold">{name}</div>
-                    <div className=" mt-[-0.2rem] text-gray-500">@{username}</div>
-                </div>
             </div>
-            <button className="rounded-full bg-black px-4 py-1 font-semibold text-white hover:text-gray-300 active:text-gray-400 ">Follow</button>
+            <div className="flex w-full flex-col  ">
+                <div className=" flex w-full items-start justify-between  pl-2 pr-3 ">
+                    <div className="w-full ">
+                        <div className="text-[1.03rem] font-semibold hover:underline">{name.length > 15 ? name.slice(0, 15).trim() + "..." : name}</div>
+                        <div className=" mt-[-0.2rem] text-gray-500">@{username.length > 15 ? username.slice(0, 15).trim() + "..." : username}</div>
+                    </div>
+                    <button className=" rounded-full bg-black px-4 py-1 font-semibold text-white hover:text-gray-300 active:text-gray-400">Follow</button>
+                </div>
+                <div className="mt-2 w-full pr-3 pl-2 pb-3 text-[0.95rem] leading-[1.35rem]">{description}</div>
+            </div>
         </div>
     );
-}
+});
+export default memo(SidebarRight);

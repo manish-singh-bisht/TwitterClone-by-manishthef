@@ -232,11 +232,11 @@ exports.findCommentById = async (req, res, next) => {
                 select: "_id",
             })
             .populate({ path: "likes", select: "name handle  _id" })
-            .populate({ path: "owner", select: "name handle _id" })
+            .populate({ path: "owner", select: "name handle _id description" })
             .populate({
                 path: "post",
                 populate: [
-                    { path: "owner", select: "name handle profile _id" },
+                    { path: "owner", select: "name handle profile _id description" },
                     { path: "likes", select: "_id" },
                     { path: "bookmarks", select: "_id" },
                     { path: "retweets", select: "_id" },
@@ -245,7 +245,7 @@ exports.findCommentById = async (req, res, next) => {
             .populate({
                 path: "parent",
                 populate: [
-                    { path: "owner", select: "name handle profile _id" },
+                    { path: "owner", select: "name handle profile _id description" },
                     { path: "likes", select: "_id" },
                     { path: "bookmarks", select: "_id" },
                     { path: "retweets", select: "_id" },

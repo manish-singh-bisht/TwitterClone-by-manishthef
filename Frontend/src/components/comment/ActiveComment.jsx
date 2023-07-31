@@ -15,7 +15,7 @@ import { toast } from "react-toastify";
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
-    const { state } = useGlobalContext();
+    const { state, setUsersForRightSidebar } = useGlobalContext();
 
     //Modal for more option
     const [visibility, setVisibility] = useState(false);
@@ -105,7 +105,9 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
         like.length === 0 && setIsLiked(false);
         bookmark.length === 0 && setIsBookmarked(false);
         data.comment.retweets.length === 0 && setIsRetweet(false);
+
         setComment(data.comment);
+        setUsersForRightSidebar(data.comment);
 
         // Regex pattern to find mentions and make them blue,in the display after it is posted
         const mentionRegex = /(@)(\w+)/g;

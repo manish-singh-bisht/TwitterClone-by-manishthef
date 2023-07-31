@@ -1,17 +1,20 @@
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import { useNavigate } from "react-router-dom";
 import { Calendar, LeftArrow, LinkInProfile, LocationInProfile } from "../SVGs/SVGs";
 import { BannerImage, ProfileImage } from "./ProfileBanner";
 
 const ProfilePage = () => {
-    const { state } = useGlobalContext();
+    const { state, setUsersForRightSidebar } = useGlobalContext();
     const navigate = useNavigate();
 
     const handleClick = () => {
         navigate("/");
     };
-
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        setUsersForRightSidebar(null);
+    }, []);
     return (
         <>
             <main className="grid grid-cols-[44vw_auto]   ">

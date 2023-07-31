@@ -18,7 +18,7 @@ const CommentCard = React.lazy(() => import("../comment/CommentCard"));
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const TweetDetail = () => {
-    const { ACTIONS, dispatchLikeUnlike: dispatch, state, stateComment, stateCommentDelete, dispatchRetweetPost: dispatchRetweet, dispatchBookmarkTweet: dispatchBookmark } = useGlobalContext();
+    const { ACTIONS, dispatchLikeUnlike: dispatch, state, stateComment, stateCommentDelete, dispatchRetweetPost: dispatchRetweet, dispatchBookmarkTweet: dispatchBookmark, setUsersForRightSidebar, usersForRightSidebar } = useGlobalContext();
 
     //Modal for more option
     const [visibility, setVisibility] = useState(false);
@@ -103,7 +103,9 @@ const TweetDetail = () => {
             const { data } = await axios.get(`http://localhost:4000/api/v1/${postId}`, { withCredentials: true });
             value = data;
         }
-
+        if (value.post?.tweet !== usersForRightSidebar?.post.tweet) {
+            setUsersForRightSidebar(value);
+        }
         setMentionHandleCollection(value.uniqueMentionHandleCollection);
         let like = [];
         like = value.post.likes;

@@ -12,8 +12,21 @@ import PostBookmark from "../../context/Actions/PostBookmark";
 import CommentBookmark from "../../context/Actions/CommentBookmark";
 
 const Home = () => {
-    const { dispatchPostOfFollowingAndMe, ACTIONS, statePostOfFollowingAndMe, dispatchBookmarkComment, state, dispatchLikeUnlike, posts, setPosts, dispatchRetweetPost, dispatchRetweetComment, dispatchCommentLikeUnlike, dispatchBookmarkTweet } =
-        useGlobalContext();
+    const {
+        dispatchPostOfFollowingAndMe,
+        setUsersForRightSidebar,
+        ACTIONS,
+        statePostOfFollowingAndMe,
+        dispatchBookmarkComment,
+        state,
+        dispatchLikeUnlike,
+        posts,
+        setPosts,
+        dispatchRetweetPost,
+        dispatchRetweetComment,
+        dispatchCommentLikeUnlike,
+        dispatchBookmarkTweet,
+    } = useGlobalContext();
 
     const { loading } = statePostOfFollowingAndMe;
 
@@ -27,6 +40,7 @@ const Home = () => {
 
     useEffect(() => {
         PostOfFollowingUsersAndMe();
+        setUsersForRightSidebar(null);
     }, []);
 
     return (
