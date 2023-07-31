@@ -36,7 +36,7 @@ const MoreOptionMenuModal = ({
     if (!visibility) return;
 
     const modalRef = useRef(null);
-    const [isAlreadyFollowing, setIsAlreadyFollowing] = useState({ bool: false, handle: null, ownerid: null });
+    const [isAlreadyFollowing, setIsAlreadyFollowing] = useState({ bool: false, handle: "", ownerid: null });
     const { state, dispatchCommentDelete, dispatch, ACTIONS, setPosts, dispatchTweetDelete, posts, dispatchFollowUser } = useGlobalContext();
     const navigate = useNavigate();
     const [visibilityDeleteModal, setVisibilityDeleteModal] = useState(false);
@@ -87,18 +87,14 @@ const MoreOptionMenuModal = ({
 
     const followedOrNot = async () => {
         const postID = infoToMoreOptionModal.postID;
-        const post = posts.filter((item) => {
-            if (item.originalPost && item.originalPost._id === postID) {
-                return item.originalPost.owner._id;
-            } else if (item._id === postID) {
-                return item.owner._id;
-            }
-        });
-        const ownerID = post[0].originalPost?.owner._id || post[0].owner._id;
+        const commentID = infoToMoreOptionModal.commentID;
+        const ownerID = infoToMoreOptionModal.ownerID;
+        const handle = infoToMoreOptionModal.handle;
+
         if (state.user.following.includes(ownerID)) {
-            setIsAlreadyFollowing({ bool: true, handle: post[0].originalPost?.owner.handle || post[0].owner.handle, ownerid: ownerID });
+            setIsAlreadyFollowing({ bool: true, handle: handle, ownerid: ownerID });
         } else {
-            setIsAlreadyFollowing({ bool: false, handle: post[0].originalPost?.owner.handle || post[0].owner.handle, ownerid: ownerID });
+            setIsAlreadyFollowing({ bool: false, handle: handle, ownerid: ownerID });
         }
     };
 
@@ -245,7 +241,11 @@ const MoreOptionMenuModal = ({
                                 onCloseMoreOptionModal();
                             }}>
                             {isAlreadyFollowing.bool ? <UserMinus /> : <UserPlus />}
-                            <div className="font-bold ">{isAlreadyFollowing.bool ? `Unfollow @${isAlreadyFollowing.handle}` : `Follow @${isAlreadyFollowing.handle}`}</div>
+                            <div className="font-bold ">
+                                {isAlreadyFollowing.bool
+                                    ? `Unfollow @${isAlreadyFollowing.handle.length > 20 ? isAlreadyFollowing.handle.slice(0, 20).trim() + "..." : isAlreadyFollowing.handle}`
+                                    : `Follow @${isAlreadyFollowing.handle.length > 20 ? isAlreadyFollowing.handle.slice(0, 20).trim() + "..." : isAlreadyFollowing.handle}`}
+                            </div>
                         </button>
                     )
                 ) : fromBookmarks ? (

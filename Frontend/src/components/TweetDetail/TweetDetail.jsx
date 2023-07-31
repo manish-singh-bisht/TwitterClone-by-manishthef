@@ -23,7 +23,7 @@ const TweetDetail = () => {
     //Modal for more option
     const [visibility, setVisibility] = useState(false);
     const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 }); //for getting the position of the button that triggers the modal to open
-    const [infoToMoreOptionModal, setInfoToMoreOptionModal] = useState({ ownerID: "", commentID: "", postID: "" });
+    const [infoToMoreOptionModal, setInfoToMoreOptionModal] = useState({ ownerID: "", commentID: "", postID: "", handle: "" });
 
     const handleOutsideClickMoreOption = (event) => {
         if (event.target === event.currentTarget) {
@@ -255,7 +255,7 @@ const TweetDetail = () => {
                                         const top = buttonRect.top + buttonRect.height;
                                         const left = buttonRect.left;
                                         setButtonPosition({ top, left });
-                                        setInfoToMoreOptionModal({ ownerID: ownerId, postID: postId });
+                                        setInfoToMoreOptionModal({ ownerID: ownerId, postID: postId, handle: handle });
                                     }}>
                                     <ThreeDots />
                                 </div>

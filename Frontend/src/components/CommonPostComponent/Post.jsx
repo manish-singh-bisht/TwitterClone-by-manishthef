@@ -62,7 +62,7 @@ const Post = ({
     //Modal for more option
     const [visibility, setVisibility] = useState(false);
     const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 }); //for getting the position of the button that triggers the modal to open
-    const [infoToMoreOptionModal, setInfoToMoreOptionModal] = useState({ ownerID: "", commentID: "", postID: "" });
+    const [infoToMoreOptionModal, setInfoToMoreOptionModal] = useState({ ownerID: "", commentID: "", postID: "", handle: "" });
 
     const handleOutsideClick = (event) => {
         if (event.target === event.currentTarget) {
@@ -254,14 +254,14 @@ const Post = ({
                                 const left = buttonRect.left;
                                 setButtonPosition({ top, left });
                                 fromCommentDetail
-                                    ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID })
+                                    ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID, handle: handle })
                                     : isCommentRetweet
-                                    ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID })
+                                    ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID, handle: handle })
                                     : isCommentBookmark
-                                    ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID })
+                                    ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID, handle: handle })
                                     : isComment
-                                    ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID })
-                                    : setInfoToMoreOptionModal({ ownerID: ownerId, postID: postId });
+                                    ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID, handle: handle })
+                                    : setInfoToMoreOptionModal({ ownerID: ownerId, postID: postId, handle: handle });
                             }}>
                             <ThreeDots />
                         </div>
