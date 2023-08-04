@@ -48,7 +48,7 @@ const App = () => {
                             <Route exact path="/Explore" element={<Test />} />
                             <Route exact path="/test" element={<Test />} />
                             <Route exact path="/ExtendedMedia" element={<ExtendedMedia />} />
-                            <Route exact path="/Profile" element={<ProfilePage />} />
+                            <Route exact path="/Profile/:id" element={<ProfilePage />} />
                             <Route exact path="/Connect" element={isAuthenticated ? <Connect /> : <Navigate to="/login" replace />} />
                             <Route exact path="/Bookmark" element={isAuthenticated ? <BookMarkPage /> : <Navigate to="/login" replace />} />
                         </Routes>

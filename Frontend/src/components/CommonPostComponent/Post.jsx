@@ -233,7 +233,7 @@ const Post = ({
                     }>
                     <div className="flex  ">
                         <Link
-                            to={`/user/${ownerId}`}
+                            to={`/Profile/${ownerId}`}
                             onClick={(e) => {
                                 e.stopPropagation();
                             }}
@@ -302,7 +302,7 @@ const Post = ({
                     }}>
                     <div className="">
                         {profile ? (
-                            <div className="m-1 h-[2.6rem] w-[2.6rem] items-center justify-center rounded-full   bg-gray-400">
+                            <div className="m-[1.05rem] h-[2.6rem] w-[2.6rem] items-center justify-center rounded-full   bg-gray-400">
                                 <img src={profile} alt="profile image" loading="lazy" className="h-full w-full rounded-full object-cover" />
                             </div>
                         ) : (

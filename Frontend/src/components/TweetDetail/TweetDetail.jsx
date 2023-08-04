@@ -67,7 +67,7 @@ const TweetDetail = () => {
 
     //using data that was sent in the state  from Post
     const location = useLocation();
-    const { tweet, ownerName, ownerId, handle, timeCreated, ownerImage: profile, postImage, mentions, isThread } = location.state;
+    const { tweet, ownerName, ownerId, handle, timeCreated, profile, postImage, mentions, isThread } = location.state;
 
     const formattedTime = usePostTimeInTweetDetail(Date.parse(timeCreated));
 
@@ -241,7 +241,7 @@ const TweetDetail = () => {
 
                         <div className="flex h-fit w-full  flex-col ">
                             <div className="flex ">
-                                <Link to={`/user/${ownerId}`} className="flex w-fit flex-col  text-[1.1rem] font-bold ">
+                                <Link to={`/Profile/${ownerId}`} className="flex w-fit flex-col  text-[1.1rem] font-bold ">
                                     <span className="hover:underline">{ownerName}</span>
                                     <span className="mt-[-0.3rem] text-[0.9rem] font-normal text-gray-700">{`@${handle}`}</span>
                                 </Link>

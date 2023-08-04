@@ -66,6 +66,14 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    location: {
+        type: String,
+        default: null,
+    },
+    website: {
+        type: String,
+        default: null,
+    },
 });
 
 //hashing before saving the password

@@ -26,7 +26,7 @@ const AppProvider = ({ children }) => {
     const [usersForRightSidebar, setUsersForRightSidebar] = useState([]);
 
     //reducer setup
-    const initialState = { loading: false, user: {}, error: "", isAuthenticated: false };
+    const initialState = { loading: false, user: {}, total: {}, error: "", isAuthenticated: false };
     const [state, dispatch] = useReducer(UserReducer, initialState);
 
     const initialStatePostOfFollowingAndMe = { loading: false, posts: [], error: "" };

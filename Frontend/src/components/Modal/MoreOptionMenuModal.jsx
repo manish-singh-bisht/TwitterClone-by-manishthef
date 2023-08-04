@@ -37,7 +37,7 @@ const MoreOptionMenuModal = ({
 
     const modalRef = useRef(null);
     const [isAlreadyFollowing, setIsAlreadyFollowing] = useState({ bool: false, handle: "", ownerid: null });
-    const { state, dispatchCommentDelete, dispatch, ACTIONS, setPosts, dispatchTweetDelete, posts, dispatchFollowUser } = useGlobalContext();
+    const { state, dispatchCommentDelete, dispatch, ACTIONS, setPosts, dispatchTweetDelete, dispatchFollowUser } = useGlobalContext();
     const navigate = useNavigate();
     const [visibilityDeleteModal, setVisibilityDeleteModal] = useState(false);
     const handleOutsideClickDeleteModal = (event) => {

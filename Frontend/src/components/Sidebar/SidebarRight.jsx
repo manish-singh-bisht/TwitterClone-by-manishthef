@@ -4,7 +4,7 @@ import { SearchIcon, ThreeDots } from "../SVGs/SVGs";
 import StickyBox from "react-sticky-box";
 import axios from "axios";
 import Loader from "../Loader/Loader";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 
 const SidebarRight = () => {
@@ -31,7 +31,6 @@ const SidebarRight = () => {
     const [active, setActive] = useState(false);
 
     const { usersForRightSidebar } = useGlobalContext();
-    console.log(usersForRightSidebar);
 
     const debounceFunction = (cb, delay = 700) => {
         let timeout;
@@ -114,17 +113,47 @@ const SidebarRight = () => {
                         ) : null}
                     </div>
                     {usersForRightSidebar && (
-                        <div className="my-2    w-[350px] flex-col items-center  overflow-hidden rounded-xl border-[0.1px] border-gray-200 ">
+                        <div className="my-2    w-[21.88rem] flex-col items-center  overflow-hidden rounded-xl border-[0.1px] border-gray-200 ">
                             <div className=" w-full rounded-xl  ">
                                 <div className="  px-3 pt-2 pb-[0.4rem] text-[1.5rem] font-bold">Relevant People</div>
                                 {usersForRightSidebar.post?.owner && (
-                                    <TrendingFollow name={usersForRightSidebar.post.owner.name} username={usersForRightSidebar.post.owner.handle} profilePicture={null} description={usersForRightSidebar.post.owner.description} />
+                                    <TrendingFollow
+                                        name={usersForRightSidebar.post.owner.name}
+                                        username={usersForRightSidebar.post.owner.handle}
+                                        profilePicture={
+                                            usersForRightSidebar.post.owner && usersForRightSidebar.post.owner.profile && usersForRightSidebar.post.owner.profile.image && usersForRightSidebar.post.owner.profile.image.url
+                                                ? usersForRightSidebar.post.owner.profile.image.url
+                                                : null
+                                        }
+                                        description={usersForRightSidebar.post.owner.description}
+                                        id={usersForRightSidebar.post.owner._id}
+                                    />
                                 )}
                                 {usersForRightSidebar.parent?.owner && usersForRightSidebar.parent?.owner._id !== usersForRightSidebar.post?.owner._id && (
-                                    <TrendingFollow name={usersForRightSidebar.parent.owner.name} username={usersForRightSidebar.parent.owner.handle} profilePicture={null} description={usersForRightSidebar.parent.owner.description} />
+                                    <TrendingFollow
+                                        name={usersForRightSidebar.parent.owner.name}
+                                        username={usersForRightSidebar.parent.owner.handle}
+                                        profilePicture={
+                                            usersForRightSidebar.parent.owner && usersForRightSidebar.parent.owner.profile && usersForRightSidebar.parent.owner.profile.image && usersForRightSidebar.parent.owner.profile.image.url
+                                                ? usersForRightSidebar.parent.owner.profile.image.url
+                                                : null
+                                        }
+                                        description={usersForRightSidebar.parent.owner.description}
+                                        id={usersForRightSidebar.parent.owner._id}
+                                    />
                                 )}
                                 {usersForRightSidebar.owner && usersForRightSidebar.owner._id !== usersForRightSidebar.post?.owner._id && usersForRightSidebar.parent?.owner._id !== usersForRightSidebar.owner._id && (
-                                    <TrendingFollow name={usersForRightSidebar.owner.name} username={usersForRightSidebar.owner.handle} profilePicture={null} description={usersForRightSidebar.owner.description} />
+                                    <TrendingFollow
+                                        name={usersForRightSidebar.owner.name}
+                                        username={usersForRightSidebar.owner.handle}
+                                        profilePicture={
+                                            usersForRightSidebar.owner && usersForRightSidebar.owner.profile && usersForRightSidebar.owner.profile.image && usersForRightSidebar.owner.profile.image.url
+                                                ? usersForRightSidebar.owner.profile.image.url
+                                                : null
+                                        }
+                                        description={usersForRightSidebar.owner.description}
+                                        id={usersForRightSidebar.owner._id}
+                                    />
                                 )}
                             </div>
                         </div>
@@ -147,9 +176,9 @@ const SidebarRight = () => {
                             <div className="mt-5 mb-5   rounded-xl bg-[#F7F9F9] ">
                                 <p className="px-3  pt-3 text-[1.31rem] font-bold">Who to follow</p>
                                 <div className="flex flex-col py-2">
-                                    <TrendingFollow name={"Iman Musa"} username={"imanmcodes"} profilePicture={"https://source.unsplash.com/random/1200x600"} description={null} />
-                                    <TrendingFollow name={"Elon Musk"} username={"elonmusk"} profilePicture={"https://source.unsplash.com/random/1200x600"} description={null} />
-                                    <TrendingFollow name={"Kim Kardashian"} username={"kimkardashian"} profilePicture={"https://source.unsplash.com/random/1200x600"} description={null} />
+                                    <TrendingFollow name={"Iman Musa"} username={"imanmcodes"} profilePicture={"https://source.unsplash.com/random/1200x600"} description={null} id={1} />
+                                    <TrendingFollow name={"Elon Musk"} username={"elonmusk"} profilePicture={"https://source.unsplash.com/random/1200x600"} description={null} id={"6452294bcf01c48b11c2f282"} />
+                                    <TrendingFollow name={"Kim Kardashian"} username={"kimkardashian"} profilePicture={"https://source.unsplash.com/random/1200x600"} description={null} id={3} />
                                 </div>
                                 <button
                                     onClick={() => {
@@ -180,23 +209,25 @@ const TrendingTopic = memo(({ topic, number }) => {
     );
 });
 
-const TrendingFollow = memo(({ name, username, profilePicture, description }) => {
+const TrendingFollow = memo(({ name, username, profilePicture, description, id }) => {
     return (
-        <div className="flex w-[350px] items-start pt-3 hover:cursor-pointer hover:bg-gray-100 ">
-            <div className="">
-                <Avatar profile={profilePicture} />
-            </div>
-            <div className="flex w-full flex-col  ">
-                <div className=" flex w-full items-start justify-between  pl-2 pr-3 ">
-                    <div className="w-full ">
-                        <div className="text-[1.03rem] font-semibold hover:underline">{name.length > 15 ? name.slice(0, 15).trim() + "..." : name}</div>
-                        <div className=" mt-[-0.2rem] text-gray-500">@{username.length > 15 ? username.slice(0, 15).trim() + "..." : username}</div>
-                    </div>
-                    <button className=" rounded-full bg-black px-4 py-1 font-semibold text-white hover:text-gray-300 active:text-gray-400">Follow</button>
+        <Link to={`/Profile/${id}`}>
+            <div className="flex w-[21.88rem] items-start pt-3 hover:cursor-pointer hover:bg-gray-100 ">
+                <div className="w-fit">
+                    <Avatar profile={profilePicture} />
                 </div>
-                <div className="mt-2 w-full pr-3 pl-2 pb-3 text-[0.95rem] leading-[1.35rem]">{description}</div>
+                <div className="flex w-full  flex-col  ">
+                    <div className=" flex w-full items-start justify-between  pl-2 pr-3 ">
+                        <div className="w-full ">
+                            <div className="text-[1.03rem] font-semibold hover:underline">{name.length > 15 ? name.slice(0, 15).trim() + "..." : name}</div>
+                            <div className=" mt-[-0.2rem] text-gray-500">@{username.length > 15 ? username.slice(0, 15).trim() + "..." : username}</div>
+                        </div>
+                        <button className=" rounded-full bg-black px-4 py-1 font-semibold text-white hover:text-gray-300 active:text-gray-400">Follow</button>
+                    </div>
+                    <div className="mt-2 w-full break-words pr-3 pl-2 pb-3 text-[0.9rem] leading-[1.35rem]">{description}</div>
+                </div>
             </div>
-        </div>
+        </Link>
     );
 });
 export default memo(SidebarRight);

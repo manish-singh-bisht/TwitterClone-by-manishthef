@@ -78,11 +78,11 @@ export const UserReducer = (state, action) => {
             return { ...state, loading: false, user: {}, error: action.payload, isAuthenticated: false };
 
         case ACTIONS.LOAD_REQUEST:
-            return { ...state, loading: true, user: {}, error: "", isAuthenticated: false };
+            return { ...state, loading: true, user: {}, total: {}, error: "", isAuthenticated: false };
         case ACTIONS.LOAD_SUCCESS:
-            return { ...state, loading: false, user: action.payload, error: "", isAuthenticated: true };
+            return { ...state, loading: false, user: action.payload.myProfile, total: action.payload.total, error: "", isAuthenticated: true };
         case ACTIONS.LOAD_FAILURE:
-            return { ...state, loading: false, user: {}, error: action.payload, isAuthenticated: false };
+            return { ...state, loading: false, user: {}, total: {}, error: action.payload, isAuthenticated: false };
 
         case ACTIONS.LOGOUT_REQUEST:
             return { ...state, loading: true, user: {}, error: "", isAuthenticated: false };

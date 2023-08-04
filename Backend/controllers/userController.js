@@ -1,17 +1,28 @@
 const Users = require("../models/userModel");
 const Posts = require("../models/postModel");
+const Retweets = require("../models/retweetsModel");
 const Comments = require("../models/commentModel");
 const ErrorHandler = require("../utils/ErrorHandler");
+const cloudinary = require("cloudinary");
+const sharp = require("sharp");
 
 //for registration of new users.
 exports.register = async (req, res, next) => {
     try {
-        const { name, email, password, profile, handle } = req.body;
+        const { name, email, password, profile, handle, location, website } = req.body;
         let user = await Users.findOne({ handle, email });
         if (user) {
             return next(new ErrorHandler("User already exists", 400));
         } else {
-            user = await Users.create({ handle, name, email, password, profile });
+            const profileResult = await handleImageUpload(profile.image, "ProfileImage");
+
+            const bannerResult = await handleImageUpload(profile.banner, "ProfileBanner");
+
+            const image = { public_id: profileResult.public_id, url: profileResult.secure_url };
+            const banner = { public_id: bannerResult.public_id, url: bannerResult.secure_url };
+
+            const userProfile = { image: image, banner: banner };
+            user = await Users.create({ handle, name, email, password, profile: userProfile, location, website });
 
             const token = await user.generateToken();
 
@@ -27,6 +38,40 @@ exports.register = async (req, res, next) => {
         next(new ErrorHandler(error.message, 500));
     }
 };
+
+async function handleImageUpload(image, folder) {
+    if (!image) {
+        return null;
+    }
+
+    const base64Buffer = Buffer.from(image.substring(22), "base64");
+    const originalSizeInBytes = base64Buffer.length;
+    const originalSizeInKB = originalSizeInBytes / 1024;
+
+    if (originalSizeInKB > 100) {
+        const { format, width } = await sharp(base64Buffer).metadata();
+
+        const compressedBuffer = await sharp(base64Buffer)
+            .toFormat(format)
+            .resize({ width: Math.floor(width * 0.5) })
+            .webp({ quality: 50, chromaSubsampling: "4:4:4" })
+            .toBuffer();
+
+        const compressedBase64 = compressedBuffer.toString("base64");
+
+        const result = await cloudinary.v2.uploader.upload(`data:image/jpeg;base64,${compressedBase64}`, {
+            folder: folder,
+        });
+
+        return result;
+    } else {
+        const result = await cloudinary.v2.uploader.upload(image, {
+            folder: folder,
+        });
+
+        return result;
+    }
+}
 
 //for login
 exports.login = async (req, res, next) => {
@@ -123,24 +168,82 @@ exports.followingOrFollow = async (req, res, next) => {
 exports.updateProfile = async (req, res, next) => {
     try {
         const user = await Users.findById(req.user._id);
-        const { email, name } = req.body;
+        const { name, profile, website, location, description } = req.body;
 
         if (name) {
             user.name = name;
         }
-        if (email) {
-            user.email = email;
+        if (website !== undefined) {
+            user.website = website;
+        }
+        if (description !== undefined) {
+            user.description = description;
+        }
+        if (location !== undefined) {
+            user.location = location;
+        }
+
+        const imageProcessingPromises = [];
+        if (profile && profile.image) {
+            const base64Buffer = Buffer.from(profile.image.substring(22), "base64");
+            const originalSizeInBytes = base64Buffer.length;
+            const originalSizeInKB = originalSizeInBytes / 1024;
+
+            if (originalSizeInKB > 100) {
+                imageProcessingPromises.push(processImage(user.profile.image, base64Buffer, "ProfileImage"));
+            }
+        }
+
+        if (profile && profile.banner) {
+            const base64Buffer = Buffer.from(profile.banner.substring(22), "base64");
+            const originalSizeInBytes = base64Buffer.length;
+            const originalSizeInKB = originalSizeInBytes / 1024;
+
+            if (originalSizeInKB > 100) {
+                imageProcessingPromises.push(processImage(user.profile.banner, base64Buffer, "ProfileBanner"));
+            }
+        }
+
+        if (imageProcessingPromises.length > 0) {
+            await Promise.all(imageProcessingPromises);
         }
 
         await user.save();
         res.status(200).json({
             success: true,
-            message: " updated successfullt",
+            message: "Updated successfully",
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
     }
 };
+
+async function processImage(imageData, base64Buffer, folder) {
+    try {
+        // Destroy existing image on Cloudinary
+        if (imageData.public_id) {
+            await cloudinary.v2.uploader.destroy(imageData.public_id);
+        }
+
+        const { format, width } = await sharp(base64Buffer).metadata();
+        const compressedBuffer = await sharp(base64Buffer)
+            .toFormat(format)
+            .resize({ width: Math.floor(width * 0.5) })
+            .webp({ quality: 50, chromaSubsampling: "4:4:4" })
+            .toBuffer();
+
+        const compressedBase64 = compressedBuffer.toString("base64");
+
+        const myCloud = await cloudinary.v2.uploader.upload(`data:image/jpeg;base64,${compressedBase64}`, {
+            folder: folder,
+        });
+
+        imageData.public_id = myCloud.public_id;
+        imageData.url = myCloud.secure_url;
+    } catch (error) {
+        next(new ErrorHandler("Error processing image:" + error.message, 500));
+    }
+}
 
 //update  password of user
 exports.updatePassword = async (req, res, next) => {
@@ -170,9 +273,15 @@ exports.updatePassword = async (req, res, next) => {
 exports.myProfile = async (req, res, next) => {
     try {
         const myProfile = await Users.findById(req.user._id).populate("posts");
+
+        const userPostsNumber = await Posts.find({ owner: req.user._id });
+        const userRetweetsNumber = await Retweets.find({ userRetweeted: req.user._id });
+        const userCommentsNumber = await Comments.find({ owner: req.user._id });
+        const total = userPostsNumber.length + userRetweetsNumber.length + userCommentsNumber.length;
         res.status(200).json({
             success: true,
             myProfile,
+            total,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
@@ -182,7 +291,12 @@ exports.myProfile = async (req, res, next) => {
 //profile of other user
 exports.profileOfUsers = async (req, res, next) => {
     try {
-        const userProfile = await Users.findById(req.params.id).populate("posts");
+        const userProfile = await Users.findById(req.params.id);
+        const userPostsNumber = await Posts.find({ owner: req.params.id });
+        const userRetweetsNumber = await Retweets.find({ userRetweeted: req.params.id });
+        const userCommentsNumber = await Comments.find({ owner: req.params.id });
+
+        const total = userPostsNumber.length + userRetweetsNumber.length + userCommentsNumber.length;
 
         if (!userProfile) {
             return next(new ErrorHandler("No such user", 404));
@@ -190,6 +304,7 @@ exports.profileOfUsers = async (req, res, next) => {
         res.status(200).json({
             success: true,
             userProfile,
+            total,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));

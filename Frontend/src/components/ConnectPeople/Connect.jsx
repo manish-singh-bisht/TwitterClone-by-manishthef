@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { LeftArrow } from "../SVGs/SVGs";
 import axios from "axios";
 import Avatar from "../Avatar/Avatar";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Connect = () => {
     const [allUsers, setAllUsers] = useState([]);
@@ -41,11 +41,11 @@ const Connect = () => {
                             <div>
                                 <Avatar profile={user.profile && user.profile.image && user.profile.image.url ? user.profile.image.url : null} />
                             </div>
-                            <div className="b flex w-full  flex-col items-start ">
-                                <div className="text-[1.03rem] font-semibold">{user.name}</div>
+                            <Link to={`/Profile/${user._id}`} className="b flex w-full  flex-col items-start ">
+                                <div className="text-[1.03rem] font-semibold hover:underline">{user.name}</div>
                                 <div className=" mt-[-0.2rem] text-gray-500">@{user.handle}</div>
                                 <div className="mt-[0.5rem] text-left ">{user.description}</div>
-                            </div>
+                            </Link>
                         </div>
                         <div className="rounded-full bg-black px-4 py-1 font-semibold text-white hover:text-gray-300 active:text-gray-400 ">Follow</div>
                     </button>
