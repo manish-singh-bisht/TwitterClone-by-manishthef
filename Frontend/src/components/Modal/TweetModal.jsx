@@ -11,7 +11,7 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
     if (!visibility) return;
 
     const { state, setPosts, dispatchPostTweet, ACTIONS } = useGlobalContext();
-    const profile = state.user && state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null;
+    const profile = state.user && state.user.profile && state.user.profile.image && state.user.profile.image.url ? state.user.profile.image.url : null;
 
     let initialId = uuidv4();
     const [isThreadStarter, setIsThreadStarter] = useState(true);

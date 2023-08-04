@@ -11,7 +11,7 @@ import CommentBookmark from "../../context/Actions/CommentBookmark";
 
 const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDetail, isParentPresent, POSTID, mentionHandleCollection, isThread, thread }) => {
     const { ACTIONS, state, dispatchCommentLikeUnlike, dispatch, dispatchRetweetPost, dispatchRetweetComment, dispatchBookmarkComment, dispatchBookmarkTweet } = useGlobalContext();
-    const profile = state.user && state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null;
+    const profile = state.user && state.user.profile && state.user.profile.image && state.user.profile.image.url ? state.user.profile.image.url : null;
 
     return (
         <>
@@ -21,7 +21,7 @@ const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDet
                     {thread &&
                         thread.length > 0 &&
                         thread.map((item) => {
-                            const ownerImage = item.post.owner.profile && item.post.owner.profile.image.url ? item.post.owner.profile.image.url : null;
+                            const ownerImage = item.post.owner.profile && item.post.owner.profile.image && item.post.owner.profile.image.url ? item.post.owner.profile.image.url : null;
                             const lastTweetInThread = thread[thread.length - 1];
 
                             return (
@@ -62,7 +62,7 @@ const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDet
             {comments &&
                 comments.length > 0 &&
                 comments.map((comment) => {
-                    const ownerImage = comment.owner.profile && comment.owner.profile.image.url ? comment.owner.profile.image.url : null;
+                    const ownerImage = comment.owner.profile && comment.owner.profile.image && comment.owner.profile.image.url ? comment.owner.profile.image.url : null;
 
                     return (
                         <Post

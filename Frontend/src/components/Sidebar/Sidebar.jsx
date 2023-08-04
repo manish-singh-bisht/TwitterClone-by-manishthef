@@ -112,7 +112,7 @@ const Sidebar = () => {
                     setButtonPosition({ top, left });
                 }}>
                 <div className="w-fit">
-                    <Avatar profile={state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null} />
+                    <Avatar profile={state.user.profile && state.user.profile.image && state.user.profile.image.url ? state.user.profile.image.url : null} />
                 </div>
 
                 <div className="w-full  ">

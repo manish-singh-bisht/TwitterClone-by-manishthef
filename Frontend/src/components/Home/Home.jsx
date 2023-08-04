@@ -30,7 +30,7 @@ const Home = () => {
 
     const { loading } = statePostOfFollowingAndMe;
 
-    const profile = state.user && state.user.profile && state.user.profile.image.url ? state.user.profile.image.url : null;
+    const profile = state.user && state.user.profile && state.user.profile.image && state.user.profile.image.url ? state.user.profile.image.url : null;
 
     //For getting post of users that the current loggedin user follows.
     async function PostOfFollowingUsersAndMe() {
@@ -67,7 +67,7 @@ const Home = () => {
                                 posts.map((item) => {
                                     const post = item.originalPost ? item.originalPost : item;
                                     const ownerRetweet = item.userRetweeted ? item.userRetweeted : null;
-                                    const ownerImage = post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null;
+                                    const ownerImage = post.owner.profile && post.owner.profile.image && post.owner.profile.image.url ? post.owner.profile.image.url : null;
                                     const imageInPost = post.images ? post.images : null;
 
                                     //item.originalPost?.comment ,ensures that its a comment retweet, because in post model for the post text it is "tweet" and in comment model for the post text it is "comment".

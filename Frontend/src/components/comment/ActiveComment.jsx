@@ -223,7 +223,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                     <div className=" m-2">
                         <div className="flex gap-2 ">
                             <div>
-                                <Avatar profile={comment.owner.profile && comment.owner.profile.image.url ? comment.owner.profile.image.url : null} />
+                                <Avatar profile={comment.owner.profile && comment.owner.profile.image && comment.owner.profile.image.url ? comment.owner.profile.image.url : null} />
                             </div>
 
                             <div className=" flex h-fit w-full flex-col gap-2  ">
@@ -322,7 +322,12 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                         </div>
                     </div>
                     <div className="mx-4 mt-4  border-t-[0.01rem] opacity-80"></div>
-                    <CommentBox profile={comment.owner.profile && comment.owner.profile.image.url ? comment.owner.profile.image.url : null} postId={postId} parent={parent} mentionHandleCollection={mentionHandleCollection} />
+                    <CommentBox
+                        profile={comment.owner.profile && comment.owner.profile.image && comment.owner.profile.image.url ? comment.owner.profile.image.url : null}
+                        postId={postId}
+                        parent={parent}
+                        mentionHandleCollection={mentionHandleCollection}
+                    />
                 </div>
                 <Suspense fallback={<Loader />}>
                     <ModalForLikesRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} handleOutsideClick={handleOutsideClick} />

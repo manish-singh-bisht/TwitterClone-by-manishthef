@@ -85,7 +85,7 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
         setCommentt(renderedComment);
     }, []);
     const formattedTimeReply = usePostTime(Date.parse(reply.createdAt));
-    const ownerImage = reply.owner.profile && reply.owner.profile.image.url ? reply.owner.profile.image.url : null;
+    const ownerImage = reply.owner.profile && reply.owner.profile.image && reply.owner.profile.image.url ? reply.owner.profile.image.url : null;
 
     return (
         <div key={reply._id}>

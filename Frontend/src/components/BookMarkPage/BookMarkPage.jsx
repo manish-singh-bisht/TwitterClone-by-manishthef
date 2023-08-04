@@ -86,7 +86,7 @@ const BookMarkPage = () => {
                 <div>
                     {bookmarks.length > 0 ? (
                         bookmarks.map((post) => {
-                            const ownerImage = post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null;
+                            const ownerImage = post.owner.profile && post.owner.profile.image && post.owner.profile.image.url ? post.owner.profile.image.url : null;
                             const imageInPost = post.images ? post.images : null;
 
                             return (

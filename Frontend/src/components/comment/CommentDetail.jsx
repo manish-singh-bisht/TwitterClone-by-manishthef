@@ -97,7 +97,7 @@ const CommentDetail = () => {
                             postImage={post.images ? post.images : null}
                             commentsChildren={post.comments}
                             ownerName={post.owner.name}
-                            ownerImage={post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null}
+                            ownerImage={post.owner.profile && post.owner.profile.image && post.owner.profile.image.url ? post.owner.profile.image.url : null}
                             ownerId={post.owner._id}
                             handle={post.owner.handle}
                             timeCreated={post.createdAt}
@@ -135,7 +135,7 @@ const CommentDetail = () => {
                                         bookmarks={item.bookmarks}
                                         retweets={item.retweets}
                                         ownerName={item.owner.name}
-                                        ownerImage={item.owner.profile && item.owner.profile.image.url ? item.owner.profile.image.url : null}
+                                        ownerImage={item.owner.profile && item.owner.profile.image && item.owner.profile.image.url ? item.owner.profile.image.url : null}
                                         ownerId={item.owner._id}
                                         postImage={item.images ? item.images : null}
                                         handle={item.owner.handle}
