@@ -184,23 +184,50 @@ exports.updateProfile = async (req, res, next) => {
         }
 
         const imageProcessingPromises = [];
-        if (profile && profile.image) {
+        if (profile && profile.image && profile.image !== user.profile.image.url) {
             const base64Buffer = Buffer.from(profile.image.substring(22), "base64");
             const originalSizeInBytes = base64Buffer.length;
             const originalSizeInKB = originalSizeInBytes / 1024;
 
             if (originalSizeInKB > 100) {
                 imageProcessingPromises.push(processImage(user.profile.image, base64Buffer, "ProfileImage"));
+            } else {
+                if (user.profile.image.public_id) {
+                    await cloudinary.v2.uploader.destroy(user.profile.image.public_id);
+                }
+                const result = await cloudinary.v2.uploader.upload(profile.image, {
+                    folder: "ProfileImage",
+                });
+
+                user.profile.image.public_id = result.public_id;
+                user.profile.image.url = result.secure_url;
             }
         }
 
-        if (profile && profile.banner) {
+        if (profile && profile.banner === null && user.profile.banner.public_id) {
+            await cloudinary.v2.uploader.destroy(user.profile.banner.public_id);
+            user.profile.banner.public_id = null;
+            user.profile.banner.url = null;
+        }
+
+        if (profile && profile.banner && profile.banner !== user.profile.banner.url) {
             const base64Buffer = Buffer.from(profile.banner.substring(22), "base64");
             const originalSizeInBytes = base64Buffer.length;
             const originalSizeInKB = originalSizeInBytes / 1024;
 
             if (originalSizeInKB > 100) {
                 imageProcessingPromises.push(processImage(user.profile.banner, base64Buffer, "ProfileBanner"));
+            } else {
+                if (user.profile.banner.public_id) {
+                    await cloudinary.v2.uploader.destroy(user.profile.banner.public_id);
+                }
+
+                const result = await cloudinary.v2.uploader.upload(profile.banner, {
+                    folder: "ProfileBanner",
+                });
+
+                user.profile.banner.public_id = result.public_id;
+                user.profile.banner.url = result.secure_url;
             }
         }
 

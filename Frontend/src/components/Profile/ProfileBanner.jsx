@@ -148,7 +148,11 @@ export const BannerImage = ({ banner, changeBanner, handleChangeImage }) => {
                                 handleChange(e);
                             }}
                         />
-                        <div className="absolute top-[50%] left-[55%] z-10 w-fit -translate-y-1/2 -translate-x-1/2 cursor-pointer rounded-full bg-black p-2 text-white">
+                        <div
+                            className="absolute top-[50%] left-[55%] z-10 w-fit -translate-y-1/2 -translate-x-1/2 cursor-pointer rounded-full bg-black p-2 text-white"
+                            onClick={() => {
+                                handleChangeImage(null, "banner");
+                            }}>
                             <Cross />
                         </div>
                     </>
