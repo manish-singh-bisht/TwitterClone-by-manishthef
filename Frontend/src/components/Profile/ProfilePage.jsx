@@ -11,6 +11,7 @@ const UpdateModal = React.lazy(() => import("../Modal/UpdateModal"));
 const ProfilePage = () => {
     const { state, setUsersForRightSidebar } = useGlobalContext();
     const [visibility, setVisibility] = useState(false);
+    const [activeButton, setActiveButton] = useState("Tweets");
     const [user, setUser] = useState(null);
     const [total, setTotal] = useState(null);
 
@@ -128,6 +129,37 @@ const ProfilePage = () => {
                                         <span className="font-bold text-black">{user.followers.length}</span> Followers
                                     </span>
                                 </div>
+                            </div>
+                            <div className="mt-5 flex h-fit w-full items-center ">
+                                <button
+                                    className={`w-fit px-12 py-4 text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Tweets" ? "text-gray-600" : "text-black"}`}
+                                    onClick={() => {
+                                        setActiveButton("Tweets");
+                                    }}>
+                                    Tweets
+                                    {activeButton === "Tweets" && <div className="  mt-[0.5rem] w-[3.4rem] rounded-3xl border-[0.15rem] border-blue-500  "></div>}
+                                </button>
+                                <button
+                                    className={`w-fit px-12 py-4 text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Replies" ? "text-gray-600" : "text-black"}`}
+                                    onClick={() => {
+                                        setActiveButton("Replies");
+                                    }}>
+                                    Replies{activeButton === "Replies" && <div className="  mt-[0.5rem] w-[3.4rem] rounded-3xl border-[0.15rem] border-blue-500  "></div>}
+                                </button>
+                                <button
+                                    className={`w-fit px-12 py-4 text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Media" ? "text-gray-600" : "text-black"}`}
+                                    onClick={() => {
+                                        setActiveButton("Media");
+                                    }}>
+                                    Media{activeButton === "Media" && <div className="  mt-[0.5rem] w-[3.4rem] rounded-3xl border-[0.15rem] border-blue-500  "></div>}
+                                </button>
+                                <button
+                                    className={`w-fit px-12 py-4 text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Likes" ? "text-gray-600" : "text-black"}`}
+                                    onClick={() => {
+                                        setActiveButton("Likes");
+                                    }}>
+                                    Likes{activeButton === "Likes" && <div className="  mt-[0.5rem] w-[3.4rem] rounded-3xl border-[0.15rem] border-blue-500  "></div>}
+                                </button>
                             </div>
                         </div>
                     </main>

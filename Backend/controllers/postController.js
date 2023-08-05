@@ -496,3 +496,175 @@ exports.deleteAllBookmarks = async (req, res, next) => {
         next(new ErrorHandler(error.message, 500));
     }
 };
+
+exports.getPostsofUser = async (req, res, next) => {
+    try {
+        const user = await Users.findById(req.params.id);
+
+        if (!user) {
+            return next(new ErrorHandler("No such user", 400));
+        }
+
+        const posts = await Posts.find({ owner: { $in: user._id }, parent: null })
+
+            .populate({
+                path: "owner",
+                select: "handle name profile",
+            })
+            .populate({
+                path: "likes",
+                select: "_id handle name profile",
+            })
+            .populate({
+                path: "retweets",
+                select: "_id handle name profile",
+            })
+            .populate({
+                path: "bookmarks",
+                select: "_id",
+            })
+            .sort({ createdAt: -1 });
+
+        const retweets = await Retweets.find({ userRetweeted: { $in: user._id } })
+            .populate({
+                path: "originalPost",
+                populate: [
+                    { path: "owner", select: "handle name profile" },
+                    { path: "likes", select: "_id handle name profile" },
+                    { path: "bookmarks", select: "_id" },
+                    { path: "retweets", select: "_id handle name profile" },
+                ],
+            })
+            .populate({
+                path: "userRetweeted",
+                select: "_id name",
+            });
+
+        const combined = [...retweets, ...posts];
+        combined.sort((a, b) => b.createdAt - a.createdAt);
+
+        res.status(200).json({
+            success: true,
+            posts: combined,
+        });
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};
+exports.getPostLikedByUser = async (req, res, next) => {
+    try {
+        const user = await Users.findById(req.params.id);
+
+        if (!user) {
+            return next(new ErrorHandler("No such user", 400));
+        }
+
+        const posts = await Posts.find({ likes: { $in: user._id } })
+
+            .populate({
+                path: "owner",
+                select: "handle name profile",
+            })
+            .populate({
+                path: "likes",
+                select: "_id handle name profile",
+            })
+            .populate({
+                path: "retweets",
+                select: "_id handle name profile",
+            })
+            .populate({
+                path: "bookmarks",
+                select: "_id",
+            })
+            .sort({ createdAt: -1 });
+
+        const comments = await Comments.find({ likes: { $in: user._id } })
+            .populate({
+                path: "owner",
+                select: "handle name profile",
+            })
+            .populate({
+                path: "likes",
+                select: "_id handle name profile",
+            })
+            .populate({
+                path: "retweets",
+                select: "_id handle name profile",
+            })
+            .populate({
+                path: "bookmarks",
+                select: "_id",
+            })
+            .sort({ createdAt: -1 });
+
+        const combined = [...comments, ...posts];
+        combined.sort((a, b) => b.createdAt - a.createdAt);
+
+        res.status(200).json({
+            success: true,
+            posts: combined,
+        });
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};
+
+exports.getPostOfUserWithMedia = async (req, res, next) => {
+    try {
+        const user = await Users.findById(req.params.id);
+
+        if (!user) {
+            return next(new ErrorHandler("No such user", 400));
+        }
+
+        const posts = await Posts.find({ images: { $exists: true, $gt: [] } })
+
+            .populate({
+                path: "owner",
+                select: "handle name profile",
+            })
+            .populate({
+                path: "likes",
+                select: "_id handle name profile",
+            })
+            .populate({
+                path: "retweets",
+                select: "_id handle name profile",
+            })
+            .populate({
+                path: "bookmarks",
+                select: "_id",
+            })
+            .sort({ createdAt: -1 });
+
+        const comments = await Comments.find({ images: { $exists: true, $gt: [] } })
+            .populate({
+                path: "owner",
+                select: "handle name profile",
+            })
+            .populate({
+                path: "likes",
+                select: "_id handle name profile",
+            })
+            .populate({
+                path: "retweets",
+                select: "_id handle name profile",
+            })
+            .populate({
+                path: "bookmarks",
+                select: "_id",
+            })
+            .sort({ createdAt: -1 });
+
+        const combined = [...comments, ...posts];
+        combined.sort((a, b) => b.createdAt - a.createdAt);
+
+        res.status(200).json({
+            success: true,
+            posts: combined,
+        });
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};
