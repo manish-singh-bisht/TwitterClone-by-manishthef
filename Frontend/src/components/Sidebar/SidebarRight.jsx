@@ -30,7 +30,7 @@ const SidebarRight = () => {
     const [loading, setLoading] = useState(false);
     const [active, setActive] = useState(false);
 
-    const { usersForRightSidebar } = useGlobalContext();
+    const { usersForRightSidebar, state } = useGlobalContext();
 
     const debounceFunction = (cb, delay = 700) => {
         let timeout;
@@ -71,9 +71,11 @@ const SidebarRight = () => {
                                 className="h-full w-full bg-transparent text-black outline-none placeholder:text-black"
                                 onFocus={() => setActive(true)}
                                 onBlur={(e) => {
-                                    setActive(false);
-                                    setUserSearched([]);
-                                    e.target.value = "";
+                                    setTimeout(() => {
+                                        setActive(false);
+                                        setUserSearched([]);
+                                        e.target.value = "";
+                                    }, 60); // Delay the onBlur action by 60 milliseconds for the user to get some time to get to the profile of user that was clicked while searching below.
                                 }}
                                 onChange={(e) => {
                                     setLoading(true);
@@ -95,14 +97,22 @@ const SidebarRight = () => {
                                             <div className="flex flex-col ">
                                                 {userSearched.map((item) => {
                                                     return (
-                                                        <button className="flex items-start gap-1 p-3 hover:bg-gray-50" key={item._id}>
+                                                        <Link to={`/Profile/${item._id}`} className="flex items-start gap-1 p-3 hover:bg-gray-50" key={item._id}>
                                                             <Avatar profile={item.profile && item.profile.image && item.profile.image.url ? item.profile.image.url : null} />
                                                             <div className="flex flex-col items-start">
                                                                 <span className="font-bold hover:underline">{item.name.length > 30 ? item.name.slice(0, 30).trim() + "..." : item.name}</span>
                                                                 <span className="mt-[-0.2rem] text-gray-600">@{item.handle.length > 26 ? item.handle.slice(0, 26).trim() + "..." : item.handle}</span>
-                                                                {/* //one for following */}
+
+                                                                {state.user.following.includes(item._id) && (
+                                                                    <span className="flex items-center text-gray-600">
+                                                                        <svg className="  h-4 w-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
+                                                                        </svg>
+                                                                        Following
+                                                                    </span>
+                                                                )}
                                                             </div>
-                                                        </button>
+                                                        </Link>
                                                     );
                                                 })}
                                             </div>
