@@ -41,7 +41,7 @@ const Connect = () => {
                             <div>
                                 <Avatar profile={user.profile && user.profile.image && user.profile.image.url ? user.profile.image.url : null} />
                             </div>
-                            <Link to={`/Profile/${user._id}`} className="b flex w-full  flex-col items-start ">
+                            <Link to={`/Profile/${user.handle}`} className="b flex w-full  flex-col items-start ">
                                 <div className="text-[1.03rem] font-semibold hover:underline">{user.name}</div>
                                 <div className=" mt-[-0.2rem] text-gray-500">@{user.handle}</div>
                                 <div className="mt-[0.5rem] text-left ">{user.description}</div>

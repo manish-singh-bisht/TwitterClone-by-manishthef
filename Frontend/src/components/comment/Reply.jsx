@@ -97,7 +97,7 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
                         <div className="relative mr-2 flex w-[87%] flex-col  gap-2 ">
                             <div className="flex">
                                 <Link
-                                    to={`/Profile/${reply.owner}`}
+                                    to={`/Profile/${reply.owner.handle}`}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                     }}

@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useId, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { Calendar, LeftArrow, LinkInProfile, LocationInProfile } from "../SVGs/SVGs";
@@ -17,7 +17,7 @@ const ProfilePage = () => {
 
     const navigate = useNavigate();
     const params = useParams();
-    const userId = params.id;
+    const userHandle = params.userName;
 
     const handleClick = () => {
         navigate(-1);
@@ -25,18 +25,19 @@ const ProfilePage = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
+        document.body.style.overflow = "unset";
         setUsersForRightSidebar(null);
 
-        const getProfileUser = async (id) => {
-            const { data } = await axios.get(`http://localhost:4000/api/v1/user/${id}`, { withCredentials: true });
+        const getProfileUser = async (userHandle) => {
+            const { data } = await axios.get(`http://localhost:4000/api/v1/user/${userHandle}`, { withCredentials: true });
             setUser(data.userProfile);
             setTotal(data.total);
         };
-        if (state.user._id === userId) {
+        if (state.user.handle === userHandle) {
             setUser(state.user);
             setTotal(state.total);
         } else {
-            getProfileUser(userId);
+            getProfileUser(userHandle);
         }
     }, [window.location.pathname]);
 
@@ -69,7 +70,7 @@ const ProfilePage = () => {
                                     className="flex flex-col
                         ">
                                     <div className="text-[1.6rem] font-bold">{user.name}</div>
-                                    <div className="text-[0.9rem] text-gray-500">{total > 1 ? `${total} Tweets` : `${total}Tweet`}</div>
+                                    {total > 0 ? <div className="text-[0.9rem] text-gray-500">{total > 1 ? `${total} Tweets` : `${total}Tweet`}</div> : <div className="text-[0.9rem] text-gray-500">0 Tweets</div>}
                                 </div>
                             </div>
                             <div className="mt-2 h-[13rem]">
@@ -77,7 +78,7 @@ const ProfilePage = () => {
                             </div>
                             <div className="relative flex   h-[6.5rem] w-full justify-end   ">
                                 <ProfileImage profile={user.profile && user.profile.image && user.profile.image.url ? user.profile.image.url : null} />
-                                {state.user._id === userId ? (
+                                {state.user.handle === userHandle ? (
                                     <button
                                         className="mr-[0.5rem] mt-[0.6rem] h-fit w-fit rounded-3xl border-2 py-1 px-4 font-semibold hover:bg-gray-200 active:bg-gray-300"
                                         onClick={() => {
@@ -123,10 +124,10 @@ const ProfilePage = () => {
                                 </div>
                                 <div className=" flex gap-6">
                                     <span className="cursor-pointer text-gray-600 hover:underline">
-                                        <span className="font-bold text-black">{user.following.length}</span> Following
+                                        <span className="font-bold text-black">{user.following.length > 0 ? user.following.length : 0}</span> Following
                                     </span>
                                     <span className="cursor-pointer text-gray-600 hover:underline">
-                                        <span className="font-bold text-black">{user.followers.length}</span> Followers
+                                        <span className="font-bold text-black">{user.followers.length > 0 ? user.followers.length : 0}</span> Followers
                                     </span>
                                 </div>
                             </div>

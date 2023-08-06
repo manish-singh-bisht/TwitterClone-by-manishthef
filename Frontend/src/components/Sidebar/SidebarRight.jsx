@@ -75,7 +75,7 @@ const SidebarRight = () => {
                                         setActive(false);
                                         setUserSearched([]);
                                         e.target.value = "";
-                                    }, 60); // Delay the onBlur action by 60 milliseconds for the user to get some time to get to the profile of user that was clicked while searching below.
+                                    }, 100); // Delay the onBlur action by 100 milliseconds for the user to get some time to get to the profile of user that was clicked while searching below.
                                 }}
                                 onChange={(e) => {
                                     setLoading(true);
@@ -97,7 +97,7 @@ const SidebarRight = () => {
                                             <div className="flex flex-col ">
                                                 {userSearched.map((item) => {
                                                     return (
-                                                        <Link to={`/Profile/${item._id}`} className="flex items-start gap-1 p-3 hover:bg-gray-50" key={item._id}>
+                                                        <Link to={`/Profile/${item.handle}`} className="flex items-start gap-1 p-3 hover:bg-gray-50" key={item._id}>
                                                             <Avatar profile={item.profile && item.profile.image && item.profile.image.url ? item.profile.image.url : null} />
                                                             <div className="flex flex-col items-start">
                                                                 <span className="font-bold hover:underline">{item.name.length > 30 ? item.name.slice(0, 30).trim() + "..." : item.name}</span>
@@ -136,7 +136,7 @@ const SidebarRight = () => {
                                                 : null
                                         }
                                         description={usersForRightSidebar.post.owner.description}
-                                        id={usersForRightSidebar.post.owner._id}
+                                        handle={usersForRightSidebar.post.owner.handle}
                                     />
                                 )}
                                 {usersForRightSidebar.parent?.owner && usersForRightSidebar.parent?.owner._id !== usersForRightSidebar.post?.owner._id && (
@@ -149,7 +149,7 @@ const SidebarRight = () => {
                                                 : null
                                         }
                                         description={usersForRightSidebar.parent.owner.description}
-                                        id={usersForRightSidebar.parent.owner._id}
+                                        handle={usersForRightSidebar.parent.owner.handle}
                                     />
                                 )}
                                 {usersForRightSidebar.owner && usersForRightSidebar.owner._id !== usersForRightSidebar.post?.owner._id && usersForRightSidebar.parent?.owner._id !== usersForRightSidebar.owner._id && (
@@ -162,7 +162,7 @@ const SidebarRight = () => {
                                                 : null
                                         }
                                         description={usersForRightSidebar.owner.description}
-                                        id={usersForRightSidebar.owner._id}
+                                        handle={usersForRightSidebar.owner.handle}
                                     />
                                 )}
                             </div>
@@ -186,9 +186,9 @@ const SidebarRight = () => {
                             <div className="mt-5 mb-5   rounded-xl bg-[#F7F9F9] ">
                                 <p className="px-3  pt-3 text-[1.31rem] font-bold">Who to follow</p>
                                 <div className="flex flex-col py-2">
-                                    <TrendingFollow name={"Iman Musa"} username={"imanmcodes"} profilePicture={"https://source.unsplash.com/random/1200x600"} description={null} id={1} />
-                                    <TrendingFollow name={"Elon Musk"} username={"elonmusk"} profilePicture={"https://source.unsplash.com/random/1200x600"} description={null} id={"6452294bcf01c48b11c2f282"} />
-                                    <TrendingFollow name={"Kim Kardashian"} username={"kimkardashian"} profilePicture={"https://source.unsplash.com/random/1200x600"} description={null} id={3} />
+                                    <TrendingFollow name={"Iman Musa"} username={"imanmcodes"} profilePicture={"https://source.unsplash.com/random/1200x600"} description={null} handle={1} />
+                                    <TrendingFollow name={"Elon Musk"} username={"elonmusk"} profilePicture={"https://source.unsplash.com/random/1200x600"} description={null} handle={"6452294bcf01c48b11c2f282"} />
+                                    <TrendingFollow name={"Kim Kardashian"} username={"kimkardashian"} profilePicture={"https://source.unsplash.com/random/1200x600"} description={null} handle={3} />
                                 </div>
                                 <button
                                     onClick={() => {
@@ -219,9 +219,9 @@ const TrendingTopic = memo(({ topic, number }) => {
     );
 });
 
-const TrendingFollow = memo(({ name, username, profilePicture, description, id }) => {
+const TrendingFollow = memo(({ name, username, profilePicture, description, handle }) => {
     return (
-        <Link to={`/Profile/${id}`}>
+        <Link to={`/Profile/${handle}`}>
             <div className="flex w-[21.88rem] items-start pt-3 hover:cursor-pointer hover:bg-gray-100 ">
                 <div className="w-fit">
                     <Avatar profile={profilePicture} />

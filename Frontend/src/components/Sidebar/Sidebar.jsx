@@ -85,7 +85,7 @@ const Sidebar = () => {
                 <NavLink className={({ isActive }) => (isActive ? "w-fit font-bold" : "w-fit font-normal")} to="/Bookmark" onClick={() => setTab("/Bookmark")}>
                     {tab === "/Bookmark" ? <SidebarList Icon={BookmarkFilled} Option="Bookmark" /> : <SidebarList Icon={BookmarkOutline} Option="Bookmark" />}
                 </NavLink>
-                <NavLink className={({ isActive }) => (isActive ? "w-fit font-bold" : "w-fit font-normal")} to={`/Profile/${state.user._id}`} onClick={() => setTab("/Profile")}>
+                <NavLink className={({ isActive }) => (isActive ? "w-fit font-bold" : "w-fit font-normal")} to={`/Profile/${state.user.handle}`} onClick={() => setTab("/Profile")}>
                     {tab === "/Profile" ? <SidebarList Icon={ProfileFilled} Option="Profile" /> : <SidebarList Icon={ProfileOutline} Option="Profile" />}
                 </NavLink>
                 <NavLink className={({ isActive }) => (isActive ? "w-fit font-bold" : "w-fit font-normal")} to="/More" onClick={() => setTab("/More")}>

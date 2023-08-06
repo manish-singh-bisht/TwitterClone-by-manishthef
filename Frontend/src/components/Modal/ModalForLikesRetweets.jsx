@@ -20,7 +20,7 @@ const ModalForLikesRetweets = ({ visibility, onClose, type, list, handleOutsideC
                     {list.length > 0 &&
                         list.map((item) => {
                             return (
-                                <Link to={`/Profile/${item._id}`} key={item._id} className=" hover:bg-gray-100">
+                                <Link to={`/Profile/${item.handle}`} key={item._id} className=" hover:bg-gray-100">
                                     <div className="mx-4 mt-2 flex flex-col gap-1 ">
                                         <div className="flex gap-3 ">
                                             {item.profile && item.profile.image && item.profile.image.url ? (

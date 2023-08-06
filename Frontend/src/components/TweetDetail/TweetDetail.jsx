@@ -241,7 +241,7 @@ const TweetDetail = () => {
 
                         <div className="flex h-fit w-full  flex-col ">
                             <div className="flex ">
-                                <Link to={`/Profile/${ownerId}`} className="flex w-fit flex-col  text-[1.1rem] font-bold ">
+                                <Link to={`/Profile/${handle}`} className="flex w-fit flex-col  text-[1.1rem] font-bold ">
                                     <span className="hover:underline">{ownerName}</span>
                                     <span className="mt-[-0.3rem] text-[0.9rem] font-normal text-gray-700">{`@${handle}`}</span>
                                 </Link>

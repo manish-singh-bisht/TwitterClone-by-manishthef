@@ -318,10 +318,12 @@ exports.myProfile = async (req, res, next) => {
 //profile of other user
 exports.profileOfUsers = async (req, res, next) => {
     try {
-        const userProfile = await Users.findById(req.params.id);
-        const userPostsNumber = await Posts.find({ owner: req.params.id });
-        const userRetweetsNumber = await Retweets.find({ userRetweeted: req.params.id });
-        const userCommentsNumber = await Comments.find({ owner: req.params.id });
+        const userProfile = await Users.find({ handle: req.params.id });
+        const id = userProfile[0]._id;
+
+        const userPostsNumber = await Posts.find({ owner: id });
+        const userRetweetsNumber = await Retweets.find({ userRetweeted: id });
+        const userCommentsNumber = await Comments.find({ owner: id });
 
         const total = userPostsNumber.length + userRetweetsNumber.length + userCommentsNumber.length;
 
@@ -330,7 +332,7 @@ exports.profileOfUsers = async (req, res, next) => {
         }
         res.status(200).json({
             success: true,
-            userProfile,
+            userProfile: userProfile[0],
             total,
         });
     } catch (error) {

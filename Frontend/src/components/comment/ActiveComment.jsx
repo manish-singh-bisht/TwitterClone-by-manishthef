@@ -228,7 +228,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
 
                             <div className=" flex h-fit w-full flex-col gap-2  ">
                                 <div className="flex">
-                                    <Link to={`/Profile/${comment.owner._id}`} className="flex w-fit flex-col  text-[1.1rem] font-bold ">
+                                    <Link to={`/Profile/${comment.owner.handle}`} className="flex w-fit flex-col  text-[1.1rem] font-bold ">
                                         <span className="hover:underline">{comment.owner.name}</span>
                                         <span className="mt-[-0.3rem] text-[0.9rem] font-normal text-gray-700">{`@${comment.owner.handle}`}</span>
                                     </Link>

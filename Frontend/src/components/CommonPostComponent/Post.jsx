@@ -233,7 +233,7 @@ const Post = ({
                     }>
                     <div className="flex  ">
                         <Link
-                            to={`/Profile/${ownerId}`}
+                            to={`/Profile/${handle}`}
                             onClick={(e) => {
                                 e.stopPropagation();
                             }}
