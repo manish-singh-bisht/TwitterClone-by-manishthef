@@ -102,7 +102,8 @@ const MoreOptionMenuModal = ({
         const id = isAlreadyFollowing.ownerid;
         await FollowUser({ dispatchFollowUser, ACTIONS, id });
         const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
-        await dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: data.myProfile });
+
+        await dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
     };
 
     const deleteHandler = async () => {
