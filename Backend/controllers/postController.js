@@ -310,7 +310,7 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
             })
             .populate({
                 path: "userRetweeted",
-                select: "_id name",
+                select: "_id name handle",
             });
 
         const combined = [...retweets, ...posts];
@@ -499,7 +499,8 @@ exports.deleteAllBookmarks = async (req, res, next) => {
 
 exports.getPostsofUser = async (req, res, next) => {
     try {
-        const user = await Users.findById(req.params.id);
+        const userArr = await Users.find({ handle: req.params.id }); //id is handle here
+        const user = userArr[0];
 
         if (!user) {
             return next(new ErrorHandler("No such user", 400));
@@ -537,7 +538,7 @@ exports.getPostsofUser = async (req, res, next) => {
             })
             .populate({
                 path: "userRetweeted",
-                select: "_id name",
+                select: "_id name handle",
             });
 
         const combined = [...retweets, ...posts];
@@ -553,8 +554,8 @@ exports.getPostsofUser = async (req, res, next) => {
 };
 exports.getPostLikedByUser = async (req, res, next) => {
     try {
-        const user = await Users.findById(req.params.id);
-
+        const userArr = await Users.find({ handle: req.params.id }); //id is handle here
+        const user = userArr[0];
         if (!user) {
             return next(new ErrorHandler("No such user", 400));
         }
@@ -612,13 +613,13 @@ exports.getPostLikedByUser = async (req, res, next) => {
 
 exports.getPostOfUserWithMedia = async (req, res, next) => {
     try {
-        const user = await Users.findById(req.params.id);
-
+        const userArr = await Users.find({ handle: req.params.id }); //id is handle here
+        const user = userArr[0];
         if (!user) {
             return next(new ErrorHandler("No such user", 400));
         }
 
-        const posts = await Posts.find({ images: { $exists: true, $gt: [] } })
+        const posts = await Posts.find({ images: { $exists: true, $gt: [] }, owner: user._id })
 
             .populate({
                 path: "owner",

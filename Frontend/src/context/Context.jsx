@@ -24,6 +24,7 @@ const AppContext = React.createContext();
 const AppProvider = ({ children }) => {
     const [posts, setPosts] = useState([]);
     const [usersForRightSidebar, setUsersForRightSidebar] = useState([]);
+    const [dataArray, setDataArray] = useState([]);
 
     //reducer setup
     const initialState = { loading: false, user: {}, total: {}, error: "", isAuthenticated: false };
@@ -78,6 +79,8 @@ const AppProvider = ({ children }) => {
                 usersForRightSidebar,
                 setUsersForRightSidebar,
                 setPosts,
+                dataArray,
+                setDataArray,
                 ACTIONS,
                 state,
                 dispatch,

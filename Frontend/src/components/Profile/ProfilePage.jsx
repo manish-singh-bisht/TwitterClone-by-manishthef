@@ -5,15 +5,24 @@ import { Calendar, LeftArrow, LinkInProfile, LocationInProfile } from "../SVGs/S
 import { BannerImage, ProfileImage } from "./ProfileBanner";
 import Loader from "../Loader/Loader";
 import axios from "axios";
+import Post from "../CommonPostComponent/Post";
+import CommentLikeUnlike from "../../context/Actions/CommentLikeUnlike";
+import LikeUnlike from "../../context/Actions/LikeUnlike";
+import RetweetComment from "../../context/Actions/RetweetComment";
+import RetweetPost from "../../context/Actions/RetweetPost";
+import CommentBookmark from "../../context/Actions/CommentBookmark";
+import PostBookmark from "../../context/Actions/PostBookmark";
 
 const UpdateModal = React.lazy(() => import("../Modal/UpdateModal"));
 
 const ProfilePage = () => {
-    const { state, setUsersForRightSidebar } = useGlobalContext();
+    const { state, setUsersForRightSidebar, dataArray, setDataArray, ACTIONS, dispatchBookmarkComment, dispatchLikeUnlike, dispatchRetweetPost, dispatchRetweetComment, dispatchCommentLikeUnlike, dispatchBookmarkTweet } = useGlobalContext();
+
     const [visibility, setVisibility] = useState(false);
     const [activeButton, setActiveButton] = useState("Tweets");
     const [user, setUser] = useState(null);
     const [total, setTotal] = useState(null);
+    const [loading, setloading] = useState(false);
 
     const navigate = useNavigate();
     const params = useParams();
@@ -28,14 +37,27 @@ const ProfilePage = () => {
         document.body.style.overflow = "unset";
         setUsersForRightSidebar(null);
 
+        const getTweets = async (userHandle) => {
+            setActiveButton("Tweets");
+            setloading(true);
+            const { data } = await axios.get(`http://localhost:4000/api/v1/getTweets/${userHandle}`, { withCredentials: true });
+            setDataArray(data.posts);
+            setloading(false);
+        };
+
         const getProfileUser = async (userHandle) => {
             const { data } = await axios.get(`http://localhost:4000/api/v1/user/${userHandle}`, { withCredentials: true });
             setUser(data.userProfile);
             setTotal(data.total);
+
+            getTweets(userHandle);
         };
+
         if (state.user.handle === userHandle) {
             setUser(state.user);
             setTotal(state.total);
+
+            getTweets(userHandle);
         } else {
             getProfileUser(userHandle);
         }
@@ -50,6 +72,34 @@ const ProfilePage = () => {
     const onClose = () => {
         setVisibility(false);
         document.body.style.overflow = "unset";
+    };
+    const tweetButtonHandler = async () => {
+        setActiveButton("Tweets");
+        setloading(true);
+        const { data } = await axios.get(`http://localhost:4000/api/v1/getTweets/${userHandle}`, { withCredentials: true });
+        setDataArray(data.posts);
+        setloading(false);
+    };
+    const replyButtonHandler = async () => {
+        setActiveButton("Replies");
+        setloading(true);
+        const { data } = await axios.get(`http://localhost:4000/api/v1/getReply/${userHandle}`, { withCredentials: true });
+        setDataArray(data.posts);
+        setloading(false);
+    };
+    const mediaButtonHandler = async () => {
+        setActiveButton("Media");
+        setloading(true);
+        const { data } = await axios.get(`http://localhost:4000/api/v1/getPostWithMedia/${userHandle}`, { withCredentials: true });
+        setDataArray(data.posts);
+        setloading(false);
+    };
+    const likedButtonHandler = async () => {
+        setActiveButton("Likes");
+        setloading(true);
+        const { data } = await axios.get(`http://localhost:4000/api/v1/getLikedPost/${userHandle}`, { withCredentials: true });
+        setDataArray(data.posts);
+        setloading(false);
     };
 
     return (
@@ -131,37 +181,130 @@ const ProfilePage = () => {
                                     </span>
                                 </div>
                             </div>
-                            <div className="mt-5 flex h-fit w-full items-center ">
+                            <div className="mt-5 flex h-fit w-full items-center border-b">
                                 <button
-                                    className={`w-fit px-12 py-4 text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Tweets" ? "text-gray-600" : "text-black"}`}
+                                    className={`w-fit px-12  text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Tweets" ? "py-[1rem] text-gray-600" : "pt-[0.8rem] text-black"}`}
                                     onClick={() => {
-                                        setActiveButton("Tweets");
+                                        tweetButtonHandler();
                                     }}>
                                     Tweets
-                                    {activeButton === "Tweets" && <div className="  mt-[0.5rem] w-[3.4rem] rounded-3xl border-[0.15rem] border-blue-500  "></div>}
+                                    {activeButton === "Tweets" && <div className="  mt-[0.8rem] w-[3.4rem] rounded-3xl border-[0.15rem] border-blue-500  "></div>}
                                 </button>
                                 <button
-                                    className={`w-fit px-12 py-4 text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Replies" ? "text-gray-600" : "text-black"}`}
+                                    className={`w-fit px-12  text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Replies" ? "py-[1rem] text-gray-600" : "pt-[0.8rem] text-black"}`}
                                     onClick={() => {
-                                        setActiveButton("Replies");
+                                        replyButtonHandler();
                                     }}>
-                                    Replies{activeButton === "Replies" && <div className="  mt-[0.5rem] w-[3.4rem] rounded-3xl border-[0.15rem] border-blue-500  "></div>}
+                                    Replies{activeButton === "Replies" && <div className="  mt-[0.8rem] w-[3.4rem] rounded-3xl border-[0.15rem] border-blue-500  "></div>}
                                 </button>
                                 <button
-                                    className={`w-fit px-12 py-4 text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Media" ? "text-gray-600" : "text-black"}`}
+                                    className={`w-fit px-12  text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Media" ? "py-[1rem] text-gray-600" : "pt-[0.8rem] text-black"}`}
                                     onClick={() => {
-                                        setActiveButton("Media");
+                                        mediaButtonHandler();
                                     }}>
-                                    Media{activeButton === "Media" && <div className="  mt-[0.5rem] w-[3.4rem] rounded-3xl border-[0.15rem] border-blue-500  "></div>}
+                                    Media{activeButton === "Media" && <div className="  mt-[0.8rem] w-[3.4rem] rounded-3xl border-[0.15rem] border-blue-500  "></div>}
                                 </button>
                                 <button
-                                    className={`w-fit px-12 py-4 text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Likes" ? "text-gray-600" : "text-black"}`}
+                                    className={`w-fit px-12  text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Likes" ? "py-[1rem] text-gray-600" : "pt-[0.8rem] text-black"}`}
                                     onClick={() => {
-                                        setActiveButton("Likes");
+                                        likedButtonHandler();
                                     }}>
-                                    Likes{activeButton === "Likes" && <div className="  mt-[0.5rem] w-[3.4rem] rounded-3xl border-[0.15rem] border-blue-500  "></div>}
+                                    Likes{activeButton === "Likes" && <div className="  mt-[0.8rem] w-[3.4rem] rounded-3xl border-[0.15rem] border-blue-500  "></div>}
                                 </button>
                             </div>
+
+                            {loading ? (
+                                <Loader />
+                            ) : (
+                                <div>
+                                    {dataArray && dataArray.length > 0 ? (
+                                        dataArray.map((item) => {
+                                            const post = item.originalPost ? item.originalPost : item;
+                                            const ownerRetweet = item.userRetweeted ? item.userRetweeted : null;
+                                            const ownerImage = post.owner.profile && post.owner.profile.image && post.owner.profile.image.url ? post.owner.profile.image.url : null;
+                                            const imageInPost = post.images ? post.images : null;
+
+                                            return (
+                                                <Post
+                                                    key={`${post._id}+${item.createdAt}`}
+                                                    postId={post._id}
+                                                    POSTID={item.originalPost?.comment ? item.originalPost?.post : null}
+                                                    tweet={post.tweet || post.comment}
+                                                    ownerRetweet={ownerRetweet}
+                                                    isCommentRetweet={item.originalPost?.comment ? true : false}
+                                                    likes={post.likes}
+                                                    postImage={imageInPost}
+                                                    retweets={post.retweets}
+                                                    comments={item.originalPost?.comment ? post.children : post.comments}
+                                                    ownerName={post.owner.name}
+                                                    ownerImage={ownerImage}
+                                                    ownerId={post.owner._id}
+                                                    handle={post.owner.handle}
+                                                    timeCreated={post.createdAt}
+                                                    handler={item.originalPost?.comment ? CommentLikeUnlike : LikeUnlike}
+                                                    dispatch={item.originalPost?.comment ? dispatchCommentLikeUnlike : dispatchLikeUnlike}
+                                                    dispatchRetweet={item.originalPost?.comment ? dispatchRetweetComment : dispatchRetweetPost}
+                                                    handlerRetweet={item.originalPost?.comment ? RetweetComment : RetweetPost}
+                                                    handlerBookmark={item.originalPost?.comment ? CommentBookmark : PostBookmark}
+                                                    dispatchBookmark={item.originalPost?.comment ? dispatchBookmarkComment : dispatchBookmarkTweet}
+                                                    state={state}
+                                                    bookmarks={post.bookmarks}
+                                                    ACTIONS={ACTIONS}
+                                                    mentions={post.mentions}
+                                                    threadChildren={post.children}
+                                                    fromProfile={true}
+                                                />
+                                            );
+                                        })
+                                    ) : (
+                                        <div>
+                                            {activeButton === "Media" && dataArray.length === 0 && (
+                                                <div className="mt-6 flex flex-col items-center justify-center ">
+                                                    <div className="flex w-[25rem] flex-col items-start ">
+                                                        <span className="text-[1.9rem] font-bold">
+                                                            @<span className="break-all">{user.handle}</span> hasnt Tweeted media <br />
+                                                        </span>
+                                                        <span className="text-gray-600">When they do, those Tweets will show up here.</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {activeButton === "Likes" && dataArray.length === 0 && (
+                                                <div className="mt-6 flex flex-col items-center justify-center ">
+                                                    <div className="flex w-[25rem] flex-col items-start">
+                                                        <span className="text-[1.9rem] font-bold">
+                                                            @<span className="break-all">{user.handle}</span> hasn't liked any Tweets
+                                                            <br />
+                                                        </span>
+                                                        <span className="text-gray-600">When they do, those Tweets will show up here.</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {activeButton === "Replies" && dataArray.length === 0 && (
+                                                <div className="mt-6 flex flex-col items-center justify-center ">
+                                                    <div className="flex w-[25rem] flex-col items-start">
+                                                        <span className="text-[1.9rem] font-bold">
+                                                            @<span className="break-all">{user.handle}</span> hasn't replied Tweets
+                                                            <br />
+                                                        </span>
+                                                        <span className="text-gray-600">When they do, those Tweets will show up here.</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {activeButton === "Tweets" && dataArray.length === 0 && (
+                                                <div className="mt-6 flex flex-col items-center justify-center ">
+                                                    <div className="flex w-[25rem] flex-col items-start">
+                                                        <span className="text-[1.9rem] font-bold">
+                                                            @<span className="break-all">{user.handle}</span> hasn't Tweeted yet
+                                                            <br />
+                                                        </span>
+                                                        <span className="text-gray-600">When they do, those Tweets will show up here.</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </main>
                     <Suspense fallback={<Loader />}>

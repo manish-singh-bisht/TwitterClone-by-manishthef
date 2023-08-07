@@ -49,6 +49,7 @@ const Post = ({
     dispatchBookmark,
     handlerBookmark,
     fromBookmarks,
+    fromProfile,
     removeBookmark,
     isCommentBookmark,
 }) => {
@@ -187,7 +188,7 @@ const Post = ({
             {ownerRetweet && (
                 <div className="mx-10 mt-1 flex items-center gap-4 text-[0.86rem] font-bold text-gray-500">
                     <Retweets />
-                    <div>{`${ownerRetweet.name} retweeted`}</div>
+                    <div>{ownerRetweet.handle === state.user.handle ? `You retweeted` : `${ownerRetweet.name} retweeted`}</div>
                 </div>
             )}
             <div
@@ -202,7 +203,7 @@ const Post = ({
                 <div className="mr-[0.5rem]">
                     <Avatar profile={profile} />
                 </div>
-                {fromHome && threadChildren && threadChildren.length > 0 && !isCommentRetweet && <div className="absolute left-[1.8rem] top-[3.65rem] h-full min-h-[5rem] w-fit border-2"></div>}
+                {(fromHome || fromProfile) && threadChildren && threadChildren.length > 0 && !isCommentRetweet && <div className="absolute left-[1.8rem] top-[3.65rem] h-full min-h-[5rem] w-fit border-2"></div>}
                 {!fromHome &&
                     comment &&
                     comment.length > 0 &&
@@ -224,7 +225,7 @@ const Post = ({
                 <div
                     className="relative mr-2 flex w-[87%] flex-col  gap-2   "
                     onClick={
-                        fromHome && threadChildren && threadChildren.length > 0
+                        (fromHome || fromProfile) && threadChildren && threadChildren.length > 0
                             ? (e) => {
                                   e.stopPropagation();
                                   handleClick(true);
@@ -293,7 +294,7 @@ const Post = ({
                     <BookMark bookmarks={bookmarks} ACTIONS={ACTIONS} dispatchBookmark={dispatchBookmark} state={state} handlerBookmark={handlerBookmark} postId={postId} fromBookmarks={fromBookmarks} removeBookmark={(id) => removeBookmark(id)} />
                 </div>
             </div>
-            {fromHome && threadChildren && threadChildren.length > 0 && !isCommentRetweet && (
+            {(fromHome || fromProfile) && threadChildren && threadChildren.length > 0 && !isCommentRetweet && (
                 <button
                     className="flex h-12 w-full  items-center gap-2  hover:bg-gray-200"
                     onClick={(e) => {

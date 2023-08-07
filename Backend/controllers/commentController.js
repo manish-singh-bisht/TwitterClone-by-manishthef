@@ -391,8 +391,8 @@ exports.commentBookmark = async (req, res, next) => {
 
 exports.getRepliesofUser = async (req, res, next) => {
     try {
-        const user = await Users.findById(req.params.id);
-
+        const userArr = await Users.find({ handle: req.params.id }); //id is handle here
+        const user = userArr[0];
         if (!user) {
             return next(new ErrorHandler("No such user", 400));
         }
@@ -431,7 +431,7 @@ exports.getRepliesofUser = async (req, res, next) => {
             })
             .populate({
                 path: "userRetweeted",
-                select: "_id name",
+                select: "_id name handle",
             });
 
         const combined = [...retweets, ...posts];
