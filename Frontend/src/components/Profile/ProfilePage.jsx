@@ -184,6 +184,7 @@ const ProfilePage = () => {
                             <div className="mt-5 flex h-fit w-full items-center border-b">
                                 <button
                                     className={`w-fit px-12  text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Tweets" ? "py-[1rem] text-gray-600" : "pt-[0.8rem] text-black"}`}
+                                    disabled={activeButton === "Tweets"}
                                     onClick={() => {
                                         tweetButtonHandler();
                                     }}>
@@ -192,6 +193,7 @@ const ProfilePage = () => {
                                 </button>
                                 <button
                                     className={`w-fit px-12  text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Replies" ? "py-[1rem] text-gray-600" : "pt-[0.8rem] text-black"}`}
+                                    disabled={activeButton === "Replies"}
                                     onClick={() => {
                                         replyButtonHandler();
                                     }}>
@@ -199,6 +201,7 @@ const ProfilePage = () => {
                                 </button>
                                 <button
                                     className={`w-fit px-12  text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Media" ? "py-[1rem] text-gray-600" : "pt-[0.8rem] text-black"}`}
+                                    disabled={activeButton === "Media"}
                                     onClick={() => {
                                         mediaButtonHandler();
                                     }}>
@@ -206,6 +209,7 @@ const ProfilePage = () => {
                                 </button>
                                 <button
                                     className={`w-fit px-12  text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Likes" ? "py-[1rem] text-gray-600" : "pt-[0.8rem] text-black"}`}
+                                    disabled={activeButton === "Likes"}
                                     onClick={() => {
                                         likedButtonHandler();
                                     }}>
@@ -216,45 +220,164 @@ const ProfilePage = () => {
                             {loading ? (
                                 <Loader />
                             ) : (
-                                <div>
+                                <>
                                     {dataArray && dataArray.length > 0 ? (
                                         dataArray.map((item) => {
-                                            const post = item.originalPost ? item.originalPost : item;
-                                            const ownerRetweet = item.userRetweeted ? item.userRetweeted : null;
-                                            const ownerImage = post.owner.profile && post.owner.profile.image && post.owner.profile.image.url ? post.owner.profile.image.url : null;
-                                            const imageInPost = post.images ? post.images : null;
+                                            if (activeButton === "Tweets") {
+                                                const post = item.originalPost ? item.originalPost : item;
+                                                const ownerRetweet = item.userRetweeted ? item.userRetweeted : null;
+                                                const ownerImage = post.owner.profile && post.owner.profile.image && post.owner.profile.image.url ? post.owner.profile.image.url : null;
+                                                const imageInPost = post.images ? post.images : null;
 
-                                            return (
-                                                <Post
-                                                    key={`${post._id}+${item.createdAt}`}
-                                                    postId={post._id}
-                                                    POSTID={item.originalPost?.comment ? item.originalPost?.post : null}
-                                                    tweet={post.tweet || post.comment}
-                                                    ownerRetweet={ownerRetweet}
-                                                    isCommentRetweet={item.originalPost?.comment ? true : false}
-                                                    likes={post.likes}
-                                                    postImage={imageInPost}
-                                                    retweets={post.retweets}
-                                                    comments={item.originalPost?.comment ? post.children : post.comments}
-                                                    ownerName={post.owner.name}
-                                                    ownerImage={ownerImage}
-                                                    ownerId={post.owner._id}
-                                                    handle={post.owner.handle}
-                                                    timeCreated={post.createdAt}
-                                                    handler={item.originalPost?.comment ? CommentLikeUnlike : LikeUnlike}
-                                                    dispatch={item.originalPost?.comment ? dispatchCommentLikeUnlike : dispatchLikeUnlike}
-                                                    dispatchRetweet={item.originalPost?.comment ? dispatchRetweetComment : dispatchRetweetPost}
-                                                    handlerRetweet={item.originalPost?.comment ? RetweetComment : RetweetPost}
-                                                    handlerBookmark={item.originalPost?.comment ? CommentBookmark : PostBookmark}
-                                                    dispatchBookmark={item.originalPost?.comment ? dispatchBookmarkComment : dispatchBookmarkTweet}
-                                                    state={state}
-                                                    bookmarks={post.bookmarks}
-                                                    ACTIONS={ACTIONS}
-                                                    mentions={post.mentions}
-                                                    threadChildren={post.children}
-                                                    fromProfile={true}
-                                                />
-                                            );
+                                                return (
+                                                    <Post
+                                                        key={`${post._id}+${item.createdAt}`}
+                                                        postId={post._id}
+                                                        POSTID={item.originalPost?.comment ? item.originalPost?.post : null}
+                                                        tweet={post.tweet || post.comment}
+                                                        ownerRetweet={ownerRetweet}
+                                                        isCommentRetweet={item.originalPost?.comment ? true : false}
+                                                        likes={post.likes}
+                                                        postImage={imageInPost}
+                                                        retweets={post.retweets}
+                                                        comments={item.originalPost?.comment ? post.children : post.comments}
+                                                        ownerName={post.owner.name}
+                                                        ownerImage={ownerImage}
+                                                        ownerId={post.owner._id}
+                                                        handle={post.owner.handle}
+                                                        timeCreated={post.createdAt}
+                                                        handler={item.originalPost?.comment ? CommentLikeUnlike : LikeUnlike}
+                                                        dispatch={item.originalPost?.comment ? dispatchCommentLikeUnlike : dispatchLikeUnlike}
+                                                        dispatchRetweet={item.originalPost?.comment ? dispatchRetweetComment : dispatchRetweetPost}
+                                                        handlerRetweet={item.originalPost?.comment ? RetweetComment : RetweetPost}
+                                                        handlerBookmark={item.originalPost?.comment ? CommentBookmark : PostBookmark}
+                                                        dispatchBookmark={item.originalPost?.comment ? dispatchBookmarkComment : dispatchBookmarkTweet}
+                                                        state={state}
+                                                        bookmarks={post.bookmarks}
+                                                        ACTIONS={ACTIONS}
+                                                        mentions={post.mentions}
+                                                        threadChildren={post.children}
+                                                        fromProfile={true}
+                                                        fromProfileTweets={true}
+                                                    />
+                                                );
+                                            }
+
+                                            if (activeButton === "Replies") {
+                                                const post = item.originalPost ? item.originalPost : item;
+                                                const ownerRetweet = item.userRetweeted ? item.userRetweeted : null;
+                                                const ownerImage = post.owner.profile && post.owner.profile.image && post.owner.profile.image.url ? post.owner.profile.image.url : null;
+                                                const imageInPost = post.images ? post.images : null;
+                                                const commentParentPost = item.originalPost?.tweet ? null : item.originalPost?.comment ? item.originalPost.comment.post : item.post;
+
+                                                return (
+                                                    <div key={`overall+${post.createdAt}+${post._id}+${commentParentPost?.createdAt}`}>
+                                                        {commentParentPost && (
+                                                            <div key={commentParentPost._id}>
+                                                                {/* Parent Post */}
+                                                                <div className="relative  ">
+                                                                    <Post
+                                                                        key={`parent-${commentParentPost._id}+${post.createdAt}`}
+                                                                        isComment={false}
+                                                                        postId={commentParentPost._id}
+                                                                        tweet={commentParentPost.tweet}
+                                                                        likes={commentParentPost.likes}
+                                                                        retweets={commentParentPost.retweets}
+                                                                        bookmarks={commentParentPost.bookmarks}
+                                                                        postImage={commentParentPost.images ? commentParentPost.images : null}
+                                                                        commentsChildren={commentParentPost.comments}
+                                                                        ownerName={commentParentPost.owner.name}
+                                                                        ownerImage={
+                                                                            commentParentPost.owner.profile && commentParentPost.owner.profile.image && commentParentPost.owner.profile.image.url ? commentParentPost.owner.profile.image.url : null
+                                                                        }
+                                                                        ownerId={commentParentPost.owner._id}
+                                                                        handle={commentParentPost.owner.handle}
+                                                                        timeCreated={commentParentPost.createdAt}
+                                                                        handler={LikeUnlike}
+                                                                        dispatch={dispatchLikeUnlike}
+                                                                        dispatchRetweet={dispatchRetweetPost}
+                                                                        handlerRetweet={RetweetPost}
+                                                                        state={state}
+                                                                        ACTIONS={ACTIONS}
+                                                                        mentions={commentParentPost.mentions}
+                                                                        handlerBookmark={PostBookmark}
+                                                                        dispatchBookmark={dispatchBookmarkTweet}
+                                                                        fromProfileRepliesParentPost={true}
+                                                                    />
+                                                                    <div className="absolute left-[2.37rem] top-[4.2rem] h-[calc(100%-3.85rem)]   w-fit border-2"></div>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                        <Post
+                                                            key={`${post._id}+${item.createdAt}`}
+                                                            postId={post._id}
+                                                            POSTID={item.originalPost?.tweet ? null : post.post.createdAt ? post.post._id : post.post}
+                                                            tweet={post.tweet || post.comment}
+                                                            ownerRetweet={ownerRetweet}
+                                                            isCommentReply={item.originalPost?.tweet ? false : true}
+                                                            likes={post.likes}
+                                                            postImage={imageInPost}
+                                                            retweets={post.retweets}
+                                                            comments={item.originalPost?.tweet ? post.comments : post.children}
+                                                            ownerName={post.owner.name}
+                                                            ownerImage={ownerImage}
+                                                            ownerId={post.owner._id}
+                                                            handle={post.owner.handle}
+                                                            timeCreated={post.createdAt}
+                                                            handler={item.originalPost?.tweet ? LikeUnlike : CommentLikeUnlike}
+                                                            dispatch={item.originalPost?.tweet ? dispatchLikeUnlike : dispatchCommentLikeUnlike}
+                                                            dispatchRetweet={item.originalPost?.tweet ? dispatchRetweetPost : dispatchRetweetComment}
+                                                            handlerRetweet={item.originalPost?.tweet ? RetweetPost : RetweetComment}
+                                                            handlerBookmark={item.originalPost?.tweet ? PostBookmark : CommentBookmark}
+                                                            dispatchBookmark={item.originalPost?.tweet ? dispatchBookmarkTweet : dispatchBookmarkComment}
+                                                            state={state}
+                                                            bookmarks={post.bookmarks}
+                                                            ACTIONS={ACTIONS}
+                                                            mentions={post.mentions}
+                                                            threadChildren={post.children}
+                                                            fromProfile={true}
+                                                            fromProfileRepliesComment={true}
+                                                        />
+                                                    </div>
+                                                );
+                                            }
+                                            if (activeButton === "Media" || activeButton == "Likes") {
+                                                const post = item;
+                                                const ownerImage = post.owner.profile && post.owner.profile.image && post.owner.profile.image.url ? post.owner.profile.image.url : null;
+                                                const imageInPost = post.images ? post.images : null;
+
+                                                return (
+                                                    <Post
+                                                        key={post._id}
+                                                        postId={post._id}
+                                                        POSTID={post.comment ? post.post : null}
+                                                        tweet={post.tweet || post.comment}
+                                                        isCommentReply={post.comment ? true : false}
+                                                        likes={post.likes}
+                                                        postImage={imageInPost}
+                                                        retweets={post.retweets}
+                                                        comments={post.comments}
+                                                        ownerName={post.owner.name}
+                                                        ownerImage={ownerImage}
+                                                        ownerId={post.owner._id}
+                                                        handle={post.owner.handle}
+                                                        timeCreated={post.createdAt}
+                                                        handler={post.comment ? CommentLikeUnlike : LikeUnlike}
+                                                        dispatch={post.comment ? dispatchCommentLikeUnlike : dispatchLikeUnlike}
+                                                        dispatchRetweet={post.comment ? dispatchRetweetComment : dispatchRetweetPost}
+                                                        handlerRetweet={post.comment ? RetweetComment : RetweetPost}
+                                                        handlerBookmark={post.comment ? CommentBookmark : PostBookmark}
+                                                        dispatchBookmark={post.comment ? dispatchBookmarkComment : dispatchBookmarkTweet}
+                                                        state={state}
+                                                        bookmarks={post.bookmarks}
+                                                        ACTIONS={ACTIONS}
+                                                        mentions={post.mentions}
+                                                        threadChildren={post.children}
+                                                        fromProfile={true}
+                                                        fromMediaLikesProfile={true}
+                                                    />
+                                                );
+                                            }
                                         })
                                     ) : (
                                         <div>
@@ -303,7 +426,7 @@ const ProfilePage = () => {
                                             )}
                                         </div>
                                     )}
-                                </div>
+                                </>
                             )}
                         </div>
                     </main>

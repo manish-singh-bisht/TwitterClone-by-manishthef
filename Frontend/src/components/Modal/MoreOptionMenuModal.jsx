@@ -32,12 +32,16 @@ const MoreOptionMenuModal = ({
     setVisibilityBookmark,
     fromBookmarksForDeletingCommentPost,
     removeBookmark,
+    fromProfileTweets,
+    fromMediaLikesProfile,
+    fromProfileRepliesParentPost,
+    fromProfileRepliesComment,
 }) => {
     if (!visibility) return;
 
     const modalRef = useRef(null);
     const [isAlreadyFollowing, setIsAlreadyFollowing] = useState({ bool: false, handle: "", ownerid: null });
-    const { state, dispatchCommentDelete, dispatch, ACTIONS, setPosts, dispatchTweetDelete, dispatchFollowUser } = useGlobalContext();
+    const { state, dispatchCommentDelete, dispatch, ACTIONS, setPosts, dispatchTweetDelete, dispatchFollowUser, setDataArray } = useGlobalContext();
     const navigate = useNavigate();
     const [visibilityDeleteModal, setVisibilityDeleteModal] = useState(false);
     const handleOutsideClickDeleteModal = (event) => {
@@ -86,8 +90,6 @@ const MoreOptionMenuModal = ({
     }, [visibility, buttonPosition]);
 
     const followedOrNot = async () => {
-        const postID = infoToMoreOptionModal.postID;
-        const commentID = infoToMoreOptionModal.commentID;
         const ownerID = infoToMoreOptionModal.ownerID;
         const handle = infoToMoreOptionModal.handle;
 
@@ -107,40 +109,38 @@ const MoreOptionMenuModal = ({
     };
 
     const deleteHandler = async () => {
+        const toastConfig = {
+            position: "bottom-center",
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: false,
+            progress: undefined,
+            closeButton: false,
+            style: {
+                backgroundColor: "#1DA1F2",
+                border: "none",
+                boxShadow: "none",
+                width: "fit-content",
+                zIndex: 9999,
+                color: "white",
+                padding: "0px 16px",
+                minHeight: "3rem",
+            },
+        };
+
         const postID = infoToMoreOptionModal.postID;
         let tempPostId = postID;
         const commentID = infoToMoreOptionModal.commentID;
+        let tempCommentId = commentID;
 
-        if (fromBookmarksForDeletingCommentPost && commentID === undefined) {
-            const toastConfig = {
-                position: "bottom-center",
-                autoClose: 2000,
-                hideProgressBar: true,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                closeButton: false,
-                style: {
-                    backgroundColor: "#1DA1F2",
-                    border: "none",
-                    boxShadow: "none",
-                    width: "fit-content",
-                    zIndex: 9999,
-                    color: "white",
-                    padding: "0px 16px",
-                    minHeight: "3rem",
-                },
-            };
-            toast("Your Tweet was deleted", toastConfig);
-            removeBookmark(postID);
-            await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
-        }
-        if (fromHome) {
-            setPosts((prev) =>
+        if (fromProfileTweets) {
+            //can be a tweet, a comment retweet, a post retweet
+            setDataArray((prev) =>
                 prev.filter((item) => {
                     if (item.onModel === "Comments") {
-                        tempPostId = "";
+                        tempPostId = ""; //by doing this only the comment gets deleted and not the post as well, because in comment type it will have both postid and commentid initiating both,a post will only have a postid not causing same effect for the comment.
                         return item.originalPost._id !== commentID;
                     }
                     if (item.onModel === "Posts") {
@@ -151,27 +151,97 @@ const MoreOptionMenuModal = ({
                     }
                 })
             );
+            toast("Your Tweet was deleted", toastConfig);
+            if (postID && commentID) {
+                await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+            } else if (postID && commentID === undefined) {
+                await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
+            }
+        } else if (fromMediaLikesProfile) {
+            //can be a tweet, a comment
+            setDataArray((prev) =>
+                prev.filter((item) => {
+                    if (item.comment) {
+                        tempPostId = ""; //by doing this only the comment gets deleted and not the post as well, because in comment type it will have both postid and commentid initiating both,a post will only have a postid not causing same effect for the comment.
+                        return item._id !== commentID;
+                    }
+                    if (item.tweet) {
+                        return item._id !== tempPostId;
+                    }
+                })
+            );
+            toast("Your Tweet was deleted", toastConfig);
+            if (postID && commentID) {
+                await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+            } else if (postID && commentID === undefined) {
+                await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
+            }
+        }
 
-            const toastConfig = {
-                position: "bottom-center",
-                autoClose: 2000,
-                hideProgressBar: true,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                closeButton: false,
-                style: {
-                    backgroundColor: "#1DA1F2",
-                    border: "none",
-                    boxShadow: "none",
-                    width: "fit-content",
-                    zIndex: 9999,
-                    color: "white",
-                    padding: "0px 16px",
-                    minHeight: "3rem",
-                },
-            };
+        if (fromProfileRepliesParentPost) {
+            //parent post
+            setDataArray((prev) =>
+                prev.filter((item) => {
+                    if (item.comment && item.post && item.post.tweet && commentID === undefined) {
+                        return item.post._id !== postID;
+                    } else {
+                        return true;
+                    }
+                })
+            );
+            toast("Your Tweet was deleted", toastConfig);
+            if (postID && commentID === undefined) {
+                await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
+            }
+        } else if (fromProfileRepliesComment) {
+            //retweet post and comment,comment
+
+            setDataArray((prev) =>
+                prev.filter((item) => {
+                    if (item.onModel === "Posts" && commentID === undefined) {
+                        tempCommentId = "";
+                        return item.originalPost._id !== tempPostId;
+                    }
+                    if (item.onModel === "Comments") {
+                        tempPostId = "";
+                        return item.originalPost._id !== tempCommentId;
+                    }
+                    if (item.onModel === undefined) {
+                        tempCommentId = "";
+                        return item._id !== commentID;
+                    } else {
+                        return true;
+                    }
+                })
+            );
+            toast("Your Tweet was deleted", toastConfig);
+            if (postID && commentID === undefined) {
+                await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
+            } else if (postID && commentID) {
+                await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+            }
+        }
+
+        if (fromBookmarksForDeletingCommentPost && commentID === undefined) {
+            toast("Your Tweet was deleted", toastConfig);
+            removeBookmark(postID);
+            await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
+        }
+        if (fromHome) {
+            setPosts((prev) =>
+                prev.filter((item) => {
+                    if (item.onModel === "Comments") {
+                        tempPostId = ""; //by doing this only the comment gets deleted and not the post as well, because in comment type it will have both postid and commentid initiating both,a post will only have a postid not causing same effect for the comment.
+                        return item.originalPost._id !== commentID;
+                    }
+                    if (item.onModel === "Posts") {
+                        return item.originalPost._id !== tempPostId;
+                    }
+                    if (item.onModel === undefined) {
+                        return item._id !== tempPostId;
+                    }
+                })
+            );
             toast("Your Tweet was deleted", toastConfig);
             if (isCommentRetweet) {
                 await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
@@ -179,26 +249,6 @@ const MoreOptionMenuModal = ({
                 await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
             }
         } else if (fromTweetDetail && commentID === undefined) {
-            const toastConfig = {
-                position: "bottom-center",
-                autoClose: 2000,
-                hideProgressBar: true,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                closeButton: false,
-                style: {
-                    backgroundColor: "#1DA1F2",
-                    border: "none",
-                    boxShadow: "none",
-                    width: "fit-content",
-                    zIndex: 9999,
-                    color: "white",
-                    padding: "0px 16px",
-                    minHeight: "3rem",
-                },
-            };
             const post = await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
             toast("Your Tweet was deleted", toastConfig);
             navigate(`/`, {
@@ -208,7 +258,9 @@ const MoreOptionMenuModal = ({
             if (fromBookmarksForDeletingCommentPost) {
                 removeBookmark(commentID);
             }
-            await DeleteComment({ dispatchCommentDelete, ACTIONS, postID, commentID });
+            if (!fromProfileTweets && !fromMediaLikesProfile && !fromProfileRepliesParentPost && !fromProfileRepliesComment) {
+                await DeleteComment({ dispatchCommentDelete, ACTIONS, postID, commentID });
+            }
         }
     };
 

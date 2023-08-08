@@ -63,7 +63,7 @@ const CommentDetail = () => {
                 handle: post.owner.handle,
                 ownerName: post.owner.name,
                 timeCreated: post.createdAt,
-                ownerImage: post.owner.profile && post.owner.profile.image.url ? post.owner.profile.image.url : null,
+                profile: post.owner.profile && post.owner.profile.image && post.owner.profile.image.url ? post.owner.profile.image.url : null,
                 postImage: post.images ? post.images : null,
                 mentions: post.mentions,
                 isThread: post.children?.length > 0 ? true : false,

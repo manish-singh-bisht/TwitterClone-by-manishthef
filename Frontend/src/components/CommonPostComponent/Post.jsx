@@ -46,12 +46,17 @@ const Post = ({
     mentions,
     ownerRetweet,
     isCommentRetweet,
+    isCommentReply,
     dispatchBookmark,
     handlerBookmark,
     fromBookmarks,
     fromProfile,
     removeBookmark,
     isCommentBookmark,
+    fromProfileTweets,
+    fromMediaLikesProfile,
+    fromProfileRepliesParentPost,
+    fromProfileRepliesComment,
 }) => {
     const formattedTime = usePostTime(Date.parse(timeCreated));
 
@@ -146,7 +151,7 @@ const Post = ({
     const navigate = useNavigate();
     const commentId = postId;
 
-    const newUrl = isCommentRetweet || isCommentBookmark ? `/${ownerName}/comment/${commentId}` : !isComment ? `/${ownerName}/${postId}` : `/${ownerName}/comment/${commentId}`;
+    const newUrl = isCommentRetweet || isCommentReply || isCommentBookmark ? `/${ownerName}/comment/${commentId}` : !isComment ? `/${ownerName}/${postId}` : `/${ownerName}/comment/${commentId}`;
 
     const handleClick = (isThread = passedIsThread) => {
         const stateObject = {
@@ -203,7 +208,7 @@ const Post = ({
                 <div className="mr-[0.5rem]">
                     <Avatar profile={profile} />
                 </div>
-                {(fromHome || fromProfile) && threadChildren && threadChildren.length > 0 && !isCommentRetweet && <div className="absolute left-[1.8rem] top-[3.65rem] h-full min-h-[5rem] w-fit border-2"></div>}
+                {(fromHome || fromProfile) && threadChildren && threadChildren.length > 0 && !isCommentRetweet && !isCommentReply && <div className="absolute left-[1.8rem] top-[3.65rem] h-full min-h-[2rem] w-fit border-2"></div>}
                 {!fromHome &&
                     comment &&
                     comment.length > 0 &&
@@ -256,7 +261,7 @@ const Post = ({
                                 setButtonPosition({ top, left });
                                 fromCommentDetail
                                     ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID, handle: handle })
-                                    : isCommentRetweet
+                                    : isCommentRetweet || isCommentReply
                                     ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID, handle: handle })
                                     : isCommentBookmark
                                     ? setInfoToMoreOptionModal({ ownerID: ownerId, commentID: commentId, postID: POSTID, handle: handle })
@@ -294,7 +299,7 @@ const Post = ({
                     <BookMark bookmarks={bookmarks} ACTIONS={ACTIONS} dispatchBookmark={dispatchBookmark} state={state} handlerBookmark={handlerBookmark} postId={postId} fromBookmarks={fromBookmarks} removeBookmark={(id) => removeBookmark(id)} />
                 </div>
             </div>
-            {(fromHome || fromProfile) && threadChildren && threadChildren.length > 0 && !isCommentRetweet && (
+            {(fromHome || fromProfile) && threadChildren && threadChildren.length > 0 && !isCommentRetweet && !isCommentReply && (
                 <button
                     className="flex h-12 w-full  items-center gap-2  hover:bg-gray-200"
                     onClick={(e) => {
@@ -407,6 +412,10 @@ const Post = ({
                     fromTweetDetail={fromTweetDetail}
                     fromBookmarksForDeletingCommentPost={fromBookmarks ? true : false}
                     removeBookmark={(id) => removeBookmark(id)}
+                    fromProfileTweets={fromProfileTweets}
+                    fromMediaLikesProfile={fromMediaLikesProfile}
+                    fromProfileRepliesParentPost={fromProfileRepliesParentPost}
+                    fromProfileRepliesComment={fromProfileRepliesComment}
                 />
             </Suspense>
         </div>

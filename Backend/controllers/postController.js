@@ -614,13 +614,15 @@ exports.getPostLikedByUser = async (req, res, next) => {
 exports.getPostOfUserWithMedia = async (req, res, next) => {
     try {
         const userArr = await Users.find({ handle: req.params.id }); //id is handle here
+
         const user = userArr[0];
         if (!user) {
             return next(new ErrorHandler("No such user", 400));
         }
 
-        const posts = await Posts.find({ images: { $exists: true, $gt: [] }, owner: user._id })
-
+        const posts = await Posts.find({
+            $and: [{ owner: user._id }, { images: { $gt: [] } }],
+        })
             .populate({
                 path: "owner",
                 select: "handle name profile",
@@ -639,7 +641,9 @@ exports.getPostOfUserWithMedia = async (req, res, next) => {
             })
             .sort({ createdAt: -1 });
 
-        const comments = await Comments.find({ images: { $exists: true, $gt: [] } })
+        const comments = await Comments.find({
+            $and: [{ owner: user._id }, { images: { $gt: [] } }],
+        })
             .populate({
                 path: "owner",
                 select: "handle name profile",

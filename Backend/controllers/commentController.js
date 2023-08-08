@@ -231,7 +231,7 @@ exports.findCommentById = async (req, res, next) => {
                 path: "bookmarks",
                 select: "_id",
             })
-            .populate({ path: "likes", select: "name handle  _id" })
+            .populate({ path: "likes", select: "name handle  _id profile" })
             .populate({ path: "owner", select: "name handle _id description profile" })
             .populate({
                 path: "post",
@@ -400,6 +400,12 @@ exports.getRepliesofUser = async (req, res, next) => {
         const posts = await Comments.find({ owner: { $in: user._id } })
             .populate({
                 path: "post",
+                populate: [
+                    {
+                        path: "owner",
+                        select: "_id name handle profile",
+                    },
+                ],
             })
             .populate({
                 path: "owner",
