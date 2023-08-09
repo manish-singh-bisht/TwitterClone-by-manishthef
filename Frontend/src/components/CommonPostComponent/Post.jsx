@@ -278,7 +278,7 @@ const Post = ({
                     </div>
                 </div>
             </div>
-            <div className="mt-4 mb-2 ml-[4.25rem] flex w-[87.5%] gap-20   border-2">
+            <div className="-mt-3 mb-2 ml-[4.25rem] flex w-[87.5%] gap-20  ">
                 <div className="group flex w-[3rem] items-center justify-around">
                     <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
                         <Comments />

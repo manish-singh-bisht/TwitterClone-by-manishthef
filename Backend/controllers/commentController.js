@@ -225,13 +225,13 @@ exports.findCommentById = async (req, res, next) => {
             .populate("post parent")
             .populate({
                 path: "retweets",
-                select: "_id handle name profile",
+                select: "_id handle name profile description",
             })
             .populate({
                 path: "bookmarks",
                 select: "_id",
             })
-            .populate({ path: "likes", select: "name handle  _id profile" })
+            .populate({ path: "likes", select: "name handle  _id profile description" })
             .populate({ path: "owner", select: "name handle _id description profile" })
             .populate({
                 path: "post",
@@ -301,10 +301,10 @@ exports.findRepliesById = async (req, res, next) => {
 async function fetchReplies(commentId, replies) {
     const comment = await Comments.findById(commentId)
         .populate({ path: "owner", select: "_id handle profile name" })
-        .populate({ path: "likes", select: "_id handle profile name" })
+        .populate({ path: "likes", select: "_id handle profile name description" })
         .populate({
             path: "retweets",
-            select: "_id handle name profile",
+            select: "_id handle name profile description",
         })
         .populate({
             path: "bookmarks",

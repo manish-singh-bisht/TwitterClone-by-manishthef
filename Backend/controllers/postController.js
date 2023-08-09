@@ -97,13 +97,13 @@ exports.findPostById = async (req, res, next) => {
             .populate("comments")
             .populate({
                 path: "likes",
-                select: "_id handle name profile",
+                select: "_id handle name profile description",
             })
             .populate({
                 path: "bookmarks",
                 select: "_id",
             })
-            .populate({ path: "retweets", select: "name handle profile _id" })
+            .populate({ path: "retweets", select: "name handle profile _id description" })
 
             .populate({ path: "owner", select: "_id handle profile name description" })
             .populate({

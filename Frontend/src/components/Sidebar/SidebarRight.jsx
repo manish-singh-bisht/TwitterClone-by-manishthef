@@ -247,7 +247,7 @@ const TrendingFollow = memo(({ name, userId, username, profilePicture, descripti
         dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
     };
     return (
-        <div onClick={navigateHandlerToProfile}>
+        <div onClick={() => navigateHandlerToProfile(username)}>
             <div className="flex w-[21.88rem] items-start pt-3 hover:cursor-pointer hover:bg-gray-100 ">
                 <div className="w-fit">
                     <Avatar profile={profilePicture} />

@@ -1,10 +1,25 @@
 import React from "react";
 import { Cross } from "../SVGs/SVGs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
+import FollowUser from "../../context/Actions/FollowUser";
+import axios from "axios";
 
 const ModalForLikesRetweets = ({ visibility, onClose, type, list, handleOutsideClick }) => {
     if (!visibility) return;
 
+    const { state, ACTIONS, dispatch, dispatchFollowUser } = useGlobalContext();
+
+    const navigate = useNavigate();
+
+    const navigateHandlerToProfile = (handle) => {
+        navigate(`/Profile/${handle}`);
+    };
+    const followHandler = async (id) => {
+        await FollowUser({ dispatchFollowUser, ACTIONS, id });
+        const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
+        dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
+    };
     return (
         <>
             <div className="fixed inset-0 z-30 flex  h-[100vh] w-[100vw] items-center justify-center">
@@ -20,7 +35,7 @@ const ModalForLikesRetweets = ({ visibility, onClose, type, list, handleOutsideC
                     {list.length > 0 &&
                         list.map((item) => {
                             return (
-                                <Link to={`/Profile/${item.handle}`} key={item._id} className=" hover:bg-gray-100">
+                                <div onClick={() => navigateHandlerToProfile(item.handle)} key={item._id} className=" hover:bg-gray-100">
                                     <div className="mx-4 mt-2 flex flex-col gap-1 ">
                                         <div className="flex gap-3 ">
                                             {item.profile && item.profile.image && item.profile.image.url ? (
@@ -39,12 +54,30 @@ const ModalForLikesRetweets = ({ visibility, onClose, type, list, handleOutsideC
                                                     <div className="  text-[1.1rem] font-bold hover:underline">{item.name}</div>
                                                     <div className="">{`@${item.handle}`}</div>
                                                 </div>
-                                                <button className="h-[2.1rem] w-[4.5rem] rounded-[5rem] bg-black  text-white">Follow</button>
+                                                {item._id !== state.user._id && (
+                                                    <button
+                                                        className={`group w-fit rounded-full   ${
+                                                            state.user.following.includes(item._id) ? "border-2 bg-white text-black hover:border-red-200 hover:bg-red-100" : "bg-black text-white hover:text-gray-300 active:text-gray-400"
+                                                        } px-4 py-2 font-bold `}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            followHandler(item._id);
+                                                        }}>
+                                                        {state.user.following.includes(item._id) ? (
+                                                            <>
+                                                                <span className="group-hover:hidden">Following</span>
+                                                                <span className="hidden group-hover:block">Unfollow</span>
+                                                            </>
+                                                        ) : (
+                                                            <span>Follow</span>
+                                                        )}
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
-                                        <div className="ml-[4rem]   pb-5">Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae mollitia eveniet quos consequatur laudantium repellat voluptatibus velit vel quis expedita.</div>
+                                        <div className="ml-[4rem]   pb-5">{item.description}</div>
                                     </div>
-                                </Link>
+                                </div>
                             );
                         })}
                 </div>
