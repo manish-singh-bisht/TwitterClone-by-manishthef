@@ -6,6 +6,7 @@ import axios from "axios";
 import Loader from "../Loader/Loader";
 import { Link, useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
+import FollowUser from "../../context/Actions/FollowUser";
 
 const SidebarRight = () => {
     // let sidebar = document.getElementsByClassName("sidebar")[0];
@@ -30,7 +31,7 @@ const SidebarRight = () => {
     const [loading, setLoading] = useState(false);
     const [active, setActive] = useState(false);
 
-    const { usersForRightSidebar, state } = useGlobalContext();
+    const { usersForRightSidebar, state, ACTIONS, dispatch, dispatchFollowUser } = useGlobalContext();
 
     const debounceFunction = (cb, delay = 700) => {
         let timeout;
@@ -137,11 +138,17 @@ const SidebarRight = () => {
                                         }
                                         description={usersForRightSidebar.post.owner.description}
                                         handle={usersForRightSidebar.post.owner.handle}
+                                        dispatchFollowUser={dispatchFollowUser}
+                                        state={state}
+                                        ACTIONS={ACTIONS}
+                                        dispatch={dispatch}
+                                        userId={usersForRightSidebar.post.owner._id}
                                     />
                                 )}
                                 {usersForRightSidebar.parent?.owner && usersForRightSidebar.parent?.owner._id !== usersForRightSidebar.post?.owner._id && (
                                     <TrendingFollow
                                         name={usersForRightSidebar.parent.owner.name}
+                                        userId={usersForRightSidebar.parent.owner._id}
                                         username={usersForRightSidebar.parent.owner.handle}
                                         profilePicture={
                                             usersForRightSidebar.parent.owner && usersForRightSidebar.parent.owner.profile && usersForRightSidebar.parent.owner.profile.image && usersForRightSidebar.parent.owner.profile.image.url
@@ -150,11 +157,16 @@ const SidebarRight = () => {
                                         }
                                         description={usersForRightSidebar.parent.owner.description}
                                         handle={usersForRightSidebar.parent.owner.handle}
+                                        dispatchFollowUser={dispatchFollowUser}
+                                        state={state}
+                                        ACTIONS={ACTIONS}
+                                        dispatch={dispatch}
                                     />
                                 )}
                                 {usersForRightSidebar.owner && usersForRightSidebar.owner._id !== usersForRightSidebar.post?.owner._id && usersForRightSidebar.parent?.owner._id !== usersForRightSidebar.owner._id && (
                                     <TrendingFollow
                                         name={usersForRightSidebar.owner.name}
+                                        userId={usersForRightSidebar.owner._id}
                                         username={usersForRightSidebar.owner.handle}
                                         profilePicture={
                                             usersForRightSidebar.owner && usersForRightSidebar.owner.profile && usersForRightSidebar.owner.profile.image && usersForRightSidebar.owner.profile.image.url
@@ -163,6 +175,10 @@ const SidebarRight = () => {
                                         }
                                         description={usersForRightSidebar.owner.description}
                                         handle={usersForRightSidebar.owner.handle}
+                                        dispatchFollowUser={dispatchFollowUser}
+                                        state={state}
+                                        ACTIONS={ACTIONS}
+                                        dispatch={dispatch}
                                     />
                                 )}
                             </div>
@@ -185,11 +201,11 @@ const SidebarRight = () => {
                         {!usersForRightSidebar && (
                             <div className="mt-5 mb-5   rounded-xl bg-[#F7F9F9] ">
                                 <p className="px-3  pt-3 text-[1.31rem] font-bold">Who to follow</p>
-                                <div className="flex flex-col py-2">
+                                {/* <div className="flex flex-col py-2">
                                     <TrendingFollow name={"Iman Musa"} username={"imanmcodes"} profilePicture={"https://source.unsplash.com/random/1200x600"} description={null} handle={1} />
                                     <TrendingFollow name={"Elon Musk"} username={"elonmusk"} profilePicture={"https://source.unsplash.com/random/1200x600"} description={null} handle={"6452294bcf01c48b11c2f282"} />
                                     <TrendingFollow name={"Kim Kardashian"} username={"kimkardashian"} profilePicture={"https://source.unsplash.com/random/1200x600"} description={null} handle={3} />
-                                </div>
+                                </div> */}
                                 <button
                                     onClick={() => {
                                         navigate("/Connect");
@@ -219,9 +235,19 @@ const TrendingTopic = memo(({ topic, number }) => {
     );
 });
 
-const TrendingFollow = memo(({ name, username, profilePicture, description, handle }) => {
+const TrendingFollow = memo(({ name, userId, username, profilePicture, description, handle, dispatchFollowUser, state, ACTIONS, dispatch }) => {
+    const navigate = useNavigate();
+
+    const navigateHandlerToProfile = (handle) => {
+        navigate(`/Profile/${handle}`);
+    };
+    const followHandler = async (id) => {
+        await FollowUser({ dispatchFollowUser, ACTIONS, id });
+        const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
+        dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
+    };
     return (
-        <Link to={`/Profile/${handle}`}>
+        <div onClick={navigateHandlerToProfile}>
             <div className="flex w-[21.88rem] items-start pt-3 hover:cursor-pointer hover:bg-gray-100 ">
                 <div className="w-fit">
                     <Avatar profile={profilePicture} />
@@ -232,12 +258,30 @@ const TrendingFollow = memo(({ name, username, profilePicture, description, hand
                             <div className="text-[1.03rem] font-semibold hover:underline">{name.length > 15 ? name.slice(0, 15).trim() + "..." : name}</div>
                             <div className=" mt-[-0.2rem] text-gray-500">@{username.length > 15 ? username.slice(0, 15).trim() + "..." : username}</div>
                         </div>
-                        <button className=" rounded-full bg-black px-4 py-1 font-semibold text-white hover:text-gray-300 active:text-gray-400">Follow</button>
+                        {userId !== state.user._id && (
+                            <button
+                                className={`group w-fit rounded-full   ${
+                                    state.user.following.includes(userId) ? "border-2 bg-white text-black hover:border-red-200 hover:bg-red-100" : "bg-black text-white hover:text-gray-300 active:text-gray-400"
+                                } px-4 py-2 font-bold `}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    followHandler(userId);
+                                }}>
+                                {state.user.following.includes(userId) ? (
+                                    <>
+                                        <span className="group-hover:hidden">Following</span>
+                                        <span className="hidden group-hover:block">Unfollow</span>
+                                    </>
+                                ) : (
+                                    <span>Follow</span>
+                                )}
+                            </button>
+                        )}
                     </div>
                     <div className="mt-2 w-full break-words pr-3 pl-2 pb-3 text-[0.9rem] leading-[1.35rem]">{description}</div>
                 </div>
             </div>
-        </Link>
+        </div>
     );
 });
 export default memo(SidebarRight);

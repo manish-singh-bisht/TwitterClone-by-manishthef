@@ -323,7 +323,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                     </div>
                     <div className="mx-4 mt-4  border-t-[0.01rem] opacity-80"></div>
                     <CommentBox
-                        profile={comment.owner.profile && comment.owner.profile.image && comment.owner.profile.image.url ? comment.owner.profile.image.url : null}
+                        profile={state.user && state.user.profile && state.user.profile.image && state.user.profile.image.url ? state.user.profile.image.url : null}
                         postId={postId}
                         parent={parent}
                         mentionHandleCollection={mentionHandleCollection}

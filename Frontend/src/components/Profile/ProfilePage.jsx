@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Calendar, LeftArrow, LinkInProfile, LocationInProfile } from "../SVGs/SVGs";
 import { BannerImage, ProfileImage } from "./ProfileBanner";
 import Loader from "../Loader/Loader";
@@ -12,11 +12,13 @@ import RetweetComment from "../../context/Actions/RetweetComment";
 import RetweetPost from "../../context/Actions/RetweetPost";
 import CommentBookmark from "../../context/Actions/CommentBookmark";
 import PostBookmark from "../../context/Actions/PostBookmark";
+import FollowUser from "../../context/Actions/FollowUser";
 
 const UpdateModal = React.lazy(() => import("../Modal/UpdateModal"));
 
 const ProfilePage = () => {
-    const { state, setUsersForRightSidebar, dataArray, setDataArray, ACTIONS, dispatchBookmarkComment, dispatchLikeUnlike, dispatchRetweetPost, dispatchRetweetComment, dispatchCommentLikeUnlike, dispatchBookmarkTweet } = useGlobalContext();
+    const { state, setUsersForRightSidebar, dispatchFollowUser, dispatch, dataArray, setDataArray, ACTIONS, dispatchBookmarkComment, dispatchLikeUnlike, dispatchRetweetPost, dispatchRetweetComment, dispatchCommentLikeUnlike, dispatchBookmarkTweet } =
+        useGlobalContext();
 
     const [visibility, setVisibility] = useState(false);
     const [activeButton, setActiveButton] = useState("Tweets");
@@ -102,6 +104,12 @@ const ProfilePage = () => {
         setloading(false);
     };
 
+    const followHandler = async (id) => {
+        await FollowUser({ dispatchFollowUser, ACTIONS, id });
+        const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
+        dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
+    };
+
     return (
         <>
             {!user ? (
@@ -137,7 +145,25 @@ const ProfilePage = () => {
                                         }}>
                                         Edit profile
                                     </button>
-                                ) : null}
+                                ) : (
+                                    <button
+                                        className={`group mr-[0.5rem] mt-[0.6rem] h-fit w-fit rounded-3xl border-2 py-2 px-4 font-bold  ${
+                                            state.user.following.includes(user._id) ? "border-2 bg-white text-black hover:border-red-200 hover:bg-red-100" : "bg-black text-white hover:text-gray-300 active:text-gray-400"
+                                        }`}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            followHandler(user._id);
+                                        }}>
+                                        {state.user.following.includes(user._id) ? (
+                                            <>
+                                                <span className="group-hover:hidden">Following</span>
+                                                <span className="hidden group-hover:block">Unfollow</span>
+                                            </>
+                                        ) : (
+                                            <span>Follow</span>
+                                        )}
+                                    </button>
+                                )}
                             </div>
                             <div className="ml-4 flex flex-col gap-2 ">
                                 <div className=" mb-2 flex flex-col">
@@ -173,12 +199,22 @@ const ProfilePage = () => {
                                     </span>
                                 </div>
                                 <div className=" flex gap-6">
-                                    <span className="cursor-pointer text-gray-600 hover:underline">
+                                    <Link
+                                        to={{
+                                            pathname: `/FollowersFollowingPage/${user.handle}`,
+                                        }}
+                                        state={{ choice: "following" }}
+                                        className="cursor-pointer  text-gray-600 hover:underline">
                                         <span className="font-bold text-black">{user.following.length > 0 ? user.following.length : 0}</span> Following
-                                    </span>
-                                    <span className="cursor-pointer text-gray-600 hover:underline">
+                                    </Link>
+                                    <Link
+                                        to={{
+                                            pathname: `/FollowersFollowingPage/${user.handle}`,
+                                        }}
+                                        state={{ choice: "followers" }}
+                                        className="cursor-pointer text-gray-600 hover:underline">
                                         <span className="font-bold text-black">{user.followers.length > 0 ? user.followers.length : 0}</span> Followers
-                                    </span>
+                                    </Link>
                                 </div>
                             </div>
                             <div className="mt-5 flex h-fit w-full items-center border-b">

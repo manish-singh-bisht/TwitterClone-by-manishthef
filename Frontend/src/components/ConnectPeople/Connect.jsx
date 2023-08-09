@@ -3,10 +3,14 @@ import { LeftArrow } from "../SVGs/SVGs";
 import axios from "axios";
 import Avatar from "../Avatar/Avatar";
 import { Link, useNavigate } from "react-router-dom";
+import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
+import FollowUser from "../../context/Actions/FollowUser";
 
 const Connect = () => {
     const [allUsers, setAllUsers] = useState([]);
     const navigate = useNavigate();
+
+    const { state, ACTIONS, dispatch, dispatchFollowUser } = useGlobalContext();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -21,6 +25,12 @@ const Connect = () => {
 
     const leftArrowHandler = () => {
         navigate("/");
+    };
+
+    const followHandler = async (id) => {
+        await FollowUser({ dispatchFollowUser, ACTIONS, id });
+        const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
+        dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
     };
     return (
         <div className=" max-h-[full] min-h-[1400px]  border-l border-r">
@@ -47,7 +57,26 @@ const Connect = () => {
                                 <div className="mt-[0.5rem] text-left ">{user.description}</div>
                             </Link>
                         </div>
-                        <div className="rounded-full bg-black px-4 py-1 font-semibold text-white hover:text-gray-300 active:text-gray-400 ">Follow</div>
+
+                        {user._id !== state.user._id && (
+                            <button
+                                className={`group w-fit rounded-full   ${
+                                    state.user.following.includes(user._id) ? "border-2 bg-white text-black hover:border-red-200 hover:bg-red-100" : "bg-black text-white hover:text-gray-300 active:text-gray-400"
+                                } px-4 py-2 font-bold `}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    followHandler(user._id);
+                                }}>
+                                {state.user.following.includes(user._id) ? (
+                                    <>
+                                        <span className="group-hover:hidden">Following</span>
+                                        <span className="hidden group-hover:block">Unfollow</span>
+                                    </>
+                                ) : (
+                                    <span>Follow</span>
+                                )}
+                            </button>
+                        )}
                     </button>
                 );
             })}

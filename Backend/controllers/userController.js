@@ -379,3 +379,43 @@ exports.getAllUsers = async (req, res, next) => {
         next(new ErrorHandler(error.message, 500));
     }
 };
+
+exports.followingOfUser = async (req, res, next) => {
+    try {
+        const userProfile = await Users.find({ handle: req.params.id });
+        if (!userProfile) {
+            return next(new ErrorHandler("No such user", 404));
+        }
+        const id = userProfile[0]._id;
+
+        const following = await Users.find({ followers: { $in: [id] } });
+
+        res.status(200).json({
+            success: true,
+            following,
+            userProfile: userProfile[0],
+        });
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};
+
+exports.followersOfUser = async (req, res, next) => {
+    try {
+        const userProfile = await Users.find({ handle: req.params.id });
+        if (!userProfile) {
+            return next(new ErrorHandler("No such user", 404));
+        }
+        const id = userProfile[0]._id;
+
+        const followers = await Users.find({ following: { $in: [id] } });
+
+        res.status(200).json({
+            success: true,
+            followers,
+            userProfile: userProfile[0],
+        });
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};
