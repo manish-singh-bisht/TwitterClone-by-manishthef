@@ -25,6 +25,7 @@ const ProfilePage = () => {
     const [user, setUser] = useState(null);
     const [total, setTotal] = useState(null);
     const [loading, setloading] = useState(false);
+    const [isPinned, setIsPinned] = useState({ bool: false, id: null });
 
     const navigate = useNavigate();
     const params = useParams();
@@ -51,6 +52,7 @@ const ProfilePage = () => {
             const { data } = await axios.get(`http://localhost:4000/api/v1/user/${userHandle}`, { withCredentials: true });
             setUser(data.userProfile);
             setTotal(data.total);
+            setIsPinned({ bool: data.userProfile.pinnedTweet ? true : false, id: data.userProfile.pinnedTweet ? data.userProfile.pinnedTweet : null });
 
             getTweets(userHandle);
         };
@@ -58,7 +60,7 @@ const ProfilePage = () => {
         if (state.user.handle === userHandle) {
             setUser(state.user);
             setTotal(state.total);
-
+            setIsPinned({ bool: state.user.pinnedTweet ? true : false, id: state.user.pinnedTweet ? state.user.pinnedTweet : null });
             getTweets(userHandle);
         } else {
             getProfileUser(userHandle);
@@ -80,6 +82,7 @@ const ProfilePage = () => {
         setloading(true);
         const { data } = await axios.get(`http://localhost:4000/api/v1/getTweets/${userHandle}`, { withCredentials: true });
         setDataArray(data.posts);
+        setUser(state.user);
         setloading(false);
     };
     const replyButtonHandler = async () => {
@@ -271,6 +274,7 @@ const ProfilePage = () => {
                                                         postId={post._id}
                                                         POSTID={item.originalPost?.comment ? item.originalPost?.post : null}
                                                         tweet={post.tweet || post.comment}
+                                                        isPinnedTweet={{ bool: isPinned.bool, id: isPinned.id }}
                                                         ownerRetweet={ownerRetweet}
                                                         isCommentRetweet={item.originalPost?.comment ? true : false}
                                                         likes={post.likes}
@@ -295,6 +299,7 @@ const ProfilePage = () => {
                                                         threadChildren={post.children}
                                                         fromProfile={true}
                                                         fromProfileTweets={true}
+                                                        setIsPinned={setIsPinned}
                                                     />
                                                 );
                                             }

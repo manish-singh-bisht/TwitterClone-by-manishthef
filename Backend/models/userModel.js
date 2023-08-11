@@ -44,6 +44,10 @@ const userSchema = new mongoose.Schema({
             ref: "Posts",
         },
     ],
+    pinnedTweet: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Posts",
+    },
     comments: [
         {
             type: mongoose.Schema.Types.ObjectId,

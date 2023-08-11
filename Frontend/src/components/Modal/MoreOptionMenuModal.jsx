@@ -36,14 +36,38 @@ const MoreOptionMenuModal = ({
     fromMediaLikesProfile,
     fromProfileRepliesParentPost,
     fromProfileRepliesComment,
+    setIsPinned,
 }) => {
     if (!visibility) return;
 
     const modalRef = useRef(null);
-    const [isAlreadyFollowing, setIsAlreadyFollowing] = useState({ bool: false, handle: "", ownerid: null });
-    const { state, dispatchCommentDelete, dispatch, ACTIONS, setPosts, dispatchTweetDelete, dispatchFollowUser, setDataArray } = useGlobalContext();
     const navigate = useNavigate();
+    const { state, dispatchCommentDelete, dispatch, ACTIONS, setPosts, dispatchTweetDelete, dispatchFollowUser, setDataArray } = useGlobalContext();
+
+    const [isAlreadyFollowing, setIsAlreadyFollowing] = useState({ bool: false, handle: "", ownerid: null });
     const [visibilityDeleteModal, setVisibilityDeleteModal] = useState(false);
+
+    const toastConfig = {
+        position: "bottom-center",
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+        closeButton: false,
+        style: {
+            backgroundColor: "#1DA1F2",
+            border: "none",
+            boxShadow: "none",
+            width: "fit-content",
+            zIndex: 9999,
+            color: "white",
+            padding: "0px 16px",
+            minHeight: "3rem",
+        },
+    };
+
     const handleOutsideClickDeleteModal = (event) => {
         if (event.target === event.currentTarget) {
             setVisibilityDeleteModal(false);
@@ -109,27 +133,6 @@ const MoreOptionMenuModal = ({
     };
 
     const deleteHandler = async () => {
-        const toastConfig = {
-            position: "bottom-center",
-            autoClose: 2000,
-            hideProgressBar: true,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: false,
-            progress: undefined,
-            closeButton: false,
-            style: {
-                backgroundColor: "#1DA1F2",
-                border: "none",
-                boxShadow: "none",
-                width: "fit-content",
-                zIndex: 9999,
-                color: "white",
-                padding: "0px 16px",
-                minHeight: "3rem",
-            },
-        };
-
         const postID = infoToMoreOptionModal.postID;
         let tempPostId = postID;
         const commentID = infoToMoreOptionModal.commentID;
@@ -264,6 +267,94 @@ const MoreOptionMenuModal = ({
         }
     };
 
+    const pinHandler = async (handle, tweetId) => {
+        if (!state.user.pinnedTweet && infoToMoreOptionModal.commentID === undefined) {
+            const { data } = await axios.get(`http://localhost:4000/api/v1/pinTweet/${handle}/${tweetId}`, { withCredentials: true });
+
+            setDataArray((prev) => {
+                const pinnedTweetIndex = prev.findIndex((tweet) => {
+                    if (!tweet.originalPost) return tweet._id === tweetId;
+                });
+
+                if (pinnedTweetIndex !== -1) {
+                    const pinnedTweet = prev[pinnedTweetIndex];
+                    const pinnedTweetCopy = { ...pinnedTweet };
+
+                    prev.splice(pinnedTweetIndex, 1);
+                    const newArray = [pinnedTweetCopy, ...prev];
+
+                    return newArray;
+                }
+
+                return prev;
+            });
+
+            {
+                fromProfileTweets && setIsPinned({ bool: true, id: tweetId });
+            }
+
+            toast(data.message, toastConfig);
+        } else if (state.user.pinnedTweet && state.user.pinnedTweet !== infoToMoreOptionModal.postID && infoToMoreOptionModal.commentID === undefined) {
+            const { data } = await axios.put(`http://localhost:4000/api/v1/pinTweet/${handle}/${tweetId}`, null, { withCredentials: true });
+
+            setDataArray((prev) => {
+                const pinnedTweetIndex = prev.findIndex((tweet) => {
+                    if (!tweet.originalPost) return tweet._id === tweetId;
+                });
+
+                if (pinnedTweetIndex !== -1) {
+                    const pinnedTweet = prev[pinnedTweetIndex];
+                    const pinnedTweetCopy = { ...pinnedTweet };
+
+                    prev.splice(pinnedTweetIndex, 1);
+                    const newArray = [pinnedTweetCopy, ...prev];
+
+                    return newArray;
+                }
+
+                return prev;
+            });
+            {
+                fromProfileTweets && setIsPinned({ bool: true, id: tweetId });
+            }
+
+            toast(data.message, toastConfig);
+        } else if (infoToMoreOptionModal.commentID) {
+            toast("Only Tweet can be pinned.", toastConfig);
+        } else {
+            const { data } = await axios.get(`http://localhost:4000/api/v1/unpinTweet/${handle}/${tweetId}`, { withCredentials: true });
+
+            setDataArray((prev) => {
+                const pinnedTweetIndex = prev.findIndex((tweet) => {
+                    if (!tweet.originalPost) return tweet._id === tweetId;
+                });
+
+                if (pinnedTweetIndex !== -1) {
+                    const pinnedTweet = prev[pinnedTweetIndex];
+                    prev.splice(pinnedTweetIndex, 1);
+                    const originalIndex = prev.findIndex((tweet) => tweet.createdAt < pinnedTweet.createdAt);
+
+                    if (originalIndex !== -1) {
+                        prev.splice(originalIndex, 0, pinnedTweet);
+                    } else {
+                        prev.push(pinnedTweet);
+                    }
+
+                    return [...prev];
+                }
+
+                return prev;
+            });
+
+            {
+                fromProfileTweets && setIsPinned({ bool: false, id: null });
+            }
+            toast(data.message, toastConfig);
+        }
+        const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
+
+        await dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
+    };
     return (
         <div className="fixed inset-0 z-30 h-[100vh] w-[100vw] ">
             <div className="fixed z-10  h-full w-full" onClick={handleOutsideClick}></div>
@@ -281,9 +372,14 @@ const MoreOptionMenuModal = ({
                                 <Delete />
                                 <div className="font-bold ">Delete</div>
                             </button>
-                            <button className="flex w-full items-center gap-3 rounded-xl p-3  hover:bg-gray-50">
+                            <button
+                                className="flex w-full items-center gap-3 rounded-xl p-3  hover:bg-gray-50"
+                                onClick={() => {
+                                    pinHandler(infoToMoreOptionModal.handle, infoToMoreOptionModal.postID);
+                                    onCloseMoreOptionModal();
+                                }}>
                                 <PushPin />
-                                <div className="font-bold ">Pin to your Profile</div>
+                                <div className="font-bold ">{state.user.pinnedTweet && state.user.pinnedTweet === infoToMoreOptionModal.postID ? "Unpin from profile" : "Pin to your Profile"}</div>
                             </button>
                         </>
                     ) : (

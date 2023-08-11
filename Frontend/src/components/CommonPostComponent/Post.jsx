@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect, useRef, useState } from "react";
-import { Comments, Retweets, ThreeDots } from "../SVGs/SVGs";
+import { Comments, PushPin, Retweets, ThreeDots } from "../SVGs/SVGs";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import PhotoGallery from "./PhotoGallery";
 import "./AnimationUsedInPostAndTweetDetail.css";
@@ -45,6 +45,8 @@ const Post = ({
     threadChildren,
     mentions,
     ownerRetweet,
+    isPinnedTweet,
+    setIsPinned,
     isCommentRetweet,
     isCommentReply,
     dispatchBookmark,
@@ -194,6 +196,12 @@ const Post = ({
                 <div className="mx-10 mt-1 flex items-center gap-4 text-[0.86rem] font-bold text-gray-500">
                     <Retweets />
                     <div>{ownerRetweet.handle === state.user.handle ? `You retweeted` : `${ownerRetweet.name} retweeted`}</div>
+                </div>
+            )}
+            {isPinnedTweet?.bool && isPinnedTweet?.id === postId && !ownerRetweet && (
+                <div className="mx-10 mt-1 flex items-center gap-4 text-[0.86rem] font-bold text-gray-500">
+                    <PushPin />
+                    <div>Pinned</div>
                 </div>
             )}
             <div
@@ -416,6 +424,7 @@ const Post = ({
                     fromMediaLikesProfile={fromMediaLikesProfile}
                     fromProfileRepliesParentPost={fromProfileRepliesParentPost}
                     fromProfileRepliesComment={fromProfileRepliesComment}
+                    setIsPinned={setIsPinned}
                 />
             </Suspense>
         </div>

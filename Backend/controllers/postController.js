@@ -190,6 +190,7 @@ exports.deletePost = async (req, res, next) => {
         if (!post) {
             return next(new ErrorHandler("Post not found", 404));
         }
+
         await recursivePostDelete(post);
 
         return res.status(200).json({
@@ -221,6 +222,9 @@ const recursivePostDelete = async (post) => {
     }
     // Remove the post from the user's posts array
     user.posts = user.posts.filter((item) => item._id.toString() !== post._id.toString());
+    if (user.pinnedTweet?.toString() === post._id.toString()) {
+        user.pinnedTweet = null;
+    }
     await user.save();
 
     //delete all retweets instances for the post
@@ -501,9 +505,30 @@ exports.getPostsofUser = async (req, res, next) => {
     try {
         const userArr = await Users.find({ handle: req.params.id }); //id is handle here
         const user = userArr[0];
+        let pinnedTweet;
 
         if (!user) {
             return next(new ErrorHandler("No such user", 400));
+        }
+
+        if (user.pinnedTweet) {
+            pinnedTweet = await Posts.findById(user.pinnedTweet)
+                .populate({
+                    path: "owner",
+                    select: "handle name profile",
+                })
+                .populate({
+                    path: "likes",
+                    select: "_id handle name profile",
+                })
+                .populate({
+                    path: "retweets",
+                    select: "_id handle name profile",
+                })
+                .populate({
+                    path: "bookmarks",
+                    select: "_id",
+                });
         }
 
         const posts = await Posts.find({ owner: { $in: user._id }, parent: null })
@@ -541,12 +566,20 @@ exports.getPostsofUser = async (req, res, next) => {
                 select: "_id name handle",
             });
 
-        const combined = [...retweets, ...posts];
+        let combined = [...posts];
+
+        if (pinnedTweet) {
+            const pinnedIndex = combined.findIndex((tweet) => tweet._id.toString() === pinnedTweet._id.toString());
+            if (pinnedIndex !== -1) {
+                combined.splice(pinnedIndex, 1);
+            }
+        }
+        combined = [...retweets, ...combined];
         combined.sort((a, b) => b.createdAt - a.createdAt);
 
         res.status(200).json({
             success: true,
-            posts: combined,
+            posts: pinnedTweet ? [pinnedTweet, ...combined] : combined,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));

@@ -305,6 +305,7 @@ exports.myProfile = async (req, res, next) => {
         const userRetweetsNumber = await Retweets.find({ userRetweeted: req.user._id });
         const userCommentsNumber = await Comments.find({ owner: req.user._id });
         const total = userPostsNumber.length + userRetweetsNumber.length + userCommentsNumber.length;
+
         res.status(200).json({
             success: true,
             myProfile,
@@ -414,6 +415,93 @@ exports.followersOfUser = async (req, res, next) => {
             success: true,
             followers,
             userProfile: userProfile[0],
+        });
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};
+
+exports.createPinnedTweet = async (req, res, next) => {
+    try {
+        const handle = req.params.id;
+        const tweetToBePinned = req.params.tweetId;
+
+        const user = await Users.findOne({ handle });
+
+        if (!user) {
+            return next(new ErrorHandler("No such user", 404));
+        }
+
+        const tweet = await Posts.findById(tweetToBePinned);
+
+        if (!tweet) {
+            return next(new ErrorHandler("No such Tweet", 404));
+        }
+
+        user.pinnedTweet = tweetToBePinned;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Your Tweet was pinned to your profile.",
+        });
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};
+
+exports.removePinnedTweet = async (req, res, next) => {
+    try {
+        const handle = req.params.id;
+        const tweetToBePinned = req.params.tweetId;
+
+        const user = await Users.findOne({ handle });
+
+        if (!user) {
+            return next(new ErrorHandler("No such user", 404));
+        }
+
+        const tweet = await Posts.findById(tweetToBePinned);
+
+        if (!tweet) {
+            return next(new ErrorHandler("No such Tweet", 404));
+        }
+
+        user.pinnedTweet = null;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Your Tweet was unpinned from your profile",
+        });
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};
+exports.updatePinnedTweet = async (req, res, next) => {
+    try {
+        const handle = req.params.id;
+        const tweetToBePinned = req.params.tweetId;
+
+        const user = await Users.findOne({ handle });
+
+        if (!user) {
+            return next(new ErrorHandler("No such user", 404));
+        }
+
+        const tweet = await Posts.findById(tweetToBePinned);
+
+        if (!tweet) {
+            return next(new ErrorHandler("No such Tweet", 404));
+        }
+        if (user.pinnedTweet && user.pinnedTweet !== req.params.tweetId) {
+            user.pinnedTweet = tweetToBePinned;
+            await user.save();
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Your Tweet was pinned to your profile.",
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
