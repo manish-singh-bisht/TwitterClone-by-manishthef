@@ -159,7 +159,13 @@ const TweetDetail = () => {
                 if (mentions.includes(nextPart?.toString())) {
                     renderedComment.push(
                         <span key={i} className="text-blue-500">
-                            {mergedPart}
+                            <Link
+                                to={`/Profile/${nextPart}`}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                }}>
+                                {mergedPart}
+                            </Link>
                         </span>
                     );
                 } else {
