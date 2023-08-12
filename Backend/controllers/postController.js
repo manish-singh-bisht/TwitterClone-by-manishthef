@@ -109,7 +109,7 @@ exports.findPostById = async (req, res, next) => {
             .populate({
                 path: "comments",
                 populate: [
-                    { path: "owner", select: "name handle profile _id" },
+                    { path: "owner", select: "name handle profile _id description" },
                     { path: "post" },
                     { path: "likes", select: "_id" },
                     { path: "retweets", select: "_id" },
@@ -117,11 +117,11 @@ exports.findPostById = async (req, res, next) => {
                     {
                         path: "children",
                         populate: [
-                            { path: "owner", select: "name handle profile _id" },
+                            { path: "owner", select: "name handle profile _id description" },
                             { path: "likes", select: "_id" },
                             { path: "retweets", select: "_id" },
                             { path: "bookmarks", select: "_id" },
-                            { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
+                            { path: "children", populate: [{ path: "owner", select: "name handle profile _id description" }] },
                         ],
                     },
                 ],
@@ -285,7 +285,7 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
         const posts = await Posts.find({ owner: { $in: [...user.following, user._id] }, parent: null })
             .populate({
                 path: "owner",
-                select: "handle name profile",
+                select: "handle name profile _id description",
             })
             .populate({
                 path: "likes",
@@ -306,7 +306,7 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
             .populate({
                 path: "originalPost",
                 populate: [
-                    { path: "owner", select: "handle name profile" },
+                    { path: "owner", select: "handle name profile _id description" },
                     { path: "likes", select: "_id handle name profile" },
                     { path: "bookmarks", select: "_id" },
                     { path: "retweets", select: "_id handle name profile" },
@@ -365,11 +365,11 @@ async function fetchThread(postId, thread, userHandle) {
                 {
                     path: "children",
                     populate: [
-                        { path: "owner", select: "name handle profile _id" },
+                        { path: "owner", select: "name handle profile _id description" },
                         { path: "likes", select: "_id" },
                         { path: "retweets", select: "_id" },
                         { path: "bookmarks", select: "_id" },
-                        { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
+                        { path: "children", populate: [{ path: "owner", select: "name handle profile _id description" }] },
                     ],
                 },
             ],
@@ -436,7 +436,7 @@ exports.getBookMarks = async (req, res, next) => {
         const posts = await Posts.find({ bookmarks: user._id })
             .populate({
                 path: "owner",
-                select: "handle name profile",
+                select: "handle name profile _id description",
             })
             .populate({
                 path: "likes",
@@ -455,7 +455,7 @@ exports.getBookMarks = async (req, res, next) => {
         const comments = await Comments.find({ bookmarks: user._id })
             .populate({
                 path: "owner",
-                select: "handle name profile",
+                select: "handle name profile _id description",
             })
             .populate({
                 path: "likes",
@@ -515,7 +515,7 @@ exports.getPostsofUser = async (req, res, next) => {
             pinnedTweet = await Posts.findById(user.pinnedTweet)
                 .populate({
                     path: "owner",
-                    select: "handle name profile",
+                    select: "handle name profile _id description",
                 })
                 .populate({
                     path: "likes",
@@ -535,7 +535,7 @@ exports.getPostsofUser = async (req, res, next) => {
 
             .populate({
                 path: "owner",
-                select: "handle name profile",
+                select: "handle name profile _id description",
             })
             .populate({
                 path: "likes",
@@ -555,7 +555,7 @@ exports.getPostsofUser = async (req, res, next) => {
             .populate({
                 path: "originalPost",
                 populate: [
-                    { path: "owner", select: "handle name profile" },
+                    { path: "owner", select: "handle name profile _id description" },
                     { path: "likes", select: "_id handle name profile" },
                     { path: "bookmarks", select: "_id" },
                     { path: "retweets", select: "_id handle name profile" },
@@ -597,7 +597,7 @@ exports.getPostLikedByUser = async (req, res, next) => {
 
             .populate({
                 path: "owner",
-                select: "handle name profile",
+                select: "handle name profile _id description",
             })
             .populate({
                 path: "likes",
@@ -616,7 +616,7 @@ exports.getPostLikedByUser = async (req, res, next) => {
         const comments = await Comments.find({ likes: { $in: user._id } })
             .populate({
                 path: "owner",
-                select: "handle name profile",
+                select: "handle name profile _id description",
             })
             .populate({
                 path: "likes",
@@ -658,7 +658,7 @@ exports.getPostOfUserWithMedia = async (req, res, next) => {
         })
             .populate({
                 path: "owner",
-                select: "handle name profile",
+                select: "handle name profile _id description",
             })
             .populate({
                 path: "likes",
@@ -679,7 +679,7 @@ exports.getPostOfUserWithMedia = async (req, res, next) => {
         })
             .populate({
                 path: "owner",
-                select: "handle name profile",
+                select: "handle name profile _id description",
             })
             .populate({
                 path: "likes",

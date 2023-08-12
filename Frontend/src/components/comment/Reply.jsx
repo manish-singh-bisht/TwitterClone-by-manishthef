@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useState } from "react";
 import Avatar from "../Avatar/Avatar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Comments, ThreeDots } from "../SVGs/SVGs";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import CommentLikeUnlike from "../../context/Actions/CommentLikeUnlike";
@@ -12,10 +12,14 @@ import Retweet from "../CommonPostComponent/Retweet";
 import BookMark from "../CommonPostComponent/BookMark";
 import RetweetComment from "../../context/Actions/RetweetComment";
 import CommentBookmark from "../../context/Actions/CommentBookmark";
+import HoverProfileCard from "../Profile/HoverProfileCard";
+import useHoverCard from "../../CustomHooks/useHoverCard";
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) => {
     const { dispatchCommentLikeUnlike, state, ACTIONS, dispatchRetweetComment, dispatchBookmarkComment } = useGlobalContext();
+    const { isHovered, handleMouseEnter, handleMouseLeave } = useHoverCard();
+
     const [commentt, setCommentt] = useState();
 
     ////Modal for more option
@@ -55,6 +59,11 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
         default:
             break;
     }
+    const navigate = useNavigate();
+
+    const navigateHandlerToProfile = (handle) => {
+        navigate(`/Profile/${handle}`);
+    };
     useEffect(() => {
         // Regex pattern to find mentions and make them blue,in the display after it is posted
         const mentionRegex = /(@)(\w+)/g;
@@ -102,17 +111,20 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
 
                         <div className="relative mr-2 flex w-[87%] flex-col  gap-2 ">
                             <div className="flex">
-                                <Link
-                                    to={`/Profile/${reply.owner.handle}`}
+                                <div
                                     onClick={(e) => {
                                         e.stopPropagation();
+                                        navigateHandlerToProfile(reply.owner.handle);
                                     }}
+                                    onMouseEnter={handleMouseEnter}
+                                    onMouseLeave={handleMouseLeave}
                                     className="absolute flex w-fit  items-center gap-1 text-[1.1rem] font-bold ">
                                     <span className="hover:underline">{reply.owner.name}</span>
                                     <span className=" text-[0.9rem] font-normal text-gray-700">{`@${reply.owner.handle}`}</span>
                                     <span className="mt-[-0.4rem] flex items-center justify-center  text-[0.8rem]">.</span>
                                     <span className="flex text-[0.9rem] font-normal text-gray-700">{`${formattedTimeReply}`}</span>
-                                </Link>
+                                    {isHovered && <HoverProfileCard description={reply.owner.description} name={reply.owner.name} handle={reply.owner.handle} ownerId={reply.owner._id} profile={ownerImage} />}
+                                </div>
                                 <div
                                     className="ml-[auto] -mr-[0.7rem] rounded-full hover:bg-blue-100 hover:text-blue-500 "
                                     onClick={(e) => {
@@ -140,7 +152,7 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
                         </div>
                     </div>
 
-                    <div className="my-4 ml-[4.25rem] flex w-[87.5%] gap-20   border-2">
+                    <div className="-mt-3 mb-2 ml-[4.25rem] flex w-[87.5%] gap-20   ">
                         <div className="group flex w-[3rem] items-center justify-around">
                             <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
                                 <Comments />

@@ -104,6 +104,7 @@ const BookMarkPage = () => {
                                     ownerId={post.owner._id}
                                     handle={post.owner.handle}
                                     timeCreated={post.createdAt}
+                                    description={post.owner.description}
                                     handler={post.comment ? CommentLikeUnlike : LikeUnlike}
                                     dispatch={post.comment ? dispatchCommentLikeUnlike : dispatchLikeUnlike}
                                     dispatchRetweet={post.comment ? dispatchRetweetComment : dispatchRetweetPost}

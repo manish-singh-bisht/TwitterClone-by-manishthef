@@ -278,6 +278,7 @@ const ProfilePage = () => {
                                                         ownerRetweet={ownerRetweet}
                                                         isCommentRetweet={item.originalPost?.comment ? true : false}
                                                         likes={post.likes}
+                                                        description={post.owner.description}
                                                         postImage={imageInPost}
                                                         retweets={post.retweets}
                                                         comments={item.originalPost?.comment ? post.children : post.comments}
@@ -328,6 +329,7 @@ const ProfilePage = () => {
                                                                         postImage={commentParentPost.images ? commentParentPost.images : null}
                                                                         commentsChildren={commentParentPost.comments}
                                                                         ownerName={commentParentPost.owner.name}
+                                                                        description={commentParentPost.owner.description}
                                                                         ownerImage={
                                                                             commentParentPost.owner.profile && commentParentPost.owner.profile.image && commentParentPost.owner.profile.image.url ? commentParentPost.owner.profile.image.url : null
                                                                         }
@@ -361,6 +363,7 @@ const ProfilePage = () => {
                                                             retweets={post.retweets}
                                                             comments={item.originalPost?.tweet ? post.comments : post.children}
                                                             ownerName={post.owner.name}
+                                                            description={post.owner.description}
                                                             ownerImage={ownerImage}
                                                             ownerId={post.owner._id}
                                                             handle={post.owner.handle}
@@ -402,6 +405,7 @@ const ProfilePage = () => {
                                                         ownerImage={ownerImage}
                                                         ownerId={post.owner._id}
                                                         handle={post.owner.handle}
+                                                        description={post.owner.description}
                                                         timeCreated={post.createdAt}
                                                         handler={post.comment ? CommentLikeUnlike : LikeUnlike}
                                                         dispatch={post.comment ? dispatchCommentLikeUnlike : dispatchLikeUnlike}

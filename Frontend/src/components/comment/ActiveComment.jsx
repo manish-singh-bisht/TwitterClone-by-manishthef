@@ -2,13 +2,15 @@ import React, { Suspense, forwardRef, useCallback, useEffect, useState } from "r
 import useAnimation from "../../CustomHooks/useAnimation";
 import { usePostTimeInTweetDetail } from "../../CustomHooks/usePostTime";
 import { Bookmark, Comments, HeartLike, HeartUnlike, Retweets, RetweetsGreen, ThreeDots, UndoBookmark } from "../SVGs/SVGs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Avatar from "../Avatar/Avatar";
 import PhotoGallery from "../CommonPostComponent/PhotoGallery";
 import CommentBox from "./CommentBox";
 import ModalForLikesRetweets from "../Modal/ModalForLikesRetweets";
 import Loader from "../Loader/Loader";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
+import useHoverCard from "../../CustomHooks/useHoverCard";
+import HoverProfileCard from "../Profile/HoverProfileCard";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -16,6 +18,7 @@ const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModa
 
 const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
     const { state, setUsersForRightSidebar } = useGlobalContext();
+    const { isHovered, handleMouseEnter, handleMouseLeave } = useHoverCard();
 
     //Modal for more option
     const [visibility, setVisibility] = useState(false);
@@ -67,6 +70,11 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
     const [commentt, setCommentt] = useState();
     const [mentionHandleCollection, setMentionHandleCollection] = useState([]);
     const [photos, setPhotos] = useState();
+
+    const navigate = useNavigate();
+    const navigateHandlerToProfile = (handle) => {
+        navigate(`/Profile/${handle}`);
+    };
 
     const fetchData = useCallback(async () => {
         const { data } = await axios.get(`http://localhost:4000/api/v1/comment/${commentId}`, { withCredentials: true });
@@ -234,10 +242,28 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
 
                             <div className=" flex h-fit w-full flex-col gap-2  ">
                                 <div className="flex">
-                                    <Link to={`/Profile/${comment.owner.handle}`} className="flex w-fit flex-col  text-[1.1rem] font-bold ">
+                                    <div
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            navigateHandlerToProfile(comment.owner.handle);
+                                        }}
+                                        className="flex w-fit flex-col  text-[1.1rem] font-bold "
+                                        onMouseEnter={handleMouseEnter}
+                                        onMouseLeave={handleMouseLeave}>
                                         <span className="hover:underline">{comment.owner.name}</span>
                                         <span className="mt-[-0.3rem] text-[0.9rem] font-normal text-gray-700">{`@${comment.owner.handle}`}</span>
-                                    </Link>
+                                        {isHovered && (
+                                            <div className="mt-[-15rem]">
+                                                <HoverProfileCard
+                                                    description={comment.owner.description}
+                                                    name={comment.owner.name}
+                                                    handle={comment.owner.handle}
+                                                    ownerId={comment.owner._id}
+                                                    profile={comment.owner.profile && comment.owner.profile.image && comment.owner.profile.image.url ? comment.owner.profile.image.url : null}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
                                     <div
                                         className="ml-auto mr-[0.35rem] h-min cursor-pointer  rounded-full hover:bg-blue-100  hover:text-blue-500 "
                                         onClick={(e) => {

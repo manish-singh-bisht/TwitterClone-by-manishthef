@@ -12,6 +12,8 @@ import Avatar from "../Avatar/Avatar";
 import PhotoGallery from "../CommonPostComponent/PhotoGallery";
 import RetweetPost from "../../context/Actions/RetweetPost";
 import PostBookmark from "../../context/Actions/PostBookmark";
+import useHoverCard from "../../CustomHooks/useHoverCard";
+import HoverProfileCard from "../Profile/HoverProfileCard";
 
 const ModalForLikesRetweets = React.lazy(() => import("../Modal/ModalForLikesRetweets"));
 const CommentCard = React.lazy(() => import("../comment/CommentCard"));
@@ -19,6 +21,7 @@ const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModa
 
 const TweetDetail = () => {
     const { ACTIONS, dispatchLikeUnlike: dispatch, state, stateComment, stateCommentDelete, dispatchRetweetPost: dispatchRetweet, dispatchBookmarkTweet: dispatchBookmark, setUsersForRightSidebar, usersForRightSidebar } = useGlobalContext();
+    const { isHovered, handleMouseEnter, handleMouseLeave } = useHoverCard();
 
     //Modal for more option
     const [visibility, setVisibility] = useState(false);
@@ -67,7 +70,7 @@ const TweetDetail = () => {
 
     //using data that was sent in the state  from Post
     const location = useLocation();
-    const { tweet, ownerName, ownerId, handle, timeCreated, profile, postImage, mentions, isThread } = location.state;
+    const { tweet, ownerName, ownerId, handle, timeCreated, profile, postImage, mentions, isThread, description } = location.state;
 
     const formattedTime = usePostTimeInTweetDetail(Date.parse(timeCreated));
 
@@ -228,6 +231,9 @@ const TweetDetail = () => {
             break;
     }
 
+    const navigateHandlerToProfile = (handle) => {
+        navigate(`/Profile/${handle}`);
+    };
     return (
         <main className="grid grid-cols-[44vw_auto]   ">
             <div className="flex max-h-[full] min-h-[1400px] flex-col  border-l  border-r">
@@ -247,10 +253,22 @@ const TweetDetail = () => {
 
                         <div className="flex h-fit w-full  flex-col ">
                             <div className="flex ">
-                                <Link to={`/Profile/${handle}`} className="flex w-fit flex-col  text-[1.1rem] font-bold ">
+                                <div
+                                    className="flex w-fit flex-col  text-[1.1rem] font-bold "
+                                    onMouseEnter={handleMouseEnter}
+                                    onMouseLeave={handleMouseLeave}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigateHandlerToProfile(handle);
+                                    }}>
                                     <span className="hover:underline">{ownerName}</span>
                                     <span className="mt-[-0.3rem] text-[0.9rem] font-normal text-gray-700">{`@${handle}`}</span>
-                                </Link>
+                                    {isHovered && (
+                                        <div className="mt-[-15rem]">
+                                            <HoverProfileCard description={description} name={ownerName} handle={handle} ownerId={ownerId} profile={profile} />
+                                        </div>
+                                    )}
+                                </div>
                                 <div
                                     className="ml-auto mr-[0.25rem] h-min cursor-pointer  rounded-full hover:bg-blue-100 hover:text-blue-500"
                                     onClick={(e) => {

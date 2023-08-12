@@ -11,6 +11,8 @@ import Reply from "../comment/Reply";
 import Loader from "../Loader/Loader";
 import Retweet from "./Retweet";
 import BookMark from "./BookMark";
+import useHoverCard from "../../CustomHooks/useHoverCard";
+import HoverProfileCard from "../Profile/HoverProfileCard";
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const Post = ({
@@ -19,6 +21,7 @@ const Post = ({
     tweet,
     ownerName,
     ownerId,
+    description,
     ownerImage: profile,
     postImage,
     handle,
@@ -61,6 +64,7 @@ const Post = ({
     fromProfileRepliesComment,
 }) => {
     const formattedTime = usePostTime(Date.parse(timeCreated));
+    const { isHovered, handleMouseEnter, handleMouseLeave } = useHoverCard();
 
     const [showReplies, setShowReplies] = useState(false);
     const [replies, setReplies] = useState([]);
@@ -172,10 +176,16 @@ const Post = ({
             postImage: postImage,
             mentions: mentions,
             isThread: isThread,
+            description: description,
         };
         isParent && activeHandler(commentId);
         navigate(newUrl, { replace: true, state: stateObject });
     };
+
+    const navigateHandlerToProfile = (handle) => {
+        navigate(`/Profile/${handle}`);
+    };
+
     const replyHandler = async (childCommentId) => {
         const { data } = await axios.get(`http://localhost:4000/api/v1/comment/reply/${childCommentId}`, { withCredentials: true });
         setReplies(data.replies);
@@ -252,17 +262,20 @@ const Post = ({
                             : null
                     }>
                     <div className="flex  ">
-                        <Link
-                            to={`/Profile/${handle}`}
+                        <div
                             onClick={(e) => {
                                 e.stopPropagation();
+                                navigateHandlerToProfile(handle);
                             }}
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
                             className="absolute flex w-fit  items-center gap-1 text-[1.1rem] font-bold ">
                             <span className="hover:underline">{ownerName}</span>
                             <span className="text-[0.9rem] font-normal text-gray-700">{`@${handle}`}</span>
                             <span className="mt-[-0.4rem] flex items-center justify-center  text-[0.8rem]">.</span>
                             <span className="flex text-[0.9rem] font-normal text-gray-700">{`${formattedTime}`}</span>
-                        </Link>
+                            {isHovered && <HoverProfileCard description={description} name={ownerName} handle={handle} ownerId={ownerId} profile={profile} />}
+                        </div>
                         <div
                             className="ml-[auto] -mr-[0.7rem] rounded-full  hover:bg-blue-100 hover:text-blue-500 "
                             onClick={(e) => {
@@ -351,9 +364,10 @@ const Post = ({
                                     if ((fromCommentDetail && item2.owner._id === item.parent.owner && item2.owner._id !== item.owner._id) || (fromTweetDetail && item2.owner._id === item.post.owner)) {
                                         return (
                                             <div key={item2._id} className="relative ">
-                                                {((!showReplies && item2 !== isLastElement) || showReplies) && <div className="absolute left-[2.3rem] top-[4.3rem] h-[86%] border-2  "></div>}
+                                                {((!showReplies && item2._id !== isLastElement._id) || showReplies) && <div className="absolute left-[2.3rem] top-[4.3rem] h-[86%] border-2  "></div>}
 
                                                 <Reply
+                                                    key={item2._id}
                                                     reply={item2}
                                                     handleClick={handleClick}
                                                     setReplyIdHandler={(id) => {
@@ -369,7 +383,7 @@ const Post = ({
                                                             return (
                                                                 <div key={item3._id}>
                                                                     <button
-                                                                        className="w-full border-2 pl-[4.5rem] text-left text-blue-500 hover:bg-gray-50"
+                                                                        className="w-full  pl-[4.5rem] text-left text-blue-500 hover:bg-gray-200"
                                                                         onClick={() => {
                                                                             return replyHandler(item3._id);
                                                                         }}>
@@ -396,20 +410,18 @@ const Post = ({
                     const isLastElement = reply === replies[replies.length - 1];
 
                     return (
-                        <>
-                            <div className="relative -mt-[0.01rem]" key={reply._id}>
-                                {!isLastElement && <div className="absolute left-[2.3rem] top-[4.2rem] h-[86.5%] border-2 "></div>}
-                                <Reply
-                                    key={reply._id}
-                                    reply={reply}
-                                    handleClick={handleClick}
-                                    setReplyIdHandler={(id) => {
-                                        setReplyIdHandler(id);
-                                    }}
-                                    deleteReplyHandler={deleteReplyHandler}
-                                />
-                            </div>
-                        </>
+                        <div className="relative -mt-[0.01rem]" key={reply._id}>
+                            {!isLastElement && <div className="absolute left-[2.3rem] top-[4.2rem] h-[86.5%] border-2 "></div>}
+                            <Reply
+                                key={reply._id}
+                                reply={reply}
+                                handleClick={handleClick}
+                                setReplyIdHandler={(id) => {
+                                    setReplyIdHandler(id);
+                                }}
+                                deleteReplyHandler={deleteReplyHandler}
+                            />
+                        </div>
                     );
                 })}
             <hr className="w-full bg-gray-100" />

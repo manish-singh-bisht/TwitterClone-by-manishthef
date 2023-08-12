@@ -88,6 +88,7 @@ const Home = () => {
                                             ownerImage={ownerImage}
                                             ownerId={post.owner._id}
                                             handle={post.owner.handle}
+                                            description={post.owner.description}
                                             timeCreated={post.createdAt}
                                             handler={item.originalPost?.comment ? CommentLikeUnlike : LikeUnlike}
                                             dispatch={item.originalPost?.comment ? dispatchCommentLikeUnlike : dispatchLikeUnlike}

@@ -7,6 +7,7 @@ import Loader from "./components/Loader/Loader";
 import { useGlobalContext } from "./CustomHooks/useGlobalContext";
 import ExtendedMedia from "./components/CommonPostComponent/ExtendedMedia";
 import SidebarRight from "./components/Sidebar/SidebarRight";
+import HoverProfileCard from "./components/Profile/HoverProfileCard";
 
 const Home = React.lazy(() => import("./components/Home/Home"));
 const LoginSignUpMainPage = React.lazy(() => import("./components/Login_Register/LoginSignUpMainPage"));
@@ -46,7 +47,7 @@ const App = () => {
                             <Route exact path="/:ownerName/:postId" element={isAuthenticated ? <TweetDetail /> : <Navigate to="/login" replace />} />
                             <Route exact path="/:ownerName/comment/:commentId" element={isAuthenticated ? <CommentDetail /> : <Navigate to="/login" replace />} />
                             <Route exact path="/user/:ownerId" element={<Test />} />
-                            <Route exact path="/Explore" element={<Test />} />
+                            <Route exact path="/Explore" element={<HoverProfileCard />} />
                             <Route exact path="/test" element={<Test />} />
                             <Route exact path="/ExtendedMedia" element={<ExtendedMedia />} />
                             <Route exact path="/Profile/:userName" element={isAuthenticated ? <ProfilePage /> : <Navigate to="/login" replace />} />

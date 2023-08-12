@@ -255,7 +255,7 @@ exports.findCommentById = async (req, res, next) => {
             .populate({
                 path: "children",
                 populate: [
-                    { path: "owner", select: "name handle profile _id" },
+                    { path: "owner", select: "name handle profile _id description" },
                     { path: "likes", select: "_id" },
                     { path: "retweets", select: "_id" },
                     { path: "bookmarks", select: "_id" },
@@ -263,11 +263,11 @@ exports.findCommentById = async (req, res, next) => {
                     {
                         path: "children",
                         populate: [
-                            { path: "owner", select: "name handle profile _id" },
+                            { path: "owner", select: "name handle profile _id description" },
                             { path: "likes", select: "_id" },
                             { path: "retweets", select: "_id" },
                             { path: "bookmarks", select: "_id" },
-                            { path: "children", populate: [{ path: "owner", select: "name handle profile _id" }] },
+                            { path: "children", populate: [{ path: "owner", select: "name handle profile _id description" }] },
                         ],
                     },
                 ],
@@ -300,7 +300,7 @@ exports.findRepliesById = async (req, res, next) => {
 };
 async function fetchReplies(commentId, replies) {
     const comment = await Comments.findById(commentId)
-        .populate({ path: "owner", select: "_id handle profile name" })
+        .populate({ path: "owner", select: "_id description handle profile name" })
         .populate({ path: "likes", select: "_id handle profile name description" })
         .populate({
             path: "retweets",
@@ -328,7 +328,7 @@ async function mentionsHandleCollector(commentId, mentions, loggedInUserHandle) 
         .populate("owner post")
         .populate({
             path: "post",
-            populate: [{ path: "owner", select: "name handle profile _id" }],
+            populate: [{ path: "owner", select: "name handle profile _id description" }],
         });
 
     if (!comment) {
@@ -403,13 +403,13 @@ exports.getRepliesofUser = async (req, res, next) => {
                 populate: [
                     {
                         path: "owner",
-                        select: "_id name handle profile",
+                        select: "_id description name handle profile",
                     },
                 ],
             })
             .populate({
                 path: "owner",
-                select: "handle name profile",
+                select: "handle name profile _id description",
             })
             .populate({
                 path: "likes",
@@ -429,7 +429,7 @@ exports.getRepliesofUser = async (req, res, next) => {
             .populate({
                 path: "originalPost",
                 populate: [
-                    { path: "owner", select: "handle name profile" },
+                    { path: "owner", select: "handle name profile _id description" },
                     { path: "likes", select: "_id handle name profile" },
                     { path: "bookmarks", select: "_id" },
                     { path: "retweets", select: "_id handle name profile" },
