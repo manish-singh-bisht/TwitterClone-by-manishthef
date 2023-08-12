@@ -216,7 +216,7 @@ const Post = ({
                 <div className="mr-[0.5rem]">
                     <Avatar profile={profile} />
                 </div>
-                {(fromHome || fromProfile) && threadChildren && threadChildren.length > 0 && !isCommentRetweet && !isCommentReply && <div className="absolute left-[1.8rem] top-[3.65rem] h-full min-h-[2rem] w-fit border-2"></div>}
+                {(fromHome || fromProfile) && threadChildren && threadChildren.length > 0 && !isCommentRetweet && !isCommentReply && <div className="absolute left-[1.8rem] top-[3.65rem] z-0 h-[calc(100%-1.4rem)] min-h-[2rem] w-fit border-2"></div>}
                 {!fromHome &&
                     comment &&
                     comment.length > 0 &&
@@ -309,7 +309,7 @@ const Post = ({
             </div>
             {(fromHome || fromProfile) && threadChildren && threadChildren.length > 0 && !isCommentRetweet && !isCommentReply && (
                 <button
-                    className="flex h-12 w-full  items-center gap-2  hover:bg-gray-200"
+                    className=" flex h-12 w-full items-center  gap-2 hover:bg-gray-200"
                     onClick={(e) => {
                         e.stopPropagation();
                         handleClick(true);
