@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoadUserWhenToken from "./context/actions/LoadUserWhenToken";
 import { ToastContainer } from "react-toastify";
@@ -19,6 +19,7 @@ const ProfilePage = React.lazy(() => import("./components/Profile/ProfilePage"))
 const BookMarkPage = React.lazy(() => import("./components/BookMarkPage/BookMarkPage"));
 const Connect = React.lazy(() => import("./components/ConnectPeople/Connect"));
 const FollowersFollowingPage = React.lazy(() => import("./components/Profile/FollowersFollowingPage"));
+import OfflineComponent from "./components/Offline/OfflineComponent";
 
 const App = () => {
     const {
@@ -34,29 +35,52 @@ const App = () => {
         loadUser();
     }, []);
 
+    const [isOnline, setIsOnline] = useState(true);
+
+    useEffect(() => {
+        const handleOnline = () => {
+            setIsOnline(true);
+        };
+
+        const handleOffline = () => {
+            setIsOnline(false);
+        };
+
+        window.addEventListener("online", handleOnline);
+        window.addEventListener("offline", handleOffline);
+
+        return () => {
+            window.removeEventListener("online", handleOnline);
+            window.removeEventListener("offline", handleOffline);
+        };
+    }, []);
     return (
         <BrowserRouter>
             <div className={`${isAuthenticated ? "grid grid-cols-[21rem_44vw_auto] gap-9 " : ""}`}>
-                <div className="">{isAuthenticated && <Sidebar />}</div>
-                <div>
-                    <Suspense fallback={<Loader />}>
-                        <Routes>
-                            <Route exact path="/" element={isAuthenticated ? <Home /> : <LoginSignUpMainPage />} />
-                            <Route exact path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <LoginSignUpMainPage />} />
-                            <Route exact path="/signUp" element={isAuthenticated ? <Navigate to="/" replace /> : <LoginSignUpMainPage />} />
-                            <Route exact path="/:ownerName/:postId" element={isAuthenticated ? <TweetDetail /> : <Navigate to="/login" replace />} />
-                            <Route exact path="/:ownerName/comment/:commentId" element={isAuthenticated ? <CommentDetail /> : <Navigate to="/login" replace />} />
-                            <Route exact path="/user/:ownerId" element={<Test />} />
-                            <Route exact path="/Explore" element={<HoverProfileCard />} />
-                            <Route exact path="/test" element={<Test />} />
-                            <Route exact path="/ExtendedMedia" element={<ExtendedMedia />} />
-                            <Route exact path="/Profile/:userName" element={isAuthenticated ? <ProfilePage /> : <Navigate to="/login" replace />} />
-                            <Route exact path="/Connect" element={isAuthenticated ? <Connect /> : <Navigate to="/login" replace />} />
-                            <Route exact path="/Bookmark" element={isAuthenticated ? <BookMarkPage /> : <Navigate to="/login" replace />} />
-                            <Route exact path="/FollowersFollowingPage/:handle" element={isAuthenticated ? <FollowersFollowingPage /> : <Navigate to="/login" replace />} />
-                        </Routes>
-                    </Suspense>
-                </div>
+                <div className="">{isAuthenticated && <Sidebar isOnline={isOnline} />}</div>
+                {isOnline ? (
+                    <div>
+                        <Suspense fallback={<Loader />}>
+                            <Routes>
+                                <Route exact path="/" element={isAuthenticated ? <Home /> : <LoginSignUpMainPage />} />
+                                <Route exact path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <LoginSignUpMainPage />} />
+                                <Route exact path="/signUp" element={isAuthenticated ? <Navigate to="/" replace /> : <LoginSignUpMainPage />} />
+                                <Route exact path="/:ownerName/:postId" element={isAuthenticated ? <TweetDetail /> : <Navigate to="/login" replace />} />
+                                <Route exact path="/:ownerName/comment/:commentId" element={isAuthenticated ? <CommentDetail /> : <Navigate to="/login" replace />} />
+                                <Route exact path="/user/:ownerId" element={<Test />} />
+                                <Route exact path="/Explore" element={<HoverProfileCard />} />
+                                <Route exact path="/test" element={<Test />} />
+                                <Route exact path="/ExtendedMedia" element={<ExtendedMedia />} />
+                                <Route exact path="/Profile/:userName" element={isAuthenticated ? <ProfilePage /> : <Navigate to="/login" replace />} />
+                                <Route exact path="/Connect" element={isAuthenticated ? <Connect /> : <Navigate to="/login" replace />} />
+                                <Route exact path="/Bookmark" element={isAuthenticated ? <BookMarkPage /> : <Navigate to="/login" replace />} />
+                                <Route exact path="/FollowersFollowingPage/:handle" element={isAuthenticated ? <FollowersFollowingPage /> : <Navigate to="/login" replace />} />
+                            </Routes>
+                        </Suspense>
+                    </div>
+                ) : (
+                    <OfflineComponent />
+                )}
                 <div className="">{isAuthenticated && <SidebarRight />}</div>
             </div>
             <ToastContainer />

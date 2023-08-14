@@ -27,7 +27,7 @@ import Avatar from "../Avatar/Avatar";
 const TweetModal = React.lazy(() => import("../Modal/TweetModal"));
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
-const Sidebar = () => {
+const Sidebar = ({ isOnline }) => {
     const [tab, setTab] = useState(window.location.pathname);
     const [isTweetBoxOpen, setIsTweetBoxOpen] = useState(false);
     const { ACTIONS, dispatch, state } = useGlobalContext();
@@ -94,8 +94,10 @@ const Sidebar = () => {
                 <div
                     className="flex h-12 w-64 items-center justify-center rounded-3xl bg-blue-500 text-[1.2rem] font-bold text-white hover:bg-blue-600 active:bg-blue-800 "
                     onClick={() => {
-                        setIsTweetBoxOpen(true);
-                        document.body.style.overflow = "hidden"; //makes the back of modal not move  i.e set overflow to hidden
+                        if (isOnline) {
+                            setIsTweetBoxOpen(true);
+                            document.body.style.overflow = "hidden";
+                        }
                     }}>
                     Tweet
                 </div>
@@ -104,12 +106,14 @@ const Sidebar = () => {
                 ref={logoutBox}
                 className=" mx-[0.4rem] mb-14   flex  min-h-[4.5rem] w-[15.5rem] cursor-pointer  items-center gap-1 rounded-[24rem]  hover:bg-gray-100"
                 onClick={() => {
-                    setVisibilityMoreOptionModal(true);
-                    document.body.style.overflow = "hidden";
-                    const buttonRect = logoutBox.current.getBoundingClientRect();
-                    const top = buttonRect.top;
-                    const left = buttonRect.left;
-                    setButtonPosition({ top, left });
+                    if (isOnline) {
+                        setVisibilityMoreOptionModal(true);
+                        document.body.style.overflow = "hidden";
+                        const buttonRect = logoutBox.current.getBoundingClientRect();
+                        const top = buttonRect.top;
+                        const left = buttonRect.left;
+                        setButtonPosition({ top, left });
+                    }
                 }}>
                 <div className="w-fit">
                     <Avatar profile={state.user.profile && state.user.profile.image && state.user.profile.image.url ? state.user.profile.image.url : null} />
