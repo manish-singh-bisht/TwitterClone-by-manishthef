@@ -80,7 +80,7 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
 
                 if (reply.mentions.includes(nextPart?.toString())) {
                     renderedComment.push(
-                        <span key={i} className="text-blue-500">
+                        <span key={i} className="text-blue-500 hover:underline">
                             <Link
                                 to={`/Profile/${nextPart}`}
                                 onClick={(e) => {
