@@ -38,6 +38,9 @@ async function pagination(model, options = {}, req) {
     if (options.populate) {
         query.populate(options.populate);
     }
+    if (options.select) {
+        query.select(options.select);
+    }
 
     results.data = await query;
 
@@ -409,10 +412,17 @@ exports.searchUser = async (req, res, next) => {
 //gets all users in database
 exports.getAllUsers = async (req, res, next) => {
     try {
-        const users = await Users.find().select("handle name _id description profile");
+        const users = await pagination(
+            Users,
+            {
+                select: "handle name _id description profile",
+            },
+            req
+        );
+
         res.status(200).json({
             success: true,
-            users,
+            users: users.data,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
@@ -432,6 +442,7 @@ exports.followingOfUser = async (req, res, next) => {
                 query: {
                     followers: { $in: [id] },
                 },
+                select: "handle name _id description profile",
             },
             req
         );
@@ -459,6 +470,7 @@ exports.followersOfUser = async (req, res, next) => {
                 query: {
                     following: { $in: [id] },
                 },
+                select: "handle name _id description profile",
             },
             req
         );

@@ -264,7 +264,7 @@ const TweetDetail = () => {
                                     <span className="hover:underline">{ownerName}</span>
                                     <span className="mt-[-0.3rem] text-[0.9rem] font-normal text-gray-700">{`@${handle}`}</span>
                                     {isHovered && (
-                                        <div className="mt-[-15rem]">
+                                        <div className="">
                                             <HoverProfileCard description={description} name={ownerName} handle={handle} ownerId={ownerId} profile={profile} />
                                         </div>
                                     )}

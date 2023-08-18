@@ -13,6 +13,7 @@ import RetweetPost from "../../context/Actions/RetweetPost";
 import CommentBookmark from "../../context/Actions/CommentBookmark";
 import PostBookmark from "../../context/Actions/PostBookmark";
 import FollowUser from "../../context/Actions/FollowUser";
+import InfiniteScrollWrapper from "../CommonPostComponent/InfiniteScrollWrapper";
 
 const UpdateModal = React.lazy(() => import("../Modal/UpdateModal"));
 
@@ -35,18 +36,20 @@ const ProfilePage = () => {
         navigate(-1);
     };
 
+    const fetchDataForButton = async (label, endpoint) => {
+        setActiveButton(label);
+        setloading(true);
+        const { data } = await axios.get(endpoint, { withCredentials: true });
+        setDataArray(data.posts);
+        setloading(false);
+    };
+
     useEffect(() => {
         window.scrollTo(0, 0);
         document.body.style.overflow = "unset";
         setUsersForRightSidebar(null);
 
-        const getTweets = async (userHandle) => {
-            setActiveButton("Tweets");
-            setloading(true);
-            const { data } = await axios.get(`http://localhost:4000/api/v1/getTweets/${userHandle}`, { withCredentials: true });
-            setDataArray(data.posts);
-            setloading(false);
-        };
+        const getTweets = (userHandle) => fetchDataForButton("Tweets", `http://localhost:4000/api/v1/getTweets/${userHandle}`);
 
         const getProfileUser = async (userHandle) => {
             const { data } = await axios.get(`http://localhost:4000/api/v1/user/${userHandle}`, { withCredentials: true });
@@ -77,35 +80,17 @@ const ProfilePage = () => {
         setVisibility(false);
         document.body.style.overflow = "unset";
     };
-    const tweetButtonHandler = async () => {
-        setActiveButton("Tweets");
-        setloading(true);
-        const { data } = await axios.get(`http://localhost:4000/api/v1/getTweets/${userHandle}`, { withCredentials: true });
-        setDataArray(data.posts);
-        setUser(state.user);
-        setloading(false);
-    };
-    const replyButtonHandler = async () => {
-        setActiveButton("Replies");
-        setloading(true);
-        const { data } = await axios.get(`http://localhost:4000/api/v1/getReply/${userHandle}`, { withCredentials: true });
-        setDataArray(data.posts);
-        setloading(false);
-    };
-    const mediaButtonHandler = async () => {
-        setActiveButton("Media");
-        setloading(true);
-        const { data } = await axios.get(`http://localhost:4000/api/v1/getPostWithMedia/${userHandle}`, { withCredentials: true });
-        setDataArray(data.posts);
-        setloading(false);
-    };
-    const likedButtonHandler = async () => {
-        setActiveButton("Likes");
-        setloading(true);
-        const { data } = await axios.get(`http://localhost:4000/api/v1/getLikedPost/${userHandle}`, { withCredentials: true });
-        setDataArray(data.posts);
-        setloading(false);
-    };
+
+    const tweetButtonHandler = () => fetchDataForButton("Tweets", `http://localhost:4000/api/v1/getTweets/${userHandle}`);
+    const replyButtonHandler = () => fetchDataForButton("Replies", `http://localhost:4000/api/v1/getReply/${userHandle}`);
+    const mediaButtonHandler = () => fetchDataForButton("Media", `http://localhost:4000/api/v1/getPostWithMedia/${userHandle}`);
+    const likedButtonHandler = () => fetchDataForButton("Likes", `http://localhost:4000/api/v1/getLikedPost/${userHandle}`);
+
+    const url =
+        (activeButton === "Tweets" && `http://localhost:4000/api/v1/getTweets/${userHandle}?page=`) ||
+        (activeButton === "Replies" && `http://localhost:4000/api/v1/getReply/${userHandle}?page=`) ||
+        (activeButton === "Media" && `http://localhost:4000/api/v1/getPostWithMedia/${userHandle}?page=`) ||
+        (activeButton === "Likes" && `http://localhost:4000/api/v1/getLikedPost/${userHandle}?page=`);
 
     const followHandler = async (id) => {
         await FollowUser({ dispatchFollowUser, ACTIONS, id });
@@ -221,258 +206,196 @@ const ProfilePage = () => {
                                 </div>
                             </div>
                             <div className="mt-5 flex h-fit w-full items-center border-b">
-                                <button
-                                    className={`w-fit px-12  text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Tweets" ? "py-[1rem] text-gray-600" : "pt-[0.8rem] text-black"}`}
-                                    disabled={activeButton === "Tweets"}
-                                    onClick={() => {
-                                        tweetButtonHandler();
-                                    }}>
-                                    Tweets
-                                    {activeButton === "Tweets" && <div className="  mt-[0.8rem] w-[3.4rem] rounded-3xl border-[0.15rem] border-blue-500  "></div>}
-                                </button>
-                                <button
-                                    className={`w-fit px-12  text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Replies" ? "py-[1rem] text-gray-600" : "pt-[0.8rem] text-black"}`}
-                                    disabled={activeButton === "Replies"}
-                                    onClick={() => {
-                                        replyButtonHandler();
-                                    }}>
-                                    Replies{activeButton === "Replies" && <div className="  mt-[0.8rem] w-[3.4rem] rounded-3xl border-[0.15rem] border-blue-500  "></div>}
-                                </button>
-                                <button
-                                    className={`w-fit px-12  text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Media" ? "py-[1rem] text-gray-600" : "pt-[0.8rem] text-black"}`}
-                                    disabled={activeButton === "Media"}
-                                    onClick={() => {
-                                        mediaButtonHandler();
-                                    }}>
-                                    Media{activeButton === "Media" && <div className="  mt-[0.8rem] w-[3.4rem] rounded-3xl border-[0.15rem] border-blue-500  "></div>}
-                                </button>
-                                <button
-                                    className={`w-fit px-12  text-[1.05rem] font-semibold hover:bg-gray-200 ${activeButton !== "Likes" ? "py-[1rem] text-gray-600" : "pt-[0.8rem] text-black"}`}
-                                    disabled={activeButton === "Likes"}
-                                    onClick={() => {
-                                        likedButtonHandler();
-                                    }}>
-                                    Likes{activeButton === "Likes" && <div className="  mt-[0.8rem] w-[3.4rem] rounded-3xl border-[0.15rem] border-blue-500  "></div>}
-                                </button>
+                                <TabButton label="Tweets" active={activeButton === "Tweets"} onClick={tweetButtonHandler} />
+                                <TabButton label="Replies" active={activeButton === "Replies"} onClick={replyButtonHandler} />
+                                <TabButton label="Media" active={activeButton === "Media"} onClick={mediaButtonHandler} />
+                                <TabButton label="Likes" active={activeButton === "Likes"} onClick={likedButtonHandler} />
                             </div>
 
-                            {loading ? (
-                                <Loader />
-                            ) : (
-                                <>
-                                    {dataArray && dataArray.length > 0 ? (
-                                        dataArray.map((item) => {
-                                            if (activeButton === "Tweets") {
-                                                const post = item.originalPost ? item.originalPost : item;
-                                                const ownerRetweet = item.userRetweeted ? item.userRetweeted : null;
-                                                const ownerImage = post.owner.profile && post.owner.profile.image && post.owner.profile.image.url ? post.owner.profile.image.url : null;
-                                                const imageInPost = post.images ? post.images : null;
+                            <InfiniteScrollWrapper dataLength={dataArray.length} url={url} setArray={setDataArray}>
+                                {loading ? (
+                                    <Loader />
+                                ) : (
+                                    <>
+                                        {dataArray && dataArray.length > 0 ? (
+                                            dataArray.map((item) => {
+                                                if (activeButton === "Tweets") {
+                                                    const post = item.originalPost ? item.originalPost : item;
+                                                    const ownerRetweet = item.userRetweeted ? item.userRetweeted : null;
+                                                    const ownerImage = post.owner.profile && post.owner.profile.image && post.owner.profile.image.url ? post.owner.profile.image.url : null;
+                                                    const imageInPost = post.images ? post.images : null;
 
-                                                return (
-                                                    <Post
-                                                        key={`${post._id}+${item.createdAt}`}
-                                                        postId={post._id}
-                                                        POSTID={item.originalPost?.comment ? item.originalPost?.post : null}
-                                                        tweet={post.tweet || post.comment}
-                                                        isPinnedTweet={{ bool: isPinned.bool, id: isPinned.id }}
-                                                        ownerRetweet={ownerRetweet}
-                                                        isCommentRetweet={item.originalPost?.comment ? true : false}
-                                                        likes={post.likes}
-                                                        description={post.owner.description}
-                                                        postImage={imageInPost}
-                                                        retweets={post.retweets}
-                                                        comments={item.originalPost?.comment ? post.children : post.comments}
-                                                        ownerName={post.owner.name}
-                                                        ownerImage={ownerImage}
-                                                        ownerId={post.owner._id}
-                                                        handle={post.owner.handle}
-                                                        timeCreated={post.createdAt}
-                                                        handler={item.originalPost?.comment ? CommentLikeUnlike : LikeUnlike}
-                                                        dispatch={item.originalPost?.comment ? dispatchCommentLikeUnlike : dispatchLikeUnlike}
-                                                        dispatchRetweet={item.originalPost?.comment ? dispatchRetweetComment : dispatchRetweetPost}
-                                                        handlerRetweet={item.originalPost?.comment ? RetweetComment : RetweetPost}
-                                                        handlerBookmark={item.originalPost?.comment ? CommentBookmark : PostBookmark}
-                                                        dispatchBookmark={item.originalPost?.comment ? dispatchBookmarkComment : dispatchBookmarkTweet}
-                                                        state={state}
-                                                        bookmarks={post.bookmarks}
-                                                        ACTIONS={ACTIONS}
-                                                        mentions={post.mentions}
-                                                        threadChildren={post.children}
-                                                        fromProfile={true}
-                                                        fromProfileTweets={true}
-                                                        setIsPinned={setIsPinned}
-                                                    />
-                                                );
-                                            }
-
-                                            if (activeButton === "Replies") {
-                                                const post = item.originalPost ? item.originalPost : item;
-                                                const ownerRetweet = item.userRetweeted ? item.userRetweeted : null;
-                                                const ownerImage = post.owner.profile && post.owner.profile.image && post.owner.profile.image.url ? post.owner.profile.image.url : null;
-                                                const imageInPost = post.images ? post.images : null;
-                                                const commentParentPost = item.originalPost?.tweet ? null : item.originalPost?.comment ? item.originalPost.comment.post : item.post;
-
-                                                return (
-                                                    <div key={`overall+${post.createdAt}+${post._id}+${commentParentPost?.createdAt}`}>
-                                                        {commentParentPost && (
-                                                            <div key={commentParentPost._id}>
-                                                                {/* Parent Post */}
-                                                                <div className="relative  ">
-                                                                    <Post
-                                                                        key={`parent-${commentParentPost._id}+${post.createdAt}`}
-                                                                        isComment={false}
-                                                                        postId={commentParentPost._id}
-                                                                        tweet={commentParentPost.tweet}
-                                                                        likes={commentParentPost.likes}
-                                                                        retweets={commentParentPost.retweets}
-                                                                        bookmarks={commentParentPost.bookmarks}
-                                                                        postImage={commentParentPost.images ? commentParentPost.images : null}
-                                                                        commentsChildren={commentParentPost.comments}
-                                                                        ownerName={commentParentPost.owner.name}
-                                                                        description={commentParentPost.owner.description}
-                                                                        ownerImage={
-                                                                            commentParentPost.owner.profile && commentParentPost.owner.profile.image && commentParentPost.owner.profile.image.url ? commentParentPost.owner.profile.image.url : null
-                                                                        }
-                                                                        ownerId={commentParentPost.owner._id}
-                                                                        handle={commentParentPost.owner.handle}
-                                                                        timeCreated={commentParentPost.createdAt}
-                                                                        handler={LikeUnlike}
-                                                                        dispatch={dispatchLikeUnlike}
-                                                                        dispatchRetweet={dispatchRetweetPost}
-                                                                        handlerRetweet={RetweetPost}
-                                                                        state={state}
-                                                                        ACTIONS={ACTIONS}
-                                                                        mentions={commentParentPost.mentions}
-                                                                        handlerBookmark={PostBookmark}
-                                                                        dispatchBookmark={dispatchBookmarkTweet}
-                                                                        fromProfileRepliesParentPost={true}
-                                                                    />
-                                                                    <div className="absolute left-[2.37rem] top-[4.2rem] h-[calc(100%-3.85rem)]   w-fit border-2"></div>
-                                                                </div>
-                                                            </div>
-                                                        )}
+                                                    return (
                                                         <Post
                                                             key={`${post._id}+${item.createdAt}`}
                                                             postId={post._id}
-                                                            POSTID={item.originalPost?.tweet ? null : post.post.createdAt ? post.post._id : post.post}
+                                                            POSTID={item.originalPost?.comment ? item.originalPost?.post : null}
                                                             tweet={post.tweet || post.comment}
+                                                            isPinnedTweet={{ bool: isPinned.bool, id: isPinned.id }}
                                                             ownerRetweet={ownerRetweet}
-                                                            isCommentReply={item.originalPost?.tweet ? false : true}
+                                                            isCommentRetweet={item.originalPost?.comment ? true : false}
                                                             likes={post.likes}
+                                                            description={post.owner.description}
                                                             postImage={imageInPost}
                                                             retweets={post.retweets}
-                                                            comments={item.originalPost?.tweet ? post.comments : post.children}
+                                                            comments={item.originalPost?.comment ? post.children : post.comments}
                                                             ownerName={post.owner.name}
-                                                            description={post.owner.description}
                                                             ownerImage={ownerImage}
                                                             ownerId={post.owner._id}
                                                             handle={post.owner.handle}
                                                             timeCreated={post.createdAt}
-                                                            handler={item.originalPost?.tweet ? LikeUnlike : CommentLikeUnlike}
-                                                            dispatch={item.originalPost?.tweet ? dispatchLikeUnlike : dispatchCommentLikeUnlike}
-                                                            dispatchRetweet={item.originalPost?.tweet ? dispatchRetweetPost : dispatchRetweetComment}
-                                                            handlerRetweet={item.originalPost?.tweet ? RetweetPost : RetweetComment}
-                                                            handlerBookmark={item.originalPost?.tweet ? PostBookmark : CommentBookmark}
-                                                            dispatchBookmark={item.originalPost?.tweet ? dispatchBookmarkTweet : dispatchBookmarkComment}
+                                                            handler={item.originalPost?.comment ? CommentLikeUnlike : LikeUnlike}
+                                                            dispatch={item.originalPost?.comment ? dispatchCommentLikeUnlike : dispatchLikeUnlike}
+                                                            dispatchRetweet={item.originalPost?.comment ? dispatchRetweetComment : dispatchRetweetPost}
+                                                            handlerRetweet={item.originalPost?.comment ? RetweetComment : RetweetPost}
+                                                            handlerBookmark={item.originalPost?.comment ? CommentBookmark : PostBookmark}
+                                                            dispatchBookmark={item.originalPost?.comment ? dispatchBookmarkComment : dispatchBookmarkTweet}
                                                             state={state}
                                                             bookmarks={post.bookmarks}
                                                             ACTIONS={ACTIONS}
                                                             mentions={post.mentions}
                                                             threadChildren={post.children}
                                                             fromProfile={true}
-                                                            fromProfileRepliesComment={true}
+                                                            fromProfileTweets={true}
+                                                            setIsPinned={setIsPinned}
                                                         />
-                                                    </div>
-                                                );
-                                            }
-                                            if (activeButton === "Media" || activeButton == "Likes") {
-                                                const post = item;
-                                                const ownerImage = post.owner.profile && post.owner.profile.image && post.owner.profile.image.url ? post.owner.profile.image.url : null;
-                                                const imageInPost = post.images ? post.images : null;
+                                                    );
+                                                }
 
-                                                return (
-                                                    <Post
-                                                        key={post._id}
-                                                        postId={post._id}
-                                                        POSTID={post.comment ? post.post : null}
-                                                        tweet={post.tweet || post.comment}
-                                                        isCommentReply={post.comment ? true : false}
-                                                        likes={post.likes}
-                                                        postImage={imageInPost}
-                                                        retweets={post.retweets}
-                                                        comments={post.comments}
-                                                        ownerName={post.owner.name}
-                                                        ownerImage={ownerImage}
-                                                        ownerId={post.owner._id}
-                                                        handle={post.owner.handle}
-                                                        description={post.owner.description}
-                                                        timeCreated={post.createdAt}
-                                                        handler={post.comment ? CommentLikeUnlike : LikeUnlike}
-                                                        dispatch={post.comment ? dispatchCommentLikeUnlike : dispatchLikeUnlike}
-                                                        dispatchRetweet={post.comment ? dispatchRetweetComment : dispatchRetweetPost}
-                                                        handlerRetweet={post.comment ? RetweetComment : RetweetPost}
-                                                        handlerBookmark={post.comment ? CommentBookmark : PostBookmark}
-                                                        dispatchBookmark={post.comment ? dispatchBookmarkComment : dispatchBookmarkTweet}
-                                                        state={state}
-                                                        bookmarks={post.bookmarks}
-                                                        ACTIONS={ACTIONS}
-                                                        mentions={post.mentions}
-                                                        threadChildren={post.children}
-                                                        fromProfile={true}
-                                                        fromMediaLikesProfile={true}
-                                                    />
-                                                );
-                                            }
-                                        })
-                                    ) : (
-                                        <div>
-                                            {activeButton === "Media" && dataArray.length === 0 && (
-                                                <div className="mt-6 flex flex-col items-center justify-center ">
-                                                    <div className="flex w-[25rem] flex-col items-start ">
-                                                        <span className="text-[1.9rem] font-bold">
-                                                            @<span className="break-all">{user.handle}</span> hasnt Tweeted media <br />
-                                                        </span>
-                                                        <span className="text-gray-600">When they do, those Tweets will show up here.</span>
+                                                if (activeButton === "Replies") {
+                                                    const post = item.originalPost ? item.originalPost : item;
+                                                    const ownerRetweet = item.userRetweeted ? item.userRetweeted : null;
+                                                    const ownerImage = post.owner.profile && post.owner.profile.image && post.owner.profile.image.url ? post.owner.profile.image.url : null;
+                                                    const imageInPost = post.images ? post.images : null;
+                                                    const commentParentPost = item.originalPost?.tweet ? null : item.originalPost?.comment ? item.originalPost.comment.post : item.post;
+
+                                                    return (
+                                                        <div key={`overall+${post.createdAt}+${post._id}+${commentParentPost?.createdAt}`}>
+                                                            {commentParentPost && (
+                                                                <div key={commentParentPost._id}>
+                                                                    {/* Parent Post */}
+                                                                    <div className="relative  ">
+                                                                        <Post
+                                                                            key={`parent-${commentParentPost._id}+${post.createdAt}`}
+                                                                            isComment={false}
+                                                                            postId={commentParentPost._id}
+                                                                            tweet={commentParentPost.tweet}
+                                                                            likes={commentParentPost.likes}
+                                                                            retweets={commentParentPost.retweets}
+                                                                            bookmarks={commentParentPost.bookmarks}
+                                                                            postImage={commentParentPost.images ? commentParentPost.images : null}
+                                                                            commentsChildren={commentParentPost.comments}
+                                                                            ownerName={commentParentPost.owner.name}
+                                                                            description={commentParentPost.owner.description}
+                                                                            ownerImage={
+                                                                                commentParentPost.owner.profile && commentParentPost.owner.profile.image && commentParentPost.owner.profile.image.url ? commentParentPost.owner.profile.image.url : null
+                                                                            }
+                                                                            ownerId={commentParentPost.owner._id}
+                                                                            handle={commentParentPost.owner.handle}
+                                                                            timeCreated={commentParentPost.createdAt}
+                                                                            handler={LikeUnlike}
+                                                                            dispatch={dispatchLikeUnlike}
+                                                                            dispatchRetweet={dispatchRetweetPost}
+                                                                            handlerRetweet={RetweetPost}
+                                                                            state={state}
+                                                                            ACTIONS={ACTIONS}
+                                                                            mentions={commentParentPost.mentions}
+                                                                            handlerBookmark={PostBookmark}
+                                                                            dispatchBookmark={dispatchBookmarkTweet}
+                                                                            fromProfileRepliesParentPost={true}
+                                                                        />
+                                                                        <div className="absolute left-[2.37rem] top-[4.2rem] h-[calc(100%-3.85rem)]   w-fit border-2"></div>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            <Post
+                                                                key={`${post._id}+${item.createdAt}`}
+                                                                postId={post._id}
+                                                                POSTID={item.originalPost?.tweet ? null : post.post.createdAt ? post.post._id : post.post}
+                                                                tweet={post.tweet || post.comment}
+                                                                ownerRetweet={ownerRetweet}
+                                                                isCommentReply={item.originalPost?.tweet ? false : true}
+                                                                likes={post.likes}
+                                                                postImage={imageInPost}
+                                                                retweets={post.retweets}
+                                                                comments={item.originalPost?.tweet ? post.comments : post.children}
+                                                                ownerName={post.owner.name}
+                                                                description={post.owner.description}
+                                                                ownerImage={ownerImage}
+                                                                ownerId={post.owner._id}
+                                                                handle={post.owner.handle}
+                                                                timeCreated={post.createdAt}
+                                                                handler={item.originalPost?.tweet ? LikeUnlike : CommentLikeUnlike}
+                                                                dispatch={item.originalPost?.tweet ? dispatchLikeUnlike : dispatchCommentLikeUnlike}
+                                                                dispatchRetweet={item.originalPost?.tweet ? dispatchRetweetPost : dispatchRetweetComment}
+                                                                handlerRetweet={item.originalPost?.tweet ? RetweetPost : RetweetComment}
+                                                                handlerBookmark={item.originalPost?.tweet ? PostBookmark : CommentBookmark}
+                                                                dispatchBookmark={item.originalPost?.tweet ? dispatchBookmarkTweet : dispatchBookmarkComment}
+                                                                state={state}
+                                                                bookmarks={post.bookmarks}
+                                                                ACTIONS={ACTIONS}
+                                                                mentions={post.mentions}
+                                                                threadChildren={post.children}
+                                                                fromProfile={true}
+                                                                fromProfileRepliesComment={true}
+                                                            />
+                                                        </div>
+                                                    );
+                                                }
+                                                if (activeButton === "Media" || activeButton == "Likes") {
+                                                    const post = item;
+                                                    const ownerImage = post.owner.profile && post.owner.profile.image && post.owner.profile.image.url ? post.owner.profile.image.url : null;
+                                                    const imageInPost = post.images ? post.images : null;
+
+                                                    return (
+                                                        <Post
+                                                            key={post._id}
+                                                            postId={post._id}
+                                                            POSTID={post.comment ? post.post : null}
+                                                            tweet={post.tweet || post.comment}
+                                                            isCommentReply={post.comment ? true : false}
+                                                            likes={post.likes}
+                                                            postImage={imageInPost}
+                                                            retweets={post.retweets}
+                                                            comments={post.comments}
+                                                            ownerName={post.owner.name}
+                                                            ownerImage={ownerImage}
+                                                            ownerId={post.owner._id}
+                                                            handle={post.owner.handle}
+                                                            description={post.owner.description}
+                                                            timeCreated={post.createdAt}
+                                                            handler={post.comment ? CommentLikeUnlike : LikeUnlike}
+                                                            dispatch={post.comment ? dispatchCommentLikeUnlike : dispatchLikeUnlike}
+                                                            dispatchRetweet={post.comment ? dispatchRetweetComment : dispatchRetweetPost}
+                                                            handlerRetweet={post.comment ? RetweetComment : RetweetPost}
+                                                            handlerBookmark={post.comment ? CommentBookmark : PostBookmark}
+                                                            dispatchBookmark={post.comment ? dispatchBookmarkComment : dispatchBookmarkTweet}
+                                                            state={state}
+                                                            bookmarks={post.bookmarks}
+                                                            ACTIONS={ACTIONS}
+                                                            mentions={post.mentions}
+                                                            threadChildren={post.children}
+                                                            fromProfile={true}
+                                                            fromMediaLikesProfile={true}
+                                                        />
+                                                    );
+                                                }
+                                            })
+                                        ) : (
+                                            <div>
+                                                {dataArray.length === 0 && (
+                                                    <div>
+                                                        {activeButton === "Media" && renderEmptyMessage("hasn't Tweeted media", user.handle)}
+                                                        {activeButton === "Likes" && renderEmptyMessage("hasn't liked any Tweets", user.handle)}
+                                                        {activeButton === "Replies" && renderEmptyMessage("hasn't replied Tweets", user.handle)}
+                                                        {activeButton === "Tweets" && renderEmptyMessage("hasn't Tweeted yet", user.handle)}
                                                     </div>
-                                                </div>
-                                            )}
-                                            {activeButton === "Likes" && dataArray.length === 0 && (
-                                                <div className="mt-6 flex flex-col items-center justify-center ">
-                                                    <div className="flex w-[25rem] flex-col items-start">
-                                                        <span className="text-[1.9rem] font-bold">
-                                                            @<span className="break-all">{user.handle}</span> hasn't liked any Tweets
-                                                            <br />
-                                                        </span>
-                                                        <span className="text-gray-600">When they do, those Tweets will show up here.</span>
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {activeButton === "Replies" && dataArray.length === 0 && (
-                                                <div className="mt-6 flex flex-col items-center justify-center ">
-                                                    <div className="flex w-[25rem] flex-col items-start">
-                                                        <span className="text-[1.9rem] font-bold">
-                                                            @<span className="break-all">{user.handle}</span> hasn't replied Tweets
-                                                            <br />
-                                                        </span>
-                                                        <span className="text-gray-600">When they do, those Tweets will show up here.</span>
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {activeButton === "Tweets" && dataArray.length === 0 && (
-                                                <div className="mt-6 flex flex-col items-center justify-center ">
-                                                    <div className="flex w-[25rem] flex-col items-start">
-                                                        <span className="text-[1.9rem] font-bold">
-                                                            @<span className="break-all">{user.handle}</span> hasn't Tweeted yet
-                                                            <br />
-                                                        </span>
-                                                        <span className="text-gray-600">When they do, those Tweets will show up here.</span>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
-                                </>
-                            )}
+                                                )}
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </InfiniteScrollWrapper>
                         </div>
                     </main>
                     <Suspense fallback={<Loader />}>
@@ -496,3 +419,22 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
+export const TabButton = ({ label, active, onClick }) => (
+    <button className={`w-fit px-12 text-[1.05rem] font-semibold hover:bg-gray-200 ${!active ? "py-[1rem] text-gray-600" : "pt-[0.8rem] text-black"}`} disabled={active} onClick={onClick}>
+        {label}
+        {active && <div className="mt-[0.8rem] w-[3.4rem] rounded-3xl border-[0.15rem] border-blue-500"></div>}
+    </button>
+);
+
+export const renderEmptyMessage = (message, handle) => (
+    <div className="mt-6 flex flex-col items-center justify-center">
+        <div className="flex w-[25rem] flex-col items-start">
+            <span className="text-[1.9rem] font-bold">
+                @<span className="break-all">{handle}</span> {message}
+                <br />
+            </span>
+            <span className="text-gray-600">When they do, those Tweets will show up here.</span>
+        </div>
+    </div>
+);

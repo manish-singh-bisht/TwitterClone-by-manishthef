@@ -6,6 +6,7 @@ import axios from "axios";
 import Loader from "../Loader/Loader";
 import Avatar from "../Avatar/Avatar";
 import FollowUser from "../../context/Actions/FollowUser";
+import InfiniteScrollWrapper from "../CommonPostComponent/InfiniteScrollWrapper";
 
 const FollowersFollowingPage = () => {
     const { setUsersForRightSidebar, state, dispatchFollowUser, ACTIONS, dispatch } = useGlobalContext();
@@ -50,6 +51,7 @@ const FollowersFollowingPage = () => {
         getFollowingFollowers(handle);
     }, [type]);
 
+    const url = type === "following" ? `http://localhost:4000/api/v1/following/${handle}?page=` : `http://localhost:4000/api/v1/followers/${handle}?page=`;
     return (
         <div className="h-[100%] min-h-[100vh] border-l border-r">
             <div className="sticky inset-0 z-10 flex h-fit   justify-between    bg-white/60  backdrop-blur-md ">
@@ -86,33 +88,37 @@ const FollowersFollowingPage = () => {
             {loading ? (
                 <Loader />
             ) : type === "followers" ? (
-                followers && followers.length > 0 && followers.map((item) => <FollowersFollowingStructure key={item._id} dispatchFollowUser={dispatchFollowUser} user={item} state={state} ACTIONS={ACTIONS} dispatch={dispatch} />)
+                <InfiniteScrollWrapper dataLength={followers.length} url={url} setArray={setfollowers}>
+                    {followers && followers.length > 0 && followers.map((item) => <FollowersFollowingStructure key={item._id} dispatchFollowUser={dispatchFollowUser} user={item} state={state} ACTIONS={ACTIONS} dispatch={dispatch} />)}{" "}
+                    {followers.length === 0 && type === "followers" && (
+                        <div className="mt-6 flex flex-col items-center justify-center ">
+                            <div className="flex w-[25rem] flex-col items-start">
+                                <span className="text-[1.9rem] font-bold">
+                                    <span className="break-all">
+                                        Looking for followers?
+                                        <br />
+                                    </span>
+                                </span>
+                                <span className="text-gray-600">When someone follows this account, they'll show up here. Tweeting and interacting with others helps boost followers.</span>
+                            </div>
+                        </div>
+                    )}
+                </InfiniteScrollWrapper>
             ) : (
-                following && following.length > 0 && following.map((item) => <FollowersFollowingStructure key={item._id} dispatchFollowUser={dispatchFollowUser} state={state} user={item} ACTIONS={ACTIONS} dispatch={dispatch} />)
-            )}
-            {followers.length === 0 && type === "followers" && (
-                <div className="mt-6 flex flex-col items-center justify-center ">
-                    <div className="flex w-[25rem] flex-col items-start">
-                        <span className="text-[1.9rem] font-bold">
-                            <span className="break-all">
-                                Looking for followers?
-                                <br />
-                            </span>
-                        </span>
-                        <span className="text-gray-600">When someone follows this account, they'll show up here. Tweeting and interacting with others helps boost followers.</span>
-                    </div>
-                </div>
-            )}
-            {following.length === 0 && type === "following" && (
-                <div className="mt-6 flex flex-col items-center justify-center ">
-                    <div className="flex w-[25rem] flex-col items-start">
-                        <span className="text-[1.9rem] font-bold">
-                            @<span className="break-all">{user?.handle}</span> isn't following anyone
-                            <br />
-                        </span>
-                        <span className="text-gray-600">Once they follow accounts, they'll show up here.</span>
-                    </div>
-                </div>
+                <InfiniteScrollWrapper dataLength={following.length} url={url} setArray={setfollowing}>
+                    {following && following.length > 0 && following.map((item) => <FollowersFollowingStructure key={item._id} dispatchFollowUser={dispatchFollowUser} state={state} user={item} ACTIONS={ACTIONS} dispatch={dispatch} />)}
+                    {following.length === 0 && type === "following" && (
+                        <div className="mt-6 flex flex-col items-center justify-center ">
+                            <div className="flex w-[25rem] flex-col items-start">
+                                <span className="text-[1.9rem] font-bold">
+                                    @<span className="break-all">{user?.handle}</span> isn't following anyone
+                                    <br />
+                                </span>
+                                <span className="text-gray-600">Once they follow accounts, they'll show up here.</span>
+                            </div>
+                        </div>
+                    )}
+                </InfiniteScrollWrapper>
             )}
         </div>
     );

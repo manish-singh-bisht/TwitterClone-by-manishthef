@@ -11,6 +11,7 @@ import RetweetComment from "../../context/Actions/RetweetComment";
 import RetweetPost from "../../context/Actions/RetweetPost";
 import PostBookmark from "../../context/Actions/PostBookmark";
 import CommentBookmark from "../../context/Actions/CommentBookmark";
+import InfiniteScrollWrapper from "../CommonPostComponent/InfiniteScrollWrapper";
 
 const BookMarkPage = () => {
     // this is just for showing the posts that were bookmarked by the logged in user, to see how the number of the bookmark is being changed or from where the api call is being made to mark a post as bookmark, refer to Frontend\src\components\CommonPostComponent\BookMark.jsx.
@@ -41,7 +42,7 @@ const BookMarkPage = () => {
             setLoading(true);
             const { data } = await axios.get(`http://localhost:4000/api/v1/getBookmarks/${state.user._id}`, { withCredentials: true });
             setLoading(false);
-            setBookmarks(data.bookmarks);
+            setBookmarks(data.posts);
         };
         functionToGetAllBookmarks();
     }, []);
@@ -57,7 +58,7 @@ const BookMarkPage = () => {
         setBookmarks([]);
         await axios.delete(`http://localhost:4000/api/v1/deleteAllBookmarks/${state.user._id}`, { withCredentials: true });
     };
-
+    const url = `http://localhost:4000/api/v1/getBookmarks/${state.user._id}?page=`;
     return (
         <div className="h-[100%] min-h-[100vh] border-l border-r">
             <div className="sticky inset-0 z-10 flex h-fit   justify-between    bg-white/60  backdrop-blur-md ">
@@ -79,61 +80,62 @@ const BookMarkPage = () => {
                     <ThreeDots />
                 </div>
             </div>
+            <InfiniteScrollWrapper dataLength={bookmarks.length} url={url} setArray={setBookmarks}>
+                {loading ? (
+                    <Loader />
+                ) : (
+                    <div>
+                        {bookmarks.length > 0 ? (
+                            bookmarks.map((post) => {
+                                const ownerImage = post.owner.profile && post.owner.profile.image && post.owner.profile.image.url ? post.owner.profile.image.url : null;
+                                const imageInPost = post.images ? post.images : null;
 
-            {loading ? (
-                <Loader />
-            ) : (
-                <div>
-                    {bookmarks.length > 0 ? (
-                        bookmarks.map((post) => {
-                            const ownerImage = post.owner.profile && post.owner.profile.image && post.owner.profile.image.url ? post.owner.profile.image.url : null;
-                            const imageInPost = post.images ? post.images : null;
+                                return (
+                                    <Post
+                                        key={post._id}
+                                        postId={post._id}
+                                        POSTID={post.comment ? post.post : null}
+                                        tweet={post.tweet || post.comment}
+                                        likes={post.likes}
+                                        postImage={imageInPost}
+                                        retweets={post.retweets}
+                                        comments={post.comments}
+                                        ownerName={post.owner.name}
+                                        ownerImage={ownerImage}
+                                        ownerId={post.owner._id}
+                                        handle={post.owner.handle}
+                                        timeCreated={post.createdAt}
+                                        description={post.owner.description}
+                                        handler={post.comment ? CommentLikeUnlike : LikeUnlike}
+                                        dispatch={post.comment ? dispatchCommentLikeUnlike : dispatchLikeUnlike}
+                                        dispatchRetweet={post.comment ? dispatchRetweetComment : dispatchRetweetPost}
+                                        handlerRetweet={post.comment ? RetweetComment : RetweetPost}
+                                        handlerBookmark={post.comment ? CommentBookmark : PostBookmark}
+                                        dispatchBookmark={post.comment ? dispatchBookmarkComment : dispatchBookmarkTweet}
+                                        state={state}
+                                        bookmarks={post.bookmarks}
+                                        ACTIONS={ACTIONS}
+                                        mentions={post.mentions}
+                                        threadChildren={post.children}
+                                        fromBookmarks={true}
+                                        removeBookmark={(id) => removeBookmark(id)}
+                                        isCommentBookmark={post.comment ? true : false}
+                                    />
+                                );
+                            })
+                        ) : (
+                            <div className="mt-[4.3rem] flex flex-col items-center justify-center">
+                                <img className="h-[10.6rem]" src="../../../Public/bookmarksNone.png" alt="no bookmark image" />
+                                <div className="text-[2.1rem] font-bold">Save Tweets for later </div>
 
-                            return (
-                                <Post
-                                    key={post._id}
-                                    postId={post._id}
-                                    POSTID={post.comment ? post.post : null}
-                                    tweet={post.tweet || post.comment}
-                                    likes={post.likes}
-                                    postImage={imageInPost}
-                                    retweets={post.retweets}
-                                    comments={post.comments}
-                                    ownerName={post.owner.name}
-                                    ownerImage={ownerImage}
-                                    ownerId={post.owner._id}
-                                    handle={post.owner.handle}
-                                    timeCreated={post.createdAt}
-                                    description={post.owner.description}
-                                    handler={post.comment ? CommentLikeUnlike : LikeUnlike}
-                                    dispatch={post.comment ? dispatchCommentLikeUnlike : dispatchLikeUnlike}
-                                    dispatchRetweet={post.comment ? dispatchRetweetComment : dispatchRetweetPost}
-                                    handlerRetweet={post.comment ? RetweetComment : RetweetPost}
-                                    handlerBookmark={post.comment ? CommentBookmark : PostBookmark}
-                                    dispatchBookmark={post.comment ? dispatchBookmarkComment : dispatchBookmarkTweet}
-                                    state={state}
-                                    bookmarks={post.bookmarks}
-                                    ACTIONS={ACTIONS}
-                                    mentions={post.mentions}
-                                    threadChildren={post.children}
-                                    fromBookmarks={true}
-                                    removeBookmark={(id) => removeBookmark(id)}
-                                    isCommentBookmark={post.comment ? true : false}
-                                />
-                            );
-                        })
-                    ) : (
-                        <div className="mt-[4.3rem] flex flex-col items-center justify-center">
-                            <img className="h-[10.6rem]" src="../../../Public/bookmarksNone.png" alt="no bookmark image" />
-                            <div className="text-[2.1rem] font-bold">Save Tweets for later </div>
-
-                            <div className="text-gray-600">
-                                Don't let the good ones fly away! Bookmark <br /> Tweets to easily find them again in the future.
+                                <div className="text-gray-600">
+                                    Don't let the good ones fly away! Bookmark <br /> Tweets to easily find them again in the future.
+                                </div>
                             </div>
-                        </div>
-                    )}
-                </div>
-            )}
+                        )}
+                    </div>
+                )}{" "}
+            </InfiniteScrollWrapper>
             <Suspense fallback={<Loader />}>
                 <MoreOptionMenuModal
                     visibility={visibility}

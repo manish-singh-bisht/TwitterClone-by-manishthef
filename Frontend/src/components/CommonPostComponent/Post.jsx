@@ -266,23 +266,26 @@ const Post = ({
                               }
                             : null
                     }>
-                    <div className="flex  " onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                    <div className="flex  ">
                         <div
                             onClick={(e) => {
                                 e.stopPropagation();
                                 navigateHandlerToProfile(handle);
                             }}
                             className="absolute flex w-fit  items-center gap-1 text-[1.1rem] font-bold ">
-                            <span className="hover:underline">{ownerName}</span>
-                            <span className="text-[0.9rem] font-normal text-gray-700">{`@${handle}`}</span>
+                            <div className="flex w-fit  items-center gap-1 " onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                                <span className="hover:underline">{ownerName}</span>
+                                <span className="text-[0.9rem] font-normal text-gray-700">{`@${handle}`}</span>
+                                {isHovered && (
+                                    <div className="relative ml-[-100%] -mt-10">
+                                        <HoverProfileCard description={description} name={ownerName} handle={handle} ownerId={ownerId} profile={profile} />
+                                    </div>
+                                )}
+                            </div>
                             <span className="mt-[-0.4rem] flex items-center justify-center  text-[0.8rem]">.</span>
                             <span className="flex text-[0.9rem] font-normal text-gray-700">{`${formattedTime}`}</span>
                         </div>
-                        {isHovered && (
-                            <div className="relative">
-                                <HoverProfileCard description={description} name={ownerName} handle={handle} ownerId={ownerId} profile={profile} />
-                            </div>
-                        )}
+
                         <div
                             className="ml-[auto] -mr-[0.7rem] rounded-full  hover:bg-blue-100 hover:text-blue-500 "
                             onClick={(e) => {

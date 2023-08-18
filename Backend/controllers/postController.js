@@ -535,7 +535,7 @@ exports.getBookMarks = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            bookmarks: combined,
+            posts: combined,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
