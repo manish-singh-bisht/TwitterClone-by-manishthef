@@ -105,7 +105,7 @@ const ProfilePage = () => {
             ) : (
                 <>
                     <main className="grid grid-cols-[44vw_auto]   ">
-                        <div className="flex h-[100%] min-h-screen flex-col  border-l  border-r">
+                        <div className="flex h-[100%] min-h-[1400px] flex-col  border-l  border-r">
                             <div className=" sticky inset-0 z-10 flex h-[3.5rem] items-center gap-7 bg-white/60 backdrop-blur-md ">
                                 <div onClick={handleClick}>
                                     <div className="m-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full hover:border-2 hover:bg-gray-200 active:bg-gray-300">

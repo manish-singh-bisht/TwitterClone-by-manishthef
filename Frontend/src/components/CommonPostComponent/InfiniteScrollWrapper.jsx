@@ -22,7 +22,7 @@ const InfiniteScrollWrapper = ({ children, dataLength, url, setArray }) => {
     };
 
     return (
-        <InfiniteScroll dataLength={dataLength} next={fetchData} hasMore={hasMore} style={{ paddingBottom: "200px" }}>
+        <InfiniteScroll dataLength={dataLength} next={fetchData} className=" pb-44" hasMore={hasMore}>
             {children}
         </InfiniteScroll>
     );
