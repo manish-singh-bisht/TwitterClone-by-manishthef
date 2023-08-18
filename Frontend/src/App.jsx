@@ -35,7 +35,7 @@ const App = () => {
         loadUser();
     }, []);
 
-    const [isOnline, setIsOnline] = useState(true);
+    const [isOnline, setIsOnline] = useState(navigator.onLine);
 
     useEffect(() => {
         const handleOnline = () => {

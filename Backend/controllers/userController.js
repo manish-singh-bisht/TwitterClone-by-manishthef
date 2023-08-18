@@ -6,6 +6,44 @@ const ErrorHandler = require("../utils/ErrorHandler");
 const cloudinary = require("cloudinary");
 const sharp = require("sharp");
 
+async function pagination(model, options = {}, req) {
+    const page = parseInt(req.query.page || 1);
+    const limit = parseInt(req.query.limit || 10);
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const results = {};
+
+    if (endIndex < (await model.countDocuments())) {
+        results.next = {
+            page: page + 1,
+            limit: limit,
+        };
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit,
+        };
+    }
+
+    const query = model
+        .find(options.query || {})
+        .limit(limit)
+        .skip(startIndex)
+        .sort(options.sort || {});
+
+    if (options.populate) {
+        query.populate(options.populate);
+    }
+
+    results.data = await query;
+
+    return results;
+}
+
 //for registration of new users.
 exports.register = async (req, res, next) => {
     try {
@@ -299,7 +337,7 @@ exports.updatePassword = async (req, res, next) => {
 //gets the logged in user's profile
 exports.myProfile = async (req, res, next) => {
     try {
-        const myProfile = await Users.findById(req.user._id).populate("posts");
+        const myProfile = await Users.findById(req.user._id);
 
         const userPostsNumber = await Posts.find({ owner: req.user._id });
         const userRetweetsNumber = await Retweets.find({ userRetweeted: req.user._id });
@@ -388,12 +426,19 @@ exports.followingOfUser = async (req, res, next) => {
             return next(new ErrorHandler("No such user", 404));
         }
         const id = userProfile[0]._id;
-
-        const following = await Users.find({ followers: { $in: [id] } });
+        const following = await pagination(
+            Users,
+            {
+                query: {
+                    followers: { $in: [id] },
+                },
+            },
+            req
+        );
 
         res.status(200).json({
             success: true,
-            following,
+            following: following.data,
             userProfile: userProfile[0],
         });
     } catch (error) {
@@ -408,12 +453,19 @@ exports.followersOfUser = async (req, res, next) => {
             return next(new ErrorHandler("No such user", 404));
         }
         const id = userProfile[0]._id;
-
-        const followers = await Users.find({ following: { $in: [id] } });
+        const followers = await pagination(
+            Users,
+            {
+                query: {
+                    following: { $in: [id] },
+                },
+            },
+            req
+        );
 
         res.status(200).json({
             success: true,
-            followers,
+            followers: followers.data,
             userProfile: userProfile[0],
         });
     } catch (error) {

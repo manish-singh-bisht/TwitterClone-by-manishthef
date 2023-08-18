@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const useHoverCard = (delay = 600) => {
+const useHoverCard = (delay = 900) => {
     const [isHovered, setIsHovered] = useState(false);
     let hoverTimer;
 

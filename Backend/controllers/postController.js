@@ -6,6 +6,44 @@ const ErrorHandler = require("../utils/ErrorHandler");
 const cloudinary = require("cloudinary");
 const sharp = require("sharp");
 
+async function pagination(model, options = {}, req) {
+    const page = parseInt(req.query.page || 1);
+    const limit = parseInt(req.query.limit || 10);
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const results = {};
+
+    if (endIndex < (await model.countDocuments())) {
+        results.next = {
+            page: page + 1,
+            limit: limit,
+        };
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit,
+        };
+    }
+
+    const query = model
+        .find(options.query || {})
+        .limit(limit)
+        .skip(startIndex)
+        .sort(options.sort || {});
+
+    if (options.populate) {
+        query.populate(options.populate);
+    }
+
+    results.data = await query;
+
+    return results;
+}
+
 exports.createPost = async (req, res, next) => {
     try {
         const images = req.body.images;
@@ -282,42 +320,62 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
         const user = await Users.findById(req.user._id);
 
         //Line below will bring all posts of the users that are being followed by the logged in user along with the loggedIn user's post.
-        const posts = await Posts.find({ owner: { $in: [...user.following, user._id] }, parent: null })
-            .populate({
-                path: "owner",
-                select: "handle name profile _id description",
-            })
-            .populate({
-                path: "likes",
-                select: "_id handle name profile",
-            })
-            .populate({
-                path: "retweets",
-                select: "_id handle name profile",
-            })
-            .populate({
-                path: "bookmarks",
-                select: "_id",
-            })
-            .sort({ createdAt: -1 });
+        const posts = await pagination(
+            Posts,
+            {
+                query: {
+                    owner: { $in: [...user.following, user._id] },
+                    parent: null,
+                },
+                populate: [
+                    {
+                        path: "owner",
+                        select: "handle name profile _id description",
+                    },
+                    {
+                        path: "likes",
+                        select: "_id handle name profile",
+                    },
+                    {
+                        path: "retweets",
+                        select: "_id handle name profile",
+                    },
+                    {
+                        path: "bookmarks",
+                        select: "_id",
+                    },
+                ],
+                sort: { createdAt: -1 },
+            },
+            req
+        );
 
         //Line below will bring all retweets of the users that are being followed by the logged in user.
-        const retweets = await Retweets.find({ userRetweeted: { $in: [...user.following] } })
-            .populate({
-                path: "originalPost",
-                populate: [
-                    { path: "owner", select: "handle name profile _id description" },
-                    { path: "likes", select: "_id handle name profile" },
-                    { path: "bookmarks", select: "_id" },
-                    { path: "retweets", select: "_id handle name profile" },
-                ],
-            })
-            .populate({
-                path: "userRetweeted",
-                select: "_id name handle",
-            });
 
-        const combined = [...retweets, ...posts];
+        const retweets = await pagination(
+            Retweets,
+            {
+                query: {
+                    userRetweeted: { $in: [...user.following] },
+                },
+                populate: [
+                    {
+                        path: "originalPost",
+                        populate: [
+                            { path: "owner", select: "handle name profile _id description" },
+                            { path: "likes", select: "_id handle name profile" },
+                            { path: "bookmarks", select: "_id" },
+                            { path: "retweets", select: "_id handle name profile" },
+                        ],
+                    },
+                    { path: "userRetweeted", select: "_id name handle" },
+                ],
+                sort: { createdAt: -1 },
+            },
+            req
+        );
+
+        const combined = [...retweets.data, ...posts.data];
         combined.sort((a, b) => b.createdAt - a.createdAt);
 
         res.status(200).json({
@@ -433,45 +491,46 @@ exports.getBookMarks = async (req, res, next) => {
     try {
         const user = await Users.findById(req.params.id);
 
-        const posts = await Posts.find({ bookmarks: user._id })
-            .populate({
-                path: "owner",
-                select: "handle name profile _id description",
-            })
-            .populate({
-                path: "likes",
-                select: "_id handle name profile",
-            })
-            .populate({
-                path: "retweets",
-                select: "_id handle name profile",
-            })
-            .populate({
-                path: "bookmarks",
-                select: "_id",
-            })
-            .sort({ createdAt: -1 });
+        const posts = await pagination(
+            Posts,
+            {
+                query: {
+                    bookmarks: user._id,
+                },
+                populate: [
+                    { path: "owner", select: "handle name profile _id description" },
 
-        const comments = await Comments.find({ bookmarks: user._id })
-            .populate({
-                path: "owner",
-                select: "handle name profile _id description",
-            })
-            .populate({
-                path: "likes",
-                select: "_id handle name profile",
-            })
-            .populate({
-                path: "retweets",
-                select: "_id handle name profile",
-            })
-            .populate({
-                path: "bookmarks",
-                select: "_id",
-            })
-            .sort({ createdAt: -1 });
+                    { path: "likes", select: "_id handle name profile" },
 
-        const combined = [...comments, ...posts];
+                    { path: "retweets", select: "_id handle name profile" },
+
+                    { path: "bookmarks", select: "_id" },
+                ],
+                sort: { createdAt: -1 },
+            },
+            req
+        );
+        const comments = await pagination(
+            Comments,
+            {
+                query: {
+                    bookmarks: user._id,
+                },
+                populate: [
+                    { path: "owner", select: "handle name profile _id description" },
+
+                    { path: "likes", select: "_id handle name profile" },
+
+                    { path: "retweets", select: "_id handle name profile" },
+
+                    { path: "bookmarks", select: "_id" },
+                ],
+                sort: { createdAt: -1 },
+            },
+            req
+        );
+
+        const combined = [...comments.data, ...posts.data];
         combined.sort((a, b) => b.createdAt - a.createdAt);
 
         res.status(200).json({
@@ -530,43 +589,59 @@ exports.getPostsofUser = async (req, res, next) => {
                     select: "_id",
                 });
         }
-
-        const posts = await Posts.find({ owner: { $in: user._id }, parent: null })
-
-            .populate({
-                path: "owner",
-                select: "handle name profile _id description",
-            })
-            .populate({
-                path: "likes",
-                select: "_id handle name profile",
-            })
-            .populate({
-                path: "retweets",
-                select: "_id handle name profile",
-            })
-            .populate({
-                path: "bookmarks",
-                select: "_id",
-            })
-            .sort({ createdAt: -1 });
-
-        const retweets = await Retweets.find({ userRetweeted: { $in: user._id } })
-            .populate({
-                path: "originalPost",
+        const posts = await pagination(
+            Posts,
+            {
+                query: {
+                    owner: { $in: user._id },
+                    parent: null,
+                },
                 populate: [
-                    { path: "owner", select: "handle name profile _id description" },
-                    { path: "likes", select: "_id handle name profile" },
-                    { path: "bookmarks", select: "_id" },
-                    { path: "retweets", select: "_id handle name profile" },
+                    {
+                        path: "owner",
+                        select: "handle name profile _id description",
+                    },
+                    {
+                        path: "likes",
+                        select: "_id handle name profile",
+                    },
+                    {
+                        path: "retweets",
+                        select: "_id handle name profile",
+                    },
+                    {
+                        path: "bookmarks",
+                        select: "_id",
+                    },
                 ],
-            })
-            .populate({
-                path: "userRetweeted",
-                select: "_id name handle",
-            });
+                sort: { createdAt: -1 },
+            },
+            req
+        );
 
-        let combined = [...posts];
+        const retweets = await pagination(
+            Retweets,
+            {
+                query: {
+                    userRetweeted: { $in: user._id },
+                },
+                populate: [
+                    {
+                        path: "originalPost",
+                        populate: [
+                            { path: "owner", select: "handle name profile _id description" },
+                            { path: "likes", select: "_id handle name profile" },
+                            { path: "bookmarks", select: "_id" },
+                            { path: "retweets", select: "_id handle name profile" },
+                        ],
+                    },
+                    { path: "userRetweeted", select: "_id name handle" },
+                ],
+            },
+            req
+        );
+
+        let combined = [...posts.data];
 
         if (pinnedTweet) {
             const pinnedIndex = combined.findIndex((tweet) => tweet._id.toString() === pinnedTweet._id.toString());
@@ -574,7 +649,7 @@ exports.getPostsofUser = async (req, res, next) => {
                 combined.splice(pinnedIndex, 1);
             }
         }
-        combined = [...retweets, ...combined];
+        combined = [...retweets.data, ...combined];
         combined.sort((a, b) => b.createdAt - a.createdAt);
 
         res.status(200).json({
@@ -592,47 +667,55 @@ exports.getPostLikedByUser = async (req, res, next) => {
         if (!user) {
             return next(new ErrorHandler("No such user", 400));
         }
+        const posts = await pagination(
+            Posts,
+            {
+                query: {
+                    likes: { $in: user._id },
+                },
+                populate: [
+                    {
+                        path: "owner",
+                        select: "handle name profile _id description",
+                    },
+                    {
+                        path: "likes",
+                        select: "_id handle name profile",
+                    },
+                    {
+                        path: "retweets",
+                        select: "_id handle name profile",
+                    },
+                    {
+                        path: "bookmarks",
+                        select: "_id",
+                    },
+                ],
+                sort: { createdAt: -1 },
+            },
+            req
+        );
+        const comments = await pagination(
+            Comments,
+            {
+                query: {
+                    likes: { $in: user._id },
+                },
+                populate: [
+                    { path: "owner", select: "handle name profile _id description" },
 
-        const posts = await Posts.find({ likes: { $in: user._id } })
+                    { path: "likes", select: "_id handle name profile" },
 
-            .populate({
-                path: "owner",
-                select: "handle name profile _id description",
-            })
-            .populate({
-                path: "likes",
-                select: "_id handle name profile",
-            })
-            .populate({
-                path: "retweets",
-                select: "_id handle name profile",
-            })
-            .populate({
-                path: "bookmarks",
-                select: "_id",
-            })
-            .sort({ createdAt: -1 });
+                    { path: "retweets", select: "_id handle name profile" },
 
-        const comments = await Comments.find({ likes: { $in: user._id } })
-            .populate({
-                path: "owner",
-                select: "handle name profile _id description",
-            })
-            .populate({
-                path: "likes",
-                select: "_id handle name profile",
-            })
-            .populate({
-                path: "retweets",
-                select: "_id handle name profile",
-            })
-            .populate({
-                path: "bookmarks",
-                select: "_id",
-            })
-            .sort({ createdAt: -1 });
+                    { path: "bookmarks", select: "_id" },
+                ],
+                sort: { createdAt: -1 },
+            },
+            req
+        );
 
-        const combined = [...comments, ...posts];
+        const combined = [...comments.data, ...posts.data];
         combined.sort((a, b) => b.createdAt - a.createdAt);
 
         res.status(200).json({
@@ -652,50 +735,55 @@ exports.getPostOfUserWithMedia = async (req, res, next) => {
         if (!user) {
             return next(new ErrorHandler("No such user", 400));
         }
+        const posts = await pagination(
+            Posts,
+            {
+                query: {
+                    $and: [{ owner: user._id }, { images: { $gt: [] } }],
+                },
+                populate: [
+                    {
+                        path: "owner",
+                        select: "handle name profile _id description",
+                    },
+                    {
+                        path: "likes",
+                        select: "_id handle name profile",
+                    },
+                    {
+                        path: "retweets",
+                        select: "_id handle name profile",
+                    },
+                    {
+                        path: "bookmarks",
+                        select: "_id",
+                    },
+                ],
+                sort: { createdAt: -1 },
+            },
+            req
+        );
+        const comments = await pagination(
+            Comments,
+            {
+                query: {
+                    $and: [{ owner: user._id }, { images: { $gt: [] } }],
+                },
+                populate: [
+                    { path: "owner", select: "handle name profile _id description" },
 
-        const posts = await Posts.find({
-            $and: [{ owner: user._id }, { images: { $gt: [] } }],
-        })
-            .populate({
-                path: "owner",
-                select: "handle name profile _id description",
-            })
-            .populate({
-                path: "likes",
-                select: "_id handle name profile",
-            })
-            .populate({
-                path: "retweets",
-                select: "_id handle name profile",
-            })
-            .populate({
-                path: "bookmarks",
-                select: "_id",
-            })
-            .sort({ createdAt: -1 });
+                    { path: "likes", select: "_id handle name profile" },
 
-        const comments = await Comments.find({
-            $and: [{ owner: user._id }, { images: { $gt: [] } }],
-        })
-            .populate({
-                path: "owner",
-                select: "handle name profile _id description",
-            })
-            .populate({
-                path: "likes",
-                select: "_id handle name profile",
-            })
-            .populate({
-                path: "retweets",
-                select: "_id handle name profile",
-            })
-            .populate({
-                path: "bookmarks",
-                select: "_id",
-            })
-            .sort({ createdAt: -1 });
+                    { path: "retweets", select: "_id handle name profile" },
 
-        const combined = [...comments, ...posts];
+                    { path: "bookmarks", select: "_id" },
+                ],
+                sort: { createdAt: -1 },
+            },
+            req
+        );
+
+        const combined = [...comments.data, ...posts.data];
         combined.sort((a, b) => b.createdAt - a.createdAt);
 
         res.status(200).json({

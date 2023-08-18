@@ -1,6 +1,6 @@
-import React, { Suspense, useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { Comments, PushPin, Retweets, ThreeDots } from "../SVGs/SVGs";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PhotoGallery from "./PhotoGallery";
 import "./AnimationUsedInPostAndTweetDetail.css";
 import { usePostTime } from "../../CustomHooks/usePostTime";
@@ -12,8 +12,9 @@ import Loader from "../Loader/Loader";
 import Retweet from "./Retweet";
 import BookMark from "./BookMark";
 import useHoverCard from "../../CustomHooks/useHoverCard";
-import HoverProfileCard from "../Profile/HoverProfileCard";
+
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
+const HoverProfileCard = React.lazy(() => import("../Profile/HoverProfileCard"));
 
 const Post = ({
     postId,
@@ -86,19 +87,22 @@ const Post = ({
         setVisibility(false);
         document.body.style.overflow = "unset";
     };
-    //For Scrolling to particular tweet after left arrow in TweetDetail.jsx/CommentDetail.jsx component is clicked
-    const location = useLocation();
     const [commentt, setCommentt] = useState();
-    useEffect(() => {
-        if (location.state && location.state.sectionId) {
-            const sectionId = location.state.sectionId;
-            const section = document.getElementById(sectionId);
 
-            if (section) {
-                section.scrollIntoView();
-            }
-            document.body.style.overflow = "unset";
-        }
+    // //For Scrolling to particular tweet after left arrow in TweetDetail.jsx/CommentDetail.jsx component is clicked
+    // const location = useLocation();
+
+    useEffect(() => {
+        // if (location.state && location.state.sectionId) {
+        //     const sectionId = location.state.sectionId;
+        //     const section = document.getElementById(sectionId);
+
+        //     if (section) {
+        //         section.scrollIntoView({ behavior: "smooth" });
+        //     }
+
+        // }
+        document.body.style.overflow = "unset";
         // Regex pattern to find mentions and make them blue,in the display after it is posted
         const mentionRegex = /(@)(\w+)/g;
 
@@ -207,7 +211,8 @@ const Post = ({
     };
 
     return (
-        <div className={` scroll-mt-32  hover:bg-gray-50`} id={postId} key={postId}>
+        <div className={`   hover:bg-gray-50`} key={postId}>
+            {/* id={postId} */}
             {ownerRetweet && (
                 <div className="mx-10 mt-1 flex items-center gap-4 text-[0.86rem] font-bold text-gray-500">
                     <Retweets />
@@ -228,7 +233,7 @@ const Post = ({
                         handleClick();
                     }
                 }}
-                className="relative  m-2 flex cursor-pointer    hover:bg-gray-50">
+                className="relative  mx-2 mb-2 flex cursor-pointer pt-2    hover:bg-gray-50">
                 <div className="mr-[0.5rem]">
                     <Avatar profile={profile} />
                 </div>
@@ -300,7 +305,7 @@ const Post = ({
                         </div>
                     </div>
                     <pre className={`  max-w-[98%] whitespace-pre-wrap break-words  `}>{commentt}</pre>
-                    <div className={`grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
+                    <div className={`mb-2 grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
                         {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo.url ? photo.url : photo} index={index} mark={false} postId={postId} url={window.location.pathname} />)}
                     </div>
                 </div>

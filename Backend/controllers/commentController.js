@@ -6,6 +6,44 @@ const ErrorHandler = require("../utils/ErrorHandler");
 const cloudinary = require("cloudinary");
 const sharp = require("sharp");
 
+async function pagination(model, options = {}, req) {
+    const page = parseInt(req.query.page || 1);
+    const limit = parseInt(req.query.limit || 10);
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const results = {};
+
+    if (endIndex < (await model.countDocuments())) {
+        results.next = {
+            page: page + 1,
+            limit: limit,
+        };
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit,
+        };
+    }
+
+    const query = model
+        .find(options.query || {})
+        .limit(limit)
+        .skip(startIndex)
+        .sort(options.sort || {});
+
+    if (options.populate) {
+        query.populate(options.populate);
+    }
+
+    results.data = await query;
+
+    return results;
+}
+
 //adding comment on a post
 exports.postComment = async (req, res, next) => {
     try {
@@ -396,51 +434,57 @@ exports.getRepliesofUser = async (req, res, next) => {
         if (!user) {
             return next(new ErrorHandler("No such user", 400));
         }
-
-        const posts = await Comments.find({ owner: { $in: user._id } })
-            .populate({
-                path: "post",
+        const comments = await pagination(
+            Comments,
+            {
+                query: {
+                    owner: { $in: user._id },
+                },
                 populate: [
                     {
-                        path: "owner",
-                        select: "_id description name handle profile",
+                        path: "post",
+                        populate: [
+                            {
+                                path: "owner",
+                                select: "_id description name handle profile",
+                            },
+                        ],
                     },
-                ],
-            })
-            .populate({
-                path: "owner",
-                select: "handle name profile _id description",
-            })
-            .populate({
-                path: "likes",
-                select: "_id handle name profile",
-            })
-            .populate({
-                path: "retweets",
-                select: "_id handle name profile",
-            })
-            .populate({
-                path: "bookmarks",
-                select: "_id",
-            })
-            .sort({ createdAt: -1 });
-
-        const retweets = await Retweets.find({ userRetweeted: { $in: user._id } })
-            .populate({
-                path: "originalPost",
-                populate: [
                     { path: "owner", select: "handle name profile _id description" },
-                    { path: "likes", select: "_id handle name profile" },
-                    { path: "bookmarks", select: "_id" },
-                    { path: "retweets", select: "_id handle name profile" },
-                ],
-            })
-            .populate({
-                path: "userRetweeted",
-                select: "_id name handle",
-            });
 
-        const combined = [...retweets, ...posts];
+                    { path: "likes", select: "_id handle name profile" },
+
+                    { path: "retweets", select: "_id handle name profile" },
+
+                    { path: "bookmarks", select: "_id" },
+                ],
+                sort: { createdAt: -1 },
+            },
+            req
+        );
+        const retweets = await pagination(
+            Retweets,
+            {
+                query: {
+                    userRetweeted: { $in: user._id },
+                },
+                populate: [
+                    {
+                        path: "originalPost",
+                        populate: [
+                            { path: "owner", select: "handle name profile _id description" },
+                            { path: "likes", select: "_id handle name profile" },
+                            { path: "bookmarks", select: "_id" },
+                            { path: "retweets", select: "_id handle name profile" },
+                        ],
+                    },
+                    { path: "userRetweeted", select: "_id name handle" },
+                ],
+            },
+            req
+        );
+
+        const combined = [...retweets.data, ...comments.data];
         combined.sort((a, b) => b.createdAt - a.createdAt);
 
         res.status(200).json({
