@@ -278,7 +278,7 @@ const TrendingFollow = memo(({ name, userId, username, profilePicture, descripti
                             </button>
                         )}
                     </div>
-                    <div className="mt-2 w-full break-words pr-3 pl-2 pb-3 text-[0.9rem] leading-[1.35rem]">{description}</div>
+                    <div className=" mt-2 w-[82%] break-words  pr-3 pl-2 pb-3 text-[0.9rem]">{description}</div>
                 </div>
             </div>
         </div>

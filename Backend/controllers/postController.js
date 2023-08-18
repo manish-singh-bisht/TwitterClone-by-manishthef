@@ -565,12 +565,13 @@ exports.getPostsofUser = async (req, res, next) => {
         const userArr = await Users.find({ handle: req.params.id }); //id is handle here
         const user = userArr[0];
         let pinnedTweet;
+        const page = parseInt(req.query.page || 1);
 
         if (!user) {
             return next(new ErrorHandler("No such user", 400));
         }
 
-        if (user.pinnedTweet) {
+        if (user.pinnedTweet && page === 1) {
             pinnedTweet = await Posts.findById(user.pinnedTweet)
                 .populate({
                     path: "owner",

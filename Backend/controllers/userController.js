@@ -52,17 +52,37 @@ exports.register = async (req, res, next) => {
     try {
         const { name, email, password, profile, handle, location, website } = req.body;
         let user = await Users.findOne({ handle, email });
+        let userProfile;
         if (user) {
             return next(new ErrorHandler("User already exists", 400));
         } else {
-            const profileResult = await handleImageUpload(profile.image, "ProfileImage");
+            if (profile && profile.image && !profile.banner) {
+                const profileResult = await handleImageUpload(profile.image, "ProfileImage");
 
-            const bannerResult = await handleImageUpload(profile.banner, "ProfileBanner");
+                const image = { public_id: profileResult.public_id, url: profileResult.secure_url };
+                const banner = { public_id: null, url: null };
 
-            const image = { public_id: profileResult.public_id, url: profileResult.secure_url };
-            const banner = { public_id: bannerResult.public_id, url: bannerResult.secure_url };
+                userProfile = { image: image, banner: banner };
+            } else if (profile && profile.banner && !profile.image) {
+                const bannerResult = await handleImageUpload(profile.banner, "ProfileBanner");
+                const image = { public_id: null, url: null };
+                const banner = { public_id: bannerResult.public_id, url: bannerResult.secure_url };
+                userProfile = { image: image, banner: banner };
+            } else if (profile && profile.image && profile.banner) {
+                const profileResult = await handleImageUpload(profile.image, "ProfileImage");
 
-            const userProfile = { image: image, banner: banner };
+                const bannerResult = await handleImageUpload(profile.banner, "ProfileBanner");
+
+                const image = { public_id: profileResult.public_id, url: profileResult.secure_url };
+                const banner = { public_id: bannerResult.public_id, url: bannerResult.secure_url };
+
+                userProfile = { image: image, banner: banner };
+            } else {
+                const image = { public_id: null, url: null };
+                const banner = { public_id: null, url: null };
+
+                userProfile = { image: image, banner: banner };
+            }
             user = await Users.create({ handle, name, email, password, profile: userProfile, location, website });
 
             const token = await user.generateToken();
