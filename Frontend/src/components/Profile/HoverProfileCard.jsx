@@ -13,7 +13,7 @@ const HoverProfileCard = ({ description, name, handle, ownerId, profile }) => {
     };
     return (
         <>
-            <div className="absolute z-30 mt-[12rem] w-[19.5rem]  rounded-2xl border-2 bg-white p-2 drop-shadow-md">
+            <div className="absolute z-30 ml-0 w-[19.5rem] rounded-2xl border-2 bg-white p-2 drop-shadow-md">
                 <div className="flex justify-between">
                     <div className="">
                         {profile ? (

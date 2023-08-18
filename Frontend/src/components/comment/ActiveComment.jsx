@@ -253,7 +253,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                                         <span className="hover:underline">{comment.owner.name}</span>
                                         <span className="mt-[-0.3rem] text-[0.9rem] font-normal text-gray-700">{`@${comment.owner.handle}`}</span>
                                         {isHovered && (
-                                            <div className="mt-[-15rem]">
+                                            <div className="relative">
                                                 <HoverProfileCard
                                                     description={comment.owner.description}
                                                     name={comment.owner.name}

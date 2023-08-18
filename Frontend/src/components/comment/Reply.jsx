@@ -110,21 +110,23 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
                         <Avatar profile={ownerImage} />
 
                         <div className="relative mr-2 flex w-[87%] flex-col  gap-2 ">
-                            <div className="flex">
+                            <div className="flex" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                                 <div
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         navigateHandlerToProfile(reply.owner.handle);
                                     }}
-                                    onMouseEnter={handleMouseEnter}
-                                    onMouseLeave={handleMouseLeave}
                                     className="absolute flex w-fit  items-center gap-1 text-[1.1rem] font-bold ">
                                     <span className="hover:underline">{reply.owner.name}</span>
                                     <span className=" text-[0.9rem] font-normal text-gray-700">{`@${reply.owner.handle}`}</span>
                                     <span className="mt-[-0.4rem] flex items-center justify-center  text-[0.8rem]">.</span>
                                     <span className="flex text-[0.9rem] font-normal text-gray-700">{`${formattedTimeReply}`}</span>
-                                    {isHovered && <HoverProfileCard description={reply.owner.description} name={reply.owner.name} handle={reply.owner.handle} ownerId={reply.owner._id} profile={ownerImage} />}
-                                </div>
+                                </div>{" "}
+                                {isHovered && (
+                                    <div className="relative ">
+                                        <HoverProfileCard description={reply.owner.description} name={reply.owner.name} handle={reply.owner.handle} ownerId={reply.owner._id} profile={ownerImage} />
+                                    </div>
+                                )}
                                 <div
                                     className="ml-[auto] -mr-[0.7rem] rounded-full hover:bg-blue-100 hover:text-blue-500 "
                                     onClick={(e) => {
