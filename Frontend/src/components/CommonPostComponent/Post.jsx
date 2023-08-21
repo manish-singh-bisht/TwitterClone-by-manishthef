@@ -237,7 +237,7 @@ const Post = ({
                 <div className="mr-[0.5rem]">
                     <Avatar profile={profile} />
                 </div>
-                {(fromHome || fromProfile) && threadChildren && threadChildren.length > 0 && !isCommentRetweet && !isCommentReply && <div className="absolute left-[1.8rem] top-[3.65rem] z-0 h-[calc(100%-1.4rem)] min-h-[2rem] w-fit border-2"></div>}
+                {(fromHome || fromProfile) && threadChildren && threadChildren.length > 0 && !isCommentRetweet && !isCommentReply && <div className="absolute left-[1.8rem] top-[4rem] z-0 h-[calc(100%-1.6rem)] min-h-[2rem] w-fit border-2 "></div>}
                 {!fromHome &&
                     comment &&
                     comment.length > 0 &&
@@ -371,10 +371,11 @@ const Post = ({
                                 item.children.length > 0 &&
                                 item.children.map((item2) => {
                                     const isLastElement = item.children[item.children.length - 1];
+
                                     if ((fromCommentDetail && item2.owner._id === item.parent.owner && item2.owner._id !== item.owner._id) || (fromTweetDetail && item2.owner._id === item.post.owner)) {
                                         return (
                                             <div key={item2._id} className="relative ">
-                                                {((!showReplies && item2._id !== isLastElement._id) || showReplies) && <div className="absolute left-[2.3rem] top-[4.3rem] h-[86%] border-2  "></div>}
+                                                {((!showReplies && item2._id !== isLastElement._id && item2.id !== item2[item2.children.length - 1]) || showReplies) && <div className="absolute left-[2.3rem] top-[4.3rem] h-[86%] border-2  "></div>}
 
                                                 <Reply
                                                     key={item2._id}
