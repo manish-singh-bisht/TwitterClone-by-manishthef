@@ -252,7 +252,7 @@ const TrendingFollow = memo(({ name, userId, username, profilePicture, descripti
                 <div className="w-fit">
                     <Avatar profile={profilePicture} />
                 </div>
-                <div className="flex w-full  flex-col  ">
+                <div className="flex w-[85%]  flex-col   ">
                     <div className=" flex w-full items-start justify-between  pl-2 pr-3 ">
                         <div className="w-full ">
                             <div className="text-[1.03rem] font-semibold hover:underline">{name.length > 15 ? name.slice(0, 15).trim() + "..." : name}</div>
@@ -278,7 +278,7 @@ const TrendingFollow = memo(({ name, userId, username, profilePicture, descripti
                             </button>
                         )}
                     </div>
-                    <div className=" mt-2 w-[82%] break-words  pr-3 pl-2 pb-3 text-[0.9rem]">{description}</div>
+                    <div className=" mt-2 w-full break-words pr-3 pl-2 pb-3 text-[0.9rem]">{description}</div>
                 </div>
             </div>
         </div>

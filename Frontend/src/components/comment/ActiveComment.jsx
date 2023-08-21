@@ -150,7 +150,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
             }
         }
         setCommentt(renderedComment);
-    }, [commentId, isLiked, isRetweet, isBookmarked]);
+    }, [commentId]);
 
     useEffect(() => {
         fetchData();
@@ -162,6 +162,15 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
     const likeHandler = async () => {
         handleLikesAnimation();
         await axios.get(`http://localhost:4000/api/v1/post/comment/${commentId}`, { withCredentials: true });
+        if (isLiked) {
+            setLikedBy((prev) =>
+                prev.filter((item) => {
+                    return item._id !== state.user._id;
+                })
+            );
+        } else {
+            setLikedBy((prev) => [...prev, { _id: state.user._id, name: state.user.name, handle: state.user.handle, profile: state.user.profile && state.user.profile, description: state.user.description }]);
+        }
     };
     //ANIMATION FOR THE NUMBER NEXT TO RETWEET USING CUSTOM HOOK
     const [animationRetweet, retweetValue, handleRetweetAnimation] = useAnimation(isRetweet, setIsRetweet, retweet, setRetweet);
@@ -177,6 +186,15 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                 headers: { "Content-Type": "application/json" },
             }
         );
+        if (isRetweet) {
+            setRetweetBy((prev) =>
+                prev.filter((item) => {
+                    return item._id !== state.user._id;
+                })
+            );
+        } else {
+            setRetweetBy((prev) => [...prev, { _id: state.user._id, name: state.user.name, handle: state.user.handle, profile: state.user.profile && state.user.profile, description: state.user.description }]);
+        }
     };
 
     const [animationBookmarked, bookmarkedValue, handleBookmarkedAnimation] = useAnimation(isBookmarked, setIsBookmarked, bookmarked, setBookmarked);
@@ -184,6 +202,11 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
     const bookmarkedHandler = async () => {
         handleBookmarkedAnimation();
         const { data } = await axios.get(`http://localhost:4000/api/v1/comment/${commentId}/bookmark`, { withCredentials: true });
+        if (isBookmarked) {
+            setBookmarked((prev) => prev - 1);
+        } else {
+            setBookmarked((prev) => prev + 1);
+        }
         const toastConfig = {
             position: "bottom-center",
             autoClose: 2000,

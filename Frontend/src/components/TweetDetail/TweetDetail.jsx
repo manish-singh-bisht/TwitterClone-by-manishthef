@@ -179,7 +179,7 @@ const TweetDetail = () => {
             }
         }
         setCommentt(renderedComment);
-    }, [isLiked, isRetweet, stateComment.comment, stateCommentDelete, postId, isBookmarked]);
+    }, [stateComment.comment, stateCommentDelete, postId]);
 
     useEffect(() => {
         fetchData();
@@ -191,6 +191,15 @@ const TweetDetail = () => {
     const likeHandler = async () => {
         handleLikesAnimation();
         await LikeUnlike({ dispatch, ACTIONS, postId });
+        if (isLiked) {
+            setLikedBy((prev) =>
+                prev.filter((item) => {
+                    return item._id !== state.user._id;
+                })
+            );
+        } else {
+            setLikedBy((prev) => [...prev, { _id: state.user._id, name: state.user.name, handle: state.user.handle, profile: state.user.profile && state.user.profile, description: state.user.description }]);
+        }
     };
     //ANIMATION FOR THE NUMBER NEXT TO RETWEET USING CUSTOM HOOK
     const [animationRetweet, retweetValue, handleRetweetAnimation] = useAnimation(isRetweet, setIsRetweet, retweet, setRetweet);
@@ -198,6 +207,15 @@ const TweetDetail = () => {
     const retweetHandler = async () => {
         handleRetweetAnimation();
         await RetweetPost({ dispatchRetweet, ACTIONS, postId, user: state.user._id });
+        if (isRetweet) {
+            setRetweetBy((prev) =>
+                prev.filter((item) => {
+                    return item._id !== state.user._id;
+                })
+            );
+        } else {
+            setRetweetBy((prev) => [...prev, { _id: state.user._id, name: state.user.name, handle: state.user.handle, profile: state.user.profile && state.user.profile, description: state.user.description }]);
+        }
     };
 
     //ANIMATION FOR THE NUMBER NEXT TO BOOKMARK USING CUSTOM HOOK
@@ -206,6 +224,11 @@ const TweetDetail = () => {
     const bookmarkedHandler = async () => {
         handleBookmarkedAnimation();
         await PostBookmark({ dispatchBookmark, ACTIONS, postId });
+        if (isBookmarked) {
+            setBookmarked((prev) => prev - 1);
+        } else {
+            setBookmarked((prev) => prev + 1);
+        }
     };
     const photos = postImage ? postImage : [];
 
