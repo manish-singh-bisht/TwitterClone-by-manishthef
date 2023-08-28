@@ -20,6 +20,7 @@ const BookMarkPage = React.lazy(() => import("./components/BookMarkPage/BookMark
 const Connect = React.lazy(() => import("./components/ConnectPeople/Connect"));
 const FollowersFollowingPage = React.lazy(() => import("./components/Profile/FollowersFollowingPage"));
 import OfflineComponent from "./components/Offline/OfflineComponent";
+const MessageHomePage = React.lazy(() => import("./components/Messages/MessageHomePage"));
 
 const App = () => {
     const {
@@ -54,6 +55,7 @@ const App = () => {
             window.removeEventListener("offline", handleOffline);
         };
     }, []);
+
     return (
         <BrowserRouter>
             <div className={`${isAuthenticated ? "grid grid-cols-[21rem_44vw_auto] gap-9 " : ""}`}>
@@ -75,6 +77,7 @@ const App = () => {
                                 <Route exact path="/Connect" element={isAuthenticated ? <Connect /> : <Navigate to="/login" replace />} />
                                 <Route exact path="/Bookmark" element={isAuthenticated ? <BookMarkPage /> : <Navigate to="/login" replace />} />
                                 <Route exact path="/FollowersFollowingPage/:handle" element={isAuthenticated ? <FollowersFollowingPage /> : <Navigate to="/login" replace />} />
+                                <Route exact path="/Messages" element={isAuthenticated ? <MessageHomePage /> : <Navigate to="/login" replace />} />
                             </Routes>
                         </Suspense>
                     </div>

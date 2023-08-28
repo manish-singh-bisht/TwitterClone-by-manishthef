@@ -16,12 +16,16 @@ const userRoute = require("./routes/userRoute");
 const postRoute = require("./routes/postRoute");
 const commentRoute = require("./routes/commentRoute");
 const retweetsRoute = require("./routes/retweetsRoute");
+const messageRoute = require("./routes/chat/messageRoute");
+const conversationRoute = require("./routes/chat/conversationRoute");
 
 //routes
 app.use("/api/v1", userRoute);
 app.use("/api/v1", postRoute);
 app.use("/api/v1", commentRoute);
 app.use("/api/v1", retweetsRoute);
+app.use("/api/v1/chat", messageRoute);
+app.use("/api/v1/chat/conversation", conversationRoute);
 
 //error middleware
 app.use(errorMiddleware);

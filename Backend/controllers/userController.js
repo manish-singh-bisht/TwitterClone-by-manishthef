@@ -2,6 +2,7 @@ const Users = require("../models/userModel");
 const Posts = require("../models/postModel");
 const Retweets = require("../models/retweetsModel");
 const Comments = require("../models/commentModel");
+const Conversation = require("../models/chat/conversationModel");
 const ErrorHandler = require("../utils/ErrorHandler");
 const cloudinary = require("cloudinary");
 const sharp = require("sharp");
@@ -537,7 +538,7 @@ exports.createPinnedTweet = async (req, res, next) => {
 exports.removePinnedTweet = async (req, res, next) => {
     try {
         const handle = req.params.id;
-        const tweetToBePinned = req.params.tweetId;
+        const tweetToBeUnPinned = req.params.tweetId;
 
         const user = await Users.findOne({ handle });
 
@@ -545,7 +546,7 @@ exports.removePinnedTweet = async (req, res, next) => {
             return next(new ErrorHandler("No such user", 404));
         }
 
-        const tweet = await Posts.findById(tweetToBePinned);
+        const tweet = await Posts.findById(tweetToBeUnPinned);
 
         if (!tweet) {
             return next(new ErrorHandler("No such Tweet", 404));
@@ -586,6 +587,93 @@ exports.updatePinnedTweet = async (req, res, next) => {
         res.status(200).json({
             success: true,
             message: "Your Tweet was pinned to your profile.",
+        });
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};
+
+exports.createPinnedConversation = async (req, res, next) => {
+    try {
+        const handle = req.params.handle;
+        const conversationToBePinned = req.params.id;
+
+        const user = await Users.findOne({ handle });
+
+        if (!user) {
+            return next(new ErrorHandler("No such user", 404));
+        }
+
+        const conversation = await Conversation.findById(conversationToBePinned);
+
+        if (!conversation) {
+            return next(new ErrorHandler("No such conversation", 404));
+        }
+
+        user.pinnedConversation = conversationToBePinned;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "This Conversation was pinned.",
+        });
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};
+
+exports.removePinnedConversation = async (req, res, next) => {
+    try {
+        const handle = req.params.handle;
+        const conversationToBeUnPinned = req.params.id;
+
+        const user = await Users.findOne({ handle });
+
+        if (!user) {
+            return next(new ErrorHandler("No such user", 404));
+        }
+
+        const conversation = await Conversation.findById(conversationToBeUnPinned);
+
+        if (!conversation) {
+            return next(new ErrorHandler("No such conversation", 404));
+        }
+
+        user.pinnedConversation = null;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "This Conversation was unpinned.",
+        });
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500));
+    }
+};
+exports.updatePinnedConversation = async (req, res, next) => {
+    try {
+        const handle = req.params.handle;
+        const conversationToBePinned = req.params.id;
+
+        const user = await Users.findOne({ handle });
+
+        if (!user) {
+            return next(new ErrorHandler("No such user", 404));
+        }
+
+        const conversation = await Conversation.findById(conversationToBePinned);
+
+        if (!conversation) {
+            return next(new ErrorHandler("No such conversation", 404));
+        }
+        if (user.pinnedConversation && user.pinnedConversation !== req.params.id) {
+            user.pinnedConversation = conversationToBePinned;
+            await user.save();
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "This Conversation was pinned.",
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));

@@ -63,7 +63,7 @@ const SidebarRight = () => {
         <StickyBox>
             <div className={``}>
                 <div className={``}>
-                    <div className="sticky top-0  z-10   flex min-h-[3.5rem] w-full  flex-col bg-white  pt-1   ">
+                    <div className="sticky top-0  z-[8]   flex min-h-[3.5rem] w-full  flex-col bg-white  pt-1   ">
                         <div className=" flex min-h-[2.75rem]  w-[350px] items-center gap-3 rounded-full bg-[#e7eaeb] pl-4">
                             <SearchIcon className="  h-[20px] w-[20px]" />
                             <input

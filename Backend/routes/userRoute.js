@@ -15,6 +15,9 @@ const {
     createPinnedTweet,
     removePinnedTweet,
     updatePinnedTweet,
+    createPinnedConversation,
+    removePinnedConversation,
+    updatePinnedConversation,
 } = require("../controllers/userController");
 const { isAuthenticated } = require("../middlewares/auth");
 
@@ -34,4 +37,6 @@ router.route("/following/:id").get(isAuthenticated, followingOfUser);
 router.route("/followers/:id").get(isAuthenticated, followersOfUser);
 router.route("/pinTweet/:id/:tweetId").get(isAuthenticated, createPinnedTweet).put(isAuthenticated, updatePinnedTweet);
 router.route("/unpinTweet/:id/:tweetId").get(isAuthenticated, removePinnedTweet);
+router.route("/pinConversation/:handle/:id").get(isAuthenticated, createPinnedConversation).put(isAuthenticated, updatePinnedConversation);
+router.route("/unpinConversation/:handle/:id").get(isAuthenticated, removePinnedConversation);
 module.exports = router;

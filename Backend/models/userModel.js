@@ -48,6 +48,10 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Posts",
     },
+    pinnedConversation: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Conversation",
+    },
     comments: [
         {
             type: mongoose.Schema.Types.ObjectId,
