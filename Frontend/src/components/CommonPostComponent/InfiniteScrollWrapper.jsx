@@ -14,6 +14,9 @@ const InfiniteScrollWrapper = ({ children, dataLength, url, setArray }) => {
         } else if (data.followers) {
             setHasMore(Boolean(data.followers.length));
             setArray((prev) => [...prev, ...data.followers]);
+        } else if (data.users) {
+            setHasMore(Boolean(data.users.length));
+            setArray((prev) => [...prev, ...data.users]);
         } else {
             setHasMore(Boolean(data.posts.length));
             setArray((prev) => [...prev, ...data.posts]);

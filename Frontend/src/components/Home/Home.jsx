@@ -111,7 +111,7 @@ const Home = () => {
                                     })
                                 ) : (
                                     <div>Follow someone to see their tweets</div>
-                                )}{" "}
+                                )}
                             </InfiniteScrollWrapper>
                         </div>
                     </main>

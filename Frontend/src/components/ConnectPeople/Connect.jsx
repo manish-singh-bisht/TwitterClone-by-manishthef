@@ -5,6 +5,7 @@ import Avatar from "../Avatar/Avatar";
 import { Link, useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import FollowUser from "../../context/Actions/FollowUser";
+import InfiniteScrollWrapper from "../CommonPostComponent/InfiniteScrollWrapper";
 
 const Connect = () => {
     const [allUsers, setAllUsers] = useState([]);
@@ -32,6 +33,9 @@ const Connect = () => {
         const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
         dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
     };
+
+    const url = `http://localhost:4000/api/v1/users?page=`;
+
     return (
         <div className=" max-h-[full] min-h-[1400px]  border-l border-r">
             <div className=" sticky inset-0 z-10 flex h-[3.5rem] items-center gap-5 bg-white/60 backdrop-blur-md ">
@@ -43,43 +47,48 @@ const Connect = () => {
                 <div className="text-[1.6rem] font-bold">Connect</div>
             </div>
             <div className="mx-5 my-2 text-[1.6rem] font-bold">Suggested for you</div>
+            <InfiniteScrollWrapper dataLength={allUsers.length} url={url} setArray={setAllUsers}>
+                {allUsers &&
+                    allUsers.length > 0 &&
+                    allUsers.map((user) => {
+                        return (
+                            <button className="flex w-full items-center justify-between  py-2 px-3 hover:bg-gray-50" key={user._id}>
+                                <div className="flex w-full items-start gap-2">
+                                    <div className="w-fit">
+                                        <Avatar profile={user.profile && user.profile.image && user.profile.image.url ? user.profile.image.url : null} />
+                                    </div>
+                                    <div className="w-full ">
+                                        <Link to={`/Profile/${user.handle}`} className="flex w-full flex-col  items-start ">
+                                            <div className="text-[1.03rem] font-semibold hover:underline">{user.name}</div>
+                                            <div className=" mt-[-0.2rem] text-gray-500">@{user.handle}</div>
+                                            <div className="mt-[0.5rem] text-left ">{user.description}</div>
+                                        </Link>
+                                    </div>
+                                </div>
 
-            {allUsers.map((user) => {
-                return (
-                    <button className="flex w-full items-center justify-between  py-2 px-3 hover:bg-gray-50" key={user._id}>
-                        <div className="flex items-start gap-2 ">
-                            <div>
-                                <Avatar profile={user.profile && user.profile.image && user.profile.image.url ? user.profile.image.url : null} />
-                            </div>
-                            <Link to={`/Profile/${user.handle}`} className="b flex w-full  flex-col items-start ">
-                                <div className="text-[1.03rem] font-semibold hover:underline">{user.name}</div>
-                                <div className=" mt-[-0.2rem] text-gray-500">@{user.handle}</div>
-                                <div className="mt-[0.5rem] text-left ">{user.description}</div>
-                            </Link>
-                        </div>
-
-                        {user._id !== state.user._id && (
-                            <button
-                                className={`group w-fit rounded-full   ${
-                                    state.user.following.includes(user._id) ? "border-2 bg-white text-black hover:border-red-200 hover:bg-red-100" : "bg-black text-white hover:text-gray-300 active:text-gray-400"
-                                } px-4 py-2 font-bold `}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    followHandler(user._id);
-                                }}>
-                                {state.user.following.includes(user._id) ? (
-                                    <>
-                                        <span className="group-hover:hidden">Following</span>
-                                        <span className="hidden group-hover:block">Unfollow</span>
-                                    </>
-                                ) : (
-                                    <span>Follow</span>
+                                {user._id !== state.user._id && (
+                                    <button
+                                        className={`group w-fit rounded-full   ${
+                                            state.user.following.includes(user._id) ? "border-2 bg-white text-black hover:border-red-200 hover:bg-red-100" : "bg-black text-white hover:text-gray-300 active:text-gray-400"
+                                        } px-4 py-2 font-bold `}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            followHandler(user._id);
+                                        }}>
+                                        {state.user.following.includes(user._id) ? (
+                                            <>
+                                                <span className="group-hover:hidden">Following</span>
+                                                <span className="hidden group-hover:block">Unfollow</span>
+                                            </>
+                                        ) : (
+                                            <span>Follow</span>
+                                        )}
+                                    </button>
                                 )}
                             </button>
-                        )}
-                    </button>
-                );
-            })}
+                        );
+                    })}
+            </InfiniteScrollWrapper>
         </div>
     );
 };
