@@ -201,6 +201,9 @@ exports.followingOrFollow = async (req, res, next) => {
             userToFollow.followers.splice(indexOfFollowerInUserToFollow, 1);
             currentUser.following.splice(indexOfFollowingInCurrentUser, 1);
 
+            currentUser.followingCount -= 1;
+            userToFollow.followersCount -= 1;
+
             await userToFollow.save();
             await currentUser.save();
 
@@ -212,6 +215,9 @@ exports.followingOrFollow = async (req, res, next) => {
             //for follow
             currentUser.following.push(userToFollow._id);
             userToFollow.followers.push(currentUser._id);
+
+            currentUser.followingCount += 1;
+            userToFollow.followersCount += 1;
 
             await userToFollow.save();
             await currentUser.save();

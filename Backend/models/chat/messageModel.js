@@ -15,6 +15,10 @@ const messageSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    replyTo: {
+        name: { type: String, default: null },
+        message: { type: String, default: null },
+    },
 
     deletedBy: [
         {

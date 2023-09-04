@@ -64,12 +64,20 @@ const userSchema = new mongoose.Schema({
             ref: "Users",
         },
     ],
+    followersCount: {
+        type: Number,
+        default: 0,
+    },
     following: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Users",
         },
     ],
+    followingCount: {
+        type: Number,
+        default: 0,
+    },
     createdAt: {
         type: Date,
         default: Date.now,

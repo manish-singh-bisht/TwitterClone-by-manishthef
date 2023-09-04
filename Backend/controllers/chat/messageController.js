@@ -2,24 +2,78 @@ const Conversation = require("../../models/chat/conversationModel");
 const Message = require("../../models/chat/messageModel");
 const ErrorHandler = require("../../utils/ErrorHandler");
 
+async function pagination(model, options = {}, req) {
+    const page = parseInt(req.query.page || 1);
+    const limit = parseInt(req.query.limit || 10);
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const results = {};
+
+    if (endIndex < (await model.countDocuments())) {
+        results.next = {
+            page: page + 1,
+            limit: limit,
+        };
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit,
+        };
+    }
+
+    const query = model
+        .find(options.query || {})
+        .limit(limit)
+        .skip(startIndex)
+        .sort(options.sort || {});
+
+    if (options.populate) {
+        query.populate(options.populate);
+    }
+
+    results.data = await query;
+
+    return results;
+}
+
 exports.sendMessage = async (req, res, next) => {
     try {
         const { conversationId, senderId, content } = req.body;
 
-        const newMessageData = new Message({
+        const newMessageData = {
             conversation: conversationId,
             sender: senderId,
             content: content,
-        });
+            replyTo: req.body.replyTo ? req.body.replyTo : null,
+        };
         const conversation = await Conversation.findById(conversationId);
 
         if (!conversation) {
             return next(new ErrorHandler("No such Conversation exist", 404));
         }
-        const newMessage = await Message.create(newMessageData);
 
+        const isSenderInConversationParticipants = conversation.participants.includes(senderId);
+
+        if (!isSenderInConversationParticipants) {
+            return next(new ErrorHandler("Invalid Sender", 404));
+        }
         // Find the receiver's ID
         const receiverId = conversation.participants.find((participant) => participant.toString() !== senderId.toString());
+
+        if (conversation.deletedBy.includes(receiverId)) {
+            const index = conversation.deletedBy.findIndex((item) => item.toString() === receiverId.toString());
+            if (index !== -1) {
+                conversation.deletedBy.splice(index, 1);
+            }
+        }
+
+        const newMessage = await Message.create(newMessageData);
+        const populatedMessage = await newMessage.populate({ path: "sender", select: "name" });
+
         // Update the latest message references for both the sender and the receiver
         const senderIndex = conversation.latest.findIndex((entry) => entry.userId.equals(senderId));
         const receiverIndex = conversation.latest.findIndex((entry) => entry.userId.equals(receiverId));
@@ -39,7 +93,7 @@ exports.sendMessage = async (req, res, next) => {
 
         return res.status(201).json({
             success: true,
-            newMessage,
+            newMessage: populatedMessage,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
@@ -72,6 +126,7 @@ const handleLatestUpdate = async (conversation, userId, messageId) => {
 exports.deleteMessageForYou = async (req, res, next) => {
     try {
         const { messageId, userId } = req.body;
+
         const message = await Message.findById(messageId);
 
         // Soft delete message for the user
@@ -133,10 +188,20 @@ exports.getAllMessages = async (req, res, next) => {
     const conversationId = req.params.conversationId;
 
     try {
-        const messages = await Message.find({ conversation: conversationId, deletedBy: { $ne: req.user._id } });
+        const messages = await pagination(
+            Message,
+            {
+                query: {
+                    conversation: conversationId,
+                    deletedBy: { $ne: req.user._id },
+                },
+                populate: [{ path: "sender", select: "name" }],
+            },
+            req
+        );
         return res.status(200).json({
             success: true,
-            messages: messages,
+            messages: messages.data,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
