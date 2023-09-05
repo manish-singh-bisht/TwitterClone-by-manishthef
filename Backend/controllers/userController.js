@@ -16,7 +16,7 @@ async function pagination(model, options = {}, req) {
 
     const results = {};
 
-    if (endIndex < (await model.countDocuments())) {
+    if (endIndex < (await model.countDocuments(options.query))) {
         results.next = {
             page: page + 1,
             limit: limit,
@@ -450,6 +450,7 @@ exports.getAllUsers = async (req, res, next) => {
         res.status(200).json({
             success: true,
             users: users.data,
+            next: users.next,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
@@ -478,6 +479,7 @@ exports.followingOfUser = async (req, res, next) => {
             success: true,
             following: following.data,
             userProfile: userProfile[0],
+            next: following.next,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
@@ -506,6 +508,7 @@ exports.followersOfUser = async (req, res, next) => {
             success: true,
             followers: followers.data,
             userProfile: userProfile[0],
+            next: followers.next,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));

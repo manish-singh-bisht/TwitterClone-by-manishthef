@@ -11,7 +11,7 @@ async function pagination(model, options = {}, req) {
 
     const results = {};
 
-    if (endIndex < (await model.countDocuments())) {
+    if (endIndex < (await model.countDocuments(options.query))) {
         results.next = {
             page: page + 1,
             limit: limit,
@@ -203,6 +203,7 @@ exports.getAllMessages = async (req, res, next) => {
         return res.status(200).json({
             success: true,
             messages: messages.data,
+            next: messages.next,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));

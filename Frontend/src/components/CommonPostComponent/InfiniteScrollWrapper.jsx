@@ -9,16 +9,16 @@ const InfiniteScrollWrapper = ({ children, dataLength, url, setArray }) => {
     const fetchData = async () => {
         const { data } = await axios.get(`${url}${page}`, { withCredentials: true });
         if (data.following) {
-            setHasMore(Boolean(data.following.length));
+            setHasMore(Boolean(data.next));
             setArray((prev) => [...prev, ...data.following]);
         } else if (data.followers) {
-            setHasMore(Boolean(data.followers.length));
+            setHasMore(Boolean(data.next));
             setArray((prev) => [...prev, ...data.followers]);
         } else if (data.users) {
-            setHasMore(Boolean(data.users.length));
+            setHasMore(Boolean(data.next));
             setArray((prev) => [...prev, ...data.users]);
         } else {
-            setHasMore(Boolean(data.posts.length));
+            setHasMore(Boolean(data.next));
             setArray((prev) => [...prev, ...data.posts]);
         }
         setPage((prev) => prev + 1);

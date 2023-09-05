@@ -9,10 +9,10 @@ const InfiniteScrollWrapperMessagesScrollableComponent = ({ children, dataLength
     const fetchData = async () => {
         const { data } = await axios.get(`${url}${page}`, { withCredentials: true });
         if (data.conversations) {
-            setHasMore(Boolean(data.conversations.length));
+            setHasMore(Boolean(data.next));
             setArray((prev) => [...prev, ...data.conversations]);
         } else if (data.messages) {
-            setHasMore(Boolean(data.messages.length));
+            setHasMore(Boolean(data.next));
             setArray((prev) => [...prev, ...data.messages]);
         }
         setPage((prev) => prev + 1);

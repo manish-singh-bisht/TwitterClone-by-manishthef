@@ -15,7 +15,7 @@ async function pagination(model, options = {}, req) {
 
     const results = {};
 
-    if (endIndex < (await model.countDocuments())) {
+    if (endIndex < (await model.countDocuments(options.query))) {
         results.next = {
             page: page + 1,
             limit: limit,
@@ -377,10 +377,12 @@ exports.getPostofFollowingAndMe = async (req, res, next) => {
 
         const combined = [...retweets.data, ...posts.data];
         combined.sort((a, b) => b.createdAt - a.createdAt);
+        const combinedNext = (retweets.next || posts.next) && true;
 
         res.status(200).json({
             success: true,
             posts: combined,
+            next: combinedNext,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
@@ -532,10 +534,12 @@ exports.getBookMarks = async (req, res, next) => {
 
         const combined = [...comments.data, ...posts.data];
         combined.sort((a, b) => b.createdAt - a.createdAt);
+        const combinedNext = (comments.next || posts.next) && true;
 
         res.status(200).json({
             success: true,
             posts: combined,
+            next: combinedNext,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
@@ -652,10 +656,12 @@ exports.getPostsofUser = async (req, res, next) => {
         }
         combined = [...retweets.data, ...combined];
         combined.sort((a, b) => b.createdAt - a.createdAt);
+        const combinedNext = (retweets.next || posts.next) && true;
 
         res.status(200).json({
             success: true,
             posts: pinnedTweet ? [pinnedTweet, ...combined] : combined,
+            next: combinedNext,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
@@ -718,10 +724,12 @@ exports.getPostLikedByUser = async (req, res, next) => {
 
         const combined = [...comments.data, ...posts.data];
         combined.sort((a, b) => b.createdAt - a.createdAt);
+        const combinedNext = (comments.next || posts.next) && true;
 
         res.status(200).json({
             success: true,
             posts: combined,
+            next: combinedNext,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
@@ -786,10 +794,12 @@ exports.getPostOfUserWithMedia = async (req, res, next) => {
 
         const combined = [...comments.data, ...posts.data];
         combined.sort((a, b) => b.createdAt - a.createdAt);
+        const combinedNext = (comments.next || posts.next) && true;
 
         res.status(200).json({
             success: true,
             posts: combined,
+            next: combinedNext,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));

@@ -15,7 +15,7 @@ async function pagination(model, options = {}, req) {
 
     const results = {};
 
-    if (endIndex < (await model.countDocuments())) {
+    if (endIndex < (await model.countDocuments(options.query))) {
         results.next = {
             page: page + 1,
             limit: limit,
@@ -487,9 +487,11 @@ exports.getRepliesofUser = async (req, res, next) => {
         const combined = [...retweets.data, ...comments.data];
         combined.sort((a, b) => b.createdAt - a.createdAt);
 
+        const combinedNext = (retweets.next || comments.next) && true;
         res.status(200).json({
             success: true,
             posts: combined,
+            next: combinedNext,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));

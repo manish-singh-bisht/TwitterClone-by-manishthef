@@ -212,11 +212,11 @@ const ProfilePage = () => {
                                 <TabButton label="Likes" active={activeButton === "Likes"} onClick={likedButtonHandler} />
                             </div>
 
-                            <InfiniteScrollWrapper dataLength={dataArray.length} url={url} setArray={setDataArray}>
-                                {loading ? (
-                                    <Loader />
-                                ) : (
-                                    <>
+                            {loading ? (
+                                <Loader />
+                            ) : (
+                                <>
+                                    <InfiniteScrollWrapper dataLength={dataArray.length} url={url} setArray={setDataArray}>
                                         {dataArray && dataArray.length > 0 ? (
                                             dataArray.map((item) => {
                                                 if (activeButton === "Tweets") {
@@ -393,9 +393,9 @@ const ProfilePage = () => {
                                                 )}
                                             </div>
                                         )}
-                                    </>
-                                )}
-                            </InfiniteScrollWrapper>
+                                    </InfiniteScrollWrapper>
+                                </>
+                            )}
                         </div>
                     </main>
                     <Suspense fallback={<Loader />}>
