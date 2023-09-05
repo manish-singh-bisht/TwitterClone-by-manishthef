@@ -196,6 +196,7 @@ exports.getAllMessages = async (req, res, next) => {
                     deletedBy: { $ne: req.user._id },
                 },
                 populate: [{ path: "sender", select: "name" }],
+                sort: { createdAt: -1 },
             },
             req
         );

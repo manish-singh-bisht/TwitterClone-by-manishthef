@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-const InfiniteScrollWrapperMessagesScrollableComponent = ({ children, dataLength, url, setArray, scrollableTarget }) => {
+const InfiniteScrollWrapperMessagesScrollableComponent = ({ children, dataLength, url, setArray, scrollableTarget, fromCoversation }) => {
     const [hasMore, setHasMore] = useState(true);
     const [page, setPage] = useState(2);
 
@@ -19,7 +19,7 @@ const InfiniteScrollWrapperMessagesScrollableComponent = ({ children, dataLength
     };
 
     return (
-        <InfiniteScroll dataLength={dataLength} next={fetchData} className=" pb-7" hasMore={hasMore} scrollableTarget={scrollableTarget}>
+        <InfiniteScroll dataLength={dataLength} next={fetchData} inverse={fromCoversation ? false : true} className={`${fromCoversation ? "pb-7" : "flex flex-col-reverse pb-7"}`} hasMore={hasMore} scrollableTarget={scrollableTarget}>
             {children}
         </InfiniteScroll>
     );

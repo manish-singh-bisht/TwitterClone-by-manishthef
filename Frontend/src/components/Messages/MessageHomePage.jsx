@@ -24,6 +24,8 @@ const MessageHomePage = () => {
 
     const { state } = useGlobalContext();
     const scrollEnd = useRef(null);
+    const scrollEndMessage = useRef(null);
+
     const handleNewMessageClick = () => {
         searchInputRef.current.focus();
         setUserSearched((prev) => ({ ...prev, active: true }));
@@ -40,7 +42,6 @@ const MessageHomePage = () => {
 
     useEffect(() => {
         document.body.style.overflow = "hidden";
-
         const functionToGetAllConversations = async () => {
             setConversations((prev) => ({ ...prev, loading: true }));
             const { data } = await axios.get(`http://localhost:4000/api/v1/chat/conversation/getAll`, { withCredentials: true });
@@ -95,7 +96,7 @@ const MessageHomePage = () => {
         if (textareaRef.current) {
             textareaRef.current.style.height = "auto";
         }
-        setMessages((prev) => ({ ...prev, messageLoading: true }));
+        setMessages((prev) => ({ ...prev, messageLoading: true, showingMessages: false }));
         const { data } = await axios.get(`http://localhost:4000/api/v1/chat/message/getAll/${id}`, { withCredentials: true });
         const selectedConversation = conversationsArray.filter((item) => {
             return item._id === id;
@@ -115,8 +116,8 @@ const MessageHomePage = () => {
                 headers: { "Content-Type": "application/json" },
             }
         );
-        setMessageArray((prev) => [...prev, data.newMessage]);
-        scrollEnd.current && scrollEnd.current.scrollIntoView();
+        setMessageArray((prev) => [data.newMessage, ...prev]);
+        scrollEndMessage.current && scrollEndMessage.current.scrollIntoView();
         setReply({ bool: false, name: "", content: "" });
         setTextareaValue("");
         if (textareaRef.current) {
@@ -160,6 +161,12 @@ const MessageHomePage = () => {
             toast(error.response.data.message, toastConfig);
         }
     };
+
+    useEffect(() => {
+        if (messages.showingMessages) {
+            scrollEnd.current.scrollIntoView();
+        }
+    }, [messages.showingMessages]);
 
     const urlConversation = `http://localhost:4000/api/v1/chat/conversation/getAll?page=`;
     const urlMessages = `http://localhost:4000/api/v1/chat/message/getAll/${conversations.activeConversation}?page=`;
@@ -251,7 +258,7 @@ const MessageHomePage = () => {
                     </div>
                 )}
                 {targetRefConversation.current && (
-                    <InfiniteScrollWrapperMessagesScrollableComponent dataLength={conversationsArray.length} url={urlConversation} setArray={setConversationsArray} scrollableTarget={targetRefConversation.current}>
+                    <InfiniteScrollWrapperMessagesScrollableComponent fromCoversation={true} dataLength={conversationsArray.length} url={urlConversation} setArray={setConversationsArray} scrollableTarget={targetRefConversation.current}>
                         {conversations.loading ? (
                             <Loader />
                         ) : conversationsArray && conversationsArray.length > 0 ? (
@@ -295,118 +302,121 @@ const MessageHomePage = () => {
                     </InfiniteScrollWrapperMessagesScrollableComponent>
                 )}
             </div>
-            <div className=" h-full w-[86%] overflow-y-auto   border-r" id="scrollableDiv" ref={targetRefMessage}>
-                {!messages.showingMessages && (
-                    <div className="flex h-full items-center justify-center ">
-                        <div className=" flex flex-col items-center justify-center  ">
-                            <div className="w-[22rem]  text-center text-[2rem] font-extrabold">Select a message</div>
-                            <div className="w-[22rem] text-center text-gray-500 ">Choose from your existing conversations, start a new one, or just keep swimming.</div>
-                            <button className="mt-5 flex h-12 w-[11rem] items-center justify-center rounded-3xl bg-blue-500 text-[1.2rem] font-bold text-white hover:bg-blue-600 active:bg-blue-800 " onClick={handleNewMessageClick}>
-                                New message
-                            </button>
-                        </div>
-                    </div>
-                )}
 
-                {messages.showingMessages && (
-                    <>
-                        <div className={`mb-[0.15rem]   ${messageArray.length > 0 ? "overflow-y-auto " : "h-full overflow-hidden"}`}>
-                            <div className="sticky  inset-0 z-10 flex h-fit  flex-col  bg-white/60  backdrop-blur-md  ">
-                                <h1 className="mx-2   h-10 py-2 text-2xl font-bold"></h1>
-                            </div>
-                            <Link to={`/Profile/${messages.selectedConversation[0].participants[0].handle}`}>
-                                <div className="flex flex-col items-center justify-center  border-b py-4 pb-[6rem] hover:bg-gray-100">
-                                    <div>
-                                        {messages.selectedConversation[0].participants[0].profile && messages.selectedConversation[0].participants[0].profile.image && messages.selectedConversation[0].participants[0].profile.image.url ? (
-                                            <div className="mx-[1.05rem] mt-[1.05rem] h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full   bg-gray-400">
-                                                <img src={messages.selectedConversation[0].participants[0].profile.image.url} alt="profile image" loading="lazy" className="h-full w-full rounded-full object-cover" />
-                                            </div>
-                                        ) : (
-                                            <div className="relative m-1   flex h-[4.5rem] w-[4.5rem] items-center justify-center  rounded-full bg-gray-200">
-                                                <svg className="  h-12 w-12 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
-                                                </svg>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="mt-1 text-[1.1rem] font-bold">{messages.selectedConversation[0].participants[0].name}</div>
-                                    <div className="text-gray-700">@{messages.selectedConversation[0].participants[0].handle}</div>
-
-                                    <div className="flex w-fit items-center gap-1 text-gray-700 ">
-                                        <span className="mt-2 ">{`Joined ${new Date(Date.parse(messages.selectedConversation[0].participants[0].createdAt)).toLocaleString("default", {
-                                            month: "short",
-                                        })} ${new Date(Date.parse(messages.selectedConversation[0].participants[0].createdAt)).getFullYear()}`}</span>
-
-                                        <span className=" flex items-center justify-center  text-[0.8rem]">{"."}</span>
-                                        <span className="mt-2 ">{`${messages.selectedConversation[0].participants[0].followersCount} Followers`}</span>
-                                    </div>
-                                </div>
-                            </Link>
-
-                            {messages.messageLoading ? (
-                                <Loader />
-                            ) : (
-                                <>
-                                    <InfiniteScrollWrapperMessagesScrollableComponent dataLength={messageArray.length} url={urlMessages} setArray={setMessageArray} scrollableTarget={targetRefMessage.current}>
-                                        {messageArray.length > 0
-                                            ? messageArray.map((message) => {
-                                                  return (
-                                                      <MessageOutline
-                                                          key={message._id}
-                                                          setMessageArray={setMessageArray}
-                                                          messageFull={message}
-                                                          message={message.content}
-                                                          date={message.createdAt}
-                                                          sender={message.sender._id}
-                                                          replyTo={message.replyTo}
-                                                          setReply={setReply}
-                                                      />
-                                                  );
-                                              })
-                                            : null}
-                                    </InfiniteScrollWrapperMessagesScrollableComponent>
-                                </>
-                            )}
-                        </div>
-                        <div ref={scrollEnd} className="pt-[3.8rem]"></div>
-
-                        <div className="sticky bottom-0 flex w-full flex-col items-center  border-t bg-white pt-[0.15rem] ">
-                            {reply.bool && (
-                                <div className={` my-[0.5rem]  flex w-full flex-col border-l-[0.4rem] border-l-black  bg-[#F7F9F9]	pl-2 align-middle `}>
-                                    <div className="flex w-full justify-between ">
-                                        <div className="font-bold ">{reply.name}</div>
-                                        <div
-                                            onClick={() => {
-                                                setReply({ bool: false, content: "", name: "" });
-                                            }}
-                                            className="mt-1 h-fit cursor-pointer rounded-full hover:bg-blue-100 hover:text-blue-500">
-                                            <Cross />
+            <div className="  bottom-0 flex h-full max-h-[full]  w-[86%] flex-col overflow-y-auto border-r">
+                <div className={`${messages.showingMessages && messages.selectedConversation[0].participants[0] ? "block" : "hidden"} sticky  inset-0 z-10 flex h-fit  flex-col  bg-white/60  backdrop-blur-md `}>
+                    {messages.showingMessages && (
+                        <Link to={`/Profile/${messages.selectedConversation[0].participants[0].handle}`}>
+                            <div className="flex flex-col items-center justify-center  border-b py-2 pb-[2rem] hover:bg-gray-100">
+                                <div>
+                                    {messages.selectedConversation[0].participants[0].profile && messages.selectedConversation[0].participants[0].profile.image && messages.selectedConversation[0].participants[0].profile.image.url ? (
+                                        <div className="mx-[1.05rem] mt-[1.05rem] h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full   bg-gray-400">
+                                            <img src={messages.selectedConversation[0].participants[0].profile.image.url} alt="profile image" loading="lazy" className="h-full w-full rounded-full object-cover" />
                                         </div>
-                                    </div>
-                                    <div className="overflow-x-hidden break-words text-gray-800">{reply.content}</div>
+                                    ) : (
+                                        <div className="relative m-1   flex h-[4.5rem] w-[4.5rem] items-center justify-center  rounded-full bg-gray-200">
+                                            <svg className="  h-12 w-12 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
+                                            </svg>
+                                        </div>
+                                    )}
                                 </div>
-                            )}
-                            <div className="flex w-full items-center justify-around ">
-                                <textarea
-                                    className="w-[90%] resize-none rounded-xl bg-[#EFF3F4] px-2  outline-none "
-                                    ref={textareaRef}
-                                    onInput={(e) => {
-                                        adjustTextareaHeight();
-                                        setTextareaValue(e.target.value);
-                                    }}
-                                    value={textareaValue}></textarea>
-                                <button
-                                    className={`${textareaValue.length < 1 ? "null" : "active:text-blue-800"} text-blue-500 `}
-                                    disabled={textareaValue.length < 1}
-                                    onClick={() => {
-                                        sendMessage(textareaValue, conversations.activeConversation);
-                                    }}>
-                                    <Send />
-                                </button>
+                                <div className="mt-1 text-[1.1rem] font-bold">{messages.selectedConversation[0].participants[0].name}</div>
+                                <div className="text-gray-700">@{messages.selectedConversation[0].participants[0].handle}</div>
+
+                                <div className="flex w-fit items-center gap-1 text-gray-700 ">
+                                    <span className="mt-2 ">{`Joined ${new Date(Date.parse(messages.selectedConversation[0].participants[0].createdAt)).toLocaleString("default", {
+                                        month: "short",
+                                    })} ${new Date(Date.parse(messages.selectedConversation[0].participants[0].createdAt)).getFullYear()}`}</span>
+
+                                    <span className=" flex items-center justify-center  text-[0.8rem]">{"."}</span>
+                                    <span className="mt-2 ">{`${messages.selectedConversation[0].participants[0].followersCount} Followers`}</span>
+                                </div>
                             </div>
+                        </Link>
+                    )}
+                </div>
+                <div className={`flex flex-col-reverse overflow-y-auto  ${messages.showingMessages ? " h-full" : ""}`} ref={targetRefMessage}>
+                    <div className=" ">
+                        {messages.showingMessages ? (
+                            <>
+                                <div className={`mb-[0.15rem]   ${messageArray.length > 0 ? "overflow-y-auto " : "h-full overflow-hidden"}`}>
+                                    {messages.messageLoading ? (
+                                        <Loader />
+                                    ) : (
+                                        <>
+                                            <InfiniteScrollWrapperMessagesScrollableComponent dataLength={messageArray.length} url={urlMessages} setArray={setMessageArray} scrollableTarget={targetRefMessage.current}>
+                                                {messageArray.length > 0
+                                                    ? messageArray.map((message) => {
+                                                          return (
+                                                              <MessageOutline
+                                                                  key={message._id}
+                                                                  setMessageArray={setMessageArray}
+                                                                  messageFull={message}
+                                                                  message={message.content}
+                                                                  date={message.createdAt}
+                                                                  sender={message.sender._id}
+                                                                  replyTo={message.replyTo}
+                                                                  setReply={setReply}
+                                                              />
+                                                          );
+                                                      })
+                                                    : null}
+                                            </InfiniteScrollWrapperMessagesScrollableComponent>
+                                            <div ref={scrollEndMessage}></div>
+                                        </>
+                                    )}
+                                </div>
+                            </>
+                        ) : (
+                            <div className="flex  h-[100vh] items-center justify-center  ">
+                                <div className=" flex flex-col items-center justify-center  ">
+                                    <div className="w-[22rem]  text-center text-[2rem] font-extrabold">Select a message</div>
+                                    <div className="w-[22rem] text-center text-gray-500 ">Choose from your existing conversations, start a new one, or just keep swimming.</div>
+                                    <button className="mt-5 flex h-12 w-[11rem] items-center justify-center rounded-3xl bg-blue-500 text-[1.2rem] font-bold text-white hover:bg-blue-600 active:bg-blue-800 " onClick={handleNewMessageClick}>
+                                        New message
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className={`${messages.showingMessages ? "block" : "hidden"} sticky bottom-0 flex w-full flex-col items-center  border-t bg-white pt-[0.15rem] `} ref={scrollEnd}>
+                    {reply.bool && (
+                        <div className={` my-[0.5rem]  flex w-full flex-col border-l-[0.4rem] border-l-black  bg-[#F7F9F9]	pl-2 align-middle `}>
+                            <div className="flex w-full justify-between ">
+                                <div className="font-bold ">{reply.name}</div>
+                                <div
+                                    onClick={() => {
+                                        setReply({ bool: false, content: "", name: "" });
+                                    }}
+                                    className="mt-1 h-fit cursor-pointer rounded-full hover:bg-blue-100 hover:text-blue-500">
+                                    <Cross />
+                                </div>
+                            </div>
+                            <div className="overflow-x-hidden break-words text-gray-800">{reply.content}</div>
                         </div>
-                    </>
-                )}
+                    )}
+                    <div className="flex w-full items-center justify-around ">
+                        <textarea
+                            className="w-[90%] resize-none rounded-xl bg-[#EFF3F4] px-2  outline-none "
+                            ref={textareaRef}
+                            onInput={(e) => {
+                                adjustTextareaHeight();
+                                setTextareaValue(e.target.value);
+                            }}
+                            value={textareaValue}></textarea>
+                        <button
+                            className={`${textareaValue.length < 1 ? "null" : "active:text-blue-800"} text-blue-500 `}
+                            disabled={textareaValue.length < 1}
+                            onClick={() => {
+                                sendMessage(textareaValue, conversations.activeConversation);
+                            }}>
+                            <Send />
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     );
