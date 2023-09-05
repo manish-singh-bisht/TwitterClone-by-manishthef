@@ -19,8 +19,9 @@ const ProfilePage = React.lazy(() => import("./components/Profile/ProfilePage"))
 const BookMarkPage = React.lazy(() => import("./components/BookMarkPage/BookMarkPage"));
 const Connect = React.lazy(() => import("./components/ConnectPeople/Connect"));
 const FollowersFollowingPage = React.lazy(() => import("./components/Profile/FollowersFollowingPage"));
-import OfflineComponent from "./components/Offline/OfflineComponent";
 const MessageHomePage = React.lazy(() => import("./components/Messages/MessageHomePage"));
+import OfflineComponent from "./components/Offline/OfflineComponent";
+const Page404 = React.lazy(() => import("./components/404/page404"));
 
 const App = () => {
     const {
@@ -70,7 +71,7 @@ const App = () => {
                                 <Route exact path="/:ownerName/:postId" element={isAuthenticated ? <TweetDetail /> : <Navigate to="/login" replace />} />
                                 <Route exact path="/:ownerName/comment/:commentId" element={isAuthenticated ? <CommentDetail /> : <Navigate to="/login" replace />} />
                                 <Route exact path="/user/:ownerId" element={<Test />} />
-                                <Route exact path="/Explore" element={<HoverProfileCard />} />
+                                <Route exact path="/Explore" element={<Page404 />} />
                                 <Route exact path="/test" element={<Test />} />
                                 <Route exact path="/ExtendedMedia" element={<ExtendedMedia />} />
                                 <Route exact path="/Profile/:userName" element={isAuthenticated ? <ProfilePage /> : <Navigate to="/login" replace />} />
@@ -78,6 +79,7 @@ const App = () => {
                                 <Route exact path="/Bookmark" element={isAuthenticated ? <BookMarkPage /> : <Navigate to="/login" replace />} />
                                 <Route exact path="/FollowersFollowingPage/:handle" element={isAuthenticated ? <FollowersFollowingPage /> : <Navigate to="/login" replace />} />
                                 <Route exact path="/Messages" element={isAuthenticated ? <MessageHomePage /> : <Navigate to="/login" replace />} />
+                                <Route path="*" element={isAuthenticated ? <Page404 /> : <Navigate to="/login" replace />} />
                             </Routes>
                         </Suspense>
                     </div>
