@@ -46,6 +46,15 @@ const Home = () => {
     }, []);
     const url = `http://localhost:4000/api/v1/posts?page=`;
 
+    const uniquePosts = [];
+    const seenIds = new Set();
+
+    for (const post of posts) {
+        if (!seenIds.has(post._id)) {
+            seenIds.add(post._id);
+            uniquePosts.push(post);
+        }
+    }
     return (
         <>
             {loading ? (
@@ -66,9 +75,9 @@ const Home = () => {
                     <main className="grid grid-cols-[44vw_auto]  ">
                         <div className={` flex h-[100%] min-h-[1400px] flex-col border-l border-r`}>
                             <TweetBoxInHome profile={profile} />
-                            <InfiniteScrollWrapper dataLength={posts.length} url={url} setArray={setPosts}>
-                                {posts && posts.length > 0 ? (
-                                    posts.map((item) => {
+                            <InfiniteScrollWrapper dataLength={uniquePosts.length} url={url} setArray={setPosts}>
+                                {uniquePosts && uniquePosts.length > 0 ? (
+                                    uniquePosts.map((item) => {
                                         const post = item.originalPost ? item.originalPost : item;
                                         const ownerRetweet = item.userRetweeted ? item.userRetweeted : null;
                                         const ownerImage = post.owner.profile && post.owner.profile.image && post.owner.profile.image.url ? post.owner.profile.image.url : null;
