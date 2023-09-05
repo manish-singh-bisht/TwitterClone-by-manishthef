@@ -53,31 +53,35 @@ exports.createConversation = async (req, res, next) => {
         });
 
         if (existingConversation) {
-            existingConversation.deletedBy.splice(0, existingConversation.deletedBy.length);
-            await existingConversation.save();
-
-            const conversation = await Conversation.findById(existingConversation._id)
-                .populate({
-                    path: "participants",
-                    select: "name handle profile _id createdAt followersCount",
-                    match: { _id: { $ne: req.user._id } },
-                })
-                .populate({
-                    path: "latest.message",
-                    select: "content createdAt",
-                });
-
-            if (conversation.latest[0]?.userId.toString() === req.user._id.toString()) {
-                conversation.latest?.splice(0, 1);
+            if (existingConversation.deletedBy.length === 0) {
+                return next(new ErrorHandler("Conversation Already Exists", 500));
             } else {
-                conversation.latest?.splice(1, 1);
-            }
+                existingConversation.deletedBy.splice(0, existingConversation.deletedBy.length);
+                await existingConversation.save();
 
-            await conversation.save();
-            return res.status(201).json({
-                success: true,
-                conversation,
-            });
+                const conversation = await Conversation.findById(existingConversation._id)
+                    .populate({
+                        path: "participants",
+                        select: "name handle profile _id createdAt followersCount",
+                        match: { _id: { $ne: req.user._id } },
+                    })
+                    .populate({
+                        path: "latest.message",
+                        select: "content createdAt",
+                    });
+
+                if (conversation.latest[0]?.userId.toString() === req.user._id.toString()) {
+                    conversation.latest?.splice(0, 1);
+                } else {
+                    conversation.latest?.splice(1, 1);
+                }
+
+                await conversation.save();
+                return res.status(201).json({
+                    success: true,
+                    conversation,
+                });
+            }
         } else {
             const newConversation = await Conversation.create({ participants: [senderId, receiverId] });
 
