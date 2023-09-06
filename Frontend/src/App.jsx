@@ -7,14 +7,12 @@ import Loader from "./components/Loader/Loader";
 import { useGlobalContext } from "./CustomHooks/useGlobalContext";
 import ExtendedMedia from "./components/CommonPostComponent/ExtendedMedia";
 import SidebarRight from "./components/Sidebar/SidebarRight";
-import HoverProfileCard from "./components/Profile/HoverProfileCard";
 
 const Home = React.lazy(() => import("./components/Home/Home"));
 const LoginSignUpMainPage = React.lazy(() => import("./components/Login_Register/LoginSignUpMainPage"));
 const SignUpOption = React.lazy(() => import("./components/Login_Register/SignUpOption"));
 const TweetDetail = React.lazy(() => import("./components/TweetDetail/TweetDetail"));
 const CommentDetail = React.lazy(() => import("./components/comment/CommentDetail"));
-const Test = React.lazy(() => import("./components/pages/Test"));
 const ProfilePage = React.lazy(() => import("./components/Profile/ProfilePage"));
 const BookMarkPage = React.lazy(() => import("./components/BookMarkPage/BookMarkPage"));
 const Connect = React.lazy(() => import("./components/ConnectPeople/Connect"));
@@ -70,9 +68,6 @@ const App = () => {
                                 <Route exact path="/signUp" element={isAuthenticated ? <Navigate to="/" replace /> : <LoginSignUpMainPage />} />
                                 <Route exact path="/:ownerName/:postId" element={isAuthenticated ? <TweetDetail /> : <Navigate to="/login" replace />} />
                                 <Route exact path="/:ownerName/comment/:commentId" element={isAuthenticated ? <CommentDetail /> : <Navigate to="/login" replace />} />
-                                <Route exact path="/user/:ownerId" element={<Test />} />
-                                <Route exact path="/Explore" element={<Page404 />} />
-                                <Route exact path="/test" element={<Test />} />
                                 <Route exact path="/ExtendedMedia" element={<ExtendedMedia />} />
                                 <Route exact path="/Profile/:userName" element={isAuthenticated ? <ProfilePage /> : <Navigate to="/login" replace />} />
                                 <Route exact path="/Connect" element={isAuthenticated ? <Connect /> : <Navigate to="/login" replace />} />

@@ -73,12 +73,8 @@ const Sidebar = ({ isOnline }) => {
                 <NavLink className={({ isActive }) => (isActive ? "w-fit font-bold" : " w-fit  font-normal")} to="/" onClick={() => setTab("/")}>
                     {tab === "/" ? <SidebarList Icon={HomeFilled} Option="Home" /> : <SidebarList Icon={HomeOutLine} Option="Home" />}
                 </NavLink>
-                <NavLink className={({ isActive }) => (isActive ? "w-fit font-bold" : "w-fit font-normal")} to="/Explore" onClick={() => setTab("/Explore")}>
-                    {tab === "/Explore" ? <SidebarList Icon={HashtagFilled} Option="Explore" /> : <SidebarList Icon={HashtagOutline} Option="Explore" />}
-                </NavLink>
-                <NavLink className={({ isActive }) => (isActive ? "w-fit font-bold" : "w-fit font-normal")} to="/Notifications" onClick={() => setTab("/Notifications")}>
-                    {tab === "/Notifications" ? <SidebarList Icon={BellFilled} Option="Notifications" /> : <SidebarList Icon={BellOutline} Option="Notifications" />}
-                </NavLink>
+                <div className={"w-fit font-normal hover:cursor-not-allowed"}>{tab === "/Explore" ? <SidebarList Icon={HashtagFilled} Option="Explore" /> : <SidebarList Icon={HashtagOutline} Option="Explore" />}</div>
+                <div className={"w-fit font-normal hover:cursor-not-allowed"}>{tab === "/Notifications" ? <SidebarList Icon={BellFilled} Option="Notifications" /> : <SidebarList Icon={BellOutline} Option="Notifications" />}</div>
                 <NavLink className={({ isActive }) => (isActive ? "w-fit font-bold" : "w-fit font-normal")} to="/Messages" onClick={() => setTab("/Messages")}>
                     {tab === "/Messages" ? <SidebarList Icon={MessageFilled} Option="Messages" /> : <SidebarList Icon={MessageOutline} Option="Messages" />}
                 </NavLink>
@@ -88,9 +84,7 @@ const Sidebar = ({ isOnline }) => {
                 <NavLink className={({ isActive }) => (isActive ? "w-fit font-bold" : "w-fit font-normal")} to={`/Profile/${state.user.handle}`} onClick={() => setTab("/Profile")}>
                     {tab === "/Profile" ? <SidebarList Icon={ProfileFilled} Option="Profile" /> : <SidebarList Icon={ProfileOutline} Option="Profile" />}
                 </NavLink>
-                <NavLink className={({ isActive }) => (isActive ? "w-fit font-bold" : "w-fit font-normal")} to="/More" onClick={() => setTab("/More")}>
-                    {tab === "/More" ? <SidebarList Icon={MoreFilled} Option="More" /> : <SidebarList Icon={MoreOutline} Option="More" />}
-                </NavLink>
+                <div className={"w-fit font-normal hover:cursor-not-allowed"}>{tab === "/More" ? <SidebarList Icon={MoreFilled} Option="More" /> : <SidebarList Icon={MoreOutline} Option="More" />}</div>
                 <div
                     className="flex h-12 w-64 items-center justify-center rounded-3xl bg-blue-500 text-[1.2rem] font-bold text-white hover:bg-blue-600 active:bg-blue-800 "
                     onClick={() => {
