@@ -31,6 +31,11 @@ const MoreOptionMenuModalConversation = ({ visibility, handleOutsideClick, butto
 
     const deleteForYou = async () => {
         const userId = state.user._id;
+        setConversationsArray((prev) =>
+            prev.filter((item) => {
+                return item._id !== infoToMoreOptionModal.conversationid;
+            })
+        );
         await axios.delete(`http://localhost:4000/api/v1/chat/conversation/deleteConversation/${infoToMoreOptionModal.conversationid}`, {
             data: {
                 userId,
@@ -40,12 +45,6 @@ const MoreOptionMenuModalConversation = ({ visibility, handleOutsideClick, butto
                 "Content-Type": "application/json",
             },
         });
-
-        setConversationsArray((prev) =>
-            prev.filter((item) => {
-                return item._id !== infoToMoreOptionModal.conversationid;
-            })
-        );
 
         setIsPinnedConversation({ bool: false, id: null });
         setMessages((prev) => ({ ...prev, showingMessages: false }));

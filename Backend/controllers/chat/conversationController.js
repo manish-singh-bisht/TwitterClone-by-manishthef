@@ -2,6 +2,7 @@ const Conversation = require("../../models/chat/conversationModel");
 const Message = require("../../models/chat/messageModel");
 const Users = require("../../models/userModel");
 const ErrorHandler = require("../../utils/ErrorHandler");
+const cloudinary = require("cloudinary");
 
 async function pagination(model, options = {}, req) {
     const page = parseInt(req.query.page || 1);
@@ -144,6 +145,15 @@ exports.deleteConversationForYou = async (req, res, next) => {
         //this message update line below,makes sure that whenever the conversation comes back to the user after soft deleting it,it only shows the messages from there on,not the ones that were before soft deleting the conversation.
         await Message.updateMany({ conversation: conversationId, deletedBy: { $ne: userId } }, { $addToSet: { deletedBy: userId } });
 
+        const deletedMessages = await Message.find({ conversation: conversationId, deletedBy: { $all: [userId, receiverId] } });
+
+        if (deletedMessages.length > 0) {
+            for (const message of deletedMessages) {
+                if (message.image && message.image.public_id) {
+                    await cloudinary.v2.uploader.destroy(message.image.public_id);
+                }
+            }
+        }
         await Message.deleteMany({ conversation: conversationId, deletedBy: { $all: [userId, receiverId] } });
 
         if (user1.pinnedConversation?.toString() === conversationId.toString()) {

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Cross, PushPin, SearchIcon, Send } from "../SVGs/SVGs";
+import { Cross, Photo, PushPin, SearchIcon, Send } from "../SVGs/SVGs";
 import ConversationProfile from "./ConversationProfile";
 import Loader from "../Loader/Loader";
 import axios from "axios";
@@ -21,6 +21,8 @@ const MessageHomePage = () => {
     const [userSearched, setUserSearched] = useState({ loadingUser: false, userArray: [], active: false });
     const [isPinnedConversation, setIsPinnedConversation] = useState({ bool: false, id: null });
     const [reply, setReply] = useState({ bool: false, name: "", content: "" });
+    const [selectedImages, setSelectedImages] = useState({ bool: false, image: null });
+    const [isSending, setIsSending] = useState(false);
 
     const { state } = useGlobalContext();
     const scrollEnd = useRef(null);
@@ -109,7 +111,7 @@ const MessageHomePage = () => {
     const sendMessage = async (content, conversation) => {
         const { data } = await axios.post(
             `http://localhost:4000/api/v1/chat/message/create`,
-            { conversationId: conversation, senderId: state.user._id, content: content, replyTo: reply.bool && { name: reply.name, message: reply.content } },
+            { conversationId: conversation, senderId: state.user._id, content: content, replyTo: reply.bool && { name: reply.name, message: reply.content }, image: selectedImages.image ? selectedImages.image : null },
 
             {
                 withCredentials: true,
@@ -119,7 +121,9 @@ const MessageHomePage = () => {
         setMessageArray((prev) => [data.newMessage, ...prev]);
         scrollEndMessage.current && scrollEndMessage.current.scrollIntoView();
         setReply({ bool: false, name: "", content: "" });
+        setSelectedImages({ bool: false, image: "" });
         setTextareaValue("");
+        setIsSending(false);
         if (textareaRef.current) {
             textareaRef.current.style.height = "auto";
         }
@@ -160,6 +164,18 @@ const MessageHomePage = () => {
         } catch (error) {
             toast(error.response.data.message, toastConfig);
         }
+    };
+
+    const handleChangeImage = (e) => {
+        const file = e.target.files[0];
+
+        const Reader = new FileReader();
+        Reader.readAsDataURL(file);
+        Reader.onload = () => {
+            if (Reader.readyState === 2) {
+                setSelectedImages((prev) => ({ bool: true, image: Reader.result }));
+            }
+        };
     };
 
     useEffect(() => {
@@ -395,26 +411,59 @@ const MessageHomePage = () => {
                                     <Cross />
                                 </div>
                             </div>
-                            <div className="overflow-x-hidden break-words text-gray-800">{reply.content}</div>
+                            <div className="overflow-x-hidden break-words text-gray-800">{reply.content.length > 300 ? reply.content.slice(0, 300).trim() + "..." : reply.content}</div>
                         </div>
                     )}
-                    <div className="flex w-full items-center justify-around ">
-                        <textarea
-                            className="w-[90%] resize-none rounded-xl bg-[#EFF3F4] px-2  outline-none "
-                            ref={textareaRef}
-                            onInput={(e) => {
-                                adjustTextareaHeight();
-                                setTextareaValue(e.target.value);
-                            }}
-                            value={textareaValue}></textarea>
-                        <button
-                            className={`${textareaValue.length < 1 ? "null" : "active:text-blue-800"} text-blue-500 `}
-                            disabled={textareaValue.length < 1}
-                            onClick={() => {
-                                sendMessage(textareaValue, conversations.activeConversation);
-                            }}>
-                            <Send />
-                        </button>
+                    {selectedImages.bool && (
+                        <div className="mb-2 flex w-full justify-between bg-[#EFF3F4] p-2 ">
+                            <div className="flex h-[11rem]  w-[11rem] justify-between">
+                                <img className="h-full w-full rounded-2xl object-cover" src={selectedImages.image} />
+                                <div
+                                    onClick={() => {
+                                        setSelectedImages({ bool: false, image: "" });
+                                    }}
+                                    className="mt-1 ml-2 h-fit cursor-pointer rounded-full hover:bg-blue-100 hover:text-blue-500">
+                                    <Cross />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    <div className="flex w-full justify-center ">
+                        <div className="flex w-[98%] items-center justify-around rounded-xl bg-[#EFF3F4] px-3">
+                            <label htmlFor="file-input" className={` rounded-full p-2 hover:bg-blue-200 active:bg-blue-300 ${selectedImages.image ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`} disabled={selectedImages.image}>
+                                <Photo />
+                            </label>
+                            {!selectedImages.image && (
+                                <input
+                                    id="file-input"
+                                    type="file"
+                                    accept="image/png , image/jpeg"
+                                    style={{ display: "none" }}
+                                    onChange={(e) => {
+                                        handleChangeImage(e);
+                                    }}
+                                />
+                            )}
+
+                            <textarea
+                                className="w-[90%] resize-none bg-[#EFF3F4]  px-2 outline-none  "
+                                ref={textareaRef}
+                                onInput={(e) => {
+                                    adjustTextareaHeight();
+                                    setTextareaValue(e.target.value);
+                                }}
+                                placeholder="Start a new Message"
+                                value={textareaValue}></textarea>
+                            <button
+                                className={`${textareaValue.length < 1 ? "null" : "active:text-blue-800"} ml-2 text-blue-500`}
+                                disabled={textareaValue.length < 1 || isSending}
+                                onClick={() => {
+                                    setIsSending(true);
+                                    sendMessage(textareaValue, conversations.activeConversation);
+                                }}>
+                                <Send />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -19,7 +19,10 @@ const messageSchema = new mongoose.Schema({
         name: { type: String, default: null },
         message: { type: String, default: null },
     },
-
+    image: {
+        public_id: String,
+        url: String,
+    },
     deletedBy: [
         {
             type: mongoose.Schema.Types.ObjectId,

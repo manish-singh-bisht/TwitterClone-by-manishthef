@@ -38,6 +38,11 @@ const MessageOutline = ({ message, date, sender, messageFull, setMessageArray, r
                     )}
 
                     <div className="relative overflow-x-hidden break-words px-2 pt-2"> {message}</div>
+                    {messageFull.image && messageFull.image.url && (
+                        <div className="mt-3 flex  h-[11rem] w-[11rem] justify-between">
+                            <img className="h-full w-full rounded-2xl object-fill" src={messageFull.image.url} />
+                        </div>
+                    )}
                     <div
                         className={`${own ? "-left-9 text-black" : "-right-9"} absolute hidden h-fit cursor-pointer   rounded-full hover:bg-blue-100 hover:text-blue-500 group-hover:block`}
                         onClick={(e) => {

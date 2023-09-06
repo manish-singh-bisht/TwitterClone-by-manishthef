@@ -37,18 +37,22 @@ const MoreOptionMenuModalMessage = ({ visibility, handleOutsideClick, buttonPosi
     }, [visibility, buttonPosition]);
 
     const deleteForAll = async () => {
-        const { data } = await axios.delete(`http://localhost:4000/api/v1/chat/message/deleteForAll/${infoToMoreOptionModal.messageid}`, { withCredentials: true });
-
         setMessageArray((prev) =>
             prev.filter((item) => {
                 return item._id !== infoToMoreOptionModal.messageid;
             })
         );
+        const { data } = await axios.delete(`http://localhost:4000/api/v1/chat/message/deleteForAll/${infoToMoreOptionModal.messageid}`, { withCredentials: true });
     };
 
     const deleteForYou = async () => {
         const messageId = infoToMoreOptionModal.messageid;
         const userId = state.user._id;
+        setMessageArray((prev) =>
+            prev.filter((item) => {
+                return item._id !== infoToMoreOptionModal.messageid;
+            })
+        );
         const { data } = await axios.delete(`http://localhost:4000/api/v1/chat/message/deleteMessage`, {
             data: {
                 messageId,
@@ -59,12 +63,6 @@ const MoreOptionMenuModalMessage = ({ visibility, handleOutsideClick, buttonPosi
                 "Content-Type": "application/json",
             },
         });
-
-        setMessageArray((prev) =>
-            prev.filter((item) => {
-                return item._id !== infoToMoreOptionModal.messageid;
-            })
-        );
     };
 
     const copyToClipboard = () => {

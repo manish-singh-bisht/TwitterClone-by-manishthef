@@ -1,6 +1,8 @@
 const Conversation = require("../../models/chat/conversationModel");
 const Message = require("../../models/chat/messageModel");
 const ErrorHandler = require("../../utils/ErrorHandler");
+const cloudinary = require("cloudinary");
+const sharp = require("sharp");
 
 async function pagination(model, options = {}, req) {
     const page = parseInt(req.query.page || 1);
@@ -44,11 +46,43 @@ exports.sendMessage = async (req, res, next) => {
     try {
         const { conversationId, senderId, content } = req.body;
 
+        const image = req.body.image;
+        let uploadImage;
+
+        if (image) {
+            const base64Buffer = Buffer.from(image.substring(22), "base64");
+            const originalSizeInBytes = base64Buffer.length;
+            const originalSizeInKB = originalSizeInBytes / 1024;
+
+            if (originalSizeInKB > 100) {
+                const { format, width } = await sharp(base64Buffer).metadata();
+
+                const compressedBuffer = await sharp(base64Buffer)
+                    .toFormat(format)
+                    .resize({ width: Math.floor(width * 0.5) })
+                    .webp({ quality: 50, chromaSubsampling: "4:4:4" })
+                    .toBuffer();
+
+                const compressedBase64 = compressedBuffer.toString("base64");
+
+                const result = await cloudinary.v2.uploader.upload(`data:image/jpeg;base64,${compressedBase64}`, {
+                    folder: "twitterCloneMessage",
+                });
+                uploadImage = result;
+            } else {
+                const result = await cloudinary.v2.uploader.upload(image, {
+                    folder: "twitterCloneMessage",
+                });
+                uploadImage = result;
+            }
+        }
+
         const newMessageData = {
             conversation: conversationId,
             sender: senderId,
             content: content,
             replyTo: req.body.replyTo ? req.body.replyTo : null,
+            image: uploadImage,
         };
         const conversation = await Conversation.findById(conversationId);
 
@@ -143,6 +177,8 @@ exports.deleteMessageForYou = async (req, res, next) => {
             await handleLatestUpdate(conversation, req.user._id, messageId);
             await handleLatestUpdate(conversation, receiverId, messageId);
 
+            await cloudinary.v2.uploader.destroy(message.image.public_id);
+
             await Message.deleteOne({ _id: messageId });
         } else {
             await handleLatestUpdate(conversation, userId, messageId);
@@ -175,6 +211,7 @@ exports.deleteMessageForAll = async (req, res, next) => {
 
         await handleLatestUpdate(conversation, req.user._id, messageId);
         await handleLatestUpdate(conversation, receiverId, messageId);
+        await cloudinary.v2.uploader.destroy(message.image.public_id);
         await Message.deleteOne({ _id: messageId });
         return res.status(200).json({
             success: true,
