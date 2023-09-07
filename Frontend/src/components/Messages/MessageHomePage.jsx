@@ -109,23 +109,54 @@ const MessageHomePage = () => {
     };
 
     const sendMessage = async (content, conversation) => {
-        const { data } = await axios.post(
-            `http://localhost:4000/api/v1/chat/message/create`,
-            { conversationId: conversation, senderId: state.user._id, content: content, replyTo: reply.bool && { name: reply.name, message: reply.content }, image: selectedImages.image ? selectedImages.image : null },
+        const toastConfig = {
+            position: "bottom-center",
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: false,
+            progress: undefined,
+            closeButton: false,
+            style: {
+                backgroundColor: "#1DA1F2",
+                border: "none",
+                boxShadow: "none",
+                width: "fit-content",
+                zIndex: 9999,
+                color: "white",
+                padding: "0px 16px",
+                minHeight: "3rem",
+            },
+        };
+        try {
+            const { data } = await axios.post(
+                `http://localhost:4000/api/v1/chat/message/create`,
+                { conversationId: conversation, senderId: state.user._id, content: content, replyTo: reply.bool && { name: reply.name, message: reply.content }, image: selectedImages.image ? selectedImages.image : null },
 
-            {
-                withCredentials: true,
-                headers: { "Content-Type": "application/json" },
+                {
+                    withCredentials: true,
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+            setMessageArray((prev) => [data.newMessage, ...prev]);
+            scrollEndMessage.current && scrollEndMessage.current.scrollIntoView();
+            setReply({ bool: false, name: "", content: "" });
+            setSelectedImages({ bool: false, image: "" });
+            setTextareaValue("");
+            setIsSending(false);
+            if (textareaRef.current) {
+                textareaRef.current.style.height = "auto";
             }
-        );
-        setMessageArray((prev) => [data.newMessage, ...prev]);
-        scrollEndMessage.current && scrollEndMessage.current.scrollIntoView();
-        setReply({ bool: false, name: "", content: "" });
-        setSelectedImages({ bool: false, image: "" });
-        setTextareaValue("");
-        setIsSending(false);
-        if (textareaRef.current) {
-            textareaRef.current.style.height = "auto";
+        } catch (error) {
+            toast(error.response.data.message, toastConfig);
+            setReply({ bool: false, name: "", content: "" });
+            setSelectedImages({ bool: false, image: "" });
+            setTextareaValue("");
+            setIsSending(false);
+            if (textareaRef.current) {
+                textareaRef.current.style.height = "auto";
+            }
         }
     };
     const createConversationHandler = async (id) => {
