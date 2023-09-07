@@ -6,7 +6,7 @@ import axios from "axios";
 import useAnimation from "../../CustomHooks/useAnimation";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import Loader from "../Loader/Loader";
-import { Comments, HeartLike, HeartUnlike, LeftArrow, Retweets, RetweetsGreen, ThreeDots, UndoBookmark, Bookmark } from "../SVGs/SVGs";
+import { Comments, HeartLike, HeartUnlike, LeftArrow, Retweets, RetweetsGreen, ThreeDots, UndoBookmark, Bookmark, PeopleYouFollow, Mention } from "../SVGs/SVGs";
 import { usePostTimeInTweetDetail } from "../../CustomHooks/usePostTime";
 import Avatar from "../Avatar/Avatar";
 import PhotoGallery from "../CommonPostComponent/PhotoGallery";
@@ -70,7 +70,7 @@ const TweetDetail = () => {
 
     //using data that was sent in the state  from Post
     const location = useLocation();
-    const { tweet, ownerName, ownerId, handle, timeCreated, profile, postImage, mentions, isThread, description } = location.state;
+    const { tweet, ownerName, ownerId, handle, timeCreated, profile, postImage, mentions, isThread, description, whoCanReply, whoCanReplyNumber } = location.state;
 
     const formattedTime = usePostTimeInTweetDetail(Date.parse(timeCreated));
 
@@ -382,11 +382,22 @@ const TweetDetail = () => {
                         </button>
                     </div>
                 </div>
+                {whoCanReplyNumber === 2 && (
+                    <div className="mx-10 mt-1 flex w-fit items-center gap-1 bg-blue-400 p-2 text-[0.86rem] font-bold ">
+                        <PeopleYouFollow />
+                        <div>{`People @${ownerName} follows can reply`}</div>
+                    </div>
+                )}
+                {whoCanReplyNumber === 3 && (
+                    <div className="mx-10 mt-1 flex w-fit items-center gap-1 bg-blue-400 p-2 text-[0.86rem] font-bold ">
+                        <Mention />
+                        <div>Only people mentioned in this tweet can reply</div>
+                    </div>
+                )}
                 <div className="mx-4 mt-4  border-t-[0.01rem] opacity-80"></div>
-
                 <Suspense fallback={<Loader />}>
                     <ModalForLikesRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} handleOutsideClick={handleOutsideClick} />
-                    {<CommentCard comments={comments} postId={postId} fromTweetDetail={true} mentionHandleCollection={mentionHandleCollection} isThread={isThread} thread={thread} />}
+                    {<CommentCard comments={comments} postId={postId} fromTweetDetail={true} mentionHandleCollection={mentionHandleCollection} isThread={isThread} thread={thread} whoCanReply={whoCanReply} />}
 
                     <MoreOptionMenuModal
                         visibility={visibility}

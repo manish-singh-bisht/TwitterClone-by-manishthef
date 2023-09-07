@@ -113,6 +113,8 @@ const CommentDetail = () => {
                             handlerBookmark={PostBookmark}
                             dispatchBookmark={dispatchBookmarkTweet}
                             isThread={post.children?.length > 0 ? true : false}
+                            whoCanReply={post.whoCanReply}
+                            whoCanReplyNumber={post.whoCanReplyNumber}
                         />
                         <div className="absolute left-[2.37rem] top-[4.2rem] h-[calc(100%-3.85rem)]   w-fit border-2"></div>
                     </div>

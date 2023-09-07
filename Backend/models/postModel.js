@@ -18,6 +18,8 @@ const postSchema = new mongoose.Schema({
     parent: {
         type: String,
     },
+    whoCanReply: [{ type: String }],
+    whoCanReplyNumber: { type: Number },
 
     threadIdForTweetInThread: { type: String },
 

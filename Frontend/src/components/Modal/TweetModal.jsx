@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { CircularRadialProgressForTweetTextLimit, Cross, Globe } from "../SVGs/SVGs";
+import React, { Suspense, useEffect, useState } from "react";
+import { CircularRadialProgressForTweetTextLimit, Cross, Globe, Mention, PeopleYouFollow } from "../SVGs/SVGs";
 import EditorForTweetModal from "../Editors/EditorForTweetModal";
 import { v4 as uuidv4 } from "uuid";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import Avatar from "../Avatar/Avatar";
 import PostTweet from "../../context/Actions/PostTweet";
 import { MediaUploadPanelLong } from "../CommonPostComponent/MediaUploadPanel";
+import Loader from "../Loader/Loader";
+import WhoCanReplyModal from "./WhoCanReplyModal";
 
 const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, handleIsTweetPressInTweetModalTrue, handleOutsideClick }) => {
     if (!visibility) return;
@@ -21,6 +23,19 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
     const [isTweetPress, setIsTweetPress] = useState(false);
     const [initialTweetFromOtherPartsOfAppPresent, setInitialTweetFromOtherPartsOfAppPresent] = useState(false);
 
+    const [visibilityWhoCanReply, setvisibilityWhoCanReply] = useState(false);
+    const [whoCanReply, setWhoCanReply] = useState(1);
+    //  1=everyone can reply
+    //  2=people you follow can reply
+    //  3=only mentioned can reply
+    const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
+    const handleOutsideClickWhoCanReply = (event) => {
+        if (event.target === event.currentTarget) {
+            setvisibilityWhoCanReply(false);
+            document.body.style.overflow = "unset";
+        }
+    };
+
     //creates a new tweet if initialTweetFromOtherPartsOfApp!==null and initialTweetFromOtherPartsOfApp value is passed in editor, so that editor can display it.
     useEffect(() => {
         if (initialTweetFromOtherPartsOfApp !== null) {
@@ -30,6 +45,7 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
 
             const updatedTweets = [newTweet];
             setParentId(initialId);
+            setWhoCanReply(initialTweetFromOtherPartsOfApp.whoCanReply);
             setTweets(updatedTweets);
             initialTweetFromOtherPartsOfApp = null;
         }
@@ -78,14 +94,29 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
         if (initialTweetFromOtherPartsOfApp) {
             handleIsTweetPressInTweetModalTrue();
         }
+        let dataWhoCanReply = [];
+        if (whoCanReply === 3) {
+            let total = [];
+            for (const tweet of tweets) {
+                tweet.mentions.map((item) => {
+                    total.push(item);
+                });
+            }
+
+            dataWhoCanReply = [...new Set([...total]), state.user.handle];
+        } else if (whoCanReply === 2) {
+            dataWhoCanReply = [...state.user.following, state.user._id];
+        }
 
         for (const tweet of tweets) {
-            const data = await PostTweet({ dispatchPostTweet, ACTIONS, tweet: tweet.text, parent: tweet.parent, mentions: tweet.mentions, threadIdForTweetInThread: tweet.id, images: [] });
+            const data = await PostTweet({ dispatchPostTweet, ACTIONS, tweet: tweet.text, parent: tweet.parent, mentions: tweet.mentions, threadIdForTweetInThread: tweet.id, images: [], whoCanReply: dataWhoCanReply, whoCanReplyNumber: whoCanReply });
 
-            if (tweets.length > 1) {
-                flag === 0 && setPosts((prev) => (data.parent === null ? [{ ...data, children: [tweets[1].id] }, ...prev] : [...prev]));
-            } else {
-                flag === 0 && setPosts((prev) => (data.parent === null ? [data, ...prev] : [...prev]));
+            if (data !== undefined) {
+                if (tweets.length > 1) {
+                    flag === 0 && setPosts((prev) => (data.parent === null ? [{ ...data, children: [tweets[1].id] }, ...prev] : [...prev]));
+                } else {
+                    flag === 0 && setPosts((prev) => (data.parent === null ? [data, ...prev] : [...prev]));
+                }
             }
             flag = 1;
         }
@@ -153,10 +184,35 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
                         </div>
                     );
                 })}
-                <div className="mt-4 ml-[3.6rem] flex  w-[15rem]   ">
-                    <div className="flex h-6  w-fit select-none items-center  gap-1 rounded-[1.8rem] px-3 text-[0.94rem] font-bold  text-blue-500 hover:bg-blue-100">
-                        <Globe />
-                        <p className="">Everyone can reply</p>
+                <div
+                    className="mt-4 ml-[3.6rem] flex  w-fit   "
+                    onClick={(e) => {
+                        setvisibilityWhoCanReply(true);
+                        document.body.style.overflow = "hidden";
+                        const buttonRect = e.target.getBoundingClientRect();
+                        const top = buttonRect.top + buttonRect.height;
+                        const left = buttonRect.left;
+                        setButtonPosition({ top, left });
+                    }}>
+                    <div className="flex h-6 w-fit  select-none items-center gap-1  rounded-[1.8rem]  px-3 text-[0.94rem] font-bold  text-blue-500 hover:bg-blue-100">
+                        {whoCanReply === 1 && (
+                            <>
+                                <Globe />
+                                <p className="">Everyone can reply</p>
+                            </>
+                        )}
+                        {whoCanReply === 2 && (
+                            <>
+                                <PeopleYouFollow />
+                                <p className="">People you follow can only reply</p>
+                            </>
+                        )}
+                        {whoCanReply === 3 && (
+                            <>
+                                <Mention />
+                                <p className="">People mentioned can only reply</p>
+                            </>
+                        )}
                     </div>
                 </div>
                 <div className=" ml-[4.6rem] mt-3 w-[85%] border-[0.01rem] bg-gray-300"></div>
@@ -193,6 +249,16 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
                     </div>
                 </div>
             </div>
+            <Suspense fallback={<Loader />}>
+                <WhoCanReplyModal
+                    setvisibility={setvisibilityWhoCanReply}
+                    setWhoCanReply={setWhoCanReply}
+                    visibility={visibilityWhoCanReply}
+                    buttonPosition={buttonPosition}
+                    handleOutsideClickWhoCanReply={handleOutsideClickWhoCanReply}
+                    fromTweetModal={true}
+                />
+            </Suspense>
         </div>
     );
 };

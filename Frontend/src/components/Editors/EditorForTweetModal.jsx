@@ -6,14 +6,10 @@ import StarterKit from "@tiptap/starter-kit";
 import { Mention } from "@tiptap/extension-mention";
 import suggestion from "./Mentions/suggestion";
 import Placeholder from "@tiptap/extension-placeholder";
-import PostTweet from "../../context/Actions/PostTweet";
-
 import "./EditorStyles.css";
-import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 
 const EditorForTweetModal = ({ height, width, placeholder, onClick: click, onChange: change, whenEditorInFocus, initialTweetFromOtherPartsOfApp, isTweetPress, onClose, tweets }) => {
     const [editorContent, setEditorContent] = useState("");
-    const { ACTIONS, dispatchPostTweet, setPosts } = useGlobalContext();
     const editor = useEditor({
         autofocus: true,
         extensions: [

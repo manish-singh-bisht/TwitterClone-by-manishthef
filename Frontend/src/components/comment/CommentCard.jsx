@@ -9,13 +9,17 @@ import RetweetComment from "../../context/Actions/RetweetComment";
 import PostBookmark from "../../context/Actions/PostBookmark";
 import CommentBookmark from "../../context/Actions/CommentBookmark";
 
-const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDetail, isParentPresent, POSTID, mentionHandleCollection, isThread, thread }) => {
+const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDetail, isParentPresent, POSTID, mentionHandleCollection, isThread, thread, whoCanReply }) => {
     const { ACTIONS, state, dispatchCommentLikeUnlike, dispatch, dispatchRetweetPost, dispatchRetweetComment, dispatchBookmarkComment, dispatchBookmarkTweet } = useGlobalContext();
+
     const profile = state.user && state.user.profile && state.user.profile.image && state.user.profile.image.url ? state.user.profile.image.url : null;
 
     return (
         <>
-            {!isParentPresent && <CommentBox profile={profile} postId={postId} parent={parent} mentionHandleCollection={mentionHandleCollection} />}
+            {!isParentPresent && (whoCanReply.includes(state.user._id) || whoCanReply.includes(state.user.handle) || whoCanReply.length === 0) && (
+                <CommentBox profile={profile} postId={postId} parent={parent} mentionHandleCollection={mentionHandleCollection} />
+            )}
+
             {isThread && (
                 <>
                     {thread &&
@@ -54,6 +58,8 @@ const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDet
                                         mentions={item.post.mentions}
                                         handlerBookmark={PostBookmark}
                                         dispatchBookmark={dispatchBookmarkTweet}
+                                        whoCanReply={item.post.whoCanReply}
+                                        whoCanReplyNumber={item.post.whoCanReplyNumber}
                                     />
                                 </div>
                             );

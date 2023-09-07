@@ -90,6 +90,8 @@ exports.createPost = async (req, res, next) => {
             mentions: req.body.mentions,
             parent: req.body.parent,
             threadIdForTweetInThread: req.body.threadIdForTweetInThread,
+            whoCanReply: req.body.whoCanReply,
+            whoCanReplyNumber: req.body.whoCanReplyNumber,
         };
         const owner = await Users.findById(newData.owner).select("name handle _id profile");
         newData.owner = owner;

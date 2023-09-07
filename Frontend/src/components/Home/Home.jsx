@@ -115,6 +115,8 @@ const Home = () => {
                                                 mentions={post.mentions}
                                                 fromHome={true}
                                                 threadChildren={post.children}
+                                                whoCanReply={post.whoCanReply}
+                                                whoCanReplyNumber={post.whoCanReplyNumber}
                                             />
                                         );
                                     })

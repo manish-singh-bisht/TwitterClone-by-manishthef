@@ -120,6 +120,8 @@ const BookMarkPage = () => {
                                         fromBookmarks={true}
                                         removeBookmark={(id) => removeBookmark(id)}
                                         isCommentBookmark={post.comment ? true : false}
+                                        whoCanReply={post.whoCanReply}
+                                        whoCanReplyNumber={post.whoCanReplyNumber}
                                     />
                                 );
                             })

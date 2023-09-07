@@ -1,10 +1,11 @@
 import React, { Suspense, useState } from "react";
 import Avatar from "../Avatar/Avatar";
 import EditorInHome from "../Editors/EditorInHome";
-import { CircularRadialProgressForTweetTextLimit, Globe } from "../SVGs/SVGs";
+import { CircularRadialProgressForTweetTextLimit, Globe, Mention, PeopleYouFollow } from "../SVGs/SVGs";
 import { v4 as uuidv4 } from "uuid";
 import Loader from "../Loader/Loader";
 import { MediaUploadPanelLong } from "../CommonPostComponent/MediaUploadPanel";
+import WhoCanReplyModal from "../Modal/WhoCanReplyModal";
 
 const TweetModal = React.lazy(() => import("../Modal/TweetModal"));
 
@@ -54,6 +55,20 @@ const TweetBoxInHome = ({ profile }) => {
         setSelectedImages((prev) => prev.filter((item) => item !== image));
     };
 
+    const [visibility, setvisibility] = useState(false);
+    const [whoCanReply, setWhoCanReply] = useState(1);
+
+    //  1=everyone can reply
+    //  2=people you follow can reply
+    //  3=only mentioned can reply
+    const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
+    const handleOutsideClickWhoCanReply = (event) => {
+        if (event.target === event.currentTarget) {
+            setvisibility(false);
+            document.body.style.overflow = "unset";
+        }
+    };
+
     return (
         <>
             <div className="  min-h-[7.5rem] border-b">
@@ -73,14 +88,40 @@ const TweetBoxInHome = ({ profile }) => {
                         deleteImages={deleteImages}
                         selectedImages={selectedImages}
                         setSelectedImages={setSelectedImages}
+                        whoCanReply={whoCanReply}
                     />
                 </div>
                 {showGlobe && (
                     <>
-                        <div className="mt-2 ml-[3.6rem] flex  w-[15rem]   ">
+                        <div
+                            className="mt-2 ml-[3.6rem] flex     w-fit "
+                            onClick={(e) => {
+                                setvisibility(true);
+                                document.body.style.overflow = "hidden";
+                                const buttonRect = e.target.getBoundingClientRect();
+                                const top = buttonRect.top + buttonRect.height;
+                                const left = buttonRect.left;
+                                setButtonPosition({ top, left });
+                            }}>
                             <div className="flex h-6  w-fit select-none items-center  gap-1 rounded-[1.8rem] px-3 text-[0.94rem] font-bold  text-blue-500 hover:bg-blue-100">
-                                <Globe />
-                                <p className="">Everyone can reply</p>
+                                {whoCanReply === 1 && (
+                                    <>
+                                        <Globe />
+                                        <p className="">Everyone can reply</p>
+                                    </>
+                                )}
+                                {whoCanReply === 2 && (
+                                    <>
+                                        <PeopleYouFollow />
+                                        <p className="">People you follow can only reply</p>
+                                    </>
+                                )}
+                                {whoCanReply === 3 && (
+                                    <>
+                                        <Mention />
+                                        <p className="">People mentioned can only reply</p>
+                                    </>
+                                )}
                             </div>
                         </div>
                         <div className=" ml-[4.6rem] mt-3 w-[85%] border-[0.01rem] bg-gray-300"></div>
@@ -119,10 +160,11 @@ const TweetBoxInHome = ({ profile }) => {
                 <TweetModal
                     visibility={isTweetBoxOpen}
                     onClose={hideTwitterBox}
-                    initialTweetFromOtherPartsOfApp={{ text: singleTweet.text }}
+                    initialTweetFromOtherPartsOfApp={{ text: singleTweet.text, whoCanReply }}
                     handleIsTweetPressInTweetModalTrue={handleIsTweetPressInTweetModalTrue}
                     handleOutsideClick={handleOutsideClick}
                 />
+                <WhoCanReplyModal setvisibility={setvisibility} setWhoCanReply={setWhoCanReply} visibility={visibility} buttonPosition={buttonPosition} handleOutsideClickWhoCanReply={handleOutsideClickWhoCanReply} />
             </Suspense>
         </>
     );

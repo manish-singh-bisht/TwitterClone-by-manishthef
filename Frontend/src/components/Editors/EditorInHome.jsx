@@ -11,9 +11,9 @@ import PostTweet from "../../context/Actions/PostTweet";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import PhotoGallery from "../CommonPostComponent/PhotoGallery";
 
-const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handleIsTweetPressFalse, isTweetPressInTweetModal, handleIsTweetPressInTweetModalFalse, selectedImages, deleteImages, setSelectedImages }) => {
+const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handleIsTweetPressFalse, isTweetPressInTweetModal, handleIsTweetPressInTweetModalFalse, selectedImages, deleteImages, setSelectedImages, whoCanReply }) => {
     const [editorContent, setEditorContent] = useState("");
-    const { ACTIONS, dispatchPostTweet, setPosts } = useGlobalContext();
+    const { ACTIONS, dispatchPostTweet, setPosts, state } = useGlobalContext();
     const [isSent, setIsSent] = useState(false);
     const editor = useEditor({
         extensions: [
@@ -50,6 +50,7 @@ const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handle
             showGlobeHandler();
         },
     });
+
     useEffect(() => {
         const whenIsTweetIsPressed = async () => {
             if ((isTweetPress || isTweetPressInTweetModal) && editor) {
@@ -60,7 +61,15 @@ const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handle
                 handleIsTweetPressFalse();
                 handleIsTweetPressInTweetModalFalse();
                 if (isTweetPress && !isTweetPressInTweetModal) {
-                    const data = await PostTweet({ dispatchPostTweet, ACTIONS, tweet: text, parent: null, mentions: mentions, threadIdForTweetInThread: null, images: selectedImages });
+                    let dataWhoCanReply = [];
+
+                    if (whoCanReply === 2) {
+                        dataWhoCanReply = [...state.user.following, state.user._id];
+                    } else if (whoCanReply === 3) {
+                        dataWhoCanReply = [...mentions, state.user.handle];
+                    }
+
+                    const data = await PostTweet({ dispatchPostTweet, ACTIONS, tweet: text, parent: null, mentions: mentions, threadIdForTweetInThread: null, images: selectedImages, whoCanReply: dataWhoCanReply, whoCanReplyNumber: whoCanReply });
                     //the threadIdForTweetInThread here is null because this threadIdForTweetInThread is uuid and not the _id of mongodb,this threadIdForTweetInThread is just created for thread purpose and not for single tweets.
                     if (selectedImages.length > 0 && data !== undefined) {
                         data.images = selectedImages;
@@ -70,6 +79,7 @@ const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handle
                     } else {
                         setPosts((prev) => [...prev]);
                     }
+                    document.body.style.overflow = "unset";
                 }
                 setIsSent(false);
                 editor.commands.clearContent(true);

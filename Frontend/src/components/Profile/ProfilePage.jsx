@@ -258,6 +258,8 @@ const ProfilePage = () => {
                                                             fromProfile={true}
                                                             fromProfileTweets={true}
                                                             setIsPinned={setIsPinned}
+                                                            whoCanReply={post.whoCanReply}
+                                                            whoCanReplyNumber={post.whoCanReplyNumber}
                                                         />
                                                     );
                                                 }
@@ -303,6 +305,8 @@ const ProfilePage = () => {
                                                                             handlerBookmark={PostBookmark}
                                                                             dispatchBookmark={dispatchBookmarkTweet}
                                                                             fromProfileRepliesParentPost={true}
+                                                                            whoCanReply={commentParentPost.whoCanReply}
+                                                                            whoCanReplyNumber={commentParentPost.whoCanReplyNumber}
                                                                         />
                                                                         <div className="absolute left-[2.37rem] top-[4.2rem] h-[calc(100%-3.85rem)]   w-fit border-2"></div>
                                                                     </div>
@@ -377,6 +381,8 @@ const ProfilePage = () => {
                                                             threadChildren={post.children}
                                                             fromProfile={true}
                                                             fromMediaLikesProfile={true}
+                                                            whoCanReply={post.whoCanReply}
+                                                            whoCanReplyNumber={post.whoCanReplyNumber}
                                                         />
                                                     );
                                                 }

@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect, useState } from "react";
-import { Comments, PushPin, Retweets, ThreeDots } from "../SVGs/SVGs";
+import { Comments, Mention, PeopleYouFollow, PushPin, Retweets, ThreeDots } from "../SVGs/SVGs";
 import { Link, useNavigate } from "react-router-dom";
 import PhotoGallery from "./PhotoGallery";
 import "./AnimationUsedInPostAndTweetDetail.css";
@@ -63,6 +63,8 @@ const Post = ({
     fromMediaLikesProfile,
     fromProfileRepliesParentPost,
     fromProfileRepliesComment,
+    whoCanReply,
+    whoCanReplyNumber,
 }) => {
     const formattedTime = usePostTime(Date.parse(timeCreated));
     const { isHovered, handleMouseEnter, handleMouseLeave } = useHoverCard();
@@ -181,6 +183,8 @@ const Post = ({
             mentions: mentions,
             isThread: isThread,
             description: description,
+            whoCanReply: whoCanReply,
+            whoCanReplyNumber: whoCanReplyNumber,
         };
         isParent && activeHandler(commentId);
         navigate(newUrl, { replace: true, state: stateObject });
@@ -217,6 +221,18 @@ const Post = ({
                 <div className="mx-10 mt-1 flex items-center gap-4 text-[0.86rem] font-bold text-gray-500">
                     <Retweets />
                     <div>{ownerRetweet.handle === state.user.handle ? `You retweeted` : `${ownerRetweet.name} retweeted`}</div>
+                </div>
+            )}
+            {whoCanReplyNumber === 2 && (
+                <div className="mx-10 mt-1 flex items-center gap-4 text-[0.86rem] font-bold text-gray-500">
+                    <PeopleYouFollow />
+                    <div>{`People @${ownerName} follows can reply`}</div>
+                </div>
+            )}
+            {whoCanReplyNumber === 3 && (
+                <div className="mx-10 mt-1 flex items-center gap-4 text-[0.86rem] font-bold text-gray-500">
+                    <Mention />
+                    <div>Only people mentioned in this tweet can reply</div>
                 </div>
             )}
             {isPinnedTweet?.bool && isPinnedTweet?.id === postId && !ownerRetweet && (
