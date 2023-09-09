@@ -54,6 +54,10 @@ const DeleteLogoutModal = ({
                                             postImage: detailsOfActiveComment.post.images,
                                             ownerImage: detailsOfActiveComment.post.owner.profile && detailsOfActiveComment.post.owner.profile.image.url ? detailsOfActiveComment.post.owner.profile.image.url : null,
                                             mentions: detailsOfActiveComment.post.mentions,
+                                            description: detailsOfActiveComment.post.owner.description,
+
+                                            whoCanReply: detailsOfActiveComment.post.whoCanReply,
+                                            whoCanReplyNumber: detailsOfActiveComment.post.whoCanReplyNumber,
                                         },
                                     }); //to tweetdetail
                                 } else if (fromSideBar) {

@@ -90,6 +90,15 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: null,
     },
+    drafts: [
+        {
+            text: String,
+            createdAt: {
+                type: Date,
+                default: Date.now,
+            },
+        },
+    ],
 });
 
 //hashing before saving the password

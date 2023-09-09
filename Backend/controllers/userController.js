@@ -688,3 +688,128 @@ exports.updatePinnedConversation = async (req, res, next) => {
         next(new ErrorHandler(error.message, 500));
     }
 };
+
+exports.createDraft = async (req, res, next) => {
+    try {
+        const { text } = req.body;
+
+        const user = await Users.findById(req.user._id);
+
+        if (!user) {
+            return next(new ErrorHandler("User not found", 500));
+        }
+
+        if (user.drafts.length >= 5) {
+            return next(new ErrorHandler("Draft limit reached.", 500));
+        }
+
+        user.drafts.push({ text });
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Your draft was saved.",
+            draft: user.drafts,
+        });
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+};
+exports.updateDraft = async (req, res, next) => {
+    try {
+        const { text, draftId } = req.body;
+
+        const user = await Users.findById(req.user._id);
+
+        if (!user) {
+            return next(new ErrorHandler("User not found", 500));
+        }
+
+        const draftIndex = user.drafts.findIndex((item) => {
+            return item._id.toString() === draftId;
+        });
+
+        if (draftIndex === -1) {
+            return next(new ErrorHandler("Draft not found", 500));
+        }
+
+        user.drafts[draftIndex].text = text;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Draft updated successfully",
+            draft: user.drafts,
+        });
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+};
+exports.deleteDraft = async (req, res, next) => {
+    try {
+        const { draftIds } = req.body;
+
+        const user = await Users.findById(req.user._id);
+
+        if (!user) {
+            return next(new ErrorHandler("User not found", 500));
+        }
+        draftIds.map((id) => {
+            const draftIndex = user.drafts.findIndex((item) => {
+                return item._id.toString() === id;
+            });
+
+            if (draftIndex === -1) {
+                return next(new ErrorHandler("Draft not found", 500));
+            }
+
+            user.drafts.splice(draftIndex, 1);
+        });
+
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Draft deleted successfully",
+        });
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+};
+
+exports.deleteDraftAll = async (req, res, next) => {
+    try {
+        const user = await Users.findById(req.user._id);
+
+        if (!user) {
+            return next(new ErrorHandler("User not found", 500));
+        }
+
+        user.drafts = [];
+
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Drafts deleted successfully",
+        });
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+};
+exports.getDrafts = async (req, res, next) => {
+    try {
+        const user = await Users.findById(req.user._id);
+
+        if (!user) {
+            return next(new ErrorHandler("User not found", 500));
+        }
+
+        res.status(200).json({
+            success: true,
+            drafts: user.drafts,
+        });
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+};

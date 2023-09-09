@@ -18,6 +18,11 @@ const {
     createPinnedConversation,
     removePinnedConversation,
     updatePinnedConversation,
+    deleteDraft,
+    createDraft,
+    updateDraft,
+    getDrafts,
+    deleteDraftAll,
 } = require("../controllers/userController");
 const { isAuthenticated } = require("../middlewares/auth");
 
@@ -39,4 +44,9 @@ router.route("/pinTweet/:id/:tweetId").get(isAuthenticated, createPinnedTweet).p
 router.route("/unpinTweet/:id/:tweetId").get(isAuthenticated, removePinnedTweet);
 router.route("/pinConversation/:handle/:id").get(isAuthenticated, createPinnedConversation).put(isAuthenticated, updatePinnedConversation);
 router.route("/unpinConversation/:handle/:id").get(isAuthenticated, removePinnedConversation);
+router.route("/draft/get").get(isAuthenticated, getDrafts);
+router.route("/draft/create").post(isAuthenticated, createDraft);
+router.route("/draft/edit").put(isAuthenticated, updateDraft);
+router.route("/draft/delete").delete(isAuthenticated, deleteDraft);
+router.route("/draft/deleteAll").delete(isAuthenticated, deleteDraftAll);
 module.exports = router;

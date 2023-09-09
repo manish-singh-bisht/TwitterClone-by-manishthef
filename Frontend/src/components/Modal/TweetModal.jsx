@@ -8,8 +8,10 @@ import PostTweet from "../../context/Actions/PostTweet";
 import { MediaUploadPanelLong } from "../CommonPostComponent/MediaUploadPanel";
 import Loader from "../Loader/Loader";
 import WhoCanReplyModal from "./WhoCanReplyModal";
+import SaveTweetModal from "./SaveTweetModal";
+import DraftModal from "./DraftModal";
 
-const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, handleIsTweetPressInTweetModalTrue, handleOutsideClick }) => {
+const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, handleIsTweetPressInTweetModalTrue, handleOutsideClick, handleDeleteDraft, handleUpdateDraft, fromDraft }) => {
     if (!visibility) return;
 
     const { state, setPosts, dispatchPostTweet, ACTIONS } = useGlobalContext();
@@ -36,9 +38,26 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
         }
     };
 
+    const [visibilityCross, setvisibilityCross] = useState(false);
+
+    const [buttonPositionCross, setButtonPositionCross] = useState({ top: 0, left: 0 });
+    const handleOutsideClickCross = (event) => {
+        if (event.target === event.currentTarget) {
+            setvisibilityCross(false);
+        }
+    };
+
+    const [visibilityDraft, setvisibilityDraft] = useState(false);
+
+    const handleOutsideClickDraft = (event) => {
+        if (event.target === event.currentTarget) {
+            setvisibilityDraft(false);
+        }
+    };
+
     //creates a new tweet if initialTweetFromOtherPartsOfApp!==null and initialTweetFromOtherPartsOfApp value is passed in editor, so that editor can display it.
     useEffect(() => {
-        if (initialTweetFromOtherPartsOfApp !== null) {
+        if (initialTweetFromOtherPartsOfApp !== null && !fromDraft) {
             setInitialTweetFromOtherPartsOfAppPresent(true);
             initialId = uuidv4();
             const newTweet = { id: initialId, text: initialTweetFromOtherPartsOfApp.text, parent: null, mentions: null };
@@ -46,6 +65,16 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
             const updatedTweets = [newTweet];
             setParentId(initialId);
             setWhoCanReply(initialTweetFromOtherPartsOfApp.whoCanReply);
+            setTweets(updatedTweets);
+            initialTweetFromOtherPartsOfApp = null;
+        }
+        if (initialTweetFromOtherPartsOfApp !== null && fromDraft) {
+            initialId = uuidv4();
+            const newTweet = { id: initialId, text: initialTweetFromOtherPartsOfApp.text, parent: null, mentions: null };
+
+            const updatedTweets = [newTweet];
+            setParentId(initialId);
+            setWhoCanReply(1);
             setTweets(updatedTweets);
             initialTweetFromOtherPartsOfApp = null;
         }
@@ -91,7 +120,7 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
     const handleTweet = async () => {
         let flag = 0;
         setIsTweetPress(true);
-        if (initialTweetFromOtherPartsOfApp) {
+        if (initialTweetFromOtherPartsOfApp && !fromDraft) {
             handleIsTweetPressInTweetModalTrue();
         }
         let dataWhoCanReply = [];
@@ -120,6 +149,9 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
             }
             flag = 1;
         }
+
+        handleDeleteDraft([initialTweetFromOtherPartsOfApp.id]);
+
         flag = 0;
         onClose();
     };
@@ -133,10 +165,33 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
             <div className="fixed  h-full w-full  bg-black opacity-70" onClick={handleOutsideClick}></div>
 
             <div className="relative left-[28rem] top-[4rem]  flex h-auto max-h-[40rem]  min-h-[18rem] w-[39.3rem] flex-col overflow-y-auto rounded-xl bg-white">
-                <div className=" h-fit w-full ">
-                    <div className="  m-2 flex h-10 w-10 cursor-pointer items-center justify-center  rounded-full p-2 hover:bg-blue-100" onClick={onClose}>
+                <div className=" flex h-fit w-full justify-between ">
+                    <div
+                        className="  m-2 flex h-10 w-10 cursor-pointer items-center justify-center  rounded-full p-2 hover:bg-blue-100"
+                        onClick={(e) => {
+                            if (tweets.length === 1 && tweets[0].text.length > 0) {
+                                setvisibilityCross(true);
+                                document.body.style.overflow = "hidden";
+                                const buttonRect = e.target.getBoundingClientRect();
+                                const top = buttonRect.top + buttonRect.height;
+                                const left = buttonRect.left;
+                                setButtonPositionCross({ top, left });
+                            } else {
+                                onClose();
+                            }
+                        }}>
                         <Cross className="  " />
                     </div>
+                    {state.user.drafts.length > 0 && tweets.length === 1 && !fromDraft && (
+                        <button
+                            className="m-2  h-fit w-fit rounded-full px-2 hover:border-2 hover:bg-blue-200 active:bg-blue-300"
+                            onClick={() => {
+                                setvisibilityDraft(true);
+                                document.body.style.overflow = "hidden";
+                            }}>
+                            Drafts
+                        </button>
+                    )}
                 </div>
 
                 {tweets.map((tweet, index) => {
@@ -258,6 +313,19 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
                     handleOutsideClickWhoCanReply={handleOutsideClickWhoCanReply}
                     fromTweetModal={true}
                 />
+                <SaveTweetModal
+                    setvisibilityCross={setvisibilityCross}
+                    visibilityCross={visibilityCross}
+                    buttonPositionCross={buttonPositionCross}
+                    handleOutsideClickCross={handleOutsideClickCross}
+                    closeAll={onClose}
+                    text={tweets[0]?.text}
+                    fromDraft={fromDraft}
+                    handleUpdateDraft={(text) => handleUpdateDraft(text)}
+                    firstTweetText={tweets[0].text}
+                />
+
+                <DraftModal visibilityDraft={visibilityDraft} handleOutsideClickDraft={handleOutsideClickDraft} closeAll={onClose} />
             </Suspense>
         </div>
     );
