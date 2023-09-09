@@ -155,7 +155,7 @@ const DraftModal = ({ visibilityDraft, handleOutsideClickDraft, closeAll }) => {
         <>
             <div className="fixed inset-0 z-30 flex  h-[100vh] w-[100vw] items-center justify-center">
                 <div className="fixed  h-[100vh] w-[100vw]  bg-black opacity-40" onClick={handleOutsideClickDraft}></div>
-                <div className="relative  flex h-auto max-h-[40rem]  min-h-[83vh] w-[41vw] flex-col  overflow-y-auto  rounded-xl bg-white ">
+                <div className="relative  flex h-full max-h-[40rem] min-h-[83vh]  w-[41vw] flex-col overflow-y-auto  rounded-xl   bg-white ">
                     <div className="  sticky inset-0 mb-3 flex h-fit w-full  items-center  justify-between bg-white/60  px-2 backdrop-blur-md">
                         <div className="flex items-center gap-4">
                             <div className="  m-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full  p-2 hover:bg-gray-200" onClick={closeAll}>
@@ -177,70 +177,74 @@ const DraftModal = ({ visibilityDraft, handleOutsideClickDraft, closeAll }) => {
                             {isEdit ? "Done" : "Edit"}
                         </button>
                     </div>
-                    {drafts.length > 0 ? (
-                        drafts.map((item) => {
-                            return (
-                                <div className="flex gap-2  px-2 hover:bg-gray-100" key={item.id}>
-                                    <input
-                                        type="checkbox"
-                                        name=""
-                                        id=""
-                                        checked={item.isChecked}
-                                        className={`${isEdit ? "block" : "hidden"} `}
-                                        onChange={(e) => {
-                                            e.stopPropagation();
-                                            checkboxHandler(item.id);
-                                        }}
-                                    />
-                                    <div
-                                        className="w-full   py-3  text-[1.1rem] "
-                                        onClick={(e) => {
-                                            setActiveDraft((prev) => ({ ...prev, id: item.id, text: item.label }));
-                                            setIsTweetBoxOpen(true);
-                                        }}>
-                                        {item.label}
+                    <div>
+                        {drafts.length > 0 ? (
+                            drafts.map((item) => {
+                                return (
+                                    <div className="flex h-fit gap-2 border-2 px-2 hover:bg-gray-100" key={item.id}>
+                                        <input
+                                            type="checkbox"
+                                            name=""
+                                            id=""
+                                            checked={item.isChecked}
+                                            className={`${isEdit ? "block" : "hidden"} `}
+                                            onChange={(e) => {
+                                                e.stopPropagation();
+                                                checkboxHandler(item.id);
+                                            }}
+                                        />
+                                        <div
+                                            className="w-full   py-3  text-[1.1rem] "
+                                            onClick={(e) => {
+                                                setActiveDraft((prev) => ({ ...prev, id: item.id, text: item.label }));
+                                                setIsTweetBoxOpen(true);
+                                            }}>
+                                            {item.label}
+                                        </div>
                                     </div>
-                                </div>
-                            );
-                        })
-                    ) : (
-                        <div className="mt-4 flex flex-col items-center justify-center  text-[1.1rem] leading-4 text-gray-700">
-                            <span className="text-[1.6rem] font-bold text-black">Hold that thought</span> <br /> Not ready to post just yet? Save it to your drafts.
-                        </div>
-                    )}
-                    {isEdit && (
-                        <div className="absolute bottom-0 flex w-full justify-between  px-3 py-3">
-                            <button
-                                className="rounded-full p-2 hover:bg-gray-100"
-                                onClick={() => {
-                                    if (anyChecked.bool) {
-                                        handleDeSelectAll();
-                                    } else {
-                                        handleSelectAll();
-                                    }
-                                }}>
-                                {anyChecked.bool ? "Deselect all" : "Select all"}
-                            </button>
-                            <button
-                                disabled={!anyChecked.bool}
-                                className={`${anyChecked.bool ? "bg-red-200 hover:bg-red-300 active:bg-red-500" : "hover:bg-gray-100"}} rounded-full p-2 `}
-                                onClick={() => {
-                                    if (anyChecked.number === drafts.length) {
-                                        handleDeleteAll();
-                                    } else {
-                                        let arrayId = [];
-                                        drafts.map((item) => {
-                                            if (item.isChecked) {
-                                                arrayId.push(item.id);
-                                            }
-                                        });
-                                        handleDelete(arrayId);
-                                    }
-                                }}>
-                                Delete
-                            </button>
-                        </div>
-                    )}
+                                );
+                            })
+                        ) : (
+                            <div className="mt-4 flex flex-col items-center justify-center  text-[1.1rem] leading-4 text-gray-700">
+                                <span className="text-[1.6rem] font-bold text-black">Hold that thought</span> <br /> Not ready to post just yet? Save it to your drafts.
+                            </div>
+                        )}
+                    </div>
+                    <div className="sticky  bottom-0 bg-gray-400">
+                        {isEdit && (
+                            <div className=" bottom-0 flex w-full justify-between   px-3 py-3">
+                                <button
+                                    className="rounded-full p-2 hover:bg-gray-100"
+                                    onClick={() => {
+                                        if (anyChecked.bool) {
+                                            handleDeSelectAll();
+                                        } else {
+                                            handleSelectAll();
+                                        }
+                                    }}>
+                                    {anyChecked.bool ? "Deselect all" : "Select all"}
+                                </button>
+                                <button
+                                    disabled={!anyChecked.bool}
+                                    className={`${anyChecked.bool ? "bg-red-200 hover:bg-red-300 active:bg-red-500" : "hover:bg-gray-100"}} rounded-full p-2 `}
+                                    onClick={() => {
+                                        if (anyChecked.number === drafts.length) {
+                                            handleDeleteAll();
+                                        } else {
+                                            let arrayId = [];
+                                            drafts.map((item) => {
+                                                if (item.isChecked) {
+                                                    arrayId.push(item.id);
+                                                }
+                                            });
+                                            handleDelete(arrayId);
+                                        }
+                                    }}>
+                                    Delete
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
             <Suspense fallback={<Loader />}>

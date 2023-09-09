@@ -50,18 +50,23 @@ const SaveTweetModal = ({ visibilityCross, buttonPositionCross, handleOutsideCli
         },
     };
     const createDraftHandler = async (text) => {
-        const { data } = await axios.post(
-            `http://localhost:4000/api/v1/draft/create`,
-            { text },
+        if (text.length >= 300) {
+            toast("Characters cannot be more than 300.", toastConfig);
+            setvisibilityCross(false);
+        } else {
+            const { data } = await axios.post(
+                `http://localhost:4000/api/v1/draft/create`,
+                { text },
 
-            {
-                withCredentials: true,
-                headers: { "Content-Type": "application/json" },
-            }
-        );
-        state.user.drafts = data.draft;
-        toast(data.message, toastConfig);
-        closeAll();
+                {
+                    withCredentials: true,
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+            state.user.drafts = data.draft;
+            toast(data.message, toastConfig);
+            closeAll();
+        }
     };
     return (
         <>
