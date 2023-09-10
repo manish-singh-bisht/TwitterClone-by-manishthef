@@ -68,6 +68,8 @@ const CommentDetail = () => {
                 mentions: post.mentions,
                 description: post.owner.description,
                 isThread: post.children?.length > 0 ? true : false,
+                whoCanReply: post.whoCanReply,
+                whoCanReplyNumber: post.whoCanReplyNumber,
             },
         });
     }
