@@ -55,7 +55,7 @@ exports.register = async (req, res, next) => {
         let user = await Users.findOne({ handle, email });
         let userProfile;
         if (user) {
-            return next(new ErrorHandler("User already exists", 400));
+            return next(new ErrorHandler("User already exists.Try different email or handle or both.", 400));
         } else {
             if (profile && profile.image && !profile.banner) {
                 const profileResult = await handleImageUpload(profile.image, "ProfileImage");
@@ -97,7 +97,11 @@ exports.register = async (req, res, next) => {
                 });
         }
     } catch (error) {
-        next(new ErrorHandler(error.message, 500));
+        if (error.code === 11000) {
+            return next(new ErrorHandler("This email or handle is already in use. Please choose a different email or handle.", 500));
+        } else {
+            return next(new ErrorHandler(error.message, 500));
+        }
     }
 };
 

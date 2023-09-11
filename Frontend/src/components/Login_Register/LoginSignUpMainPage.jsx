@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { Link } from "react-router-dom";
-import LoginOptionModal from "./LoginOptionModal";
+
 import { TwitterIconInLoginSignupMainPage } from "../SVGs/SVGs";
+import Loader from "../Loader/Loader";
+
+const SignUpOption = React.lazy(() => import("./SignUpOption"));
+const LoginOptionModal = React.lazy(() => import("./LoginOptionModal"));
 
 const LoginSignUpMainPage = () => {
     const [isLoginVisible, setIsLoginVisible] = useState(false);
@@ -11,6 +15,17 @@ const LoginSignUpMainPage = () => {
     const handleOutsideClick = (event) => {
         if (event.target === event.currentTarget) {
             setIsLoginVisible(false);
+            document.body.style.overflow = "unset";
+        }
+    };
+
+    const [isSignUpVisible, setIsSignUpVisible] = useState(false);
+    const hideSignUp = () => {
+        setIsSignUpVisible(false);
+    };
+    const handleOutsideClickSignup = (event) => {
+        if (event.target === event.currentTarget) {
+            setIsSignUpVisible(false);
             document.body.style.overflow = "unset";
         }
     };
@@ -31,16 +46,21 @@ const LoginSignUpMainPage = () => {
                             <div className="text-4xl font-bold ">Join Twitter today.</div>
                         </div>
                         <div className="mt-12 flex flex-col gap-3">
-                            <Link to="/signUp" className="  flex  h-16 w-[25.5rem] items-center justify-center rounded-[4rem] border-2 border-blue-200 bg-blue-400  font-bold text-white hover:bg-blue-500 hover:text-black active:bg-blue-600">
+                            <div
+                                onClick={() => setIsSignUpVisible(true)}
+                                className="flex  h-16  w-[25.5rem] cursor-pointer items-center justify-center rounded-[4rem] border-2 border-blue-200 bg-blue-400  font-bold text-white hover:bg-blue-500 hover:text-black active:bg-blue-600">
                                 Sign up
-                            </Link>
+                            </div>
                             <div
                                 className="flex h-16 w-[25.5rem] cursor-pointer select-none items-center justify-center rounded-[4rem] border-2 border-blue-200 bg-white font-bold text-blue-400 hover:bg-gray-50 hover:text-black active:bg-gray-100 "
                                 onClick={() => setIsLoginVisible(true)}>
                                 Log in
                             </div>
 
-                            <LoginOptionModal onClose={hideLogin} isLoginVisible={isLoginVisible} handleOutsideClick={handleOutsideClick} />
+                            <Suspense loader={<Loader />}>
+                                <LoginOptionModal onClose={hideLogin} isLoginVisible={isLoginVisible} handleOutsideClick={handleOutsideClick} />
+                                <SignUpOption onClose={hideSignUp} isSignUpVisible={isSignUpVisible} handleOutsideClickSignup={handleOutsideClickSignup} />
+                            </Suspense>
                         </div>
                     </div>
                 </div>
