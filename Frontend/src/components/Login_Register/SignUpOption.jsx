@@ -107,13 +107,6 @@ const SignUpOption = ({ onClose, isSignUpVisible, handleOutsideClickSignup }) =>
                         <InputField name="handle" type="text" placeholder="@Handle" value={data.handle} onChange={dataHandler} />
                         <button className="h-9 rounded-[24rem] bg-gray-100 font-bold hover:bg-gray-200 active:bg-gray-300 ">Next</button>
                     </form>
-
-                    <div className="mt-16 flex gap-2 text-gray-400">
-                        <div> Already have an account?</div>
-                        <button className="text-blue-500" onClick={onClose}>
-                            Log In
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
