@@ -5,24 +5,14 @@ import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import Loader from "../Loader/Loader";
 import TweetModal from "./TweetModal";
 import { toast } from "react-toastify";
+import useModal from "../../CustomHooks/useModal";
 
 const DraftModal = ({ visibilityDraft, handleOutsideClickDraft, closeAll }) => {
     if (!visibilityDraft) return;
 
     const { state } = useGlobalContext();
 
-    const [isTweetBoxOpen, setIsTweetBoxOpen] = useState(false);
-
-    const hideTwitterBox = () => {
-        setIsTweetBoxOpen(false);
-        document.body.style.overflow = "unset";
-    };
-    const handleOutsideClick = (event) => {
-        if (event.target === event.currentTarget) {
-            setIsTweetBoxOpen(false);
-            document.body.style.overflow = "unset";
-        }
-    };
+    const [isTweetBoxOpen, setIsTweetBoxOpen, handleOutsideClick, hideTwitterBox] = useModal();
 
     const [drafts, setDrafts] = useState([{ id: null, label: null, isChecked: null }]);
     const [isEdit, setIsEdit] = useState(false);
@@ -210,7 +200,7 @@ const DraftModal = ({ visibilityDraft, handleOutsideClickDraft, closeAll }) => {
                             </div>
                         )}
                     </div>
-                    <div className="sticky  bottom-0 bg-gray-400">
+                    <div className="sticky  bottom-0 bg-gray-200">
                         {isEdit && (
                             <div className=" bottom-0 flex w-full justify-between   px-3 py-3">
                                 <button

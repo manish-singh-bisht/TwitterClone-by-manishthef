@@ -1,6 +1,7 @@
 import { ThreeDots } from "../SVGs/SVGs";
 import Avatar from "../Avatar/Avatar";
 import { usePostTime } from "../../CustomHooks/usePostTime";
+import useModal from "../../CustomHooks/useModal";
 
 import React, { Suspense, useState } from "react";
 import Loader from "../Loader/Loader";
@@ -9,15 +10,10 @@ const MoreOptionMenuModalConversation = React.lazy(() => import("../Modal/MoreOp
 const ConversationProfile = ({ profile, name, handle, latest, date, conversationid, setConversationsArray, setMessages, setIsPinnedConversation }) => {
     const formattedTime = usePostTime(Date.parse(date));
 
-    const [visibilityMoreOptionModalConversation, setVisibilityMoreOptionModalConversation] = useState(false);
+    const [visibilityMoreOptionModalConversation, setVisibilityMoreOptionModalConversation, handleOutsideClickMoreOptionModalConversation] = useModal();
+
     const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
     const [infoToMoreOptionModal, setInfoToMoreOptionModal] = useState({ conversationid: "" });
-
-    const handleOutsideClickMoreOptionModalConversation = (event) => {
-        if (event.target === event.currentTarget) {
-            setVisibilityMoreOptionModalConversation(false);
-        }
-    };
 
     return (
         <div className="flex  cursor-pointer justify-between  p-2 hover:bg-gray-100">

@@ -14,6 +14,7 @@ import RetweetPost from "../../context/Actions/RetweetPost";
 import PostBookmark from "../../context/Actions/PostBookmark";
 import useHoverCard from "../../CustomHooks/useHoverCard";
 import HoverProfileCard from "../Profile/HoverProfileCard";
+import useModal from "../../CustomHooks/useModal";
 
 const ModalForLikesRetweets = React.lazy(() => import("../Modal/ModalForLikesRetweets"));
 const CommentCard = React.lazy(() => import("../comment/CommentCard"));
@@ -24,35 +25,16 @@ const TweetDetail = () => {
     const { isHovered, handleMouseEnter, handleMouseLeave } = useHoverCard();
 
     //Modal for more option
-    const [visibility, setVisibility] = useState(false);
+
     const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 }); //for getting the position of the button that triggers the modal to open
     const [infoToMoreOptionModal, setInfoToMoreOptionModal] = useState({ ownerID: "", commentID: "", postID: "", handle: "" });
 
-    const handleOutsideClickMoreOption = (event) => {
-        if (event.target === event.currentTarget) {
-            setVisibility(false);
-            document.body.style.overflow = "unset";
-        }
-    };
-    const onCloseMoreOptionModal = () => {
-        setVisibility(false);
-        document.body.style.overflow = "unset";
-    };
+    const [visibility, setVisibility, handleOutsideClickMoreOption, onCloseMoreOptionModal] = useModal();
+    const [isModalOpen, setIsModalOpen, handleOutsideClick, hideModal] = useModal();
 
     //Modal for like,retweet,Bookmark
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [type, setType] = useState("");
     const [list, setList] = useState(null);
-    const hideModal = () => {
-        setIsModalOpen(false);
-        document.body.style.overflow = "unset";
-    };
-    const handleOutsideClick = (event) => {
-        if (event.target === event.currentTarget) {
-            setIsModalOpen(false);
-            document.body.style.overflow = "unset";
-        }
-    };
 
     //For navigating to a particular section that is to the tweet that openend this component.
     const navigate = useNavigate();

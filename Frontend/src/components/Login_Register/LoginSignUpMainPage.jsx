@@ -1,34 +1,14 @@
 import React, { Suspense, useState } from "react";
-import { Link } from "react-router-dom";
-
 import { TwitterIconInLoginSignupMainPage } from "../SVGs/SVGs";
 import Loader from "../Loader/Loader";
+import useModal from "../../CustomHooks/useModal";
 
 const SignUpOption = React.lazy(() => import("./SignUpOption"));
 const LoginOptionModal = React.lazy(() => import("./LoginOptionModal"));
 
 const LoginSignUpMainPage = () => {
-    const [isLoginVisible, setIsLoginVisible] = useState(false);
-    const hideLogin = () => {
-        setIsLoginVisible(false);
-    };
-    const handleOutsideClick = (event) => {
-        if (event.target === event.currentTarget) {
-            setIsLoginVisible(false);
-            document.body.style.overflow = "unset";
-        }
-    };
-
-    const [isSignUpVisible, setIsSignUpVisible] = useState(false);
-    const hideSignUp = () => {
-        setIsSignUpVisible(false);
-    };
-    const handleOutsideClickSignup = (event) => {
-        if (event.target === event.currentTarget) {
-            setIsSignUpVisible(false);
-            document.body.style.overflow = "unset";
-        }
-    };
+    const [isLoginVisible, setIsLoginVisible, handleOutsideClick, hideLogin] = useModal();
+    const [isSignUpVisible, setIsSignUpVisible, handleOutsideClickSignup, hideSignUp] = useModal();
 
     return (
         <>

@@ -14,6 +14,7 @@ import RetweetComment from "../../context/Actions/RetweetComment";
 import CommentBookmark from "../../context/Actions/CommentBookmark";
 import HoverProfileCard from "../Profile/HoverProfileCard";
 import useHoverCard from "../../CustomHooks/useHoverCard";
+import useModal from "../../CustomHooks/useModal";
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) => {
@@ -23,20 +24,9 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
     const [commentt, setCommentt] = useState();
 
     ////Modal for more option
-    const [visibility, setVisibility] = useState(false);
     const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 }); //for getting the position of the button that triggers the modal to open
     const [infoToMoreOptionModal, setInfoToMoreOptionModal] = useState({ ownerID: "", commentID: "", postID: "", handle: "" });
-
-    const handleOutsideClick = (event) => {
-        if (event.target === event.currentTarget) {
-            setVisibility(false);
-            document.body.style.overflow = "unset";
-        }
-    };
-    const onCloseMoreOptionModal = () => {
-        setVisibility(false);
-        document.body.style.overflow = "unset";
-    };
+    const [visibility, setVisibility, handleOutsideClick, onCloseMoreOptionModal] = useModal();
 
     //Grid layout for different numbers of image,used below
     let gridClass = "";

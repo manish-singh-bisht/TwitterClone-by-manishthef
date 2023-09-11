@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import Loader from "../Loader/Loader";
 import { MediaUploadPanelLong } from "../CommonPostComponent/MediaUploadPanel";
 import WhoCanReplyModal from "../Modal/WhoCanReplyModal";
+import useModal from "../../CustomHooks/useModal";
 
 const TweetModal = React.lazy(() => import("../Modal/TweetModal"));
 
@@ -13,20 +14,11 @@ const TweetBoxInHome = ({ profile }) => {
     const [selectedImages, setSelectedImages] = useState([]);
     const [showGlobe, setShowGlobe] = useState(false);
     const [singleTweet, setSingleTweet] = useState({ id: uuidv4(), text: "" });
-    const [isTweetBoxOpen, setIsTweetBoxOpen] = useState(false);
     const [isTweetPress, setIsTweetPress] = useState(false); //for clearing the tweet box in home after the tweet button is pressed in home itself
     const [isTweetPressInTweetModal, setIsTweetPressInTweetModal] = useState(false); //for clearing the tweet box in home after the tweet button is pressed in tweetmodal
 
-    const hideTwitterBox = () => {
-        setIsTweetBoxOpen(false);
-        document.body.style.overflow = "unset"; //makes the back of modal move again i.e set overflow to normal
-    };
-    const handleOutsideClick = (event) => {
-        if (event.target === event.currentTarget) {
-            setIsTweetBoxOpen(false);
-            document.body.style.overflow = "unset";
-        }
-    };
+    const [isTweetBoxOpen, setIsTweetBoxOpen, handleOutsideClick, hideTwitterBox] = useModal();
+    const [visibility, setvisibility, handleOutsideClickWhoCanReply] = useModal();
 
     //for keeping the globe and other related to show when editor is in focus for the first time
     const showGlobeHandler = () => {
@@ -55,19 +47,12 @@ const TweetBoxInHome = ({ profile }) => {
         setSelectedImages((prev) => prev.filter((item) => item !== image));
     };
 
-    const [visibility, setvisibility] = useState(false);
     const [whoCanReply, setWhoCanReply] = useState(1);
 
     //  1=everyone can reply
     //  2=people you follow can reply
     //  3=only mentioned can reply
     const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
-    const handleOutsideClickWhoCanReply = (event) => {
-        if (event.target === event.currentTarget) {
-            setvisibility(false);
-            document.body.style.overflow = "unset";
-        }
-    };
 
     return (
         <>

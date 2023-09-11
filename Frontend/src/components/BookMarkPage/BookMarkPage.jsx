@@ -12,25 +12,16 @@ import RetweetPost from "../../context/Actions/RetweetPost";
 import PostBookmark from "../../context/Actions/PostBookmark";
 import CommentBookmark from "../../context/Actions/CommentBookmark";
 import InfiniteScrollWrapper from "../CommonPostComponent/InfiniteScrollWrapper";
+import useModal from "../../CustomHooks/useModal";
 
 const BookMarkPage = () => {
     // this is just for showing the posts that were bookmarked by the logged in user, to see how the number of the bookmark is being changed or from where the api call is being made to mark a post as bookmark, refer to Frontend\src\components\CommonPostComponent\BookMark.jsx.
     const { state, ACTIONS, setUsersForRightSidebar, dispatchCommentLikeUnlike, dispatchLikeUnlike, dispatchRetweetPost, dispatchRetweetComment, dispatchBookmarkComment, dispatchBookmarkTweet } = useGlobalContext();
 
     //Modal for more option
-    const [visibility, setVisibility] = useState(false);
-    const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
+    const [visibility, setVisibility, handleOutsideClickMoreOption, onCloseMoreOptionModal] = useModal();
 
-    const handleOutsideClickMoreOption = (event) => {
-        if (event.target === event.currentTarget) {
-            setVisibility(false);
-            document.body.style.overflow = "unset";
-        }
-    };
-    const onCloseMoreOptionModal = () => {
-        setVisibility(false);
-        document.body.style.overflow = "unset";
-    };
+    const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
 
     const [bookmarks, setBookmarks] = useState([]);
     const [loading, setLoading] = useState(false);
