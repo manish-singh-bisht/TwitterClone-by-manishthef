@@ -132,11 +132,10 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
             }
             flag = 1;
         }
-
-        handleDeleteDraft([initialTweetFromOtherPartsOfApp.id]);
-
         flag = 0;
         onClose();
+
+        fromDraft && handleDeleteDraft([initialTweetFromOtherPartsOfApp.id]);
     };
 
     const whenEditorInFocus = (id) => {

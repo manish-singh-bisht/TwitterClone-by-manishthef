@@ -33,10 +33,12 @@ const ShowValues = ({ retweetValue, likedValue, bookmarkedValue, animationBookma
                                     key={button.action}
                                     className="cursor-pointer"
                                     onClick={() => {
-                                        setIsModalOpen(true);
-                                        document.body.style.overflow = "hidden";
-                                        setType(button.action);
-                                        setList(button.action === "Retweeted" ? retweetBy : button.action === "Liked" ? likedBy : []);
+                                        if (button.action !== "Bookmarked") {
+                                            setIsModalOpen(true);
+                                            document.body.style.overflow = "hidden";
+                                            setType(button.action);
+                                            setList(button.action === "Retweeted" ? retweetBy : button.action === "Liked" ? likedBy : []);
+                                        }
                                     }}>
                                     {button.value > 0 ? <span className={`${button.animation} mr-1`}>{button.value}</span> : null}
                                     <span className="text-[0.9rem] font-normal hover:underline">{button.value === 1 ? button.label.slice(0, -1) : button.label}</span>

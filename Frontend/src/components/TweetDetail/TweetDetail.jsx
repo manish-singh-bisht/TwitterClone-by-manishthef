@@ -6,7 +6,7 @@ import axios from "axios";
 import useAnimation from "../../CustomHooks/useAnimation";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import Loader from "../Loader/Loader";
-import { Comments, HeartLike, HeartUnlike, LeftArrow, Retweets, RetweetsGreen, ThreeDots, UndoBookmark, Bookmark, PeopleYouFollow, Mention } from "../SVGs/SVGs";
+import { LeftArrow, ThreeDots, PeopleYouFollow, Mention } from "../SVGs/SVGs";
 import { usePostTimeInTweetDetail } from "../../CustomHooks/usePostTime";
 import Avatar from "../Avatar/Avatar";
 import PhotoGallery from "../CommonPostComponent/PhotoGallery";
@@ -15,6 +15,8 @@ import PostBookmark from "../../context/Actions/PostBookmark";
 import useHoverCard from "../../CustomHooks/useHoverCard";
 import HoverProfileCard from "../Profile/HoverProfileCard";
 import useModal from "../../CustomHooks/useModal";
+import ActionButtonPanelLong from "../CommonPostComponent/ActionButtonPanelLong";
+import ShowValues from "../CommonPostComponent/ShowValues";
 
 const ModalForLikesRetweets = React.lazy(() => import("../Modal/ModalForLikesRetweets"));
 const CommentCard = React.lazy(() => import("../comment/CommentCard"));
@@ -300,70 +302,20 @@ const TweetDetail = () => {
                 </div>
                 <div className="mx-4  "> {formattedTime}</div>
                 <div className="m-4  border-t-[0.01rem] opacity-80"></div>
-                {likedValue > 0 || retweetValue > 0 || bookmarkedValue > 0 ? (
-                    <>
-                        <div className="mx-4 flex gap-8  font-bold">
-                            {retweetValue > 0 ? (
-                                <div
-                                    className="cursor-pointer"
-                                    onClick={() => {
-                                        setIsModalOpen(true);
-                                        document.body.style.overflow = "hidden";
-                                        setType("Retweeted");
-                                        setList(retweetBy);
-                                    }}>
-                                    {retweetValue > 0 ? <span className={`${animationRetweet} mr-1`}>{retweetValue}</span> : null}
-                                    <span className={`text-[0.9rem] font-normal hover:underline`}> {retweetValue === 1 ? "Retweet" : "Retweets"}</span>
-                                </div>
-                            ) : null}
-
-                            {likedValue > 0 ? (
-                                <div
-                                    className="cursor-pointer"
-                                    onClick={() => {
-                                        setIsModalOpen(true);
-                                        document.body.style.overflow = "hidden";
-                                        setType("Liked");
-                                        setList(likedBy);
-                                    }}>
-                                    {likedValue > 0 ? <span className={`${animationLikes} mr-1`}>{likedValue}</span> : null}
-                                    <span className={`text-[0.9rem] font-normal hover:underline`}>{likedValue === 1 ? "Like" : "Likes"}</span>
-                                </div>
-                            ) : null}
-
-                            {bookmarkedValue > 0 ? (
-                                <div className="cursor-pointer ">
-                                    {bookmarkedValue > 0 ? <span className={`${animationBookmarked} mr-1`}>{bookmarkedValue}</span> : null}
-                                    <span className={`text-[0.9rem] font-normal hover:underline`}> {bookmarkedValue === 1 ? "Bookmark" : "Bookmarks"}</span>
-                                </div>
-                            ) : null}
-                        </div>
-                        <div className="m-4  border-t-[0.01rem] opacity-80"></div>
-                    </>
-                ) : null}
-                <div className="  mx-2 -mt-2 flex gap-20    pl-10">
-                    <div className="group flex items-center justify-center gap-2 ">
-                        <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
-                            <Comments bigIcon={true} />
-                        </button>
-                    </div>
-
-                    <div className="group flex items-center justify-center gap-2 ">
-                        <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-green-100 group-hover:text-green-500" onClick={retweetHandler}>
-                            {isRetweet ? <RetweetsGreen bigIcon={true} /> : <Retweets bigIcon={true} />}
-                        </button>
-                    </div>
-                    <div className=" group flex items-center justify-center gap-2  ">
-                        <button className=" flex h-8 w-8 items-center justify-center rounded-full  group-hover:bg-red-100 group-hover:text-red-500" onClick={likeHandler}>
-                            {isLiked ? <HeartLike bigIcon={true} /> : <HeartUnlike bigIcon={true} />}
-                        </button>
-                    </div>
-                    <div className="group flex items-center justify-center gap-2 ">
-                        <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500" onClick={bookmarkedHandler}>
-                            {isBookmarked ? <Bookmark bigIcon={true} /> : <UndoBookmark bigIcon={true} />}
-                        </button>
-                    </div>
-                </div>
+                <ShowValues
+                    retweetValue={retweetValue}
+                    likedValue={likedValue}
+                    bookmarkedValue={bookmarkedValue}
+                    animationBookmarked={animationBookmarked}
+                    animationLikes={animationLikes}
+                    animationRetweet={animationRetweet}
+                    setIsModalOpen={setIsModalOpen}
+                    setType={setType}
+                    setList={setList}
+                    retweetBy={retweetBy}
+                    likedBy={likedBy}
+                />
+                <ActionButtonPanelLong retweetHandler={retweetHandler} likeHandler={likeHandler} bookmarkedHandler={bookmarkedHandler} isRetweet={isRetweet} isLiked={isLiked} isBookmarked={isBookmarked} />
                 {whoCanReplyNumber === 2 && (
                     <div className="mx-10 mt-1 flex w-fit items-center gap-1 bg-blue-400 p-2 text-[0.86rem] font-bold ">
                         <PeopleYouFollow />
