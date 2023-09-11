@@ -13,6 +13,7 @@ import Retweet from "./Retweet";
 import BookMark from "./BookMark";
 import useHoverCard from "../../CustomHooks/useHoverCard";
 import useModal from "../../CustomHooks/useModal";
+import ActionButtonPanelShort from "./ActionButtonPanelShort";
 
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 const HoverProfileCard = React.lazy(() => import("../Profile/HoverProfileCard"));
@@ -323,27 +324,27 @@ const Post = ({
                     </div>
                 </div>
             </div>
-            <div className="-mt-3 mb-2 ml-[4.25rem] flex w-[87.5%] gap-20  ">
-                <div className="group flex w-[3rem] items-center justify-around">
-                    <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
-                        <Comments />
-                    </button>
-                    {fromTweetDetail || fromCommentDetail ? (
-                        <span className="group-hover:text-blue-500">{commentsChildren.length > 0 ? commentsChildren.length : null}</span>
-                    ) : (
-                        <span className="group-hover:text-blue-500">{comments.length > 0 ? comments.length : null}</span>
-                    )}
-                </div>
-                <div className=" group flex w-[3rem] items-center justify-around  ">
-                    <Retweet retweets={retweets} ACTIONS={ACTIONS} dispatchRetweet={dispatchRetweet} state={state} handlerRetweet={handlerRetweet} postId={postId} />
-                </div>
-                <div className=" group flex w-[3rem] items-center justify-around  ">
-                    <LikeUnlikePost likes={likes} ACTIONS={ACTIONS} dispatch={dispatch} state={state} handler={handler} postId={postId} />
-                </div>
-                <div className=" group flex w-[3rem] items-center justify-around  ">
-                    <BookMark bookmarks={bookmarks} ACTIONS={ACTIONS} dispatchBookmark={dispatchBookmark} state={state} handlerBookmark={handlerBookmark} postId={postId} fromBookmarks={fromBookmarks} removeBookmark={(id) => removeBookmark(id)} />
-                </div>
-            </div>
+
+            <ActionButtonPanelShort
+                retweets={retweets}
+                dispatchRetweet={dispatchRetweet}
+                handlerRetweet={handlerRetweet}
+                postId={postId}
+                likes={likes}
+                dispatch={dispatch}
+                handler={handler}
+                bookmarks={bookmarks}
+                dispatchBookmark={dispatchBookmark}
+                handlerBookmark={handlerBookmark}
+                fromBookmarks={fromBookmarks}
+                removeBookmark={removeBookmark}
+                ACTIONS={ACTIONS}
+                state={state}
+                fromTweetDetail={fromTweetDetail}
+                fromCommentDetail={fromCommentDetail}
+                commentsChildren={commentsChildren}
+                comments={comments}
+            />
             {(fromHome || fromProfile) && threadChildren && threadChildren.length > 0 && !isCommentRetweet && !isCommentReply && (
                 <button
                     className=" flex h-12 w-full items-center  gap-2 hover:bg-gray-200"

@@ -1,20 +1,20 @@
 import React, { Suspense, useEffect, useState } from "react";
 import Avatar from "../Avatar/Avatar";
 import { Link, useNavigate } from "react-router-dom";
-import { Comments, ThreeDots } from "../SVGs/SVGs";
+import { ThreeDots } from "../SVGs/SVGs";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import CommentLikeUnlike from "../../context/Actions/CommentLikeUnlike";
 import Loader from "../Loader/Loader";
 import PhotoGallery from "../CommonPostComponent/PhotoGallery";
-import LikeUnlikePost from "../CommonPostComponent/LikeUnlikePost";
+
 import { usePostTime } from "../../CustomHooks/usePostTime";
-import Retweet from "../CommonPostComponent/Retweet";
-import BookMark from "../CommonPostComponent/BookMark";
+
 import RetweetComment from "../../context/Actions/RetweetComment";
 import CommentBookmark from "../../context/Actions/CommentBookmark";
 import HoverProfileCard from "../Profile/HoverProfileCard";
 import useHoverCard from "../../CustomHooks/useHoverCard";
 import useModal from "../../CustomHooks/useModal";
+import ActionButtonPanelShort from "../CommonPostComponent/ActionButtonPanelShort";
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) => {
@@ -144,25 +144,22 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
                         </div>
                     </div>
 
-                    <div className="-mt-3 mb-2 ml-[4.25rem] flex w-[87.5%] gap-20   ">
-                        <div className="group flex w-[3rem] items-center justify-around">
-                            <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
-                                <Comments />
-                            </button>
-
-                            <span className="group-hover:text-blue-500">{reply.children.length > 0 ? reply.children.length : null}</span>
-                        </div>
-
-                        <div className=" group flex w-[3rem] items-center justify-around  ">
-                            <Retweet retweets={reply.retweets} ACTIONS={ACTIONS} dispatchRetweet={dispatchRetweetComment} state={state} handlerRetweet={RetweetComment} postId={reply._id} />
-                        </div>
-                        <div className=" group flex w-[3rem] items-center justify-around  ">
-                            <LikeUnlikePost likes={reply.likes} ACTIONS={ACTIONS} dispatch={dispatchCommentLikeUnlike} state={state} handler={CommentLikeUnlike} postId={reply._id} />
-                        </div>
-                        <div className=" group flex w-[3rem] items-center justify-around  ">
-                            <BookMark bookmarks={reply.bookmarks} ACTIONS={ACTIONS} dispatchBookmark={dispatchBookmarkComment} state={state} handlerBookmark={CommentBookmark} postId={reply._id} />
-                        </div>
-                    </div>
+                    <ActionButtonPanelShort
+                        retweets={reply.retweets}
+                        dispatchRetweet={dispatchRetweetComment}
+                        handlerRetweet={RetweetComment}
+                        postId={reply._id}
+                        likes={reply.likes}
+                        dispatch={dispatchCommentLikeUnlike}
+                        handler={CommentLikeUnlike}
+                        bookmarks={reply.bookmarks}
+                        dispatchBookmark={dispatchBookmarkComment}
+                        handlerBookmark={CommentBookmark}
+                        ACTIONS={ACTIONS}
+                        state={state}
+                        fromReply={true}
+                        replyChildren={reply.children}
+                    />
                 </div>
             </div>
 
