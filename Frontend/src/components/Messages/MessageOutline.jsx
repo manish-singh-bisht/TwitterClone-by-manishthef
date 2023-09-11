@@ -3,6 +3,7 @@ import { usePostTimeInTweetDetail } from "../../CustomHooks/usePostTime";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import { ThreeDots } from "../SVGs/SVGs";
 import Loader from "../Loader/Loader";
+import useModal from "../../CustomHooks/useModal";
 const MoreOptionMenuModalMessage = React.lazy(() => import("../Modal/MoreOptionMenuModalMessage"));
 
 const MessageOutline = ({ message, date, sender, messageFull, setMessageArray, replyTo, setReply }) => {
@@ -11,15 +12,9 @@ const MessageOutline = ({ message, date, sender, messageFull, setMessageArray, r
 
     const own = sender === state.user._id ? true : false;
 
-    const [visibilityMoreOptionModalMessage, setVisibilityMoreOptionModalMessage] = useState(false);
+    const [visibilityMoreOptionModalMessage, setVisibilityMoreOptionModalMessage, handleOutsideClickMoreOptionModalMessage] = useModal();
     const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
     const [infoToMoreOptionModal, setInfoToMoreOptionModal] = useState({ messageid: "" });
-
-    const handleOutsideClickMoreOptionModalMessage = (event) => {
-        if (event.target === event.currentTarget) {
-            setVisibilityMoreOptionModalMessage(false);
-        }
-    };
 
     return (
         <>

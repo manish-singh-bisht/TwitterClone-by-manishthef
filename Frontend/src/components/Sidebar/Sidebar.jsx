@@ -23,13 +23,13 @@ import Loader from "../Loader/Loader";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import LogoutUser from "../../context/Actions/LogoutUser";
 import Avatar from "../Avatar/Avatar";
+import useModal from "../../CustomHooks/useModal";
 
 const TweetModal = React.lazy(() => import("../Modal/TweetModal"));
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const Sidebar = ({ isOnline }) => {
     const [tab, setTab] = useState(window.location.pathname);
-    const [isTweetBoxOpen, setIsTweetBoxOpen] = useState(false);
     const { ACTIONS, dispatch, state } = useGlobalContext();
     const logoutBox = useRef(null);
 
@@ -37,31 +37,13 @@ const Sidebar = ({ isOnline }) => {
         setTab(window.location.pathname);
     }, [window.location.pathname]);
 
-    const hideTwitterBox = () => {
-        setIsTweetBoxOpen(false);
-        document.body.style.overflow = "unset"; //makes the back of modal move again i.e set overflow to normal
-    };
-    const handleOutsideClick = (event) => {
-        if (event.target === event.currentTarget) {
-            setIsTweetBoxOpen(false);
-            document.body.style.overflow = "unset";
-        }
-    };
+    const [isTweetBoxOpen, setIsTweetBoxOpen, handleOutsideClick, hideTwitterBox] = useModal();
+    const [visibilityMoreOptionModal, setVisibilityMoreOptionModal, handleOutsideClickMoreOptionModal, onCloseMoreOptionModal] = useModal();
+
     const logOutUser = async () => {
         await LogoutUser({ dispatch, ACTIONS });
     };
-    const [visibilityMoreOptionModal, setVisibilityMoreOptionModal] = useState(false);
     const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
-    const handleOutsideClickMoreOptionModal = (event) => {
-        if (event.target === event.currentTarget) {
-            setVisibilityMoreOptionModal(false);
-            document.body.style.overflow = "unset";
-        }
-    };
-    const onCloseMoreOptionModal = () => {
-        setVisibilityMoreOptionModal(false);
-        document.body.style.overflow = "unset";
-    };
 
     return (
         <main className="fixed z-20 flex h-[100vh] w-[21rem] flex-col items-end justify-between    ">

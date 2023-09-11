@@ -10,6 +10,7 @@ import Loader from "../Loader/Loader";
 import WhoCanReplyModal from "./WhoCanReplyModal";
 import SaveTweetModal from "./SaveTweetModal";
 import DraftModal from "./DraftModal";
+import useModal from "../../CustomHooks/useModal";
 
 const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, handleIsTweetPressInTweetModalTrue, handleOutsideClick, handleDeleteDraft, handleUpdateDraft, fromDraft }) => {
     if (!visibility) return;
@@ -25,35 +26,17 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
     const [isTweetPress, setIsTweetPress] = useState(false);
     const [initialTweetFromOtherPartsOfAppPresent, setInitialTweetFromOtherPartsOfAppPresent] = useState(false);
 
-    const [visibilityWhoCanReply, setvisibilityWhoCanReply] = useState(false);
+    const [visibilityWhoCanReply, setvisibilityWhoCanReply, handleOutsideClickWhoCanReply] = useModal();
+    const [visibilityCross, setvisibilityCross, handleOutsideClickCross] = useModal();
+    const [visibilityDraft, setvisibilityDraft, handleOutsideClickDraft] = useModal();
+
     const [whoCanReply, setWhoCanReply] = useState(1);
     //  1=everyone can reply
     //  2=people you follow can reply
     //  3=only mentioned can reply
     const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
-    const handleOutsideClickWhoCanReply = (event) => {
-        if (event.target === event.currentTarget) {
-            setvisibilityWhoCanReply(false);
-            document.body.style.overflow = "unset";
-        }
-    };
-
-    const [visibilityCross, setvisibilityCross] = useState(false);
 
     const [buttonPositionCross, setButtonPositionCross] = useState({ top: 0, left: 0 });
-    const handleOutsideClickCross = (event) => {
-        if (event.target === event.currentTarget) {
-            setvisibilityCross(false);
-        }
-    };
-
-    const [visibilityDraft, setvisibilityDraft] = useState(false);
-
-    const handleOutsideClickDraft = (event) => {
-        if (event.target === event.currentTarget) {
-            setvisibilityDraft(false);
-        }
-    };
 
     //creates a new tweet if initialTweetFromOtherPartsOfApp!==null and initialTweetFromOtherPartsOfApp value is passed in editor, so that editor can display it.
     useEffect(() => {

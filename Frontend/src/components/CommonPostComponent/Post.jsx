@@ -12,6 +12,7 @@ import Loader from "../Loader/Loader";
 import Retweet from "./Retweet";
 import BookMark from "./BookMark";
 import useHoverCard from "../../CustomHooks/useHoverCard";
+import useModal from "../../CustomHooks/useModal";
 
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 const HoverProfileCard = React.lazy(() => import("../Profile/HoverProfileCard"));
@@ -75,20 +76,11 @@ const Post = ({
     let flag = 0;
 
     //Modal for more option
-    const [visibility, setVisibility] = useState(false);
+    const [visibility, setVisibility, handleOutsideClick, onCloseMoreOptionModal] = useModal();
+
     const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 }); //for getting the position of the button that triggers the modal to open
     const [infoToMoreOptionModal, setInfoToMoreOptionModal] = useState({ ownerID: "", commentID: "", postID: "", handle: "" });
 
-    const handleOutsideClick = (event) => {
-        if (event.target === event.currentTarget) {
-            setVisibility(false);
-            document.body.style.overflow = "unset";
-        }
-    };
-    const onCloseMoreOptionModal = () => {
-        setVisibility(false);
-        document.body.style.overflow = "unset";
-    };
     const [commentt, setCommentt] = useState();
 
     // //For Scrolling to particular tweet after left arrow in TweetDetail.jsx/CommentDetail.jsx component is clicked

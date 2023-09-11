@@ -13,6 +13,7 @@ import useHoverCard from "../../CustomHooks/useHoverCard";
 import HoverProfileCard from "../Profile/HoverProfileCard";
 import axios from "axios";
 import { toast } from "react-toastify";
+import useModal from "../../CustomHooks/useModal";
 
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
@@ -21,36 +22,16 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
     const { isHovered, handleMouseEnter, handleMouseLeave } = useHoverCard();
 
     //Modal for more option
-    const [visibility, setVisibility] = useState(false);
+    const [visibility, setVisibility, handleOutsideClickMoreOption, onCloseMoreOptionModal] = useModal();
+
     const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 }); //for getting the position of the button that triggers the modal to open
     const [infoToMoreOptionModal, setInfoToMoreOptionModal] = useState({ ownerID: "", commentID: "", postID: "", handle: "" });
 
-    const handleOutsideClickMoreOption = (event) => {
-        if (event.target === event.currentTarget) {
-            setVisibility(false);
-            document.body.style.overflow = "unset";
-        }
-    };
-    const handleOutsideClick = (event) => {
-        if (event.target === event.currentTarget) {
-            setIsModalOpen(false);
-            document.body.style.overflow = "unset";
-        }
-    };
-    const onCloseMoreOptionModal = () => {
-        setVisibility(false);
-        document.body.style.overflow = "unset";
-    };
-
     //Modal for like,retweet,Bookmark
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen, handleOutsideClick, hideModal] = useModal();
+
     const [type, setType] = useState("");
     const [list, setList] = useState(null);
-
-    const hideModal = () => {
-        setIsModalOpen(false);
-        document.body.style.overflow = "unset";
-    };
 
     //For like and unlike of comment
     const [isLiked, setIsLiked] = useState(false);

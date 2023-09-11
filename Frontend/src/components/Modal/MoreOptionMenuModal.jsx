@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import FollowUser from "../../context/Actions/FollowUser";
+import useModal from "../../CustomHooks/useModal";
 
 const MoreOptionMenuModal = ({
     visibility,
@@ -45,7 +46,6 @@ const MoreOptionMenuModal = ({
     const { state, dispatchCommentDelete, dispatch, ACTIONS, setPosts, dispatchTweetDelete, dispatchFollowUser, setDataArray } = useGlobalContext();
 
     const [isAlreadyFollowing, setIsAlreadyFollowing] = useState({ bool: false, handle: "", ownerid: null });
-    const [visibilityDeleteModal, setVisibilityDeleteModal] = useState(false);
 
     const toastConfig = {
         position: "bottom-center",
@@ -67,15 +67,7 @@ const MoreOptionMenuModal = ({
             minHeight: "3rem",
         },
     };
-
-    const handleOutsideClickDeleteModal = (event) => {
-        if (event.target === event.currentTarget) {
-            setVisibilityDeleteModal(false);
-        }
-    };
-    const onClose = () => {
-        setVisibilityDeleteModal(false);
-    };
+    const [visibilityDeleteModal, setVisibilityDeleteModal, handleOutsideClickDeleteModal, onClose] = useModal();
 
     useEffect(() => {
         const positionModal = () => {
