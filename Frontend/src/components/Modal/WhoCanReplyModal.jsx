@@ -45,6 +45,7 @@ const WhoCanReplyModal = ({ visibility, buttonPosition, handleOutsideClickWhoCan
                             onClick={() => {
                                 setWhoCanReply(1);
                                 setvisibility(false);
+                                document.body.style.overflow = "unset";
                             }}>
                             <div className="rounded-full bg-blue-500 p-3 text-white">
                                 <Globe className="text-white" />
@@ -56,6 +57,7 @@ const WhoCanReplyModal = ({ visibility, buttonPosition, handleOutsideClickWhoCan
                             onClick={() => {
                                 setWhoCanReply(2);
                                 setvisibility(false);
+                                document.body.style.overflow = "unset";
                             }}>
                             <div className="rounded-full bg-blue-500 p-3 text-white">
                                 <PeopleYouFollow className="text-white" />
@@ -67,6 +69,7 @@ const WhoCanReplyModal = ({ visibility, buttonPosition, handleOutsideClickWhoCan
                             onClick={() => {
                                 setWhoCanReply(3);
                                 setvisibility(false);
+                                document.body.style.overflow = "unset";
                             }}>
                             <div className="rounded-full bg-blue-500 p-3 text-white">
                                 <Mention className="text-white" />

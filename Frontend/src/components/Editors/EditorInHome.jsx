@@ -38,7 +38,7 @@ const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handle
         ],
         editorProps: {
             attributes: {
-                class: `mt-2 resize-none overflow-hidden text-2xl  outline-none  w-[35rem]`,
+                class: `mt-2 resize-none overflow-hidden text-2xl  outline-none  w-[90%]`,
             },
         },
         content: ``,
@@ -140,10 +140,10 @@ const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handle
             break;
     }
     return (
-        <div className="h-fit">
+        <div className="h-fit w-[100%]">
             {isSent && <div className="tweet-sent-animation"></div>}
             <EditorContent editor={editor} />
-            <div className={`m-[-0.25rem] mt-8 grid max-w-[98%]  ${gridClass}  ${selectedImages.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${selectedImages.length > 0 ? `border-[0.05rem]` : ``}`}>
+            <div className={`m-[-0.25rem] mt-8 grid max-w-[90%]  ${gridClass}  ${selectedImages.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${selectedImages.length > 0 ? `border-[0.05rem]` : ``}`}>
                 {selectedImages.length > 0 && selectedImages.map((photo, index) => <PhotoGallery key={index} photos={selectedImages} photo={photo} index={index} deleteImages={deleteImages} mark={true} />)}
             </div>
         </div>
