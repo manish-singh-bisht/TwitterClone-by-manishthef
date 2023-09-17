@@ -23,6 +23,7 @@ const MoreOptionMenuModal = ({
     deleteReplyHandler,
     detailsOfActiveComment,
     fromSideBar,
+    fromMobileSidebar,
     logOutUser,
     fromCommentDetail,
     fromHome,
@@ -350,12 +351,12 @@ const MoreOptionMenuModal = ({
     return (
         <div className="fixed inset-0 z-30 h-[100vh] w-[100vw] ">
             <div className="fixed z-10  h-full w-full" onClick={handleOutsideClick}></div>
-            <div className={`relative z-30   ${fromBookmarks ? "w-fit" : "w-[20rem]"} rounded-xl border-2 bg-white shadow-md`} ref={modalRef}>
+            <div className={`relative z-30   ${fromBookmarks ? "w-[60vw] lg:w-fit" : "w-[60vw] lg:w-[20rem]"}  rounded-xl border-2 bg-white shadow-md`} ref={modalRef}>
                 {!fromSideBar && !fromBookmarks ? (
                     state.user._id === infoToMoreOptionModal.ownerID ? (
                         <>
                             <button
-                                className="flex w-full items-center gap-3 rounded-xl p-3 text-red-400  hover:bg-gray-50"
+                                className="flex w-full items-center gap-2 rounded-xl p-3 text-red-400 hover:bg-gray-50  xl:gap-3"
                                 onClick={(e) => {
                                     setVisibilityDeleteModal(true);
                                     e.stopPropagation();
@@ -365,7 +366,7 @@ const MoreOptionMenuModal = ({
                                 <div className="font-bold ">Delete</div>
                             </button>
                             <button
-                                className="flex w-full items-center gap-3 rounded-xl p-3  hover:bg-gray-50"
+                                className="flex w-full items-center gap-2 rounded-xl p-3 hover:bg-gray-50 xl:gap-3  "
                                 onClick={() => {
                                     pinHandler(infoToMoreOptionModal.handle, infoToMoreOptionModal.postID);
                                     onCloseMoreOptionModal();
@@ -376,7 +377,7 @@ const MoreOptionMenuModal = ({
                         </>
                     ) : (
                         <button
-                            className="flex w-full items-center gap-3 rounded-xl p-3  hover:bg-gray-50"
+                            className="flex w-full items-center gap-2 rounded-xl p-3 hover:bg-gray-50  xl:gap-3"
                             onClick={() => {
                                 followUnfollowHandler();
                                 onCloseMoreOptionModal();
@@ -391,7 +392,7 @@ const MoreOptionMenuModal = ({
                     )
                 ) : fromBookmarks ? (
                     <button
-                        className="flex w-full items-center gap-3 rounded-xl   p-3 text-red-400  hover:bg-gray-50"
+                        className="flex w-full items-center gap-2 rounded-xl p-3   text-red-400 hover:bg-gray-50  xl:gap-3"
                         onClick={() => {
                             setVisibilityBookmark(false);
                             deleteAllBookmarks();
@@ -400,7 +401,7 @@ const MoreOptionMenuModal = ({
                     </button>
                 ) : (
                     <button
-                        className="flex w-full items-center justify-center gap-3 rounded-xl bg-black  p-3 text-red-500 hover:bg-gray-800 "
+                        className={`flex w-full items-center justify-center gap-2 rounded-xl bg-black p-3  text-red-500 hover:bg-gray-800 xl:gap-3 ${fromMobileSidebar && "ml-6 py-5"} `}
                         onClick={(e) => {
                             setVisibilityDeleteModal(true);
                             e.stopPropagation();

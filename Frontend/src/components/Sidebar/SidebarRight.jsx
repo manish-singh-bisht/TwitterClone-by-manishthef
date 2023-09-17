@@ -61,10 +61,10 @@ const SidebarRight = () => {
 
     return (
         <StickyBox>
-            <div className={``}>
+            <div className={`w-fit `}>
                 <div className={``}>
-                    <div className="sticky top-0  z-[8]   flex min-h-[3.5rem] w-full  flex-col bg-white  pt-1   ">
-                        <div className=" flex min-h-[2.75rem]  w-[350px] items-center gap-3 rounded-full bg-[#e7eaeb] pl-4">
+                    <div className="sticky top-0  z-[8]   flex min-h-[3.5rem] w-[29vw] flex-col   bg-white pt-1  xl:w-full   ">
+                        <div className=" flex min-h-[2.75rem] w-[29vw] items-center gap-3 rounded-full bg-[#e7eaeb] pl-4 xl:w-[350px]">
                             <SearchIcon className="  h-[20px] w-[20px]" />
                             <input
                                 type="text"
@@ -87,7 +87,7 @@ const SidebarRight = () => {
                         {loading ? (
                             <Loader />
                         ) : active && !loading ? (
-                            <div className="min-h-24  max-h-[20rem] w-[350px]  overflow-y-auto rounded-xl border-2  bg-white text-center drop-shadow-lg">
+                            <div className="min-h-24  max-h-[20rem] w-[29vw] overflow-y-auto rounded-xl  border-2  bg-white  text-center drop-shadow-lg xl:w-[350px]">
                                 {userSearched.length === 0 ? (
                                     <div className="mt-4  h-24 text-gray-600">Try searching for people</div>
                                 ) : (
@@ -124,7 +124,7 @@ const SidebarRight = () => {
                         ) : null}
                     </div>
                     {usersForRightSidebar && (
-                        <div className="my-2    w-[21.88rem] flex-col items-center  overflow-hidden rounded-xl border-[0.1px] border-gray-200 ">
+                        <div className="my-2   w-[29vw] flex-col items-center overflow-hidden  rounded-xl border-[0.1px] border-gray-200 xl:w-[21.88rem] ">
                             <div className=" w-full rounded-xl  ">
                                 <div className="  px-3 pt-2 pb-[0.4rem] text-[1.5rem] font-bold">Relevant People</div>
                                 {usersForRightSidebar.post?.owner && (
@@ -185,7 +185,7 @@ const SidebarRight = () => {
                         </div>
                     )}
 
-                    <div className="    w-[350px] flex-col items-center  overflow-hidden">
+                    <div className="  w-[29vw]  flex-col items-center overflow-hidden  xl:w-[350px]">
                         <div className="mt-3 w-full rounded-xl bg-[#F7F9F9] p-3 pb-3">
                             <p className="mb-2 text-[1.5rem] font-bold">What's happening</p>
                             <TrendingTopic topic={"Mera Pyara Bharat"} number={"500K"} />
@@ -248,12 +248,12 @@ const TrendingFollow = memo(({ name, userId, username, profilePicture, descripti
     };
     return (
         <div onClick={() => navigateHandlerToProfile(username)}>
-            <div className="flex w-[21.88rem] items-start pt-3 hover:cursor-pointer hover:bg-gray-100 ">
+            <div className="flex w-[29vw] items-start pt-3 hover:cursor-pointer hover:bg-gray-100 xl:w-[21.88rem] ">
                 <div className="w-fit">
                     <Avatar profile={profilePicture} />
                 </div>
                 <div className="flex w-[85%]  flex-col   ">
-                    <div className=" flex w-full items-start justify-between  pl-2 pr-3 ">
+                    <div className=" flex w-full items-start justify-between  pr-3 xl:pl-2 ">
                         <div className="w-full ">
                             <div className="text-[1.03rem] font-semibold hover:underline">{name.length > 15 ? name.slice(0, 15).trim() + "..." : name}</div>
                             <div className=" mt-[-0.2rem] text-gray-500">@{username.length > 15 ? username.slice(0, 15).trim() + "..." : username}</div>
@@ -262,7 +262,7 @@ const TrendingFollow = memo(({ name, userId, username, profilePicture, descripti
                             <button
                                 className={`group w-fit rounded-full   ${
                                     state.user.following.includes(userId) ? "border-2 bg-white text-black hover:border-red-200 hover:bg-red-100" : "bg-black text-white hover:text-gray-300 active:text-gray-400"
-                                } px-4 py-2 font-bold `}
+                                } py-2 px-[0.68rem] font-bold xl:px-4 `}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     followHandler(userId);
@@ -278,7 +278,7 @@ const TrendingFollow = memo(({ name, userId, username, profilePicture, descripti
                             </button>
                         )}
                     </div>
-                    <div className=" mt-2 w-full break-words pr-3 pl-2 pb-3 text-[0.9rem]">{description}</div>
+                    <div className=" mt-2 w-full break-words pr-3 pb-3 text-[0.9rem] xl:pl-2">{description}</div>
                 </div>
             </div>
         </div>

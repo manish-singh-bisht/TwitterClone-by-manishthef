@@ -38,13 +38,13 @@ const ExtendedMedia = () => {
     return (
         <div className="fixed inset-0  z-50 h-[100vh] w-[100vw] ">
             <div className="absolute h-screen w-screen bg-black "></div>
-            <div className="relative m-6 flex gap-8">
+            <div className="relative m-6 flex flex-col md:flex-row xl:gap-8">
                 <div className="flex flex-col">
                     <div className="h-fit cursor-pointer  text-white hover:text-red-500" onClick={navigateHandler}>
                         <Cross />
                     </div>
 
-                    <div className={`flex h-screen w-fit flex-col items-center justify-center`}>
+                    <div className={` hidden h-screen w-fit flex-col items-center justify-center md:flex`}>
                         <div
                             className=" mt-[-250%] cursor-pointer  rounded-full p-2 text-white hover:bg-white hover:text-black "
                             onClick={prevImage}
@@ -54,12 +54,31 @@ const ExtendedMedia = () => {
                     </div>
                 </div>
                 <div>
-                    <div className="h-[96vh] w-[86.5vw] ">
+                    <div className="relative  h-[96vh]  w-[86.5vw] ">
                         <img src={photos[currentImageIndex] && photos[currentImageIndex].url ? photos[currentImageIndex].url : photos[currentImageIndex]} alt="Extended Photo" className="h-full w-full select-none object-contain" />
+
+                        <div className="absolute  bottom-10 flex w-full items-center justify-center md:hidden ">
+                            <div className={` `}>
+                                <div
+                                    className=" cursor-pointer rounded-full  p-2 text-red-500 hover:bg-white hover:text-black md:mt-[-250%] "
+                                    onClick={prevImage}
+                                    style={{ visibility: photos.length > 1 && (photos[currentImageIndex].url !== photos[0].url || photos[currentImageIndex] !== photos[0]) ? "visible" : "hidden" }}>
+                                    <LeftArrow />
+                                </div>
+                            </div>
+                            <div className="  ">
+                                <div
+                                    style={{ visibility: photos.length > 1 && (photos[currentImageIndex].url !== photos[photos.length - 1].url || photos[currentImageIndex] !== photos[photos.length - 1]) ? "visible" : "hidden" }}
+                                    className=" cursor-pointer rounded-full  p-2 text-red-500 hover:bg-white hover:text-black md:mt-[-100%] "
+                                    onClick={nextImage}>
+                                    <RightArrow />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div className="  flex h-screen w-fit flex-col items-center justify-center ">
+                <div className="hidden  h-screen w-fit flex-col items-center justify-center md:flex ">
                     <div
                         style={{ visibility: photos.length > 1 && (photos[currentImageIndex].url !== photos[photos.length - 1].url || photos[currentImageIndex] !== photos[photos.length - 1]) ? "visible" : "hidden" }}
                         className=" mt-[-100%] cursor-pointer  rounded-full p-2 text-white hover:bg-white hover:text-black "

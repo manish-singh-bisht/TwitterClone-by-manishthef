@@ -33,7 +33,7 @@ const ActionButtonPanelLong = ({ retweetHandler, likeHandler, bookmarkedHandler,
         },
     ];
     return (
-        <div className={`mx-2 -mt-2 flex gap-20 pl-10 ${activeRef && "scroll-mt-32"}`} ref={activeRef}>
+        <div className={`mx-2 -mt-2 flex gap-10 pl-6 md:gap-20 md:pl-10 ${activeRef && "scroll-mt-32"}`} ref={activeRef}>
             {actionButtons.map((button, index) => (
                 <div key={index} className={`group flex items-center justify-center gap-2 `}>
                     <button className={`flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-${button.color}-100 group-hover:text-${button.color}-500`} onClick={() => button.action()}>

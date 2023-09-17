@@ -30,7 +30,7 @@ const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDet
 
                             return (
                                 <div key={item.post._id} className="relative ">
-                                    {thread.length > 1 && lastTweetInThread.post._id !== item.post._id && <div className="absolute left-[2.37rem] top-[4.2rem] h-[calc(100%-3.85rem)]   w-fit border-2"></div>}
+                                    {thread.length > 1 && lastTweetInThread.post._id !== item.post._id && <div className="absolute left-[1.6rem] top-[4.2rem] h-[calc(100%-3.85rem)] w-fit border-2   md:left-[1.8rem]"></div>}
                                     <Post
                                         key={item.post._id}
                                         fromTweetDetail={fromTweetDetail}

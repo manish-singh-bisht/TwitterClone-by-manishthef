@@ -76,7 +76,7 @@ const CommentDetail = () => {
 
     return (
         post !== undefined && (
-            <main className="grid grid-cols-[44vw_auto]   ">
+            <main className="w-[100%] xl:grid xl:grid-cols-[44vw_auto]   ">
                 <div className=" flex max-h-[full] min-h-[1400px] flex-col  border-l  border-r ">
                     <div className=" sticky inset-0 z-10 flex h-[3.5rem] items-center gap-7 bg-white/60 backdrop-blur-md ">
                         <div onClick={handleClick}>
@@ -118,7 +118,7 @@ const CommentDetail = () => {
                             whoCanReply={post.whoCanReply}
                             whoCanReplyNumber={post.whoCanReplyNumber}
                         />
-                        <div className="absolute left-[2.37rem] top-[4.2rem] h-[calc(100%-3.85rem)]   w-fit border-2"></div>
+                        <div className="absolute left-[1.55rem] top-[4.2rem] h-[calc(100%-3.85rem)] w-fit   border-2 xl:left-[1.8rem]"></div>
                     </div>
                     {/* Parent Comments */}
                     {parentCollection &&
@@ -158,7 +158,7 @@ const CommentDetail = () => {
                                         handlerBookmark={CommentBookmark}
                                         dispatchBookmark={dispatchBookmarkComment}
                                     />
-                                    <div className="absolute left-[2.37rem] top-[4.2rem]  h-[calc(100%-3.8rem)] border-2"></div>
+                                    <div className="absolute left-[1.55rem] top-[4.2rem] h-[calc(100%-3.8rem)]  border-2 xl:left-[1.8rem]"></div>
                                 </div>
                             );
                         })}

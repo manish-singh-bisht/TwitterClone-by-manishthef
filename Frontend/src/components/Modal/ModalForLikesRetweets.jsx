@@ -22,9 +22,9 @@ const ModalForLikesRetweets = ({ visibility, onClose, type, list, handleOutsideC
     };
     return (
         <>
-            <div className="fixed inset-0 z-30 flex  h-[100vh] w-[100vw] items-center justify-center">
-                <div className="fixed  h-[100vh] w-[100vw]  bg-black opacity-40" onClick={handleOutsideClick}></div>
-                <div className="relative  flex h-auto max-h-[40rem]  min-h-[83vh] w-[41vw] flex-col  overflow-y-auto  rounded-xl bg-white ">
+            <div className="fixed inset-0 z-30 flex  h-[100%] w-[100%] items-center justify-center">
+                <div className="fixed h-[100vh] w-[100vw]  bg-black opacity-40" onClick={handleOutsideClick}></div>
+                <div className="relative  flex h-[100%] w-[100%] flex-col overflow-y-auto  rounded-xl bg-white lg:h-auto  lg:max-h-[40rem]  lg:min-h-[83vh] lg:w-[41vw] ">
                     <div className=" sticky inset-0 mb-3 flex h-fit w-full items-center gap-4 bg-white/60  backdrop-blur-md  ">
                         <div className="  m-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full  p-2 hover:bg-gray-200" onClick={onClose}>
                             <Cross className="  " />
@@ -36,14 +36,14 @@ const ModalForLikesRetweets = ({ visibility, onClose, type, list, handleOutsideC
                         list.map((item) => {
                             return (
                                 <div onClick={() => navigateHandlerToProfile(item.handle)} key={item._id} className=" hover:bg-gray-100">
-                                    <div className="mx-4 mt-2 flex flex-col gap-1 ">
-                                        <div className="flex gap-3 ">
+                                    <div className="mx-1 mt-1 flex flex-col gap-1 md:mx-4 md:mt-2 ">
+                                        <div className="flex gap-2 md:gap-3 ">
                                             {item.profile && item.profile.image && item.profile.image.url ? (
-                                                <div className=" h-[3.2rem] w-full max-w-[3.2rem] items-center justify-center rounded-full   bg-gray-400">
+                                                <div className=" h-[2.8rem] min-w-[2.8rem]   rounded-full bg-gray-400 md:h-[3.2rem] md:w-full   md:max-w-[3.2rem]">
                                                     <img src={item.profile.image.url} alt="profile image" className="h-full w-full rounded-full object-cover" />
                                                 </div>
                                             ) : (
-                                                <div className="relative  flex h-[3.2rem] min-w-[3.2rem] items-center justify-center  rounded-full bg-gray-200">
+                                                <div className="relative flex h-[2.8rem] min-w-[2.8rem] items-center justify-center rounded-full bg-gray-200  md:h-[3.2rem] md:min-w-[3.2rem]">
                                                     <svg className="  h-9 w-9 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                                         <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
                                                     </svg>
@@ -51,8 +51,11 @@ const ModalForLikesRetweets = ({ visibility, onClose, type, list, handleOutsideC
                                             )}
                                             <div className="flex w-full items-start justify-between ">
                                                 <div className=" flex flex-col align-top">
-                                                    <div className="  text-[1.1rem] font-bold hover:underline">{item.name}</div>
-                                                    <div className="">{`@${item.handle}`}</div>
+                                                    <div className=" hidden text-[1.1rem] font-bold hover:underline md:block">{item.name}</div>
+                                                    <div className="hidden md:block">{`@${item.handle}`}</div>
+
+                                                    <div className="  text-[1.1rem] font-bold hover:underline  md:hidden">{item.name.length > 8 ? item.name.slice(0, 8).trim() + "..." : item.name}</div>
+                                                    <div className="md:hidden ">@{item.handle.length > 8 ? item.handle.slice(0, 8).trim() + "..." : item.handle}</div>
                                                 </div>
                                                 {item._id !== state.user._id && (
                                                     <button
@@ -75,7 +78,7 @@ const ModalForLikesRetweets = ({ visibility, onClose, type, list, handleOutsideC
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="ml-[4rem]   pb-5">{item.description}</div>
+                                        <div className="pb-5   md:ml-[4rem]">{item.description}</div>
                                     </div>
                                 </div>
                             );

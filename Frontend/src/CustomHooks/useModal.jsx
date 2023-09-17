@@ -4,6 +4,7 @@ const useModal = () => {
     const [modal, setModal] = useState(false);
     const hideModal = () => {
         setModal(false);
+        document.body.style.overflow = "unset";
     };
     const handleOutsideClickModal = (event) => {
         if (event.target === event.currentTarget) {

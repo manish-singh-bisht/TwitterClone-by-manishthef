@@ -52,16 +52,20 @@ const Connect = () => {
                     allUsers.length > 0 &&
                     allUsers.map((user) => {
                         return (
-                            <button className="flex w-full items-center justify-between  py-2 px-3 hover:bg-gray-50" key={user._id}>
-                                <div className="flex w-full items-start gap-2">
+                            <button className="flex w-full items-center justify-between  py-2 hover:bg-gray-50 md:px-3" key={user._id}>
+                                <div className="flex w-full items-start md:gap-2">
                                     <div className="w-fit">
                                         <Avatar profile={user.profile && user.profile.image && user.profile.image.url ? user.profile.image.url : null} />
                                     </div>
                                     <div className="w-full ">
-                                        <Link to={`/Profile/${user.handle}`} className="flex w-full flex-col  items-start ">
-                                            <div className="text-[1.03rem] font-semibold hover:underline">{user.name}</div>
-                                            <div className=" mt-[-0.2rem] text-gray-500">@{user.handle}</div>
-                                            <div className="mt-[0.5rem] text-left ">{user.description}</div>
+                                        <Link to={`/Profile/${user.handle}`} className="flex w-[full] flex-col  items-start ">
+                                            <div className="hidden text-[1.03rem] font-semibold hover:underline md:block">{user.name}</div>
+                                            <div className=" mt-[-0.2rem] hidden text-gray-500 md:block">@{user.handle}</div>
+
+                                            <div className=" text-[1.03rem] font-semibold hover:underline md:hidden">{user.name.length > 8 ? user.name.slice(0, 8).trim() + "..." : user.name}</div>
+
+                                            <div className=" mt-[-0.2rem] text-gray-500 md:hidden">@{user.handle.length > 8 ? user.handle.slice(0, 8).trim() + "..." : user.handle}</div>
+                                            <div className="mt-[0.5rem] w-full break-words break-all text-left ">{user.description}</div>
                                         </Link>
                                     </div>
                                 </div>

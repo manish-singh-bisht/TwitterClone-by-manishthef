@@ -96,7 +96,7 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
         <div key={reply._id}>
             <div>
                 <div className={`  pt-[0.1rem] hover:bg-gray-50`}>
-                    <div onClick={handleClick} className=" relative m-2 flex cursor-pointer gap-2 hover:bg-gray-50">
+                    <div onClick={handleClick} className=" relative my-2 flex cursor-pointer gap-2  hover:bg-gray-50">
                         <Avatar profile={ownerImage} />
 
                         <div className="relative mr-2 flex w-[87%] flex-col  gap-2 ">

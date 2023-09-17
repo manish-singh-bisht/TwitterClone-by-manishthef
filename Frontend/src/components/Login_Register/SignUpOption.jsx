@@ -11,7 +11,7 @@ const InputField = ({ name, type, placeholder, value, onChange, max = 26 }) => (
             id={name}
             name={name}
             required
-            className="peer block h-16 w-[23.5rem] rounded-md border-2 border-gray-700 bg-black p-2 pt-8 text-white placeholder-transparent focus:border-blue-500 focus:outline-none"
+            className="peer block h-16 w-[110%] rounded-md border-2 border-gray-700 bg-black p-2 pt-8 text-white placeholder-transparent focus:border-blue-500 focus:outline-none md:w-[23.5rem]"
             placeholder={placeholder}
             value={value}
             onChange={onChange}
@@ -88,24 +88,24 @@ const SignUpOption = ({ onClose, isSignUpVisible, handleOutsideClickSignup }) =>
     return (
         <div className="fixed inset-0 flex items-center justify-center">
             <div className="fixed h-full w-full bg-black opacity-70" onClick={handleOutsideClickSignup}></div>
-            <div className="z-10 flex h-[90vh] w-[45vw] rounded-xl bg-black">
-                <div className="m-[0.39rem] h-fit " onClick={onClose}>
+            <div className="relative z-10 flex  h-full w-full rounded-xl bg-black lg:w-[45vw] 2xl:h-[60%] 2xl:w-[40%]">
+                <div className="z-20 m-[0.39rem] h-fit" onClick={onClose}>
                     <CrossInLogin className=" " />
                 </div>
 
-                <div className="flex w-full flex-col items-center  ">
+                <div className="absolute flex h-full w-full  flex-col items-center">
                     <div className="flex h-fit flex-col items-center justify-around ">
                         <TwitterIconInLogin className="" />
-                        <p className="mx-4 mt-4 text-[3rem] font-bold text-gray-100">Sign up to Twitter</p>
+                        <p className="mx-4 text-[2rem] font-bold text-gray-100 md:mt-4  xl:text-[3rem]">Sign up to Twitter</p>
                     </div>
 
-                    <form className="relative mt-12 flex flex-col gap-4 " onSubmit={handleSignUp}>
+                    <form className="relative mt-6 flex flex-col gap-4 xl:mt-12 " onSubmit={handleSignUp}>
                         <InputField name="email" type="email" placeholder="Email" value={data.email} onChange={dataHandler} />
                         <InputField name="password" type="password" placeholder="Password" value={data.password} onChange={dataHandler} />
                         <InputField name="confirmPassword" type="password" placeholder="Confirm Password" value={data.confirmPassword} onChange={dataHandler} />
                         <InputField name="name" type="text" placeholder="Name" value={data.name} onChange={dataHandler} />
                         <InputField name="handle" type="text" placeholder="@Handle" value={data.handle} onChange={dataHandler} />
-                        <button className="h-9 rounded-[24rem] bg-gray-100 font-bold hover:bg-gray-200 active:bg-gray-300 ">Next</button>
+                        <button className="h-9 w-[110%] rounded-[24rem] bg-gray-100 font-bold hover:bg-gray-200 active:bg-gray-300 md:w-full">Next</button>
                     </form>
                 </div>
             </div>

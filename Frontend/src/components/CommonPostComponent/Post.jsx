@@ -242,11 +242,13 @@ const Post = ({
                         handleClick();
                     }
                 }}
-                className="relative  mx-2 mb-2 flex cursor-pointer pt-2    hover:bg-gray-50">
-                <div className="mr-[0.5rem]">
+                className="relative mb-2  flex cursor-pointer   pt-2    hover:bg-gray-50">
+                <div className="mr-[0.1rem]  md:mr-[0.5rem]">
                     <Avatar profile={profile} />
                 </div>
-                {(fromHome || fromProfile) && threadChildren && threadChildren.length > 0 && !isCommentRetweet && !isCommentReply && <div className="absolute left-[1.8rem] top-[4rem] z-0 h-[calc(100%-1.6rem)] min-h-[2rem] w-fit border-2 "></div>}
+                {(fromHome || fromProfile) && threadChildren && threadChildren.length > 0 && !isCommentRetweet && !isCommentReply && (
+                    <div className="absolute left-[1.7rem] top-[4rem] z-0 h-[calc(100%-1.6rem)] min-h-[2rem] w-fit border-2 md:left-[1.8rem] "></div>
+                )}
                 {!fromHome &&
                     comment &&
                     comment.length > 0 &&
@@ -258,7 +260,13 @@ const Post = ({
                                     item.children.length > 0 &&
                                     item.children.map((item2) => {
                                         if ((fromCommentDetail && item2.owner._id === item.parent.owner && item2.owner._id !== item.owner._id) || (fromTweetDetail && item2.owner._id === item.post.owner)) {
-                                            return <div key={item2._id} className="absolute   top-[3.66rem] left-[1.8rem]  h-[103%] border-2 "></div>;
+                                            return (
+                                                <div
+                                                    key={item2._id}
+                                                    className="absolute top-[3.66rem]   left-[1.5rem] h-[103%] border-2  md:left-[1.85rem]
+                                            lg:left-[1.95rem]
+                                            xl:left-[1.95rem] "></div>
+                                            );
                                         }
                                     })}
                             </div>
@@ -266,7 +274,7 @@ const Post = ({
                     })}
 
                 <div
-                    className="relative mr-2 flex w-[87%] flex-col  gap-2   "
+                    className="relative  mr-2 flex w-[78%] flex-col gap-2  md:w-[87%] "
                     onClick={
                         (fromHome || fromProfile) && threadChildren && threadChildren.length > 0
                             ? (e) => {
@@ -281,10 +289,14 @@ const Post = ({
                                 e.stopPropagation();
                                 navigateHandlerToProfile(handle);
                             }}
-                            className="absolute flex w-fit  items-center gap-1 text-[1.1rem] font-bold ">
+                            className="absolute flex w-fit items-center gap-1 text-[1.1rem] font-bold ">
                             <div className="flex w-fit  items-center gap-1 " onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-                                <span className="hover:underline">{ownerName}</span>
-                                <span className="text-[0.9rem] font-normal text-gray-700">{`@${handle}`}</span>
+                                <span className="hidden hover:underline md:block">{ownerName}</span>
+                                <span className="hidden w-[5rem]  text-[0.9rem] font-normal text-gray-700 md:block md:w-fit">{`@${handle}`}</span>
+
+                                <span className="hover:underline md:hidden">{`${ownerName.length > 5 ? ownerName.slice(0, 5).trim() + "..." : ownerName}`}</span>
+
+                                <span className="w-fit    text-[0.9rem] font-normal text-gray-700 md:hidden md:w-fit">{`@${handle.length > 5 ? handle.slice(0, 5).trim() + "..." : handle}`}</span>
                                 {isHovered && (
                                     <div className="relative ml-[-100%] -mt-10">
                                         <HoverProfileCard description={description} name={ownerName} handle={handle} ownerId={ownerId} profile={profile} />
@@ -318,7 +330,7 @@ const Post = ({
                             <ThreeDots />
                         </div>
                     </div>
-                    <pre className={`  max-w-[98%] whitespace-pre-wrap break-words  `}>{commentt}</pre>
+                    <pre className={`max-w-[98%] whitespace-pre-wrap  break-words    `}>{commentt}</pre>
                     <div className={`mb-2 grid max-w-[98%]  ${gridClass}  ${photos.length > 1 ? `max-h-[18rem]` : "max-h-[30rem]  "}  gap-[0.05rem] rounded-xl  ${photos.length > 0 ? `border-[0.05rem]` : ``}`}>
                         {photos.length > 0 && photos.map((photo, index) => <PhotoGallery key={index} photos={photos} photo={photo.url ? photo.url : photo} index={index} mark={false} postId={postId} url={window.location.pathname} />)}
                     </div>
@@ -354,11 +366,11 @@ const Post = ({
                     }}>
                     <div className="">
                         {profile ? (
-                            <div className="m-[1.05rem] h-[2.6rem] w-[2.6rem] items-center justify-center rounded-full   bg-gray-400">
+                            <div className="m-[0.55rem] h-[2.6rem] w-[2.6rem] items-center justify-center rounded-full bg-gray-400 md:m-[0.65rem]  xl:m-[0.55rem]">
                                 <img src={profile} alt="profile image" loading="lazy" className="h-full w-full rounded-full object-cover" />
                             </div>
                         ) : (
-                            <div className="relative m-1 ml-[1.15rem]  flex h-[2.6rem] w-[2.6rem] items-center justify-center  rounded-full bg-gray-200">
+                            <div className="relative m-[0.5rem] flex h-[2.6rem]  w-[2.6rem] items-center justify-center rounded-full bg-gray-200 md:m-[0.65rem] xl:m-[1] ">
                                 <svg className="  h-8 w-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
                                 </svg>
@@ -384,7 +396,9 @@ const Post = ({
                                     if ((fromCommentDetail && item2.owner._id === item.parent.owner && item2.owner._id !== item.owner._id) || (fromTweetDetail && item2.owner._id === item.post.owner)) {
                                         return (
                                             <div key={item2._id} className="relative ">
-                                                {((!showReplies && item2._id !== isLastElement._id && item2.id !== item2[item2.children.length - 1]) || showReplies) && <div className="absolute left-[2.3rem] top-[4.3rem] h-[86%] border-2  "></div>}
+                                                {((!showReplies && item2._id !== isLastElement._id && item2.id !== item2[item2.children.length - 1]) || showReplies) && (
+                                                    <div className="absolute left-[1.5rem] top-[4.3rem] h-[86%] border-2 md:left-[1.9rem] xl:left-[1.95rem] "></div>
+                                                )}
 
                                                 <Reply
                                                     key={item2._id}
@@ -431,7 +445,7 @@ const Post = ({
 
                     return (
                         <div className="relative -mt-[0.01rem]" key={reply._id}>
-                            {!isLastElement && <div className="absolute left-[2.3rem] top-[4.2rem] h-[86.5%] border-2 "></div>}
+                            {!isLastElement && <div className="absolute left-[1.75rem] top-[4.2rem] h-[86.5%] border-2 md:left-[1.9rem] xl:left-[1.95rem] "></div>}
                             <Reply
                                 key={reply._id}
                                 reply={reply}

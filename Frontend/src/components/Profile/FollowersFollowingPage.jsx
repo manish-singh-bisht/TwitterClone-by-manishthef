@@ -145,9 +145,9 @@ export const FollowersFollowingStructure = ({ user, state, dispatchFollowUser, A
                     <Avatar profile={user.profile && user.profile.image && user.profile.image.url ? user.profile.image.url : null} />
                 </div>
                 <div className="flex w-full flex-col items-start gap-2 ">
-                    <span className="text-[1.1rem] font-bold hover:underline">{user.name}</span>
-                    <span className="-mt-[0.6rem] text-[0.92rem] text-gray-600">@{user.handle}</span>
-                    <div>{user.description}</div>
+                    <span className="text-[1.1rem] font-bold hover:underline">{user.name.length > 8 ? user.name.slice(0, 8).trim() + "..." : user.name}</span>
+                    <span className="-mt-[0.6rem] text-[0.92rem] text-gray-600">@{user.handle.length > 8 ? user.handle.slice(0, 8).trim() + "..." : user.handle}</span>
+                    <div className="">{user.description}</div>
                 </div>
 
                 {user._id !== state.user._id && (

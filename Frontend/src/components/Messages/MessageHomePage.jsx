@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Cross, Photo, PushPin, SearchIcon, Send } from "../SVGs/SVGs";
+import { Cross, LeftArrow, Photo, PushPin, SearchIcon, Send } from "../SVGs/SVGs";
 import ConversationProfile from "./ConversationProfile";
 import Loader from "../Loader/Loader";
 import axios from "axios";
@@ -219,9 +219,12 @@ const MessageHomePage = () => {
     const urlMessages = `http://localhost:4000/api/v1/chat/message/getAll/${conversations.activeConversation}?page=`;
 
     return (
-        <div className="fixed z-10 grid h-[100vh] w-[calc(100vw-24rem)] grid-cols-[24.5rem_auto] bg-white">
-            <div className="h-full overflow-y-auto border-l border-r " ref={targetRefConversation}>
-                <div className="sticky inset-0 z-10 flex   flex-col  bg-white/60  backdrop-blur-md  ">
+        <div className="fixed z-10 h-[100vh] w-full bg-white xl:grid xl:w-[calc(100vw-24rem)] xl:grid-cols-[24.5rem_auto] 2xl:w-[calc(100vw-48rem)] ">
+            <div className={`h-full overflow-y-auto border-l border-r ${messages.showingMessages && "hidden xl:block"}`} ref={targetRefConversation}>
+                <div className="sticky inset-0 z-10    flex items-center gap-3  bg-white/60 backdrop-blur-md ">
+                    <Link to={"/"} className="cursor-pointer pl-3 xl:hidden">
+                        <LeftArrow />
+                    </Link>
                     <h1 className="mx-2  py-2 text-2xl font-bold">Messages</h1>
                 </div>
 
@@ -339,8 +342,8 @@ const MessageHomePage = () => {
                             })
                         ) : (
                             <div className="mt-8 flex flex-col items-center justify-center">
-                                <div className="w-[22rem] text-[2rem]  font-extrabold leading-[2.3rem]">Send a message,get a message</div>
-                                <div className="mt-5 w-[22rem]  text-gray-500 ">Direct Messages are private conversations between you and other people on Twitter.</div>
+                                <div className="text-[2rem] font-extrabold  leading-[2.3rem] xl:w-[22rem]">Send a message,get a message</div>
+                                <div className="mt-5 text-gray-500  xl:w-[22rem] ">Direct Messages are private conversations between you and other people on Twitter.</div>
                                 <button className="mt-5 flex h-12 w-[fit] items-center justify-center rounded-3xl bg-blue-500 px-4 text-[1.2rem] font-bold text-white hover:bg-blue-600 active:bg-blue-800 " onClick={handleNewMessageClick}>
                                     Start a conversation
                                 </button>
@@ -350,8 +353,17 @@ const MessageHomePage = () => {
                 )}
             </div>
 
-            <div className="  bottom-0 flex h-full max-h-[full]  w-[86%] flex-col overflow-y-auto border-r">
+            <div className={`bottom-0   h-full max-h-[full] flex-col  overflow-y-auto border-r xl:flex xl:w-[86%] `}>
                 <div className={`${messages.showingMessages && messages.selectedConversation[0].participants[0] ? "block" : "hidden"} sticky  inset-0 z-10 flex h-fit  flex-col  bg-white/60  backdrop-blur-md `}>
+                    <div
+                        onClick={() => {
+                            setMessages((prev) => ({ ...prev, messageLoading: false, showingMessages: false, prevId: null, selectedConversation: null }));
+
+                            setMessageArray([]);
+                        }}
+                        className="cursor-pointer pt-3 pl-3 xl:hidden">
+                        <LeftArrow />
+                    </div>
                     {messages.showingMessages && (
                         <Link to={`/Profile/${messages.selectedConversation[0].participants[0].handle}`}>
                             <div className="flex flex-col items-center justify-center  border-b py-2 pb-[2rem] hover:bg-gray-100">
@@ -429,7 +441,7 @@ const MessageHomePage = () => {
                     </div>
                 </div>
 
-                <div className={`${messages.showingMessages ? "block" : "hidden"} sticky bottom-0 flex w-full flex-col items-center  border-t bg-white pt-[0.15rem] `} ref={scrollEnd}>
+                <div className={`${messages.showingMessages ? "block" : "hidden"} sticky bottom-0 mt-16 flex w-full flex-col items-center  border-t bg-white pt-[0.15rem] xl:mt-5 `} ref={scrollEnd}>
                     {reply.bool && (
                         <div className={` my-[0.5rem]  flex w-full flex-col border-l-[0.4rem] border-l-black  bg-[#F7F9F9]	pl-2 align-middle `}>
                             <div className="flex w-full justify-between ">

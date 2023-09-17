@@ -96,7 +96,7 @@ const MoreOptionMenuModalMessage = ({ visibility, handleOutsideClick, buttonPosi
         <>
             <div className="fixed inset-0 z-30 h-[100vh] w-[100vw] ">
                 <div className="fixed z-10  h-full w-full" onClick={handleOutsideClick}></div>
-                <div className="relative z-30 w-fit " ref={modalRef}>
+                <div className="relative z-30 ml-[5.2rem] w-fit md:ml-0" ref={modalRef}>
                     <div className=" h-fit w-fit rounded-xl border-2 bg-white">
                         <button
                             className="flex w-full items-center gap-3 rounded-t-xl p-3 text-black  hover:bg-gray-100"

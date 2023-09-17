@@ -109,9 +109,9 @@ const UpdateModal = ({ visibility, onClose, handleOutsideClick, profile, banner,
         <>
             <div className="fixed inset-0 z-40  flex  h-[100vh] w-[100vw] items-center justify-center">
                 <div className="fixed h-[100vh] w-[100vw]  bg-black opacity-40" onClick={handleOutsideClick}></div>
-                <div className="z-40 h-[85vh] w-[42vw] overflow-y-auto rounded-xl bg-white">
+                <div className="z-40 h-full w-full overflow-y-auto rounded-xl bg-white  lg:h-[85vh]  lg:w-[42vw]">
                     <div className="sticky inset-0 z-40 mt-[0.1rem] flex w-full items-center justify-between rounded-tl-xl    bg-white/60 px-4 backdrop-blur-md">
-                        <div className="flex items-center gap-7">
+                        <div className="flex items-center  gap-7">
                             <div className="my-2 flex h-fit    w-fit cursor-pointer items-center justify-center  rounded-full  p-2 hover:bg-gray-200 " onClick={onClose}>
                                 <Cross />
                             </div>

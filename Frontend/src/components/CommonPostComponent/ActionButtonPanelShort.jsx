@@ -45,12 +45,12 @@ const ActionButtonPanelShort = ({
         },
     ];
     return (
-        <div className="-mt-3 mb-2 ml-[4.25rem] flex w-[87.5%] gap-20  ">
+        <div className="-mt-3 mb-2 ml-[4.25rem] flex w-[87.5%] gap-[2.2rem] lg:gap-20  ">
             {actionButtons.map((button, index) => {
                 return (
                     <div key={index}>
                         {!fromReply && button.name === "comments" ? (
-                            <div className="group flex w-[3rem] items-center justify-around">
+                            <div className="group flex w-[2rem] items-center justify-around lg:w-[3rem]">
                                 <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
                                     <Comments />
                                 </button>
@@ -69,7 +69,7 @@ const ActionButtonPanelShort = ({
                                 <span className="group-hover:text-blue-500">{replyChildren.length > 0 ? replyChildren.length : null}</span>
                             </div>
                         ) : (
-                            <div className=" group flex w-[3rem] items-center justify-around  ">{button.component}</div>
+                            <div className=" group flex w-[2rem] items-center justify-around lg:w-[3rem]  ">{button.component}</div>
                         )}
                     </div>
                 );

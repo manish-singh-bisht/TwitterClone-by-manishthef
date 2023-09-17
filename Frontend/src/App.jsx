@@ -19,6 +19,7 @@ const Connect = React.lazy(() => import("./components/ConnectPeople/Connect"));
 const FollowersFollowingPage = React.lazy(() => import("./components/Profile/FollowersFollowingPage"));
 const MessageHomePage = React.lazy(() => import("./components/Messages/MessageHomePage"));
 import OfflineComponent from "./components/Offline/OfflineComponent";
+import SideBarIconsOnly from "./components/Sidebar/SideBarIconsOnly";
 const Page404 = React.lazy(() => import("./components/404/page404"));
 
 const App = () => {
@@ -57,8 +58,9 @@ const App = () => {
 
     return (
         <BrowserRouter>
-            <div className={`${isAuthenticated ? "grid grid-cols-[21rem_44vw_auto] gap-9 " : ""}`}>
-                <div className="">{isAuthenticated && <Sidebar isOnline={isOnline} />}</div>
+            <div className={`${isAuthenticated ? " gap-2  md:grid md:grid-cols-[8vw_auto] lg:grid-cols-[7vw_68vw_auto]  xl:grid-cols-[21rem_44vw_auto] xl:gap-9 2xl:justify-center" : ""} `}>
+                <div className="hidden xl:block">{isAuthenticated && <Sidebar isOnline={isOnline} />}</div>
+                <div className="hidden md:block xl:hidden">{isAuthenticated && <SideBarIconsOnly isOnline={isOnline} />}</div>
                 {isOnline ? (
                     <div>
                         <Suspense fallback={<Loader />}>
@@ -81,7 +83,7 @@ const App = () => {
                 ) : (
                     <OfflineComponent />
                 )}
-                <div className="">{isAuthenticated && <SidebarRight />}</div>
+                <div className="hidden lg:block">{isAuthenticated && <SidebarRight />}</div>
             </div>
             <ToastContainer />
         </BrowserRouter>

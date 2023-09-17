@@ -242,7 +242,7 @@ const TweetDetail = () => {
         navigate(`/Profile/${handle}`);
     };
     return (
-        <main className="grid grid-cols-[44vw_auto]   ">
+        <main className="w-[100%] xl:grid  xl:grid-cols-[44vw_auto] ">
             <div className="flex max-h-[full] min-h-[1400px] flex-col  border-l  border-r">
                 <div className=" sticky inset-0 z-10 flex h-[3.5rem] items-center gap-7 bg-white/60 backdrop-blur-md ">
                     <div onClick={handleClick}>
@@ -252,7 +252,7 @@ const TweetDetail = () => {
                     </div>
                     <div className="text-[1.6rem] font-bold">{thread.length > 0 ? "Thread" : "Tweet"}</div>
                 </div>
-                <div className=" m-2">
+                <div className="m-2">
                     <div className="flex gap-2">
                         <div className="">
                             <Avatar profile={profile} />

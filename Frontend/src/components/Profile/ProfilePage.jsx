@@ -104,7 +104,7 @@ const ProfilePage = () => {
                 <Loader />
             ) : (
                 <>
-                    <main className="grid grid-cols-[44vw_auto]   ">
+                    <main className="w-full xl:grid xl:grid-cols-[44vw_auto]   ">
                         <div className="flex h-[100%] min-h-[1400px] flex-col  border-l  border-r">
                             <div className=" sticky inset-0 z-10 flex h-[3.5rem] items-center gap-7 bg-white/60 backdrop-blur-md ">
                                 <div onClick={handleClick}>
@@ -427,9 +427,13 @@ const ProfilePage = () => {
 export default ProfilePage;
 
 export const TabButton = ({ label, active, onClick }) => (
-    <button className={`w-fit px-12 text-[1.05rem] font-semibold hover:bg-gray-200 ${!active ? "py-[1rem] text-gray-600" : "pt-[0.8rem] text-black"}`} disabled={active} onClick={onClick}>
+    <button className={`w-full  font-semibold hover:bg-gray-200 md:w-fit md:px-12 md:text-[1.05rem] ${!active ? "py-[1rem] text-gray-600" : "pt-[0.8rem] text-black"}`} disabled={active} onClick={onClick}>
         {label}
-        {active && <div className="mt-[0.8rem] w-[3.4rem] rounded-3xl border-[0.15rem] border-blue-500"></div>}
+        {active && (
+            <div className="flex w-full items-center justify-center ">
+                <div className=" mt-[0.8rem]  w-[2.5rem] rounded-3xl border-[0.15rem] border-blue-500  md:w-[3.4rem]"></div>
+            </div>
+        )}
     </button>
 );
 

@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
-import { ThreeDots } from "../SVGs/SVGs";
+import { LeftArrow, ThreeDots } from "../SVGs/SVGs";
 import MoreOptionMenuModal from "../Modal/MoreOptionMenuModal";
 import Loader from "../Loader/Loader";
 import axios from "axios";
@@ -13,6 +13,7 @@ import PostBookmark from "../../context/Actions/PostBookmark";
 import CommentBookmark from "../../context/Actions/CommentBookmark";
 import InfiniteScrollWrapper from "../CommonPostComponent/InfiniteScrollWrapper";
 import useModal from "../../CustomHooks/useModal";
+import { Link } from "react-router-dom";
 
 const BookMarkPage = () => {
     // this is just for showing the posts that were bookmarked by the logged in user, to see how the number of the bookmark is being changed or from where the api call is being made to mark a post as bookmark, refer to Frontend\src\components\CommonPostComponent\BookMark.jsx.
@@ -54,6 +55,9 @@ const BookMarkPage = () => {
         <div className="h-[100%] min-h-[100vh] border-l border-r">
             <div className="sticky inset-0 z-10 flex h-fit   justify-between    bg-white/60  backdrop-blur-md ">
                 <div className="mx-2 flex flex-col ">
+                    <Link to="/" className="lg:hidden">
+                        <LeftArrow />
+                    </Link>
                     <span className="   text-2xl font-bold">Bookmarks</span>
                     <span className="  text-sm text-gray-600">@{state.user.handle}</span>
                 </div>
@@ -119,9 +123,9 @@ const BookMarkPage = () => {
                         ) : (
                             <div className="mt-[4.3rem] flex flex-col items-center justify-center">
                                 <img className="h-[10.6rem]" src="../../../Public/bookmarksNone.png" alt="no bookmark image" />
-                                <div className="text-[2.1rem] font-bold">Save Tweets for later </div>
+                                <div className="text-center text-[2.1rem] font-bold">Save Tweets for later </div>
 
-                                <div className="text-gray-600">
+                                <div className="text-center text-gray-600">
                                     Don't let the good ones fly away! Bookmark <br /> Tweets to easily find them again in the future.
                                 </div>
                             </div>

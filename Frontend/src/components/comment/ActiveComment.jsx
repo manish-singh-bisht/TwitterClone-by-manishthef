@@ -238,9 +238,9 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
     const formattedTime = usePostTimeInTweetDetail(Date.parse(comment?.createdAt));
     return (
         comment !== undefined && (
-            <main className="grid   grid-cols-[44vw_auto] ">
+            <main className="w-[100%] xl:grid  xl:grid-cols-[44vw_auto] ">
                 <div className="flex h-[100%] flex-col  ">
-                    <div className=" m-2">
+                    <div className=" m-2 ml-[-0.02rem]">
                         <div className="flex gap-2 ">
                             <div>
                                 <Avatar profile={comment.owner.profile && comment.owner.profile.image && comment.owner.profile.image.url ? comment.owner.profile.image.url : null} />

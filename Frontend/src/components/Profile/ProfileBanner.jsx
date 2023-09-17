@@ -149,7 +149,7 @@ export const BannerImage = ({ banner, changeBanner, handleChangeImage }) => {
                             }}
                         />
                         <div
-                            className="absolute top-[50%] left-[55%] z-10 w-fit -translate-y-1/2 -translate-x-1/2 cursor-pointer rounded-full bg-black p-2 text-white"
+                            className="absolute top-[50%] left-[60%] z-10 w-fit -translate-y-1/2 -translate-x-1/2 cursor-pointer rounded-full bg-black p-2 text-white md:left-[55%]"
                             onClick={() => {
                                 handleChangeImage(null, "banner");
                             }}>

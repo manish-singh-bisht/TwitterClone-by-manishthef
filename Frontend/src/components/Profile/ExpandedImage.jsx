@@ -19,8 +19,10 @@ const ExpandedImage = ({ modalData, onclose, visibility }) => {
                         </div>
                     )}
                     {modalData.type === "profile" && (
-                        <div className="my-auto  flex items-center justify-center ">
-                            <img src={modalData.imageUrl} alt="expanded image" className="h-[46.2vh] w-[24vw] rounded-full object-cover" />
+                        <div className="flex h-full  w-full items-center justify-center  ">
+                            <div className="h-[300px] w-[300px] md:h-[400px] md:w-[400px]">
+                                <img src={modalData.imageUrl} alt="expanded image" className="h-full w-full rounded-full object-cover" />
+                            </div>
                         </div>
                     )}
                 </div>

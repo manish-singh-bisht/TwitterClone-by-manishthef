@@ -12,27 +12,27 @@ const LoginSignUpMainPage = () => {
 
     return (
         <>
-            <main className=" flex gap-8">
-                <div className=" w-[60vw]">
-                    <img src="./Public/logo/twitter.jpg" alt="twitter logo" className="h-[46.5rem] " />
+            <main className=" flex gap-3 overflow-auto xl:gap-8">
+                <div className="hidden h-[100vh] w-[60vw] lg:block">
+                    <img src="./Public/logo/twitter.jpg" alt="twitter logo" className="h-full" />
                 </div>
-                <div className="flex w-[38vw] flex-col justify-center ">
-                    <div className="h-[70vh] ">
+                <div className="flex w-full flex-col justify-center  lg:w-[38vw]">
+                    <div className="h-[70vh]flex flex-col  p-3 align-middle lg:p-0 lg:max-xl:mt-[-4rem]">
                         <div className="">
                             <TwitterIconInLoginSignupMainPage className="" />
                         </div>
-                        <div className="mt-14 flex h-[35%] flex-col justify-between ">
-                            <div className="text-[4.5rem] font-bold">Happening now</div>
-                            <div className="text-4xl font-bold ">Join Twitter today.</div>
+                        <div className="relative mt-14 flex h-fit flex-col justify-between gap-5  py-16 lg:mt-10 lg:h-fit lg:py-0">
+                            <div className="text-[3.5rem] font-bold leading-[4rem] lg:text-[4.5rem] lg:leading-none">Happening now</div>
+                            <div className="text-3xl font-bold lg:text-4xl ">Join Twitter today.</div>
                         </div>
-                        <div className="mt-12 flex flex-col gap-3">
+                        <div className="mt-12 flex w-full flex-col gap-3 lg:mt-16 ">
                             <div
                                 onClick={() => setIsSignUpVisible(true)}
-                                className="flex  h-16  w-[25.5rem] cursor-pointer items-center justify-center rounded-[4rem] border-2 border-blue-200 bg-blue-400  font-bold text-white hover:bg-blue-500 hover:text-black active:bg-blue-600">
+                                className="flex h-16  w-full  cursor-pointer items-center justify-center rounded-[4rem] border-2 border-blue-200 bg-blue-400 font-bold  text-white hover:bg-blue-500 hover:text-black active:bg-blue-600 xl:w-[28.5rem]">
                                 Sign up
                             </div>
                             <div
-                                className="flex h-16 w-[25.5rem] cursor-pointer select-none items-center justify-center rounded-[4rem] border-2 border-blue-200 bg-white font-bold text-blue-400 hover:bg-gray-50 hover:text-black active:bg-gray-100 "
+                                className="flex h-16 w-full cursor-pointer select-none items-center justify-center rounded-[4rem] border-2 border-blue-200 bg-white font-bold text-blue-400 hover:bg-gray-50 hover:text-black active:bg-gray-100 xl:w-[28.5rem] "
                                 onClick={() => setIsLoginVisible(true)}>
                                 Log in
                             </div>

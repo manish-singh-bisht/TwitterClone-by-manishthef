@@ -53,10 +53,8 @@ exports.createPost = async (req, res, next) => {
                 const base64Buffer = Buffer.from(image.substring(22), "base64");
                 const originalSizeInBytes = base64Buffer.length;
                 const originalSizeInKB = originalSizeInBytes / 1024;
-
+                const { format, width } = await sharp(base64Buffer).metadata();
                 if (originalSizeInKB > 100) {
-                    const { format, width } = await sharp(base64Buffer).metadata();
-
                     const compressedBuffer = await sharp(base64Buffer)
                         .toFormat(format)
                         .resize({ width: Math.floor(width * 0.5) })
@@ -70,7 +68,13 @@ exports.createPost = async (req, res, next) => {
                     });
                     return result;
                 } else {
-                    const result = await cloudinary.v2.uploader.upload(image, {
+                    const compressedBuffer = await sharp(base64Buffer)
+                        .toFormat(format)
+                        .resize({ width: Math.floor(width * 0.5) })
+                        .webp({ quality: 80, chromaSubsampling: "4:4:4" })
+                        .toBuffer();
+                    const compressedBase64 = compressedBuffer.toString("base64");
+                    const result = await cloudinary.v2.uploader.upload(`data:image/jpeg;base64,${compressedBase64}`, {
                         folder: "twitterClone",
                     });
                     return result;

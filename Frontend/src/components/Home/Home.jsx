@@ -11,6 +11,9 @@ import CommentLikeUnlike from "../../context/Actions/CommentLikeUnlike";
 import PostBookmark from "../../context/Actions/PostBookmark";
 import CommentBookmark from "../../context/Actions/CommentBookmark";
 import InfiniteScrollWrapper from "../CommonPostComponent/InfiniteScrollWrapper";
+import { TwitterIcon } from "../SVGs/SVGs";
+import Avatar from "../Avatar/Avatar";
+import SideBarMobile from "../Sidebar/SideBarMobile";
 
 const Home = () => {
     const {
@@ -28,6 +31,18 @@ const Home = () => {
         dispatchCommentLikeUnlike,
         dispatchBookmarkTweet,
     } = useGlobalContext();
+
+    const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+    const toggleSidebar = () => {
+        setSidebarOpen(!isSidebarOpen);
+    };
+
+    const handleOutsideClick = (event) => {
+        if (event.target === event.currentTarget) {
+            setSidebarOpen(false);
+        }
+    };
 
     const { loading } = statePostOfFollowingAndMe;
 
@@ -61,20 +76,31 @@ const Home = () => {
                 <Loader />
             ) : (
                 <>
-                    <div className="sticky inset-0 z-10 flex h-[7rem] w-[44vw] flex-col gap-2 border-2  bg-white/60  backdrop-blur-md  ">
-                        <h1 className="mx-2 mt-2  text-2xl font-bold">Home</h1>
-
+                    <div className=" sticky inset-0  z-10 flex h-fit w-full flex-col gap-2 border-2  bg-white/60  backdrop-blur-md  xl:h-[7rem] xl:w-[44vw] ">
+                        <h1 className="mx-2 mt-2  hidden text-2xl font-bold md:block">Home</h1>
+                        <div className="md:hidden" onClick={toggleSidebar}>
+                            <Avatar profile={profile} />
+                        </div>
+                        <div className="absolute left-1/2 mx-auto translate-x-[-50%]  md:hidden">
+                            <TwitterIcon />
+                        </div>
                         <div className="flex h-full items-center justify-center  ">
                             <div className="flex h-full w-fit cursor-pointer flex-col items-center  justify-center  px-20 hover:border-2 hover:bg-gray-200">
-                                <div className=" mt-[0.65rem]  text-center font-bold">Following</div>
-                                <div className=" mt-[1.2rem] w-[4.8rem] rounded-3xl border-[0.15rem] border-blue-500  "></div>
+                                <div className=" text-center  font-bold xl:mt-[0.65rem]">Following</div>
+                                <div className=" mt-3 w-[4.8rem] rounded-3xl border-[0.15rem] border-blue-500 lg:mt-[1.2rem]  "></div>
                             </div>
                         </div>
                     </div>
 
-                    <main className="grid grid-cols-[44vw_auto]  ">
+                    <div className="md:hidden">
+                        <SideBarMobile isOpen={isSidebarOpen} handleOutsideClick={handleOutsideClick} profile={profile} />
+                    </div>
+
+                    <main className="w-full overflow-hidden  xl:grid xl:grid-cols-[44vw_auto]  ">
                         <div className={` flex h-[100%] min-h-[1400px] flex-col border-l border-r`}>
-                            <TweetBoxInHome profile={profile} />
+                            <div className="hidden md:block">
+                                <TweetBoxInHome profile={profile} />
+                            </div>
                             <InfiniteScrollWrapper dataLength={uniquePosts.length} url={url} setArray={setPosts}>
                                 {uniquePosts && uniquePosts.length > 0 ? (
                                     uniquePosts.map((item) => {

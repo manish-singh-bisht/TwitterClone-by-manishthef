@@ -9,7 +9,7 @@ const InputField = ({ type, id, placeholder, value, onChange }) => (
             type={type}
             id={id}
             required
-            className="peer block h-16 w-[23.5rem] rounded-md border-2 border-gray-700 bg-black p-2 pt-8 text-white placeholder-transparent focus:border-blue-500 focus:outline-none"
+            className="peer block h-16 w-[110%] rounded-md border-2 border-gray-700 bg-black p-2 pt-8 text-white placeholder-transparent focus:border-blue-500 focus:outline-none md:w-[23.5rem]"
             placeholder={placeholder}
             value={value}
             onChange={onChange}
@@ -42,21 +42,21 @@ const LoginOptionModal = ({ onClose, isLoginVisible, handleOutsideClick }) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center">
             <div className="fixed h-full w-full bg-black opacity-70" onClick={handleOutsideClick}></div>
-            <div className="z-10 flex h-[85vh] w-[45vw] rounded-xl bg-black">
-                <div className="m-[0.39rem] h-fit " onClick={onClose}>
+            <div className="relative z-10 flex  h-full w-full rounded-xl bg-black lg:w-[45vw] 2xl:h-[60%] 2xl:w-[40%]">
+                <div className="z-20 m-[0.39rem] h-fit" onClick={onClose}>
                     <CrossInLogin className=" " />
                 </div>
 
-                <div className="flex w-full flex-col items-center">
+                <div className="absolute flex h-full w-full  flex-col items-center">
                     <div className="flex h-[30vh] flex-col items-center justify-around">
                         <TwitterIconInLogin className="" />
-                        <p className="m-4 text-[3rem] font-bold text-gray-100">Log in to Twitter</p>
+                        <p className="mx-4 text-[2rem] font-bold text-gray-100 md:mt-4  xl:text-[3rem]">Log in to Twitter</p>
                     </div>
 
-                    <form className="relative mt-12 flex flex-col gap-4" onSubmit={handleLogin}>
+                    <form className="relative mt-6 flex flex-col gap-4 xl:mt-12 2xl:mt-0" onSubmit={handleLogin}>
                         <InputField type="email" id="Email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
                         <InputField type="password" id="Password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                        <button className="h-9 rounded-[24rem] bg-gray-100 font-bold hover:bg-gray-200 active:bg-gray-300">Next</button>
+                        <button className="h-9 w-[110%] rounded-[24rem] bg-gray-100 font-bold hover:bg-gray-200 active:bg-gray-300 md:w-full">Next</button>
                     </form>
 
                     <div className="mt-16 flex gap-2 text-gray-400">
