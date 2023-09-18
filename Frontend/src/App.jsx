@@ -10,7 +10,6 @@ import SidebarRight from "./components/Sidebar/SidebarRight";
 
 const Home = React.lazy(() => import("./components/Home/Home"));
 const LoginSignUpMainPage = React.lazy(() => import("./components/Login_Register/LoginSignUpMainPage"));
-const SignUpOption = React.lazy(() => import("./components/Login_Register/SignUpOption"));
 const TweetDetail = React.lazy(() => import("./components/TweetDetail/TweetDetail"));
 const CommentDetail = React.lazy(() => import("./components/comment/CommentDetail"));
 const ProfilePage = React.lazy(() => import("./components/Profile/ProfilePage"));

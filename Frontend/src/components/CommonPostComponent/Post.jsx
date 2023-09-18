@@ -1,16 +1,13 @@
 import React, { Suspense, useEffect, useState } from "react";
-import { Comments, Mention, PeopleYouFollow, PushPin, Retweets, ThreeDots } from "../SVGs/SVGs";
+import { Mention, PeopleYouFollow, PushPin, Retweets, ThreeDots } from "../SVGs/SVGs";
 import { Link, useNavigate } from "react-router-dom";
 import PhotoGallery from "./PhotoGallery";
 import "./AnimationUsedInPostAndTweetDetail.css";
 import { usePostTime } from "../../CustomHooks/usePostTime";
 import Avatar from "../Avatar/Avatar";
-import LikeUnlikePost from "./LikeUnlikePost";
 import axios from "axios";
 import Reply from "../comment/Reply";
 import Loader from "../Loader/Loader";
-import Retweet from "./Retweet";
-import BookMark from "./BookMark";
 import useHoverCard from "../../CustomHooks/useHoverCard";
 import useModal from "../../CustomHooks/useModal";
 import ActionButtonPanelShort from "./ActionButtonPanelShort";
