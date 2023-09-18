@@ -66,7 +66,7 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
 
     //will be passed in editor
     const height = "min-h-[10rem] ";
-    const width = " w-[33rem]";
+    const width = "w-[95vw] md:w-[33rem]";
     const placeholder = initialTweetFromOtherPartsOfAppPresent ? "What's Happening" : isThreadStarter ? "What's Happening" : "Add Another Tweet";
 
     const handleChange = (value, id, mentions) => {
@@ -146,7 +146,7 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
         <div className=" fixed inset-0 z-30 flex h-[100vh]  w-[100vw] items-center justify-center ">
             <div className="fixed  h-full w-full  bg-black opacity-70" onClick={handleOutsideClick}></div>
 
-            <div className="relative flex h-auto  max-h-[40rem] min-h-[18rem] w-[39.3rem]  flex-col overflow-y-auto rounded-xl bg-white">
+            <div className="relative flex h-auto  max-h-[40rem] min-h-[18rem] w-full flex-col overflow-y-auto rounded-xl  bg-white md:w-[39.3rem]">
                 <div className=" flex h-fit w-full justify-between ">
                     <div
                         className="  m-2 flex h-10 w-10 cursor-pointer items-center justify-center  rounded-full p-2 hover:bg-blue-100"
@@ -182,7 +182,9 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
                             <div className="    h-full ">
                                 <div className={`flex h-full w-full flex-col    `}>
                                     <div className=" ml-3  flex gap-2">
-                                        <Avatar profile={profile} />
+                                        <div className="hidden md:block">
+                                            <Avatar profile={profile} />
+                                        </div>
 
                                         <div>
                                             {!isThreadStarter ? (
@@ -222,7 +224,7 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
                     );
                 })}
                 <div
-                    className="mt-4 ml-[3.6rem] flex  w-fit   "
+                    className="mt-4 flex w-fit  md:ml-[3.6rem]   "
                     onClick={(e) => {
                         setvisibilityWhoCanReply(true);
                         document.body.style.overflow = "hidden";
@@ -252,9 +254,9 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
                         )}
                     </div>
                 </div>
-                <div className=" ml-[4.6rem] mt-3 w-[85%] border-[0.01rem] bg-gray-300"></div>
+                <div className="mt-3 w-full border-[0.01rem] bg-gray-300 md:ml-[4.6rem] md:w-[85%]"></div>
                 <div className="flex h-fit items-center justify-between ">
-                    <div className="ml-16">
+                    <div className="md:ml-16">
                         <MediaUploadPanelLong fromTweetModal={true} />
                     </div>
                     <div className={` my-3 mx-5 flex justify-end gap-2 `}>

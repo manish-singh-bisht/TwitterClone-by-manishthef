@@ -58,7 +58,7 @@ const App = () => {
 
     return (
         <BrowserRouter>
-            <div className={`${isAuthenticated ? " gap-2  md:grid md:grid-cols-[8vw_auto] lg:grid-cols-[6vw_63vw_auto]  xl:grid-cols-[21rem_44vw_auto] xl:gap-9 2xl:justify-center" : ""} `}>
+            <div className={`${isAuthenticated ? " gap-2  md:grid md:grid-cols-[8vw_92vw] lg:grid-cols-[6vw_63vw_auto]  xl:grid-cols-[21rem_44vw_auto] xl:gap-9 2xl:justify-center" : ""} `}>
                 <div className="hidden xl:block">{isAuthenticated && <Sidebar isOnline={isOnline} />}</div>
                 <div className="hidden md:block xl:hidden">{isAuthenticated && <SideBarIconsOnly isOnline={isOnline} />}</div>
                 {isOnline ? (

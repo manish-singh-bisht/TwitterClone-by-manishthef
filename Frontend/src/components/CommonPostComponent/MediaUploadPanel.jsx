@@ -15,9 +15,9 @@ export const MediaUploadPanelLong = ({ setSelectedImages, selectedImages, fromTw
     };
     return (
         <>
-            <div className="flex w-fit gap-0 ">
+            <div className=" flex w-fit gap-0 md:ml-0 ">
                 {fromTweetModal ? (
-                    <button className="cursor-not-allowed rounded-full p-2 hover:bg-blue-100 active:bg-blue-300 disabled:opacity-50" disabled>
+                    <button className="cursor-not-allowed rounded-full hover:bg-blue-100 active:bg-blue-300 disabled:opacity-50 md:p-2" disabled>
                         <Photo />
                     </button>
                 ) : (
@@ -39,19 +39,19 @@ export const MediaUploadPanelLong = ({ setSelectedImages, selectedImages, fromTw
                     </>
                 )}
 
-                <button className="cursor-not-allowed rounded-full p-2 hover:bg-blue-100 active:bg-blue-300 disabled:opacity-50" disabled>
+                <button className=" cursor-not-allowed rounded-full hover:bg-blue-100 active:bg-blue-300 disabled:opacity-50 md:p-2 " disabled>
                     <Gif />
                 </button>
-                <button className="cursor-not-allowed rounded-full p-2 hover:bg-blue-100 active:bg-blue-300 disabled:opacity-50" disabled>
+                <button className=" cursor-not-allowed rounded-full hover:bg-blue-100 active:bg-blue-300 disabled:opacity-50 md:p-2 " disabled>
                     <Poll />
                 </button>
-                <button className="cursor-not-allowed rounded-full p-2 hover:bg-blue-100 active:bg-blue-300 disabled:opacity-50" disabled>
+                <button className=" cursor-not-allowed rounded-full hover:bg-blue-100 active:bg-blue-300 disabled:opacity-50 md:p-2 " disabled>
                     <Emoji />
                 </button>
-                <button className="cursor-not-allowed rounded-full p-2 hover:bg-blue-100 active:bg-blue-300 disabled:opacity-50" disabled>
+                <button className=" cursor-not-allowed rounded-full hover:bg-blue-100 active:bg-blue-300 disabled:opacity-50 md:p-2 " disabled>
                     <Schedule />
                 </button>
-                <button className="cursor-not-allowed rounded-full p-2 hover:bg-blue-100 active:bg-blue-300 disabled:opacity-50" disabled>
+                <button className=" cursor-not-allowed rounded-full hover:bg-blue-100 active:bg-blue-300 disabled:opacity-50 md:p-2 " disabled>
                     <Location />
                 </button>
             </div>

@@ -23,9 +23,9 @@ const SideBarMobile = ({ isOpen, handleOutsideClick, profile, onClose }) => {
 
     const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
     return (
-        <div className="fixed inset-0 z-30 flex  h-[100%] w-[100%] items-center justify-center">
+        <div className="fixed inset-0 z-30 flex  h-[100%] w-[100%] items-center justify-center ">
             <div className="fixed h-[100vh] w-[100vw]  bg-black opacity-40" onClick={handleOutsideClick}></div>
-            <div className={`fixed inset-y-0 left-0 w-[85%] transform bg-white transition-transform ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
+            <div className={`fixed inset-y-0 left-0 w-[85%] transform overflow-y-auto bg-white transition-transform ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
                 <div className="absolute right-0 z-40 flex w-fit justify-end  p-4 md:hidden" onClick={onClose}>
                     <Cross />
                 </div>

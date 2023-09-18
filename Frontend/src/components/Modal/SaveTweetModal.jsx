@@ -1,33 +1,11 @@
 import axios from "axios";
-import { useEffect, useRef } from "react";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import { toast } from "react-toastify";
 
-const SaveTweetModal = ({ visibilityCross, buttonPositionCross, handleOutsideClickCross, setvisibilityCross, closeAll, text, fromDraft, handleUpdateDraft, firstTweetText }) => {
+const SaveTweetModal = ({ visibilityCross, handleOutsideClickCross, setvisibilityCross, closeAll, text, fromDraft, handleUpdateDraft, firstTweetText }) => {
     if (!visibilityCross) return;
 
     const { state } = useGlobalContext();
-    const modalRef = useRef(null);
-
-    useEffect(() => {
-        const positionModal = () => {
-            const modalRect = modalRef.current.getBoundingClientRect();
-            let top = 0;
-            let left = 0;
-
-            // Calculate the desired position
-            top = buttonPositionCross.top - 300 + modalRect.height;
-            left = buttonPositionCross.left + 455 - modalRect.width;
-
-            // Apply the position to the modal
-            modalRef.current.style.top = `${top}px`;
-            modalRef.current.style.left = `${left}px`;
-        };
-
-        if (visibilityCross && buttonPositionCross) {
-            positionModal();
-        }
-    }, [visibilityCross, buttonPositionCross]);
 
     const toastConfig = {
         position: "bottom-center",
@@ -72,7 +50,7 @@ const SaveTweetModal = ({ visibilityCross, buttonPositionCross, handleOutsideCli
         <>
             <div className="fixed inset-0 z-30 flex h-[100vh] w-[100vw] items-center justify-center">
                 <div className={`fixed  h-full w-full bg-black/30`} onClick={handleOutsideClickCross}></div>
-                <div className="absolute z-10 flex h-fit w-[20rem] flex-col gap-2 rounded-2xl bg-white p-8" ref={modalRef}>
+                <div className="absolute z-10 flex h-fit w-[20rem] flex-col gap-2 rounded-2xl bg-white p-8">
                     <div className=" text-[1.4rem] font-bold">Save post? </div>
                     <div className="text-[0.97rem] text-gray-600">You can save this to send later from your drafts.</div>
                     <div className="flex flex-col gap-3 pt-3">

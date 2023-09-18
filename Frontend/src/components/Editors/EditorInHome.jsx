@@ -38,7 +38,7 @@ const EditorInHome = ({ onChange: change, showGlobeHandler, isTweetPress, handle
         ],
         editorProps: {
             attributes: {
-                class: `mt-2 resize-none overflow-hidden text-2xl  outline-none  w-[90%]`,
+                class: `mt-2 resize-none overflow-hidden text-2xl  outline-none w-[82.5%] break-words md:w-[90%]`,
             },
         },
         content: ``,

@@ -70,6 +70,10 @@ const Home = () => {
             uniquePosts.push(post);
         }
     }
+
+    const isPlusClickedHanlder = () => {
+        scrollTo(0, 0);
+    };
     return (
         <>
             {loading ? (
@@ -98,7 +102,7 @@ const Home = () => {
 
                     <main className="w-full overflow-hidden  xl:grid xl:grid-cols-[44vw_auto]  ">
                         <div className={` flex h-[100%] min-h-[1400px] flex-col border-l border-r`}>
-                            <div className="hidden md:block">
+                            <div>
                                 <TweetBoxInHome profile={profile} />
                             </div>
                             <InfiniteScrollWrapper dataLength={uniquePosts.length} url={url} setArray={setPosts}>
@@ -150,7 +154,11 @@ const Home = () => {
                                     <div>Follow someone to see their tweets</div>
                                 )}
                             </InfiniteScrollWrapper>
-                            <div className="fixed bottom-10 right-5 z-20 rounded-full bg-blue-400 p-5 active:bg-blue-600 md:block">
+                            <div
+                                className="fixed bottom-10 right-5 z-20 rounded-full bg-blue-400 p-5 active:bg-blue-600 md:hidden"
+                                onClick={() => {
+                                    isPlusClickedHanlder();
+                                }}>
                                 <Plus />
                             </div>
                         </div>

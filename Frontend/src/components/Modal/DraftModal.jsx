@@ -195,7 +195,7 @@ const DraftModal = ({ visibilityDraft, handleOutsideClickDraft, closeAll }) => {
                                 );
                             })
                         ) : (
-                            <div className="mt-4 flex flex-col items-center justify-center  text-[1.1rem] leading-4 text-gray-700">
+                            <div className="mt-4 flex flex-col items-center justify-center  text-center text-[1.1rem] leading-4 text-gray-700">
                                 <span className="text-[1.6rem] font-bold text-black">Hold that thought</span> <br /> Not ready to post just yet? Save it to your drafts.
                             </div>
                         )}

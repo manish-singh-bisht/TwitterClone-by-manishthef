@@ -32,7 +32,7 @@ const WhoCanReplyModal = ({ visibility, buttonPosition, handleOutsideClickWhoCan
 
     return (
         <>
-            <div className="fixed inset-0 z-30 h-[100vh] w-[100vw] ">
+            <div className="fixed inset-0 z-30 ml-16 mt-16 h-[100vh] w-[100vw] md:mt-0 md:ml-0">
                 <div className="fixed z-10  h-full w-full" onClick={handleOutsideClickWhoCanReply}></div>
                 <div className="relative z-30 w-fit " ref={modalRef}>
                     <div className=" h-fit w-fit rounded-xl border-2 bg-white p-3">

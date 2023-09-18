@@ -57,7 +57,7 @@ const TweetBoxInHome = ({ profile }) => {
     return (
         <>
             <div className="  min-h-[7.5rem] border-b">
-                <div className="m-2 flex  gap-2">
+                <div className="flex md:m-2  md:gap-2">
                     <div className="">
                         <Avatar profile={profile} />
                     </div>
@@ -79,7 +79,7 @@ const TweetBoxInHome = ({ profile }) => {
                 {showGlobe && (
                     <>
                         <div
-                            className="mt-2 ml-[3.6rem] flex     w-fit "
+                            className="mt-2 flex w-fit     md:ml-[3.6rem] "
                             onClick={(e) => {
                                 setvisibility(true);
                                 document.body.style.overflow = "hidden";
@@ -109,14 +109,14 @@ const TweetBoxInHome = ({ profile }) => {
                                 )}
                             </div>
                         </div>
-                        <div className=" ml-[4.6rem] mt-3 w-[85%] border-[0.01rem] bg-gray-300"></div>
+                        <div className=" mt-3 w-full border-[0.01rem] bg-gray-300 md:ml-[4.6rem] md:w-[85%]"></div>
                     </>
                 )}
-                <div className="flex h-fit items-center justify-between ">
-                    <div className="ml-16">
+                <div className="flex h-fit items-center justify-between  ">
+                    <div className="md:ml-16">
                         <MediaUploadPanelLong setSelectedImages={setSelectedImages} selectedImages={selectedImages} />
                     </div>
-                    <div className={` mx-5 mt-3 mb-2 flex w-fit justify-end gap-2`}>
+                    <div className={`mx-5 mt-3 mb-2 flex w-fit justify-end gap-2 `}>
                         {singleTweet.text.length > 0 && (
                             <div className="flex gap-1">
                                 <div className={`  h-[2.3rem] w-fit `}>{<CircularRadialProgressForTweetTextLimit tweetCount={singleTweet.text.length} maxCount={280} />}</div>
