@@ -143,10 +143,10 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
     };
 
     return (
-        <div className=" fixed inset-0  z-30 h-[100vh] w-[100vw] ">
+        <div className=" fixed inset-0 z-30 flex h-[100vh]  w-[100vw] items-center justify-center ">
             <div className="fixed  h-full w-full  bg-black opacity-70" onClick={handleOutsideClick}></div>
 
-            <div className="relative left-[28rem] top-[4rem]  flex h-auto max-h-[40rem]  min-h-[18rem] w-[39.3rem] flex-col overflow-y-auto rounded-xl bg-white">
+            <div className="relative flex h-auto  max-h-[40rem] min-h-[18rem] w-[39.3rem]  flex-col overflow-y-auto rounded-xl bg-white">
                 <div className=" flex h-fit w-full justify-between ">
                     <div
                         className="  m-2 flex h-10 w-10 cursor-pointer items-center justify-center  rounded-full p-2 hover:bg-blue-100"

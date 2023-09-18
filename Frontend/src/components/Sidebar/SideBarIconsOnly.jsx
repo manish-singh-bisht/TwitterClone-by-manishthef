@@ -26,8 +26,8 @@ const SideBarIconsOnly = ({ isOnline }) => {
     };
     const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
     return (
-        <main className="sticky top-0 z-20 flex h-[100vh] w-[100%] flex-col items-end justify-between    ">
-            <div className=" flex w-3/4 select-none flex-col items-end gap-6    ">
+        <main className="sticky top-0 z-20 flex h-[100vh] w-[100%] flex-col items-end justify-between   overflow-y-auto ">
+            <div className=" flex w-3/4 select-none flex-col items-end gap-6   ">
                 <NavLink to="/" className={({ isActive }) => (isActive ? "w-fit " : " w-fit ")} onClick={() => setTab("/")}>
                     <TwitterIcon className="" />
                 </NavLink>
@@ -60,7 +60,7 @@ const SideBarIconsOnly = ({ isOnline }) => {
             </div>
             <div
                 ref={logoutBox}
-                className=" mx-[0.4rem] mb-14   flex   cursor-pointer  items-center gap-1 rounded-[24rem]  hover:bg-gray-100"
+                className=" ml-[0.3rem] mb-14   flex   cursor-pointer  items-center gap-1 rounded-full hover:bg-gray-100"
                 onClick={() => {
                     if (isOnline) {
                         setVisibilityMoreOptionModal(true);

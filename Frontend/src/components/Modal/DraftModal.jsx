@@ -145,7 +145,7 @@ const DraftModal = ({ visibilityDraft, handleOutsideClickDraft, closeAll }) => {
         <>
             <div className="fixed inset-0 z-30 flex  h-[100vh] w-[100vw] items-center justify-center">
                 <div className="fixed  h-[100vh] w-[100vw]  bg-black opacity-40" onClick={handleOutsideClickDraft}></div>
-                <div className="relative  flex h-full max-h-[40rem] min-h-[83vh]  w-[41vw] flex-col overflow-y-auto  rounded-xl   bg-white ">
+                <div className="relative  flex h-full max-h-[40rem] min-h-[83vh] w-full  flex-col overflow-y-auto rounded-xl  bg-white   lg:w-[41vw] ">
                     <div className="  sticky inset-0 mb-3 flex h-fit w-full  items-center  justify-between bg-white/60  px-2 backdrop-blur-md">
                         <div className="flex items-center gap-4">
                             <div className="  m-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full  p-2 hover:bg-gray-200" onClick={closeAll}>

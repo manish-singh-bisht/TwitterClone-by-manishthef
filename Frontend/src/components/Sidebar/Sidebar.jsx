@@ -46,7 +46,7 @@ const Sidebar = ({ isOnline }) => {
     const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
 
     return (
-        <main className="sticky top-0 z-20 flex h-[100vh] w-[21rem] flex-col items-end justify-between    ">
+        <main className="sticky top-0 z-20 flex h-[100vh] w-[21rem] flex-col items-end justify-between    overflow-y-auto overflow-x-hidden">
             <div className=" flex w-3/4 select-none flex-col  gap-1 ">
                 <NavLink to="/" className={({ isActive }) => (isActive ? "w-fit " : " w-fit ")} onClick={() => setTab("/")}>
                     <TwitterIcon className="" />
@@ -68,7 +68,7 @@ const Sidebar = ({ isOnline }) => {
                 </NavLink>
                 <div className={"w-fit font-normal hover:cursor-not-allowed"}>{tab === "/More" ? <SidebarList Icon={MoreFilled} Option="More" /> : <SidebarList Icon={MoreOutline} Option="More" />}</div>
                 <div
-                    className="flex h-12 w-64 items-center justify-center rounded-3xl bg-blue-500 text-[1.2rem] font-bold text-white hover:bg-blue-600 active:bg-blue-800 "
+                    className="flex h-12 w-[15.5rem] items-center justify-center rounded-3xl bg-blue-500 text-[1.2rem] font-bold text-white hover:bg-blue-600 active:bg-blue-800 "
                     onClick={() => {
                         if (isOnline) {
                             setIsTweetBoxOpen(true);

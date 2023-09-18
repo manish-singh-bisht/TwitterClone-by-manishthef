@@ -11,7 +11,7 @@ import CommentLikeUnlike from "../../context/Actions/CommentLikeUnlike";
 import PostBookmark from "../../context/Actions/PostBookmark";
 import CommentBookmark from "../../context/Actions/CommentBookmark";
 import InfiniteScrollWrapper from "../CommonPostComponent/InfiniteScrollWrapper";
-import { TwitterIcon } from "../SVGs/SVGs";
+import { Plus, TwitterIcon } from "../SVGs/SVGs";
 import Avatar from "../Avatar/Avatar";
 import SideBarMobile from "../Sidebar/SideBarMobile";
 
@@ -93,7 +93,7 @@ const Home = () => {
                     </div>
 
                     <div className="md:hidden">
-                        <SideBarMobile isOpen={isSidebarOpen} handleOutsideClick={handleOutsideClick} profile={profile} />
+                        <SideBarMobile isOpen={isSidebarOpen} onClose={toggleSidebar} handleOutsideClick={handleOutsideClick} profile={profile} />
                     </div>
 
                     <main className="w-full overflow-hidden  xl:grid xl:grid-cols-[44vw_auto]  ">
@@ -150,6 +150,9 @@ const Home = () => {
                                     <div>Follow someone to see their tweets</div>
                                 )}
                             </InfiniteScrollWrapper>
+                            <div className="fixed bottom-10 right-5 z-20 rounded-full bg-blue-400 p-5 active:bg-blue-600 md:block">
+                                <Plus />
+                            </div>
                         </div>
                     </main>
                 </>

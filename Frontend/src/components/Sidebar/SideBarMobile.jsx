@@ -3,13 +3,13 @@ import React, { Suspense, useRef, useState } from "react";
 import Avatar from "../Avatar/Avatar";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import { Link } from "react-router-dom";
-import { BookmarkOutline, Connect, MessageOutline, ProfileOutline, ThreeDots } from "../SVGs/SVGs";
+import { BookmarkOutline, Connect, Cross, MessageOutline, ProfileOutline, ThreeDots } from "../SVGs/SVGs";
 import useModal from "../../CustomHooks/useModal";
 import LogoutUser from "../../context/Actions/LogoutUser";
 import Loader from "../Loader/Loader";
 import MoreOptionMenuModal from "../Modal/MoreOptionMenuModal";
 
-const SideBarMobile = ({ isOpen, handleOutsideClick, profile }) => {
+const SideBarMobile = ({ isOpen, handleOutsideClick, profile, onClose }) => {
     if (!isOpen) return;
 
     const { state, dispatch, ACTIONS } = useGlobalContext();
@@ -26,6 +26,10 @@ const SideBarMobile = ({ isOpen, handleOutsideClick, profile }) => {
         <div className="fixed inset-0 z-30 flex  h-[100%] w-[100%] items-center justify-center">
             <div className="fixed h-[100vh] w-[100vw]  bg-black opacity-40" onClick={handleOutsideClick}></div>
             <div className={`fixed inset-y-0 left-0 w-[85%] transform bg-white transition-transform ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
+                <div className="absolute right-0 z-40 flex w-fit justify-end  p-4 md:hidden" onClick={onClose}>
+                    <Cross />
+                </div>
+
                 <div className="flex flex-col">
                     <div className=" border-b p-4">
                         <Avatar profile={profile} />
@@ -55,7 +59,7 @@ const SideBarMobile = ({ isOpen, handleOutsideClick, profile }) => {
                         </Link>
                         <Link to="/Connect" className="flex gap-3 p-3 text-[1.2rem] font-bold active:bg-gray-100">
                             <Connect />
-                            <div>Connect</div>
+                            <div className="ml-2">Connect</div>
                         </Link>
                         <div
                             ref={logoutBox}

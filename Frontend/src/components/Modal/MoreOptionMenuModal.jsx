@@ -401,7 +401,7 @@ const MoreOptionMenuModal = ({
                     </button>
                 ) : (
                     <button
-                        className={`flex w-full items-center justify-center gap-2 rounded-xl bg-black p-3  text-red-500 hover:bg-gray-800 xl:gap-3 ${fromMobileSidebar && "ml-6 py-5"} `}
+                        className={`flex w-full items-center justify-center gap-2 rounded-xl bg-black p-3 text-red-500 hover:bg-gray-800 md:ml-10 xl:ml-0 xl:gap-3 ${fromMobileSidebar && "ml-6 py-5"} `}
                         onClick={(e) => {
                             setVisibilityDeleteModal(true);
                             e.stopPropagation();

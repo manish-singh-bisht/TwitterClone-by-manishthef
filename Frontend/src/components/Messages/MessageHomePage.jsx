@@ -219,7 +219,7 @@ const MessageHomePage = () => {
     const urlMessages = `http://localhost:4000/api/v1/chat/message/getAll/${conversations.activeConversation}?page=`;
 
     return (
-        <div className="fixed z-10 h-[100vh] w-full bg-white xl:grid xl:w-[calc(100vw-24rem)] xl:grid-cols-[24.5rem_auto] 2xl:w-[calc(100vw-48rem)] ">
+        <div className="fixed z-10 h-[100%] w-full bg-white md:w-[calc(100vw-9.2%)] lg:w-[calc(100vw-7.1%)] xl:grid xl:w-[calc(100vw-25%)] xl:grid-cols-[24.5rem_auto] 2xl:w-[calc(100vw-25%)] ">
             <div className={`h-full overflow-y-auto border-l border-r ${messages.showingMessages && "hidden xl:block"}`} ref={targetRefConversation}>
                 <div className="sticky inset-0 z-10    flex items-center gap-3  bg-white/60 backdrop-blur-md ">
                     <Link to={"/"} className="cursor-pointer pl-3 xl:hidden">
