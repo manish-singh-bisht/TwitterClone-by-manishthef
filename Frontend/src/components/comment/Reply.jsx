@@ -107,8 +107,10 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
                                         navigateHandlerToProfile(reply.owner.handle);
                                     }}
                                     className="absolute flex w-fit  items-center gap-1 text-[1.1rem] font-bold ">
-                                    <span className="hover:underline">{reply.owner.name}</span>
-                                    <span className=" text-[0.9rem] font-normal text-gray-700">{`@${reply.owner.handle}`}</span>
+                                    <span className="md:blcok hidden hover:underline">{reply.owner.name}</span>{" "}
+                                    <span className="hover:underline md:block">{reply.owner.name.length > 5 ? reply.owner.name.slice(0, 5).trim() + "..." : reply.owner.name}</span>
+                                    <span className=" hidden text-[0.9rem] font-normal text-gray-700 md:block">{`@${reply.owner.handle.length}`}</span>
+                                    <span className=" text-[0.9rem] font-normal text-gray-700 md:hidden">{`@${reply.owner.handle.length > 5 ? reply.owner.handle.slice(0, 5).trim() + "..." : reply.owner.handle}`}</span>
                                     <span className="mt-[-0.4rem] flex items-center justify-center  text-[0.8rem]">.</span>
                                     <span className="flex text-[0.9rem] font-normal text-gray-700">{`${formattedTimeReply}`}</span>
                                 </div>{" "}

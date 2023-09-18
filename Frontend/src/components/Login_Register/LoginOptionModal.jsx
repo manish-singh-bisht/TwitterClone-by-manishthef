@@ -42,7 +42,7 @@ const LoginOptionModal = ({ onClose, isLoginVisible, handleOutsideClick }) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center">
             <div className="fixed h-full w-full bg-black opacity-70" onClick={handleOutsideClick}></div>
-            <div className="relative z-10 flex  h-full w-full rounded-xl bg-black lg:w-[45vw] 2xl:h-[60%] 2xl:w-[40%]">
+            <div className="relative z-10 flex  h-full w-full overflow-y-auto rounded-xl bg-black lg:w-[45vw] 2xl:h-[60%] 2xl:w-[40%]">
                 <div className="z-20 m-[0.39rem] h-fit" onClick={onClose}>
                     <CrossInLogin className=" " />
                 </div>
