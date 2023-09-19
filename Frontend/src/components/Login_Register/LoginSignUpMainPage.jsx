@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from "react";
+import React, { Suspense, memo } from "react";
 import { TwitterIconInLoginSignupMainPage } from "../SVGs/SVGs";
 import Loader from "../Loader/Loader";
 import useModal from "../../CustomHooks/useModal";
@@ -49,4 +49,4 @@ const LoginSignUpMainPage = () => {
     );
 };
 
-export default LoginSignUpMainPage;
+export default memo(LoginSignUpMainPage);

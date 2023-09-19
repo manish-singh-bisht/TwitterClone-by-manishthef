@@ -1,5 +1,5 @@
 // Sidebar.js
-import React, { Suspense, useRef, useState } from "react";
+import React, { Suspense, memo, useRef, useState } from "react";
 import Avatar from "../Avatar/Avatar";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import { Link } from "react-router-dom";
@@ -103,4 +103,4 @@ const SideBarMobile = ({ isOpen, handleOutsideClick, profile, onClose }) => {
     );
 };
 
-export default SideBarMobile;
+export default memo(SideBarMobile);

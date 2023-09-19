@@ -3,7 +3,7 @@ import Loader from "../Loader/Loader";
 import MoreOptionMenuModal from "../Modal/MoreOptionMenuModal";
 import TweetModal from "../Modal/TweetModal";
 import { BellFilled, BellOutline, BookmarkFilled, BookmarkOutline, HashtagOutline, HomeFilled, HomeOutLine, MessageFilled, MessageOutline, MoreFilled, MoreOutline, Plus, ProfileFilled, ProfileOutline, TwitterIcon } from "../SVGs/SVGs";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, memo, useEffect, useRef, useState } from "react";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import useModal from "../../CustomHooks/useModal";
 import LogoutUser from "../../context/Actions/LogoutUser";
@@ -90,4 +90,4 @@ const SideBarIconsOnly = ({ isOnline }) => {
     );
 };
 
-export default SideBarIconsOnly;
+export default memo(SideBarIconsOnly);

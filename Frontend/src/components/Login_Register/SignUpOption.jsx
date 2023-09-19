@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import { CrossInLogin, TwitterIconInLogin } from "../SVGs/SVGs";
 import { toast } from "react-toastify";
@@ -113,4 +113,4 @@ const SignUpOption = ({ onClose, isSignUpVisible, handleOutsideClickSignup }) =>
     );
 };
 
-export default SignUpOption;
+export default memo(SignUpOption);

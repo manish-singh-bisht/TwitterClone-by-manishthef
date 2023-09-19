@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import UserLogin from "../../context/actions/UserLogin";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import { CrossInLogin, TwitterIconInLogin } from "../SVGs/SVGs";
@@ -71,4 +71,4 @@ const LoginOptionModal = ({ onClose, isLoginVisible, handleOutsideClick }) => {
     );
 };
 
-export default LoginOptionModal;
+export default memo(LoginOptionModal);
