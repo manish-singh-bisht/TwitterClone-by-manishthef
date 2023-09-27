@@ -40,8 +40,6 @@ const Post = ({
     fromTweetDetail,
     fromCommentDetail,
     commentsChildren,
-    activeHandler,
-    isParent,
     isThread: passedIsThread,
     fromHome,
     comment, //this is child comments of the active comment and is being passed from commentCard by commentDetail component
@@ -176,7 +174,7 @@ const Post = ({
             whoCanReply: whoCanReply,
             whoCanReplyNumber: whoCanReplyNumber,
         };
-        isParent && activeHandler(commentId);
+
         navigate(newUrl, { replace: true, state: stateObject });
     };
 
@@ -271,7 +269,7 @@ const Post = ({
                     })}
 
                 <div
-                    className="relative  mr-2 flex w-[78%] flex-col gap-2  md:w-[87%] "
+                    className="relative  mr-[1.4rem] flex w-full flex-col gap-2  "
                     onClick={
                         (fromHome || fromProfile) && threadChildren && threadChildren.length > 0
                             ? (e) => {
@@ -411,6 +409,7 @@ const Post = ({
                                                     item2.children.map((item3) => {
                                                         if (flag !== 1 && !showReplies && ((fromCommentDetail && item3.owner._id === item.owner._id) || (fromTweetDetail && item3.owner._id === item.owner._id))) {
                                                             flag = 1;
+
                                                             return (
                                                                 <div key={item3._id}>
                                                                     <button

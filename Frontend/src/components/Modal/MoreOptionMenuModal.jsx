@@ -44,7 +44,7 @@ const MoreOptionMenuModal = ({
 
     const modalRef = useRef(null);
     const navigate = useNavigate();
-    const { state, dispatchCommentDelete, dispatch, ACTIONS, setPosts, dispatchTweetDelete, dispatchFollowUser, setDataArray } = useGlobalContext();
+    const { state, dispatchCommentDelete, dispatch, ACTIONS, setPosts, dispatchTweetDelete, dispatchFollowUser, setDataArray, setCommentArray, setComment, comment } = useGlobalContext();
 
     const [isAlreadyFollowing, setIsAlreadyFollowing] = useState({ bool: false, handle: "", ownerid: null });
 
@@ -125,6 +125,70 @@ const MoreOptionMenuModal = ({
         await dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
     };
 
+    const setCommentsHandlerForDelete = () => {
+        setComment((prev) => {
+            const commentNotAPartOfComments = prev.activeComment.comment.children?.findIndex((item) => {
+                return item._id === infoToMoreOptionModal.commentID;
+            });
+            if (commentNotAPartOfComments === -1) {
+                const tempCommentsArray = [...prev.comments];
+                let commentDeleted;
+                const filtered = tempCommentsArray.filter((item) => {
+                    if (item.comment._id === infoToMoreOptionModal.commentID) {
+                        commentDeleted = item.comment;
+                    }
+                    return item.comment._id !== infoToMoreOptionModal.commentID;
+                });
+                if (commentDeleted.parent) {
+                    const findParentIndex = filtered.findIndex((item) => {
+                        return item.comment._id === commentDeleted.parent._id;
+                    });
+                    if (findParentIndex !== -1) {
+                        const findDeletedCommentIndexInParentChildArray =
+                            findParentIndex !== -1 &&
+                            filtered[findParentIndex].comment.children.findIndex((item) => {
+                                return item._id === commentDeleted._id;
+                            });
+                        findDeletedCommentIndexInParentChildArray !== -1 && filtered[findParentIndex].comment.children.splice(findDeletedCommentIndexInParentChildArray, 1);
+                    }
+
+                    if (filtered[findParentIndex].comment.parent) {
+                        const findParentIndex2 = filtered.findIndex((item) => {
+                            return item.comment._id === filtered[findParentIndex].comment.parent._id;
+                        });
+
+                        if (findParentIndex2 !== -1) {
+                            const indexOfParentCommentInChildrenArrayOfParentsComment = filtered[findParentIndex2].comment.children.findIndex((item) => {
+                                return item._id === filtered[findParentIndex].comment._id;
+                            });
+
+                            if (indexOfParentCommentInChildrenArrayOfParentsComment !== -1) {
+                                const indexOfDeletedCommentInChildrenArray = filtered[findParentIndex2].comment.children[indexOfParentCommentInChildrenArrayOfParentsComment].children.findIndex((item) => {
+                                    return item._id === infoToMoreOptionModal.commentID;
+                                });
+
+                                indexOfDeletedCommentInChildrenArray !== -1 && filtered[findParentIndex2].comment.children[indexOfParentCommentInChildrenArrayOfParentsComment].children.splice(indexOfDeletedCommentInChildrenArray, 1);
+                            }
+                        }
+                    }
+                }
+
+                return {
+                    comments: filtered,
+                    activeComment: null,
+                };
+            } else if (commentNotAPartOfComments !== -1) {
+                const tempCommentsArray = [...prev.activeComment.comment.children];
+                const filtered = tempCommentsArray.filter((item) => {
+                    return item._id !== infoToMoreOptionModal.commentID;
+                });
+                return {
+                    comments: filtered,
+                    activeComment: null,
+                };
+            }
+        });
+    };
     const deleteHandler = async () => {
         const postID = infoToMoreOptionModal.postID;
         let tempPostId = postID;
@@ -149,7 +213,10 @@ const MoreOptionMenuModal = ({
             );
             toast("Your Tweet was deleted", toastConfig);
             if (postID && commentID) {
-                await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+                const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+                if (data.haveParent) {
+                    setCommentsHandlerForDelete();
+                }
             } else if (postID && commentID === undefined) {
                 await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
             }
@@ -168,7 +235,11 @@ const MoreOptionMenuModal = ({
             );
             toast("Your Tweet was deleted", toastConfig);
             if (postID && commentID) {
-                await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+                const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+
+                if (data.haveParent) {
+                    setCommentsHandlerForDelete();
+                }
             } else if (postID && commentID === undefined) {
                 await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
             }
@@ -214,7 +285,10 @@ const MoreOptionMenuModal = ({
             if (postID && commentID === undefined) {
                 await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
             } else if (postID && commentID) {
-                await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+                const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+                if (data.haveParent) {
+                    setCommentsHandlerForDelete();
+                }
             }
         }
 
@@ -247,14 +321,30 @@ const MoreOptionMenuModal = ({
         } else if (fromTweetDetail && commentID === undefined) {
             const post = await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
             toast("Your Tweet was deleted", toastConfig);
+
             navigate(`/`, {
                 replace: true,
             });
         } else {
             if (fromBookmarksForDeletingCommentPost) {
                 removeBookmark(commentID);
+                const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+                if (data.haveParent) {
+                    setCommentsHandlerForDelete();
+                }
+
+                return;
             }
             if (!fromProfileTweets && !fromMediaLikesProfile && !fromProfileRepliesParentPost && !fromProfileRepliesComment) {
+                if (fromActiveComment || fromCommentDetail) {
+                    setCommentsHandlerForDelete();
+                } else {
+                    setCommentArray((prev) =>
+                        prev.filter((item) => {
+                            return item._id !== commentID;
+                        })
+                    );
+                }
                 await DeleteComment({ dispatchCommentDelete, ACTIONS, postID, commentID });
             }
         }
@@ -372,7 +462,7 @@ const MoreOptionMenuModal = ({
                                     onCloseMoreOptionModal();
                                 }}>
                                 <PushPin />
-                                <div className="font-bold ">{state.user.pinnedTweet && state.user.pinnedTweet === infoToMoreOptionModal.postID ? "Unpin from profile" : "Pin to your Profile"}</div>
+                                <div className="font-bold ">{state.user.pinnedTweet && state.user.pinnedTweet === infoToMoreOptionModal.postID && infoToMoreOptionModal.commentID === undefined ? "Unpin from profile" : "Pin to your Profile"}</div>
                             </button>
                         </>
                     ) : (

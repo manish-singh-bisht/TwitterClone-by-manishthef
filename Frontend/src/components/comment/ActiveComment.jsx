@@ -19,8 +19,8 @@ import ShowValues from "../CommonPostComponent/ShowValues";
 
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
-const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
-    const { state, setUsersForRightSidebar } = useGlobalContext();
+const ActiveComment = forwardRef(({ commentId, postId, parent, dataActiveComment }, ref) => {
+    const { state, setUsersForRightSidebar, comment: n } = useGlobalContext();
     const { isHovered, handleMouseEnter, handleMouseLeave } = useHoverCard();
 
     //Modal for more option
@@ -60,7 +60,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
     };
 
     const fetchData = useCallback(async () => {
-        const { data } = await axios.get(`http://localhost:4000/api/v1/comment/${commentId}`, { withCredentials: true });
+        const data = dataActiveComment;
         setMentionHandleCollection(data.mentionsHandleCollection);
         let like = [];
         like = data.comment.likes;
@@ -133,7 +133,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
             }
         }
         setCommentt(renderedComment);
-    }, [commentId]);
+    }, [dataActiveComment]);
 
     useEffect(() => {
         fetchData();
@@ -316,6 +316,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent }, ref) => {
                         postId={postId}
                         parent={parent}
                         mentionHandleCollection={mentionHandleCollection}
+                        fromActiveComment={true}
                     />
                 </div>
                 <Suspense fallback={<Loader />}>

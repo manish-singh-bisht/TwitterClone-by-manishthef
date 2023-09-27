@@ -12,11 +12,11 @@ import PostComments from "../../context/Actions/PostComments";
 import "./EditorStyles.css";
 import PhotoGallery from "../CommonPostComponent/PhotoGallery";
 
-const EditorForComments = ({ onChange: change, isReplyPress, handleIsReplyPressFalse, postId, parent, setShowReplyingToHandler, selectedImages, deleteImages, setSelectedImages }) => {
+const EditorForComments = ({ onChange: change, isReplyPress, handleIsReplyPressFalse, postId, parent, setShowReplyingToHandler, selectedImages, deleteImages, setSelectedImages, fromActiveComment }) => {
     const [editorContent, setEditorContent] = useState("");
     const [isSent, setIsSent] = useState(false);
     const [isFirstTimeFocus, setIsFirstTimeFocus] = useState(true);
-    const { dispatchComment, ACTIONS } = useGlobalContext();
+    const { dispatchComment, ACTIONS, setCommentArray, setComment, comment } = useGlobalContext();
 
     const editor = useEditor({
         extensions: [
@@ -65,7 +65,53 @@ const EditorForComments = ({ onChange: change, isReplyPress, handleIsReplyPressF
 
                 handleIsReplyPressFalse();
                 setIsFirstTimeFocus(true);
-                await PostComments({ dispatchComment, ACTIONS, postId, comment: text, parent, mentions: mentions, images: selectedImages });
+                const data = await PostComments({ dispatchComment, ACTIONS, postId, comment: text, parent, mentions: mentions, images: selectedImages });
+
+                if (selectedImages.length > 0 && data !== undefined) {
+                    data.comment.images = selectedImages;
+                }
+                if (fromActiveComment) {
+                    if (data !== undefined) {
+                        setComment((prev) => {
+                            const updatedActiveComment = { ...prev.activeComment };
+                            const updatedChildren = [...updatedActiveComment.comment.children];
+                            updatedChildren.unshift(data.comment);
+
+                            updatedActiveComment.comment.children = [...new Set(updatedChildren)];
+
+                            const tempArray = [...prev.comments];
+                            const findIndexOFactiveCommentParentInArray = tempArray?.findIndex((item) => {
+                                return item.comment._id === updatedActiveComment?.comment?.parent?._id;
+                            });
+                            if (findIndexOFactiveCommentParentInArray !== -1) {
+                                const updatedComment = { ...tempArray[findIndexOFactiveCommentParentInArray] };
+                                const indexOfActiveCommentInChildrenArrayOfParentComment = updatedComment.comment.children.findIndex((item) => {
+                                    return item._id === updatedActiveComment.comment._id;
+                                });
+
+                                const updatedChildren = [...updatedComment.comment.children[indexOfActiveCommentInChildrenArrayOfParentComment].children];
+                                updatedChildren.unshift(data.comment);
+                                updatedComment.comment.children[indexOfActiveCommentInChildrenArrayOfParentComment].children = [...new Set(updatedChildren)];
+                                tempArray[findIndexOFactiveCommentParentInArray] = updatedComment;
+                            }
+
+                            return {
+                                ...prev,
+                                comment: tempArray,
+                                activeComment: updatedActiveComment,
+                            };
+                        });
+                    } else {
+                        setComment((prev) => ({ ...prev }));
+                    }
+                } else {
+                    if (data !== undefined) {
+                        setCommentArray((prev) => [data.comment, ...prev]);
+                    } else {
+                        setCommentArray((prev) => [...prev]);
+                    }
+                }
+
                 editor.commands.clearContent(true);
                 setSelectedImages([]);
                 setIsSent(false);

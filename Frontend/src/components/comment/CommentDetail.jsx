@@ -17,43 +17,72 @@ const ActiveComment = React.lazy(() => import("./ActiveComment"));
 
 const CommentDetail = () => {
     const componentRef = useRef(null); //when clicking on comment, it scrolls to the comment clicked and not to top.
-    const { ACTIONS, state, dispatchLikeUnlike, stateComment, stateCommentDelete, dispatchCommentLikeUnlike, dispatchRetweetPost, dispatchRetweetComment, dispatchBookmarkTweet, dispatchBookmarkComment } = useGlobalContext();
+    const {
+        ACTIONS,
+        state,
+        dispatchLikeUnlike,
+        dispatchCommentLikeUnlike,
+        dispatchRetweetPost,
+        dispatchRetweetComment,
+        dispatchBookmarkTweet,
+        dispatchBookmarkComment,
+        comment,
+        setComment,
+        parentCollectionId,
+        setParentCollectionId,
+        parentCollection,
+        setParentCollection,
+    } = useGlobalContext();
 
     //For navigating to a particular section that is to the comment that openend this component
     const navigate = useNavigate();
     const { commentId } = useParams();
 
     const [post, setPost] = useState();
-    const [comment, setComment] = useState([]);
-    const [parentCollection, setParentCollection] = useState([]); //for getting the parent/parents
-    const [parentCollectionId, setParentCollectionId] = useState([]); //for getting parent/parents id only
-    const [active, setActive] = useState(); //sets the current active comment's id
 
     useEffect(() => {
         const getCommentById = async () => {
             const { data } = await axios.get(`http://localhost:4000/api/v1/comment/${commentId}`, { withCredentials: true });
             setPost(data.comment.post);
-            setComment(data.comment);
+            setComment((prev) => ({ comments: [...prev.comments, data], activeComment: data }));
 
-            if (data.comment.parent !== undefined && !parentCollection.some((item) => item._id === data.comment.parent._id)) {
-                setParentCollection((prevCollection) => [...prevCollection, data.comment.parent]);
-                setParentCollectionId((prevCollection) => [...prevCollection, data.comment.parent._id]);
+            setParentCollection((prevCollection) => [...prevCollection, data.comment]);
+            setParentCollectionId((prevCollection) => [...prevCollection, data.comment._id]);
+        };
+
+        const findIndexActiveCommentInComment = comment.comments.findIndex((item) => {
+            return item.comment._id === commentId;
+        });
+
+        if (findIndexActiveCommentInComment !== -1) {
+            if (comment.comments[findIndexActiveCommentInComment].comment.parent !== undefined && !parentCollection.some((item) => item._id === comment.comments[findIndexActiveCommentInComment].comment._id)) {
+                setParentCollection((prevCollection) => [...prevCollection, comment.comments[findIndexActiveCommentInComment].comment]);
+
+                setParentCollectionId((prevCollection) => [...prevCollection, comment.comments[findIndexActiveCommentInComment].comment._id]);
+            } else if (comment.comments[findIndexActiveCommentInComment].comment.parent === undefined && !parentCollection.some((item) => item._id === comment.comments[findIndexActiveCommentInComment].comment._id)) {
+                setParentCollection((prevCollection) => [...prevCollection, comment.comments[findIndexActiveCommentInComment].comment]);
+
+                setParentCollectionId((prevCollection) => [...prevCollection, comment.comments[findIndexActiveCommentInComment].comment._id]);
             } else {
-                if (parentCollectionId.includes(active)) {
-                    const index = parentCollectionId.indexOf(active);
-                    const updatedParentCollection = parentCollection.slice(0, index);
-                    const updatedParentCollectionId = parentCollectionId.slice(0, index);
+                if (parentCollectionId.includes(commentId)) {
+                    const index = parentCollectionId.indexOf(commentId);
+
+                    const updatedParentCollection = [...parentCollection].slice(0, index + 1);
+                    const updatedParentCollectionId = [...parentCollectionId].slice(0, index + 1);
+
                     setParentCollection(updatedParentCollection);
                     setParentCollectionId(updatedParentCollectionId);
                 }
             }
-        };
 
-        getCommentById();
+            setPost(comment.comments[findIndexActiveCommentInComment].comment.post);
+            setComment((prev) => ({ ...prev, activeComment: comment.comments[findIndexActiveCommentInComment] }));
+        } else {
+            getCommentById();
+        }
 
         componentRef?.current?.scrollIntoView();
-    }, [commentId, stateComment, stateCommentDelete.message]);
-
+    }, [commentId]);
     function handleClick() {
         navigate(`/${post.owner.name}/${post._id}`, {
             replace: true,
@@ -124,49 +153,56 @@ const CommentDetail = () => {
                     {parentCollection &&
                         parentCollection.length > 0 &&
                         parentCollection.map((item) => {
-                            return (
-                                <div className="relative" key={item._id}>
-                                    <Post
-                                        key={item._id}
-                                        activeHandler={(val) => {
-                                            setActive(val);
-                                        }}
-                                        isParent={true}
-                                        isComment={true}
-                                        fromCommentDetail={true}
-                                        postId={item._id} //this is the parent comment id
-                                        POSTID={post._id} //this is the post id
-                                        tweet={item.comment}
-                                        likes={item.likes}
-                                        bookmarks={item.bookmarks}
-                                        retweets={item.retweets}
-                                        ownerName={item.owner.name}
-                                        description={item.owner.description}
-                                        ownerImage={item.owner.profile && item.owner.profile.image && item.owner.profile.image.url ? item.owner.profile.image.url : null}
-                                        ownerId={item.owner._id}
-                                        postImage={item.images ? item.images : null}
-                                        handle={item.owner.handle}
-                                        timeCreated={item.createdAt}
-                                        commentsChildren={item.children}
-                                        dispatch={dispatchCommentLikeUnlike}
-                                        state={state}
-                                        ACTIONS={ACTIONS}
-                                        handler={CommentLikeUnlike}
-                                        dispatchRetweet={dispatchRetweetComment}
-                                        handlerRetweet={RetweetComment}
-                                        mentions={item.mentions}
-                                        handlerBookmark={CommentBookmark}
-                                        dispatchBookmark={dispatchBookmarkComment}
-                                    />
-                                    <div className="absolute left-[1.55rem] top-[4.2rem] h-[calc(100%-3.8rem)]  border-2 xl:left-[1.8rem]"></div>
-                                </div>
-                            );
+                            if (item._id !== comment.activeComment.comment._id) {
+                                return (
+                                    <div className="relative" key={item._id}>
+                                        <Post
+                                            key={item._id}
+                                            isComment={true}
+                                            fromCommentDetail={true}
+                                            postId={item._id} //this is the parent comment id
+                                            POSTID={post._id} //this is the post id
+                                            tweet={item.comment}
+                                            likes={item.likes}
+                                            bookmarks={item.bookmarks}
+                                            retweets={item.retweets}
+                                            ownerName={item.owner.name}
+                                            description={item.owner.description}
+                                            ownerImage={item.owner.profile && item.owner.profile.image && item.owner.profile.image.url ? item.owner.profile.image.url : null}
+                                            ownerId={item.owner._id}
+                                            postImage={item.images ? item.images : null}
+                                            handle={item.owner.handle}
+                                            timeCreated={item.createdAt}
+                                            commentsChildren={item.children}
+                                            dispatch={dispatchCommentLikeUnlike}
+                                            state={state}
+                                            ACTIONS={ACTIONS}
+                                            handler={CommentLikeUnlike}
+                                            dispatchRetweet={dispatchRetweetComment}
+                                            handlerRetweet={RetweetComment}
+                                            mentions={item.mentions}
+                                            handlerBookmark={CommentBookmark}
+                                            dispatchBookmark={dispatchBookmarkComment}
+                                        />
+                                        <div className="absolute left-[1.55rem] top-[4.2rem] h-[calc(100%-3.8rem)]  border-2 xl:left-[1.8rem]"></div>
+                                    </div>
+                                );
+                            }
                         })}
 
                     <Suspense fallback={<Loader />}>
-                        <ActiveComment commentId={commentId} postId={post._id} parent={commentId} ref={componentRef} />
+                        <ActiveComment dataActiveComment={comment.activeComment} commentId={commentId} postId={post._id} parent={commentId} ref={componentRef} />
 
-                        {comment.children && comment.children.length > 0 && <CommentCard comments={comment.children} postId={comment.children.post} parent={comment.children.parent} fromCommentDetail={true} isParentPresent={true} POSTID={post._id} />}
+                        {comment.activeComment.comment.children && comment.activeComment.comment.children.length > 0 && (
+                            <CommentCard
+                                comments={comment.activeComment.comment.children}
+                                postId={comment.activeComment.comment.children.post}
+                                parent={comment.activeComment.comment.children.parent}
+                                fromCommentDetail={true}
+                                isParentPresent={true}
+                                POSTID={post._id}
+                            />
+                        )}
                     </Suspense>
                 </div>
             </main>

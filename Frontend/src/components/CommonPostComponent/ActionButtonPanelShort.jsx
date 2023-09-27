@@ -50,7 +50,7 @@ const ActionButtonPanelShort = ({
                 return (
                     <div key={index}>
                         {!fromReply && button.name === "comments" ? (
-                            <div className="group flex w-[2rem] items-center justify-around lg:w-[3rem]">
+                            <div className="group flex w-[3rem] items-center justify-around lg:w-[3rem]">
                                 <button className=" flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-blue-100 group-hover:text-blue-500">
                                     <Comments />
                                 </button>

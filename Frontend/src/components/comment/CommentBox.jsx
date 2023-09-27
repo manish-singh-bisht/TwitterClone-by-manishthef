@@ -5,7 +5,7 @@ import { CircularRadialProgressForTweetTextLimit } from "../SVGs/SVGs";
 import { v4 as uuidv4 } from "uuid";
 import { MediaUploadPanelLong } from "../CommonPostComponent/MediaUploadPanel";
 
-const CommentBox = ({ profile, postId, parent, mentionHandleCollection }) => {
+const CommentBox = ({ profile, postId, parent, mentionHandleCollection, fromActiveComment }) => {
     const [comment, setComment] = useState({ id: uuidv4(), text: "" });
     const [isReplyPress, setIsReplyPress] = useState(false); //for clearing the comment box  after the reply button is pressed.
     const [showReplyingTo, setShowReplyingTo] = useState(false);
@@ -62,6 +62,7 @@ const CommentBox = ({ profile, postId, parent, mentionHandleCollection }) => {
                         selectedImages={selectedImages}
                         setSelectedImages={setSelectedImages}
                         deleteImages={deleteImages}
+                        fromActiveComment={fromActiveComment}
                     />
                 </div>
                 <div className="flex h-fit items-center min-[320px]:justify-around sm:justify-between">

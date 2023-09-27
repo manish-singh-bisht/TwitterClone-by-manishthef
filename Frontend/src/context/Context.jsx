@@ -25,6 +25,10 @@ const AppProvider = ({ children }) => {
     const [posts, setPosts] = useState([]);
     const [usersForRightSidebar, setUsersForRightSidebar] = useState([]);
     const [dataArray, setDataArray] = useState([]);
+    const [CommentArray, setCommentArray] = useState([]); //for tweetDetail
+    const [comment, setComment] = useState({ comments: [], activeComment: {} }); //for CommentDetail
+    const [parentCollection, setParentCollection] = useState([]); //for getting the parent/parents
+    const [parentCollectionId, setParentCollectionId] = useState([]); //for getting parent/parents id only
 
     //reducer setup
     const initialState = { loading: false, user: {}, total: {}, error: "", isAuthenticated: false };
@@ -112,6 +116,14 @@ const AppProvider = ({ children }) => {
                 dispatchPostTweet,
                 stateTweetDelete,
                 dispatchTweetDelete,
+                CommentArray,
+                setCommentArray,
+                comment,
+                setComment,
+                parentCollectionId,
+                setParentCollectionId,
+                parentCollection,
+                setParentCollection,
             }}>
             {children}
         </AppContext.Provider>

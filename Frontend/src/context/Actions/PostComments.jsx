@@ -36,6 +36,7 @@ const PostComments = async ({ dispatchComment, ACTIONS, postId, comment, parent,
 
         toast(data.message, toastConfig);
         dispatchComment({ type: ACTIONS.COMMENT_SUCCESS, payload: data.message });
+        return data;
     } catch (err) {
         const toastConfig = {
             position: "bottom-center",

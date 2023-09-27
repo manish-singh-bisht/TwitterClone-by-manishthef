@@ -23,7 +23,19 @@ const CommentCard = React.lazy(() => import("../comment/CommentCard"));
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const TweetDetail = () => {
-    const { ACTIONS, dispatchLikeUnlike: dispatch, state, stateComment, stateCommentDelete, dispatchRetweetPost: dispatchRetweet, dispatchBookmarkTweet: dispatchBookmark, setUsersForRightSidebar, usersForRightSidebar } = useGlobalContext();
+    const {
+        ACTIONS,
+        dispatchLikeUnlike: dispatch,
+        state,
+        setParentCollectionId,
+        setParentCollection,
+        dispatchRetweetPost: dispatchRetweet,
+        dispatchBookmarkTweet: dispatchBookmark,
+        setUsersForRightSidebar,
+        usersForRightSidebar,
+        CommentArray,
+        setCommentArray,
+    } = useGlobalContext();
     const { isHovered, handleMouseEnter, handleMouseLeave } = useHoverCard();
 
     //Modal for more option
@@ -64,7 +76,6 @@ const TweetDetail = () => {
     const [likedBy, setLikedBy] = useState([]);
 
     //For comments
-    const [comments, setComments] = useState([]);
     const [commentt, setCommentt] = useState();
     const [mentionHandleCollection, setMentionHandleCollection] = useState([]);
 
@@ -80,6 +91,8 @@ const TweetDetail = () => {
     const [bookmarked, setBookmarked] = useState(null); // no bookmarkedBy for bookmark as in for like and retweet
 
     const fetchData = useCallback(async () => {
+        setParentCollection([]);
+        setParentCollectionId([]);
         //gets the updated data of likes, when user likes at homepage and then comes to detailpage,the user gets the updated data
         let value;
         if (isThread) {
@@ -128,7 +141,7 @@ const TweetDetail = () => {
                 setIsBookmarked(true);
             }
         });
-        setComments(value.post.comments);
+        setCommentArray(value.post.comments);
 
         // Regex pattern to find mentions and make them blue,in the display after it is posted
         const mentionRegex = /(@)(\w+)/g;
@@ -163,7 +176,7 @@ const TweetDetail = () => {
             }
         }
         setCommentt(renderedComment);
-    }, [stateComment.comment, stateCommentDelete, postId]);
+    }, [postId]);
 
     useEffect(() => {
         fetchData();
@@ -331,7 +344,7 @@ const TweetDetail = () => {
                 <div className="mx-4 mt-4  border-t-[0.01rem] opacity-80"></div>
                 <Suspense fallback={<Loader />}>
                     <ModalForLikesRetweets visibility={isModalOpen} onClose={hideModal} type={type} list={list} handleOutsideClick={handleOutsideClick} />
-                    {<CommentCard comments={comments} postId={postId} fromTweetDetail={true} mentionHandleCollection={mentionHandleCollection} isThread={isThread} thread={thread} whoCanReply={whoCanReply} />}
+                    {<CommentCard comments={CommentArray} postId={postId} fromTweetDetail={true} mentionHandleCollection={mentionHandleCollection} isThread={isThread} thread={thread} whoCanReply={whoCanReply} />}
 
                     <MoreOptionMenuModal
                         visibility={visibility}

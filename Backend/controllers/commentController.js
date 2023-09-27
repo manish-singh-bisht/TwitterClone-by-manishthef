@@ -133,7 +133,28 @@ exports.postComment = async (req, res, next) => {
             }
 
             const newCreateComment = await Comments.create(newData);
-
+            await newCreateComment.populate([
+                { path: "owner", select: "name handle profile" },
+                {
+                    path: "post",
+                    populate: [
+                        { path: "owner", select: "name handle profile _id description" },
+                        { path: "likes", select: "_id" },
+                        { path: "bookmarks", select: "_id" },
+                        { path: "retweets", select: "_id" },
+                    ],
+                },
+                {
+                    path: "parent",
+                    populate: [
+                        { path: "owner", select: "name handle profile _id description" },
+                        { path: "likes", select: "_id" },
+                        { path: "bookmarks", select: "_id" },
+                        { path: "retweets", select: "_id" },
+                    ],
+                },
+            ]);
+            const mentionsHandleCollection = await mentionsHandleCollector(newCreateComment._id, [], req.user.handle);
             parentComment.children.unshift(newCreateComment._id);
             await parentComment.save();
 
@@ -143,9 +164,33 @@ exports.postComment = async (req, res, next) => {
             return res.status(200).json({
                 success: true,
                 message: "Your Tweet was sent.",
+                comment: newCreateComment,
+                mentionsHandleCollection,
             });
         }
         const newCreateComment = await Comments.create(newData);
+        await newCreateComment.populate([
+            { path: "owner", select: "name handle profile" },
+            {
+                path: "post",
+                populate: [
+                    { path: "owner", select: "name handle profile _id description" },
+                    { path: "likes", select: "_id" },
+                    { path: "bookmarks", select: "_id" },
+                    { path: "retweets", select: "_id" },
+                ],
+            },
+            {
+                path: "parent",
+                populate: [
+                    { path: "owner", select: "name handle profile _id description" },
+                    { path: "likes", select: "_id" },
+                    { path: "bookmarks", select: "_id" },
+                    { path: "retweets", select: "_id" },
+                ],
+            },
+        ]);
+        const mentionsHandleCollection = await mentionsHandleCollector(newCreateComment._id, [], req.user.handle);
 
         post.comments.unshift(newCreateComment._id);
         await post.save();
@@ -156,6 +201,8 @@ exports.postComment = async (req, res, next) => {
         return res.status(200).json({
             success: true,
             message: "Your Tweet was sent.",
+            comment: newCreateComment,
+            mentionsHandleCollection,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
@@ -178,7 +225,7 @@ exports.deleteComment = async (req, res, next) => {
         if (!commentToDelete) {
             return next(new ErrorHandler("Comment not found", 404));
         }
-
+        const haveParent = commentToDelete.parent ? true : false;
         // Delete the comment and its children recursively
         await deleteCommentRecursive(commentToDelete);
 
@@ -189,6 +236,7 @@ exports.deleteComment = async (req, res, next) => {
         return res.status(200).json({
             success: true,
             message: "Your Tweet was deleted",
+            haveParent,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));
