@@ -85,7 +85,7 @@ const EditorForComments = ({ onChange: change, isReplyPress, handleIsReplyPressF
                             });
                             if (findIndexOFactiveCommentParentInArray !== -1) {
                                 const updatedComment = { ...tempArray[findIndexOFactiveCommentParentInArray] };
-                                const indexOfActiveCommentInChildrenArrayOfParentComment = updatedComment.comment.children.findIndex((item) => {
+                                const indexOfActiveCommentInChildrenArrayOfParentComment = updatedComment?.comment?.children?.findIndex((item) => {
                                     return item._id === updatedActiveComment.comment._id;
                                 });
 

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import useAnimation from "../../CustomHooks/useAnimation";
 import { HeartLike, HeartUnlike } from "../SVGs/SVGs";
+import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 
-const LikeUnlikePost = ({ likes, ACTIONS, dispatch, state, handler, postId }) => {
+const LikeUnlikePost = ({ likes, ACTIONS, dispatch, handler, postId }) => {
+    const { state, setComment } = useGlobalContext();
     //For like and unlike of post
     const [isLiked, setIsLiked] = useState(false);
     const [liked, setLiked] = useState(likes.length);
@@ -12,7 +14,7 @@ const LikeUnlikePost = ({ likes, ACTIONS, dispatch, state, handler, postId }) =>
 
     const likeHandler = async () => {
         handleLikesAnimation();
-        await handler({ dispatch, ACTIONS, postId });
+        await handler({ dispatch, ACTIONS, postId, state, setComment });
     };
 
     //For keeping the heart red or unred even after refreshing the page

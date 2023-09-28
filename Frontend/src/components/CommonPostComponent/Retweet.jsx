@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import useAnimation from "../../CustomHooks/useAnimation";
 import { Retweets, RetweetsGreen } from "../SVGs/SVGs";
+import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 
-const Retweet = ({ retweets, ACTIONS, dispatchRetweet, state, handlerRetweet, postId }) => {
+const Retweet = ({ retweets, ACTIONS, dispatchRetweet, handlerRetweet, postId }) => {
+    const { state, setComment } = useGlobalContext();
     //For retweet of post
     const [isRetweet, setIsRetweet] = useState(false);
     const [retweet, setRetweet] = useState(retweets.length);
@@ -12,7 +14,7 @@ const Retweet = ({ retweets, ACTIONS, dispatchRetweet, state, handlerRetweet, po
 
     const retweetHandler = async () => {
         handleRetweetAnimation();
-        await handlerRetweet({ dispatchRetweet, ACTIONS, postId, user: state.user._id });
+        await handlerRetweet({ dispatchRetweet, ACTIONS, postId, user: state.user._id, state, setComment });
     };
 
     useEffect(() => {

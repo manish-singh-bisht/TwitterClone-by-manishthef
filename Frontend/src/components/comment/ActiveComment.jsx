@@ -20,7 +20,7 @@ import ShowValues from "../CommonPostComponent/ShowValues";
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
 const ActiveComment = forwardRef(({ commentId, postId, parent, dataActiveComment }, ref) => {
-    const { state, setUsersForRightSidebar, comment: n } = useGlobalContext();
+    const { state, setUsersForRightSidebar, setComment: setCommentCache } = useGlobalContext();
     const { isHovered, handleMouseEnter, handleMouseLeave } = useHoverCard();
 
     //Modal for more option
@@ -139,6 +139,56 @@ const ActiveComment = forwardRef(({ commentId, postId, parent, dataActiveComment
         fetchData();
     }, [fetchData]);
 
+    const setCommentHandler = (type) => {
+        const userData = { _id: state.user._id, name: state.user.name, handle: state.user.handle, profile: state.user.profile && state.user.profile, description: state.user.description };
+        setCommentCache((prev) => {
+            const tempComments = [...prev.comments];
+
+            const indexCommentInTempArray = tempComments.findIndex((item) => {
+                return item.comment._id === commentId;
+            });
+
+            if (indexCommentInTempArray !== -1) {
+                const indexOfUserInTypeArray = tempComments[indexCommentInTempArray].comment[type].findIndex((item) => {
+                    return item._id === state.user._id;
+                });
+
+                if (indexOfUserInTypeArray !== -1 && tempComments[indexCommentInTempArray].comment[type].length > 0) {
+                    tempComments[indexCommentInTempArray].comment[type].splice(indexOfUserInTypeArray, 1);
+                    const parentId = tempComments[indexCommentInTempArray].comment.parent?._id;
+                    const parentIndex = tempComments.findIndex((item) => {
+                        return item.comment._id === parentId;
+                    });
+                    if (parentIndex !== -1) {
+                        const childIndex = tempComments[parentIndex].comment.children.findIndex((item) => item._id === commentId);
+                        if (childIndex !== -1) {
+                            const indexOfUserInTypeArray = tempComments[parentIndex].comment.children[childIndex][type].findIndex((item) => {
+                                return item._id === state.user._id;
+                            });
+                            tempComments[parentIndex].comment.children[childIndex][type].splice(indexOfUserInTypeArray, 1);
+                        }
+                    }
+                } else {
+                    tempComments[indexCommentInTempArray].comment[type].push(userData);
+                    const parentId = tempComments[indexCommentInTempArray].comment.parent?._id;
+                    const parentIndex = tempComments.findIndex((item) => {
+                        return item.comment._id === parentId;
+                    });
+                    if (parentIndex !== -1) {
+                        const childIndex = tempComments[parentIndex].comment.children.findIndex((item) => item._id === commentId);
+                        if (childIndex !== -1) {
+                            tempComments[parentIndex].comment.children[childIndex][type].push(userData);
+                        }
+                    }
+                }
+            }
+
+            return {
+                ...prev,
+                comment: tempComments,
+            };
+        });
+    };
     //ANIMATION FOR THE NUMBER NEXT TO LIKE/UNLIKE USING CUSTOM HOOK
     const [animationLikes, likedValue, handleLikesAnimation] = useAnimation(isLiked, setIsLiked, liked, setLiked);
 
@@ -154,6 +204,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent, dataActiveComment
         } else {
             setLikedBy((prev) => [...prev, { _id: state.user._id, name: state.user.name, handle: state.user.handle, profile: state.user.profile && state.user.profile, description: state.user.description }]);
         }
+        setCommentHandler("likes");
     };
     //ANIMATION FOR THE NUMBER NEXT TO RETWEET USING CUSTOM HOOK
     const [animationRetweet, retweetValue, handleRetweetAnimation] = useAnimation(isRetweet, setIsRetweet, retweet, setRetweet);
@@ -178,6 +229,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent, dataActiveComment
         } else {
             setRetweetBy((prev) => [...prev, { _id: state.user._id, name: state.user.name, handle: state.user.handle, profile: state.user.profile && state.user.profile, description: state.user.description }]);
         }
+        setCommentHandler("retweets");
     };
 
     const [animationBookmarked, bookmarkedValue, handleBookmarkedAnimation] = useAnimation(isBookmarked, setIsBookmarked, bookmarked, setBookmarked);
@@ -212,6 +264,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent, dataActiveComment
         };
 
         toast(data.message, toastConfig);
+        setCommentHandler("bookmarks");
     };
     //Grid layout for different numbers of image,used below
     let gridClass = "";

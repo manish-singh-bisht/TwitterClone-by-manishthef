@@ -1,6 +1,8 @@
 import axios from "axios";
 import { toast } from "react-toastify";
-const PostBookmark = async ({ dispatchBookmark, ACTIONS, postId }) => {
+const PostBookmark = async ({ dispatchBookmark, ACTIONS, postId, state, setComment }) => {
+    const userData = { _id: state.user._id, name: state.user.name, handle: state.user.handle, profile: state.user.profile && state.user.profile, description: state.user.description };
+
     try {
         dispatchBookmark({ type: ACTIONS.BOOKMARK_POST_REQUEST });
         const { data } = await axios.get(`http://localhost:4000/api/v1/${postId}/bookmark`, { withCredentials: true });
@@ -27,6 +29,23 @@ const PostBookmark = async ({ dispatchBookmark, ACTIONS, postId }) => {
 
         toast(data.message, toastConfig);
         dispatchBookmark({ type: ACTIONS.BOOKMARK_POST_SUCCESS, payload: data.message });
+        setComment((prev) => {
+            const tempArray = [...prev.comments];
+            tempArray.length > 0 &&
+                tempArray.forEach((item) => {
+                    if (item.comment.post && item.comment.post._id === postId) {
+                        const indexOfUserInBookmarksArray = item.comment.post.bookmarks.findIndex((item) => {
+                            return item._id === state.user._id;
+                        });
+                        if (indexOfUserInBookmarksArray !== -1) {
+                            item.comment.post.bookmarks.splice(indexOfUserInBookmarksArray, 1);
+                        } else {
+                            item.comment.post.bookmarks.push(userData);
+                        }
+                    }
+                });
+            return { ...prev, comments: tempArray };
+        });
     } catch (err) {
         dispatchBookmark({ type: ACTIONS.BOOKMARK_POST_FAILURE, payload: err.response.data.message });
     }

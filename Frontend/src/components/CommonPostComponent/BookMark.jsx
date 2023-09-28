@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import useAnimation from "../../CustomHooks/useAnimation";
 import { Bookmark, UndoBookmark } from "../SVGs/SVGs";
+import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 
-const BookMark = ({ bookmarks, ACTIONS, dispatchBookmark, state, handlerBookmark, postId, fromBookmarks = false, removeBookmark = null }) => {
+const BookMark = ({ bookmarks, ACTIONS, dispatchBookmark, handlerBookmark, postId, fromBookmarks = false, removeBookmark = null }) => {
+    const { state, setComment } = useGlobalContext();
     //For bookmarking of post
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [bookmarked, setBookmarked] = useState(bookmarks.length);
@@ -14,7 +16,7 @@ const BookMark = ({ bookmarks, ACTIONS, dispatchBookmark, state, handlerBookmark
         if (fromBookmarks) {
             removeBookmark(postId);
         }
-        await handlerBookmark({ dispatchBookmark, ACTIONS, postId });
+        await handlerBookmark({ dispatchBookmark, ACTIONS, postId, state, setComment });
     };
 
     useEffect(() => {

@@ -16,7 +16,7 @@ const CommentCard = ({ comments, postId, parent, fromTweetDetail, fromCommentDet
 
     return (
         <>
-            {!isParentPresent && (whoCanReply.includes(state.user._id) || whoCanReply.includes(state.user.handle) || whoCanReply.length === 0) && (
+            {!isParentPresent && (whoCanReply?.includes(state.user._id) || whoCanReply?.includes(state.user.handle) || whoCanReply?.length === 0) && (
                 <CommentBox profile={profile} postId={postId} parent={parent} mentionHandleCollection={mentionHandleCollection} />
             )}
 

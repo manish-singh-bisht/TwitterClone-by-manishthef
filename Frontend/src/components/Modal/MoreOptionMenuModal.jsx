@@ -125,13 +125,19 @@ const MoreOptionMenuModal = ({
         await dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
     };
 
-    const setCommentsHandlerForDelete = () => {
+    const setCommentsHandlerForDelete = (from = null) => {
         setComment((prev) => {
-            const commentNotAPartOfComments = prev.activeComment.comment.children?.findIndex((item) => {
-                return item._id === infoToMoreOptionModal.commentID;
+            const tempCommentsArray = [...prev.comments];
+            const indexCommentInTempArray = tempCommentsArray.findIndex((item) => {
+                return item.comment._id === infoToMoreOptionModal.commentID;
             });
-            if (commentNotAPartOfComments === -1) {
-                const tempCommentsArray = [...prev.comments];
+            if ((from === "fromProfileTweets" || from === "fromMediaLikes" || from === "fromReplies" || from === "fromBookmarks") && indexCommentInTempArray === -1) {
+                return {
+                    comments: prev.comments,
+                    activeComment: prev.activeComment,
+                };
+            }
+            if (indexCommentInTempArray !== -1) {
                 let commentDeleted;
                 const filtered = tempCommentsArray.filter((item) => {
                     if (item.comment._id === infoToMoreOptionModal.commentID) {
@@ -177,13 +183,13 @@ const MoreOptionMenuModal = ({
                     comments: filtered,
                     activeComment: null,
                 };
-            } else if (commentNotAPartOfComments !== -1) {
-                const tempCommentsArray = [...prev.activeComment.comment.children];
-                const filtered = tempCommentsArray.filter((item) => {
+            } else {
+                const tempCommentsArray = [...prev.activeComment?.comment?.children];
+                const filtered = tempCommentsArray?.filter((item) => {
                     return item._id !== infoToMoreOptionModal.commentID;
                 });
                 return {
-                    comments: filtered,
+                    comments: filtered !== undefined ? filtered : prev.comments,
                     activeComment: null,
                 };
             }
@@ -215,7 +221,7 @@ const MoreOptionMenuModal = ({
             if (postID && commentID) {
                 const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
                 if (data.haveParent) {
-                    setCommentsHandlerForDelete();
+                    setCommentsHandlerForDelete("fromProfileTweets");
                 }
             } else if (postID && commentID === undefined) {
                 await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
@@ -238,7 +244,7 @@ const MoreOptionMenuModal = ({
                 const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
 
                 if (data.haveParent) {
-                    setCommentsHandlerForDelete();
+                    setCommentsHandlerForDelete("fromMediaLikes");
                 }
             } else if (postID && commentID === undefined) {
                 await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
@@ -287,7 +293,7 @@ const MoreOptionMenuModal = ({
             } else if (postID && commentID) {
                 const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
                 if (data.haveParent) {
-                    setCommentsHandlerForDelete();
+                    setCommentsHandlerForDelete("fromReplies");
                 }
             }
         }
@@ -330,7 +336,7 @@ const MoreOptionMenuModal = ({
                 removeBookmark(commentID);
                 const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
                 if (data.haveParent) {
-                    setCommentsHandlerForDelete();
+                    setCommentsHandlerForDelete("fromBookmarks");
                 }
 
                 return;

@@ -22,10 +22,10 @@ const ModalForLikesRetweets = ({ visibility, onClose, type, list, handleOutsideC
     };
     return (
         <>
-            <div className="fixed inset-0 z-30 flex  h-[100%] w-[100%] items-center justify-center">
+            <div className="fixed inset-0 z-40 flex  h-[100%] w-[100%] items-center justify-center">
                 <div className="fixed h-[100vh] w-[100vw]  bg-black opacity-40" onClick={handleOutsideClick}></div>
                 <div className="relative  flex h-[100%] w-[100%] flex-col overflow-y-auto  rounded-xl bg-white lg:h-auto  lg:max-h-[40rem]  lg:min-h-[83vh] lg:w-[41vw] ">
-                    <div className=" sticky inset-0 mb-3 flex h-fit w-full items-center gap-4 bg-white/60  backdrop-blur-md  ">
+                    <div className=" sticky inset-0 z-40 mb-3 flex h-fit w-full items-center gap-4 bg-white/60  backdrop-blur-md  ">
                         <div className="  m-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full  p-2 hover:bg-gray-200" onClick={onClose}>
                             <Cross className="  " />
                         </div>
