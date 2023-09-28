@@ -183,26 +183,6 @@ const TweetDetail = () => {
         fetchData();
     }, [fetchData]);
 
-    const setCommentHandler = (type) => {
-        const userData = { _id: state.user._id, name: state.user.name, handle: state.user.handle, profile: state.user.profile && state.user.profile, description: state.user.description };
-        setComment((prev) => {
-            const tempArray = [...prev.comments];
-            tempArray.length > 0 &&
-                tempArray.forEach((item) => {
-                    if (item.comment.post && item.comment.post._id === postId) {
-                        const indexOfUserInTypeArray = item.comment.post[type].findIndex((item) => {
-                            return item._id === state.user._id;
-                        });
-                        if (indexOfUserInTypeArray !== -1) {
-                            item.comment.post[type].splice(indexOfUserInTypeArray, 1);
-                        } else {
-                            item.comment.post[type].push(userData);
-                        }
-                    }
-                });
-            return { ...prev, comments: tempArray };
-        });
-    };
     //ANIMATION FOR THE NUMBER NEXT TO LIKE/UNLIKE USING CUSTOM HOOK
     const [animationLikes, likedValue, handleLikesAnimation] = useAnimation(isLiked, setIsLiked, liked, setLiked);
 
@@ -218,7 +198,6 @@ const TweetDetail = () => {
         } else {
             setLikedBy((prev) => [...prev, { _id: state.user._id, name: state.user.name, handle: state.user.handle, profile: state.user.profile && state.user.profile, description: state.user.description }]);
         }
-        setCommentHandler("likes");
     };
     //ANIMATION FOR THE NUMBER NEXT TO RETWEET USING CUSTOM HOOK
     const [animationRetweet, retweetValue, handleRetweetAnimation] = useAnimation(isRetweet, setIsRetweet, retweet, setRetweet);
@@ -235,7 +214,6 @@ const TweetDetail = () => {
         } else {
             setRetweetBy((prev) => [...prev, { _id: state.user._id, name: state.user.name, handle: state.user.handle, profile: state.user.profile && state.user.profile, description: state.user.description }]);
         }
-        setCommentHandler("retweets");
     };
 
     //ANIMATION FOR THE NUMBER NEXT TO BOOKMARK USING CUSTOM HOOK
@@ -249,7 +227,6 @@ const TweetDetail = () => {
         } else {
             setBookmarked((prev) => prev + 1);
         }
-        setCommentHandler("bookmarks");
     };
     const photos = postImage ? postImage : [];
 
