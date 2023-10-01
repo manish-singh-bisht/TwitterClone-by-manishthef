@@ -226,6 +226,7 @@ exports.deleteComment = async (req, res, next) => {
             return next(new ErrorHandler("Comment not found", 404));
         }
         const haveParent = commentToDelete.parent ? true : false;
+        const parentid = commentToDelete.parent?._id;
         // Delete the comment and its children recursively
         await deleteCommentRecursive(commentToDelete);
 
@@ -237,6 +238,7 @@ exports.deleteComment = async (req, res, next) => {
             success: true,
             message: "Your Tweet was deleted",
             haveParent,
+            parentid: parentid,
         });
     } catch (error) {
         next(new ErrorHandler(error.message, 500));

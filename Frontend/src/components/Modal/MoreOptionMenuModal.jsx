@@ -125,17 +125,35 @@ const MoreOptionMenuModal = ({
         await dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
     };
 
-    const setCommentsHandlerForDelete = (from = null) => {
+    const setCommentsHandlerForDelete = (from = null, parenId = null) => {
         setComment((prev) => {
             const tempCommentsArray = [...prev.comments];
             const indexCommentInTempArray = tempCommentsArray.findIndex((item) => {
                 return item.comment._id === infoToMoreOptionModal.commentID;
             });
             if ((from === "fromProfileTweets" || from === "fromMediaLikes" || from === "fromReplies" || from === "fromBookmarks") && indexCommentInTempArray === -1) {
-                return {
-                    comments: prev.comments,
-                    activeComment: prev.activeComment,
-                };
+                if (parenId !== null) {
+                    const parentIndex = tempCommentsArray.findIndex((item) => {
+                        return item.comment._id === parenId;
+                    });
+                    if (parentIndex !== -1) {
+                        const parentComment = { ...tempCommentsArray[parentIndex] };
+                        const childIndex = parentComment.comment.children.findIndex((item) => {
+                            return item._id === infoToMoreOptionModal.commentID;
+                        });
+                        parentComment.comment.children.splice(childIndex, 1);
+                        tempCommentsArray[parentIndex] = parentComment;
+                        return {
+                            comments: tempCommentsArray,
+                            activeComment: prev.activeComment,
+                        };
+                    } else {
+                        return {
+                            comments: prev.comments,
+                            activeComment: prev.activeComment,
+                        };
+                    }
+                }
             }
             if (indexCommentInTempArray !== -1) {
                 let commentDeleted;
@@ -221,7 +239,7 @@ const MoreOptionMenuModal = ({
             if (postID && commentID) {
                 const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
                 if (data.haveParent) {
-                    setCommentsHandlerForDelete("fromProfileTweets");
+                    setCommentsHandlerForDelete("fromProfileTweets", data.parentid);
                 }
             } else if (postID && commentID === undefined) {
                 await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
@@ -244,7 +262,7 @@ const MoreOptionMenuModal = ({
                 const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
 
                 if (data.haveParent) {
-                    setCommentsHandlerForDelete("fromMediaLikes");
+                    setCommentsHandlerForDelete("fromMediaLikes", data.parentid);
                 }
             } else if (postID && commentID === undefined) {
                 await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
@@ -293,7 +311,7 @@ const MoreOptionMenuModal = ({
             } else if (postID && commentID) {
                 const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
                 if (data.haveParent) {
-                    setCommentsHandlerForDelete("fromReplies");
+                    setCommentsHandlerForDelete("fromReplies", data.parentid);
                 }
             }
         }
@@ -336,7 +354,7 @@ const MoreOptionMenuModal = ({
                 removeBookmark(commentID);
                 const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
                 if (data.haveParent) {
-                    setCommentsHandlerForDelete("fromBookmarks");
+                    setCommentsHandlerForDelete("fromBookmarks", data.parentid);
                 }
 
                 return;

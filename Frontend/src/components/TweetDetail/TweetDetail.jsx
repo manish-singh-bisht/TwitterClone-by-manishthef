@@ -142,6 +142,10 @@ const TweetDetail = () => {
                 setIsBookmarked(true);
             }
         });
+
+        like.length === 0 && setIsLiked(false);
+        bookmark.length === 0 && setIsBookmarked(false);
+        value.post.retweets.length === 0 && setIsRetweet(false);
         setCommentArray(value.post.comments);
 
         // Regex pattern to find mentions and make them blue,in the display after it is posted

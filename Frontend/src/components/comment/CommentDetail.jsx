@@ -32,6 +32,7 @@ const CommentDetail = () => {
         setParentCollectionId,
         parentCollection,
         setParentCollection,
+        setCommentArray,
     } = useGlobalContext();
 
     //For navigating to a particular section that is to the comment that openend this component
@@ -41,6 +42,7 @@ const CommentDetail = () => {
     const [post, setPost] = useState();
 
     useEffect(() => {
+        setCommentArray([]);
         const getCommentById = async () => {
             const { data } = await axios.get(`http://localhost:4000/api/v1/comment/${commentId}`, { withCredentials: true });
             setPost(data.comment.post);

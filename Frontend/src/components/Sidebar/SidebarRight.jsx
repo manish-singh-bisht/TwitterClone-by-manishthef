@@ -189,13 +189,13 @@ const SidebarRight = () => {
                         <div className="mt-3 w-full rounded-xl bg-[#F7F9F9] p-3 pb-3">
                             <p className="mb-2 text-[1.5rem] font-bold">What's happening</p>
                             <TrendingTopic topic={"Mera Pyara Bharat"} number={"500K"} />
-                            <TrendingTopic topic={"Just Keep Grinding."} number={"490K"} />
-                            <TrendingTopic topic={"All Physical Mental Capabilities are False."} number={"480K"} />
-                            <TrendingTopic topic={"Run,Run Fast To Get Out Of the mess you're in right now,don't stop in this mess."} number={"470K"} />
+                            <TrendingTopic topic={"Just keep grinding."} number={"490K"} />
+                            <TrendingTopic topic={"All physical mental capabilities are false."} number={"480K"} />
+                            <TrendingTopic topic={"Run,run fast to get out of the mess you're in right now,don't stop in this mess."} number={"470K"} />
                             <TrendingTopic topic={"Keep pushing,push push push and push."} number={"460K"} />
                             <TrendingTopic topic={"When I reach my limits, I push and I grow."} number={"450K"} />
-                            <TrendingTopic topic={"It's my Choice,Every Second That I Pass In this Uncomfortable Thing It's My Choice."} number={"440K"} />
-                            <TrendingTopic topic={"Nobody Wants To Do it Because It's Hard. I Can and I will.Maybe not Today,not Tomorrow But I will for Sure."} number={"430K"} />
+                            <TrendingTopic topic={"It's my choice,every second that I pass in this uncomfortable thing it's my choice."} number={"440K"} />
+                            <TrendingTopic topic={"Nobody wants to do it because it's hard. I Can and I will.Maybe not today,not tomorrow but I will for Sure."} number={"430K"} />
                             <TrendingTopic topic={"𝕏"} number={"54K"} />
                         </div>
                         {!usersForRightSidebar && (
