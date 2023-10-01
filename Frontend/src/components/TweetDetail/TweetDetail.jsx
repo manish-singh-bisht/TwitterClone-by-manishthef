@@ -36,6 +36,7 @@ const TweetDetail = () => {
         CommentArray,
         setCommentArray,
         setComment,
+        setMainTweetDetailPost,
     } = useGlobalContext();
     const { isHovered, handleMouseEnter, handleMouseLeave } = useHoverCard();
 
@@ -104,6 +105,7 @@ const TweetDetail = () => {
             const { data } = await axios.get(`http://localhost:4000/api/v1/${postId}`, { withCredentials: true });
             value = data;
         }
+        setMainTweetDetailPost(value);
         if (value.post?.tweet !== usersForRightSidebar?.post.tweet) {
             setUsersForRightSidebar(value);
         }

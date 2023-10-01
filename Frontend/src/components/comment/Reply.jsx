@@ -130,7 +130,7 @@ const Reply = ({ reply, handleClick, setReplyIdHandler, deleteReplyHandler }) =>
                                         const top = buttonRect.top + buttonRect.height;
                                         const left = buttonRect.left;
                                         setButtonPosition({ top, left });
-                                        setInfoToMoreOptionModal({ ownerID: reply.owner._id, commentID: reply._id, postID: reply.post, handle: reply.owner.handle });
+                                        setInfoToMoreOptionModal({ ownerID: reply.owner._id, commentID: reply._id, postID: reply.post._id ? reply.post._id : reply.post, handle: reply.owner.handle });
                                         setReplyIdHandler(reply._id);
                                         document.body.style.overflow = "hidden";
                                     }}>

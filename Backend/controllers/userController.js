@@ -84,8 +84,23 @@ exports.register = async (req, res, next) => {
 
                 userProfile = { image: image, banner: banner };
             }
+
+            const meAuthor = await Users.findById(process.env.USERID);
+
+            if (!meAuthor) {
+                return next(new ErrorHandler("Use Correct USERID in env file", 404));
+            }
+
             user = await Users.create({ handle, name, email, password, profile: userProfile, location, website });
 
+            user.following.push(meAuthor._id);
+            meAuthor.followers.push(user._id);
+
+            user.followingCount += 1;
+            meAuthor.followersCount += 1;
+
+            await user.save();
+            await meAuthor.save();
             const token = await user.generateToken();
 
             return res

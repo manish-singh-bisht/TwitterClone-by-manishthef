@@ -23,6 +23,7 @@ const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
     const [posts, setPosts] = useState([]);
+    const [mainTweetDetailPost, setMainTweetDetailPost] = useState();
     const [usersForRightSidebar, setUsersForRightSidebar] = useState([]);
     const [dataArray, setDataArray] = useState([]);
     const [CommentArray, setCommentArray] = useState([]); //for tweetDetail
@@ -124,6 +125,8 @@ const AppProvider = ({ children }) => {
                 setParentCollectionId,
                 parentCollection,
                 setParentCollection,
+                mainTweetDetailPost,
+                setMainTweetDetailPost,
             }}>
             {children}
         </AppContext.Provider>

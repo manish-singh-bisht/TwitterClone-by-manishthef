@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 
 const DeleteLogoutModal = ({
     visibility,
@@ -19,7 +20,7 @@ const DeleteLogoutModal = ({
 }) => {
     if (!visibility) return;
     const navigate = useNavigate();
-
+    const { mainTweetDetailPost, setMainTweetDetailPost } = useGlobalContext();
     return (
         <div className="fixed inset-0 z-30 flex h-[100vh] w-[100vw] items-center justify-center">
             <div className={`fixed  h-full w-full ${fromSideBar ? "bg-black  " : "bg-black opacity-20"}`} onClick={handleOutsideClick}></div>
@@ -40,6 +41,22 @@ const DeleteLogoutModal = ({
                                     onClose();
                                     onCloseMoreOptionModal();
                                     deleteReplyHandler();
+                                    navigate(`/${mainTweetDetailPost.post.owner.name}/${infoToDeleteModal.postID}`, {
+                                        state: {
+                                            tweet: mainTweetDetailPost.post.tweet,
+                                            ownerName: mainTweetDetailPost.post.owner.name,
+                                            timeCreated: mainTweetDetailPost.post.createdAt,
+                                            ownerId: mainTweetDetailPost.post.owner._id,
+                                            handle: mainTweetDetailPost.post.owner.handle,
+                                            postImage: mainTweetDetailPost.post.images,
+                                            ownerImage: mainTweetDetailPost.post.owner.profile && mainTweetDetailPost.post.owner.profile.image.url ? mainTweetDetailPost.post.owner.profile.image.url : null,
+                                            mentions: mainTweetDetailPost.post.mentions,
+                                            description: mainTweetDetailPost.post.owner.description,
+
+                                            whoCanReply: mainTweetDetailPost.post.whoCanReply,
+                                            whoCanReplyNumber: mainTweetDetailPost.post.whoCanReplyNumber,
+                                        },
+                                    });
                                 } else if (fromActiveComment) {
                                     deleteHandler();
                                     onClose();
@@ -68,8 +85,21 @@ const DeleteLogoutModal = ({
                                     deleteHandler();
                                     onClose();
                                     onCloseMoreOptionModal();
-                                    navigate(`/`, {
-                                        replace: true,
+                                    navigate(`/${mainTweetDetailPost.post.owner.name}/${infoToDeleteModal.postID}`, {
+                                        state: {
+                                            tweet: mainTweetDetailPost.post.tweet,
+                                            ownerName: mainTweetDetailPost.post.owner.name,
+                                            timeCreated: mainTweetDetailPost.post.createdAt,
+                                            ownerId: mainTweetDetailPost.post.owner._id,
+                                            handle: mainTweetDetailPost.post.owner.handle,
+                                            postImage: mainTweetDetailPost.post.images,
+                                            ownerImage: mainTweetDetailPost.post.owner.profile && mainTweetDetailPost.post.owner.profile.image.url ? mainTweetDetailPost.post.owner.profile.image.url : null,
+                                            mentions: mainTweetDetailPost.post.mentions,
+                                            description: mainTweetDetailPost.post.owner.description,
+
+                                            whoCanReply: mainTweetDetailPost.post.whoCanReply,
+                                            whoCanReplyNumber: mainTweetDetailPost.post.whoCanReplyNumber,
+                                        },
                                     });
                                 } else {
                                     deleteHandler();

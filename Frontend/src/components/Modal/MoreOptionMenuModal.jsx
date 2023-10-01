@@ -131,7 +131,7 @@ const MoreOptionMenuModal = ({
             const indexCommentInTempArray = tempCommentsArray.findIndex((item) => {
                 return item.comment._id === infoToMoreOptionModal.commentID;
             });
-            if ((from === "fromProfileTweets" || from === "fromMediaLikes" || from === "fromReplies" || from === "fromBookmarks") && indexCommentInTempArray === -1) {
+            if ((from === "fromProfileTweets" || from === "fromMediaLikes" || from === "fromRepliesProfile" || from === "fromBookmarks" || from === "fromReplies") && indexCommentInTempArray === -1) {
                 if (parenId !== null) {
                     const parentIndex = tempCommentsArray.findIndex((item) => {
                         return item.comment._id === parenId;
@@ -311,7 +311,7 @@ const MoreOptionMenuModal = ({
             } else if (postID && commentID) {
                 const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
                 if (data.haveParent) {
-                    setCommentsHandlerForDelete("fromReplies", data.parentid);
+                    setCommentsHandlerForDelete("fromRepliesProfile", data.parentid);
                 }
             }
         }
@@ -360,7 +360,15 @@ const MoreOptionMenuModal = ({
                 return;
             }
             if (!fromProfileTweets && !fromMediaLikesProfile && !fromProfileRepliesParentPost && !fromProfileRepliesComment) {
-                if (fromActiveComment || fromCommentDetail) {
+                if (fromActiveComment || fromCommentDetail || fromReplies) {
+                    if (fromReplies) {
+                        const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+                        if (data.haveParent) {
+                            setCommentsHandlerForDelete("fromReplies", data.parentid);
+                        }
+
+                        return;
+                    }
                     setCommentsHandlerForDelete();
                 } else {
                     setCommentArray((prev) =>

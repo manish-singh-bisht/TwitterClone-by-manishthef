@@ -24,18 +24,33 @@ const InputField = ({ name, type, placeholder, value, onChange, max = 26 }) => (
         </label>
     </div>
 );
-
+const generateRandomString = (length = 10) => {
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+};
 const SignUpOption = ({ onClose, isSignUpVisible, handleOutsideClickSignup }) => {
     if (!isSignUpVisible) return null;
 
     const [data, setData] = useState({
-        name: null,
-        email: null,
-        handle: null,
-        password: null,
-        confirmPassword: null,
+        name: "",
+        email: "",
+        handle: "",
+        password: "",
+        confirmPassword: "",
     });
-
+    const generateRandomValues = () => {
+        setData({
+            name: generateRandomString(6), // Generate a random name
+            email: generateRandomString(5) + "@example.com", // Generate a random email
+            handle: generateRandomString(6), // Generate a random handle
+            password: "",
+            confirmPassword: "",
+        });
+    };
     const { dispatch, ACTIONS } = useGlobalContext();
 
     const handleSignUp = async (e) => {
@@ -106,6 +121,11 @@ const SignUpOption = ({ onClose, isSignUpVisible, handleOutsideClickSignup }) =>
                         <InputField name="name" type="text" placeholder="Name" value={data.name} onChange={dataHandler} />
                         <InputField name="handle" type="text" placeholder="@Handle" value={data.handle} onChange={dataHandler} />
                         <button className="h-9 w-[110%] rounded-[24rem] bg-gray-100 font-bold hover:bg-gray-200 active:bg-gray-300 md:w-full">Next</button>
+                        <button className="h-12 w-[110%] rounded-[24rem] bg-blue-200 font-bold hover:bg-blue-400 active:bg-gray-500 md:w-full" onClick={generateRandomValues}>
+                            Generate Random Values,
+                            <br />
+                            <p className="text-red-500"> be active change them!</p>
+                        </button>
                     </form>
                 </div>
             </div>

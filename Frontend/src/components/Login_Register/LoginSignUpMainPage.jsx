@@ -24,6 +24,7 @@ const LoginSignUpMainPage = () => {
                         <div className="relative mt-14 flex h-fit flex-col justify-between gap-5  py-16 lg:mt-10 lg:h-fit lg:py-0">
                             <div className="text-[3.5rem] font-bold leading-[4rem] lg:text-[4.5rem] lg:leading-none">Happening now</div>
                             <div className="text-3xl font-bold lg:text-4xl ">Join Twitter today.</div>
+                            <div className="mt-[-1rem] italic text-gray-500  underline"> Generate dummy data in SignUp!!!</div>
                         </div>
                         <div className="mt-12 flex w-full flex-col gap-3 lg:mt-16 ">
                             <div

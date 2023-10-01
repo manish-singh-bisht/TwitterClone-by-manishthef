@@ -202,7 +202,31 @@ const ActiveComment = forwardRef(({ commentId, postId, parent, dataActiveComment
                 })
             );
         } else {
-            setLikedBy((prev) => [...prev, { _id: state.user._id, name: state.user.name, handle: state.user.handle, profile: state.user.profile && state.user.profile, description: state.user.description }]);
+            setLikedBy((prev) => {
+                const uniqueLikedBy = new Set(prev.map((item) => item._id));
+
+                if (!uniqueLikedBy.has(state.user._id)) {
+                    uniqueLikedBy.add(state.user._id);
+
+                    return [
+                        ...Array.from(uniqueLikedBy).map((userId) => {
+                            if (userId === state.user._id) {
+                                return {
+                                    _id: userId,
+                                    name: state.user.name,
+                                    handle: state.user.handle,
+                                    profile: state.user.profile && state.user.profile,
+                                    description: state.user.description,
+                                };
+                            }
+                            const existingItem = prev.find((item) => item._id === userId);
+                            return existingItem || {};
+                        }),
+                    ];
+                }
+
+                return prev;
+            });
         }
         setCommentHandler("likes");
     };
@@ -227,7 +251,31 @@ const ActiveComment = forwardRef(({ commentId, postId, parent, dataActiveComment
                 })
             );
         } else {
-            setRetweetBy((prev) => [...prev, { _id: state.user._id, name: state.user.name, handle: state.user.handle, profile: state.user.profile && state.user.profile, description: state.user.description }]);
+            setRetweetBy((prev) => {
+                const uniqueBy = new Set(prev.map((item) => item._id));
+
+                if (!uniqueBy.has(state.user._id)) {
+                    uniqueBy.add(state.user._id);
+
+                    return [
+                        ...Array.from(uniqueBy).map((userId) => {
+                            if (userId === state.user._id) {
+                                return {
+                                    _id: userId,
+                                    name: state.user.name,
+                                    handle: state.user.handle,
+                                    profile: state.user.profile && state.user.profile,
+                                    description: state.user.description,
+                                };
+                            }
+                            const existingItem = prev.find((item) => item._id === userId);
+                            return existingItem || {};
+                        }),
+                    ];
+                }
+
+                return prev;
+            });
         }
         setCommentHandler("retweets");
     };
