@@ -216,7 +216,7 @@ exports.deleteMessageForAll = async (req, res, next) => {
 
         await handleLatestUpdate(conversation, req.user._id, messageId);
         await handleLatestUpdate(conversation, receiverId, messageId);
-        await cloudinary.v2.uploader.destroy(message.image.public_id);
+        message.image?.public_id && (await cloudinary.v2.uploader.destroy(message.image.public_id));
         await Message.deleteOne({ _id: messageId });
         return res.status(200).json({
             success: true,

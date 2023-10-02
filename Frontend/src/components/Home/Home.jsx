@@ -30,6 +30,7 @@ const Home = () => {
         dispatchRetweetComment,
         dispatchCommentLikeUnlike,
         dispatchBookmarkTweet,
+        setCommentArray,
     } = useGlobalContext();
 
     const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -58,6 +59,7 @@ const Home = () => {
         window.scrollTo(0, 0);
         PostOfFollowingUsersAndMe();
         setUsersForRightSidebar(null);
+        setCommentArray([]);
     }, []);
     const url = `http://localhost:4000/api/v1/posts?page=`;
 
