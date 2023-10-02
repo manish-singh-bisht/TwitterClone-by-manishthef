@@ -80,6 +80,8 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
                 setParentId(tweets[tweets.length - 2].id);
             }
         }
+
+        const index = tweets.findIndex((tweet) => tweet.id === id);
         const updatedTweets = tweets.filter((tweet) => {
             return tweet.id !== id;
         });
@@ -89,6 +91,11 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
             updatedTweets[0].parent = null;
         }
         if (updatedTweets.length > 1) {
+            if (index < updatedTweets.length && index !== 0) {
+                const tweetNext = updatedTweets[index];
+                tweetNext.parent = updatedTweets[index - 1].id;
+            }
+
             const lastTweetInThread = updatedTweets[updatedTweets.length - 1];
             lastTweetInThread.parent = updatedTweets[updatedTweets.length - 2].id;
 
@@ -96,13 +103,11 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
                 updatedTweets[0].parent = null;
             }
         }
-
         setTweets(updatedTweets);
     };
     const addTweet = () => {
         const newTweet = { id: uuidv4(), text: "", parent: parentId, mentions: null };
         const updatedTweets = [...tweets, newTweet];
-
         setTweets(updatedTweets);
         setParentId(newTweet.id);
         setIsThreadStarter(false);
