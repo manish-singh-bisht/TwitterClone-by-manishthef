@@ -5,12 +5,12 @@ A Twitter clone project built with MERN stack.
 
 ## Table of Contents
 
-- [Demo](##Demo)
-- [Problem It Solves](##Problem-It-Solves)
-- [Features](##Features)
-- [Installation](##installation)
-- [Contributing](##contributing)
-- [License](##license)
+- [Demo](#Demo)
+- [Problem It Solves](#Problem-It-Solves)
+- [Features](#Features)
+- [Installation](#installation)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Demo
 Will be available soon.
