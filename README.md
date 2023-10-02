@@ -55,16 +55,16 @@ The TwitterClone allows users to express their individuality through creative tw
 - *__Chat__* : reply to a message,image messages,soft delete,hard delete,latest message,pin conversation,reverse infinite scroll,copy messages.
 
 ### Other Features
-Create single tweets with images.
+- Create single tweets with images.
 
-Responsive Design.
+- Responsive Design.
 
-Like,Bookmark,Retweet,Delete tweets.
+- Like,Bookmark,Retweet,Delete tweets.
 
-Follow,unfollow other users.
+- Follow,unfollow other users.
 
-Profile section, edit profile.
+- Profile section, edit profile.
 
-Pin tweet.
+- Pin tweet.
 
-Authentication:Jwt.
+- Authentication:Jwt.
