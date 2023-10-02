@@ -8,6 +8,7 @@ A Twitter clone project built with MERN stack.
 - [Demo](#Demo)
 - [Problem It Solves](#Problem-It-Solves)
 - [Features](#Features)
+- [ShortComings](#ShortComings)
 - [Development](#Development)
 - [Contributing](#Contributing)
 
@@ -67,6 +68,13 @@ The TwitterClone allows users to express their individuality through creative tw
 - Pin tweet.
 
 - Authentication:Jwt.
+## ShortComings
+1. no real time chat updates, otherwise i woudnt be able to deploy,as no free provider support websockets
+2. no real time comment updates,had their been web sockets i would have done it, but otherwise it will do multiple api calls.
+3. using tiptap editor for mention feature,so might cause error sometimes,pause a bit after typing @.
+4. use chat in shorter screen like a tablet or mobile,so that one can go back to refresh and come back to chat.If done in laptop(15.5inch) or bigger screens then back means going to home page and then coming to chat,so smaller screens save some api calls.
+
+```NOTE```:not using tiptap for any other purposes than mention,apart from necessary packages needed to work with React, I am only using tiptap editor(tippy.js and awesome-debounce-promise are needed with it) for mentions,react-infinite-scroll-component,react-sticky-box,react-toastify, rest everthing is done by me.
 
 ## Development
 Here are the steps to run the project locally.
@@ -74,11 +82,63 @@ Here are the steps to run the project locally.
 1. Clone the repository
 ```
  git clone https://github.com/manish-singh-bisht/TwitterClone--by-manishthef.git
-
 ```
 2. Install dependencies
-
-   - Open terminal and do
+   - Open terminal, then do ``` npm install ```.This installs dependencies of the backend.
+   - Open another terminal and do
      ``` cd Frontend ``` ,then do ``` npm install ```.This installs dependencies in the frontend folder.
-   - Open another terminal, then do ``` npm install ```.This installs dependencies of the backend.
+  
+     
 3. Create a .env file in the main folder,not in the backend folder and not in the frontend folder.
+4. In the .env file add the following
+   ```
+    PORT=4000
+    DB_URI="Add your own"
+    JWT_SECRET="Create your own"
+    EXPIRE=30
+    CLOUDINARY_NAME= 'add your own'
+    CLOUDINARY_API_KEY= 'add your own'
+    CLOUDINARY_API_SECRET= 'add your own'
+   ```
+   1. For ```DB_URI```
+      - download MongoDB or create an account in MongoDB Atlas
+      - create your database
+      - copy the connection string, looks something like this ```mongodb://localhost:27017```
+      - add the name of your database infront of the connection string,like ```mongodb://localhost:27017/databaseName```
+      - this is your ```DB_URI```, paste it in .env file
+   2. For ```JWT_SECRET```
+      - write anything,for example JWT_SECRET="fdsfsdfsdfsd"
+   3. For ```CLOUDINARY_NAME,CLOUDINARY_API_KEY,CLOUDINARY_API_SECRET```
+      - create an account in cloudinary and copy from there.
+
+    Your .env file is ready.
+   
+5. Delete these lines of code and add the line of code in point  6,
+``` Go to Backend -> controllers -> userController.js```
+```
+            const meAuthor = await Users.findById(process.env.USERID);
+
+            if (!meAuthor) {
+                return next(new ErrorHandler("Use Correct USERID in env file", 404));
+            }
+
+            user = await Users.create({ handle, name, email, password, profile: userProfile, location, website });
+
+            user.following.push(meAuthor._id);
+            meAuthor.followers.push(user._id);
+
+            user.followingCount += 1;
+            meAuthor.followersCount += 1;
+
+            await user.save();
+            await meAuthor.save();
+```
+6. Add this line of code
+   ```  user = await Users.create({ handle, name, email, password, profile: userProfile, location, website }); ```
+7. Close all the terminals,and open two terminals
+   - In first,write ```npm run start```
+   - In second, do ```cd Frontend``` then do ```npm run dev```
+   - Now copy or click on the link in the second terminal,in the one in which you did cd Frontend,and your app should be running.
+
+## Contributing
+Close to any contribution as of now.
