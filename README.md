@@ -8,36 +8,35 @@ A Twitter clone project built with MERN stack.
 - [Demo](#Demo)
 - [Problem It Solves](#Problem-It-Solves)
 - [Features](#Features)
-- [Installation](#installation)
-- [Contributing](#contributing)
-- [License](#license)
+- [Development](#Development)
+- [Contributing](#Contributing)
 
 ## Demo
 Will be available soon.
 
 ## Problem It Solves
-- __Information Sharing__:
+- *__Information Sharing__*:
 TwitterClone is a platform for sharing news, updates, and information on a wide range of topics.
 
-- __Connectivity__:
+- *__Connectivity__*:
 The TwitterClone helps users connect with friends, colleagues, celebrities, and people,however no algorithm is present for doing this.
 
-- __Promotion and Brand Building__:
+- *__Promotion and Brand Building__*:
 The TwitterClone can be widely used for marketing, promotion, and brand building. Individuals, businesses, and organizations can use the TwitterClone to reach a global audience, promote products or services, and build brand awareness.
 
-- __Expression and Opinion Sharing__:
+- *__Expression and Opinion Sharing__*:
 The TwitterClone provides a platform for users to express their thoughts, opinions, and viewpoints on various topics. It encourages open dialogue and discussions on social, political, and cultural issues.
 
-- __Networking__:
+- *__Networking__*:
 The TwitterClone is a valuable networking tool for professionals and individuals looking to expand their professional and social circles.
 
-- __Awareness and Activism__:
+- *__Awareness and Activism__*:
 The TwitterClone has played a significant role in raising awareness about social and political issues.
 
-- __Entertainment__:
+- *__Entertainment__*:
 The TwitterClone is a source of entertainment, humor, and viral content. Users can follow comedians, celebrities, and entertainment accounts for a dose of entertainment and laughter.
 
-- __Personal Expression__
+- *__Personal Expression__*:
 The TwitterClone allows users to express their individuality through creative tweets, photos, videos, and memes. It encourages self-expression and creativity.
 
 ## Features
@@ -68,3 +67,18 @@ The TwitterClone allows users to express their individuality through creative tw
 - Pin tweet.
 
 - Authentication:Jwt.
+
+## Development
+Here are the steps to run the project locally.
+
+1. Clone the repository
+```
+ git clone https://github.com/manish-singh-bisht/TwitterClone--by-manishthef.git
+
+```
+2. Install dependencies
+
+   - Open terminal and do
+     ``` cd Frontend ``` ,then do ``` npm install ```.This installs dependencies in the frontend folder.
+   - Open another terminal, then do ``` npm install ```.This installs dependencies of the backend.
+3. Create a .env file in the main folder,not in the backend folder and not in the frontend folder.
