@@ -75,7 +75,14 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
     };
 
     const deleteTweet = (id) => {
-        const updatedTweets = tweets.filter((tweet) => tweet.id !== id);
+        if (id === tweets[tweets.length - 1].id) {
+            if (parentId === id) {
+                setParentId(tweets[tweets.length - 2].id);
+            }
+        }
+        const updatedTweets = tweets.filter((tweet) => {
+            return tweet.id !== id;
+        });
 
         if (updatedTweets.length === 1) {
             setIsThreadStarter(true);
@@ -84,6 +91,7 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
         if (updatedTweets.length > 1) {
             const lastTweetInThread = updatedTweets[updatedTweets.length - 1];
             lastTweetInThread.parent = updatedTweets[updatedTweets.length - 2].id;
+
             if (updatedTweets[0].parent) {
                 updatedTweets[0].parent = null;
             }
