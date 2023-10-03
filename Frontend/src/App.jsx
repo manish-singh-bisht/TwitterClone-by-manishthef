@@ -19,7 +19,7 @@ const FollowersFollowingPage = React.lazy(() => import("./components/Profile/Fol
 const MessageHomePage = React.lazy(() => import("./components/Messages/MessageHomePage"));
 import OfflineComponent from "./components/Offline/OfflineComponent";
 import SideBarIconsOnly from "./components/Sidebar/SideBarIconsOnly";
-import Page404 from "./components/404/page404";
+import Page404 from "./components/404/Page404";
 
 const App = () => {
     const {
