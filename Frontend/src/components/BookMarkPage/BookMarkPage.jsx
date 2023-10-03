@@ -123,7 +123,7 @@ const BookMarkPage = () => {
                             })
                         ) : (
                             <div className="mt-[4.3rem] flex flex-col items-center justify-center">
-                                <img className="h-[10.6rem]" src="/images/bookmarksNone.png" alt="no bookmark image" />
+                                <img className="h-[10.6rem]" src="../../../images/bookmarksNone.png" alt="no bookmark image" />
                                 <div className="text-center text-[2.1rem] font-bold">Save Tweets for later </div>
 
                                 <div className="text-center text-gray-600">
