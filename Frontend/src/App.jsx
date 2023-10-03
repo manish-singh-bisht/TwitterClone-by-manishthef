@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import LoadUserWhenToken from "./context/actions/LoadUserWhenToken";
+
 import { ToastContainer } from "react-toastify";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Loader from "./components/Loader/Loader";
@@ -19,6 +19,7 @@ const FollowersFollowingPage = React.lazy(() => import("./components/Profile/Fol
 const MessageHomePage = React.lazy(() => import("./components/Messages/MessageHomePage"));
 import OfflineComponent from "./components/Offline/OfflineComponent";
 import SideBarIconsOnly from "./components/Sidebar/SideBarIconsOnly";
+import LoadUserWhenToken from "./context/Actions/LoadUserWhenToken";
 const Page404 = React.lazy(() => import("./components/404/page404"));
 
 const App = () => {
