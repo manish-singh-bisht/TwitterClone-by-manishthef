@@ -2,13 +2,14 @@ import React from "react";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import FollowUser from "../../context/Actions/FollowUser";
 import axios from "axios";
+import { API_BASE_URL } from "../../../config";
 
 const HoverProfileCard = ({ description, name, handle, ownerId, profile }) => {
     const { state, dispatchFollowUser, ACTIONS, dispatch } = useGlobalContext();
 
     const followHandler = async (id) => {
         await FollowUser({ dispatchFollowUser, ACTIONS, id });
-        const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
+        const { data } = await axios.get(`${API_BASE_URL}/me`, { withCredentials: true });
         dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
     };
     return (

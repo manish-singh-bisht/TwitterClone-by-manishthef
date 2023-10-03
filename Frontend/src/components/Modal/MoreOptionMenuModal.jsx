@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import FollowUser from "../../context/Actions/FollowUser";
 import useModal from "../../CustomHooks/useModal";
+import { API_BASE_URL } from "../../../config";
 
 const MoreOptionMenuModal = ({
     visibility,
@@ -120,7 +121,7 @@ const MoreOptionMenuModal = ({
     const followUnfollowHandler = async () => {
         const id = isAlreadyFollowing.ownerid;
         await FollowUser({ dispatchFollowUser, ACTIONS, id });
-        const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
+        const { data } = await axios.get("${API_BASE_URL}/me", { withCredentials: true });
 
         await dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
     };
@@ -237,7 +238,7 @@ const MoreOptionMenuModal = ({
             );
             toast("Your Tweet was deleted", toastConfig);
             if (postID && commentID) {
-                const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+                const { data } = await axios.delete(`${API_BASE_URL}/${postID}/${commentID}`, { withCredentials: true });
                 if (data.haveParent) {
                     setCommentsHandlerForDelete("fromProfileTweets", data.parentid);
                 }
@@ -259,7 +260,7 @@ const MoreOptionMenuModal = ({
             );
             toast("Your Tweet was deleted", toastConfig);
             if (postID && commentID) {
-                const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+                const { data } = await axios.delete(`${API_BASE_URL}/${postID}/${commentID}`, { withCredentials: true });
 
                 if (data.haveParent) {
                     setCommentsHandlerForDelete("fromMediaLikes", data.parentid);
@@ -309,7 +310,7 @@ const MoreOptionMenuModal = ({
             if (postID && commentID === undefined) {
                 await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
             } else if (postID && commentID) {
-                const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+                const { data } = await axios.delete(`${API_BASE_URL}/${postID}/${commentID}`, { withCredentials: true });
                 if (data.haveParent) {
                     setCommentsHandlerForDelete("fromRepliesProfile", data.parentid);
                 }
@@ -338,7 +339,7 @@ const MoreOptionMenuModal = ({
             );
             toast("Your Tweet was deleted", toastConfig);
             if (isCommentRetweet) {
-                await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+                await axios.delete(`${API_BASE_URL}/${postID}/${commentID}`, { withCredentials: true });
             } else {
                 await DeletePost({ dispatchTweetDelete, ACTIONS, postID });
             }
@@ -352,7 +353,7 @@ const MoreOptionMenuModal = ({
         } else {
             if (fromBookmarksForDeletingCommentPost) {
                 removeBookmark(commentID);
-                const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+                const { data } = await axios.delete(`${API_BASE_URL}/${postID}/${commentID}`, { withCredentials: true });
                 if (data.haveParent) {
                     setCommentsHandlerForDelete("fromBookmarks", data.parentid);
                 }
@@ -362,7 +363,7 @@ const MoreOptionMenuModal = ({
             if (!fromProfileTweets && !fromMediaLikesProfile && !fromProfileRepliesParentPost && !fromProfileRepliesComment) {
                 if (fromActiveComment || fromCommentDetail || fromReplies) {
                     if (fromReplies) {
-                        const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+                        const { data } = await axios.delete(`${API_BASE_URL}/${postID}/${commentID}`, { withCredentials: true });
                         if (data.haveParent) {
                             setCommentsHandlerForDelete("fromReplies", data.parentid);
                         }
@@ -384,7 +385,7 @@ const MoreOptionMenuModal = ({
 
     const pinHandler = async (handle, tweetId) => {
         if (!state.user.pinnedTweet && infoToMoreOptionModal.commentID === undefined) {
-            const { data } = await axios.get(`http://localhost:4000/api/v1/pinTweet/${handle}/${tweetId}`, { withCredentials: true });
+            const { data } = await axios.get(`${API_BASE_URL}/pinTweet/${handle}/${tweetId}`, { withCredentials: true });
 
             setDataArray((prev) => {
                 const pinnedTweetIndex = prev.findIndex((tweet) => {
@@ -410,7 +411,7 @@ const MoreOptionMenuModal = ({
 
             toast(data.message, toastConfig);
         } else if (state.user.pinnedTweet && state.user.pinnedTweet !== infoToMoreOptionModal.postID && infoToMoreOptionModal.commentID === undefined) {
-            const { data } = await axios.put(`http://localhost:4000/api/v1/pinTweet/${handle}/${tweetId}`, null, { withCredentials: true });
+            const { data } = await axios.put(`${API_BASE_URL}/pinTweet/${handle}/${tweetId}`, null, { withCredentials: true });
 
             setDataArray((prev) => {
                 const pinnedTweetIndex = prev.findIndex((tweet) => {
@@ -437,7 +438,7 @@ const MoreOptionMenuModal = ({
         } else if (infoToMoreOptionModal.commentID) {
             toast("Only Tweet can be pinned.", toastConfig);
         } else {
-            const { data } = await axios.get(`http://localhost:4000/api/v1/unpinTweet/${handle}/${tweetId}`, { withCredentials: true });
+            const { data } = await axios.get(`${API_BASE_URL}/unpinTweet/${handle}/${tweetId}`, { withCredentials: true });
 
             setDataArray((prev) => {
                 const pinnedTweetIndex = prev.findIndex((tweet) => {
@@ -466,7 +467,7 @@ const MoreOptionMenuModal = ({
             }
             toast(data.message, toastConfig);
         }
-        const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
+        const { data } = await axios.get("${API_BASE_URL}/me", { withCredentials: true });
 
         await dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
     };

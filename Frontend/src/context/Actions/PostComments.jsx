@@ -1,11 +1,12 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { API_BASE_URL } from "../../../config";
 const PostComments = async ({ dispatchComment, ACTIONS, postId, comment, parent, mentions, images }) => {
     try {
         dispatchComment({ type: ACTIONS.COMMENT_REQUEST });
         const { data } = await axios.post(
-            `http://localhost:4000/api/v1/post/comment/${postId}`,
+            `${API_BASE_URL}/post/comment/${postId}`,
             { comment, parent, mentions, images },
 
             {

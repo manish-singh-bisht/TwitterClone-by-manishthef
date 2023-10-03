@@ -1,4 +1,5 @@
 import axios from "axios";
+import { API_BASE_URL } from "../../../config";
 const RetweetPost = async ({ dispatchRetweet, ACTIONS, postId, user, state, setComment }) => {
     const userData = { _id: state.user._id, name: state.user.name, handle: state.user.handle, profile: state.user.profile && state.user.profile, description: state.user.description };
 
@@ -6,7 +7,7 @@ const RetweetPost = async ({ dispatchRetweet, ACTIONS, postId, user, state, setC
         dispatchRetweet({ type: ACTIONS.RETWEET_POST_REQUEST });
 
         const { data } = await axios.post(
-            `http://localhost:4000/api/v1/${postId}`,
+            `${API_BASE_URL}/${postId}`,
             { user },
 
             {

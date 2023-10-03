@@ -1,11 +1,12 @@
 import axios from "axios";
 import { toast } from "react-toastify";
+import { API_BASE_URL } from "../../../config";
 const PostBookmark = async ({ dispatchBookmark, ACTIONS, postId, state, setComment }) => {
     const userData = { _id: state.user._id, name: state.user.name, handle: state.user.handle, profile: state.user.profile && state.user.profile, description: state.user.description };
 
     try {
         dispatchBookmark({ type: ACTIONS.BOOKMARK_POST_REQUEST });
-        const { data } = await axios.get(`http://localhost:4000/api/v1/${postId}/bookmark`, { withCredentials: true });
+        const { data } = await axios.get(`${API_BASE_URL}/${postId}/bookmark`, { withCredentials: true });
         const toastConfig = {
             position: "bottom-center",
             autoClose: 2000,

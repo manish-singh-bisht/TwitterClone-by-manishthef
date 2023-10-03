@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import useModal from "../../CustomHooks/useModal";
 import ActionButtonPanelLong from "../CommonPostComponent/ActionButtonPanelLong";
 import ShowValues from "../CommonPostComponent/ShowValues";
+import { API_BASE_URL } from "../../../config";
 
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 
@@ -194,7 +195,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent, dataActiveComment
 
     const likeHandler = async () => {
         handleLikesAnimation();
-        await axios.get(`http://localhost:4000/api/v1/post/comment/${commentId}`, { withCredentials: true });
+        await axios.get(`${API_BASE_URL}/post/comment/${commentId}`, { withCredentials: true });
         if (isLiked) {
             setLikedBy((prev) =>
                 prev.filter((item) => {
@@ -236,7 +237,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent, dataActiveComment
     const retweetHandler = async () => {
         handleRetweetAnimation();
         await axios.post(
-            `http://localhost:4000/api/v1/comment/${commentId}`,
+            `${API_BASE_URL}/comment/${commentId}`,
             { user: state.user._id },
 
             {
@@ -284,7 +285,7 @@ const ActiveComment = forwardRef(({ commentId, postId, parent, dataActiveComment
 
     const bookmarkedHandler = async () => {
         handleBookmarkedAnimation();
-        const { data } = await axios.get(`http://localhost:4000/api/v1/comment/${commentId}/bookmark`, { withCredentials: true });
+        const { data } = await axios.get(`${API_BASE_URL}/comment/${commentId}/bookmark`, { withCredentials: true });
         if (isBookmarked) {
             setBookmarked((prev) => prev - 1);
         } else {

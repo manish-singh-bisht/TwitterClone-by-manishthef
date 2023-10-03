@@ -1,12 +1,13 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { API_BASE_URL } from "../../../config";
 const UserSignUp = async ({ name, email, password, profile = null, handle, location = null, website = null, dispatch, ACTIONS }) => {
     try {
         dispatch({ type: ACTIONS.LOGIN_REQUEST });
 
         const { data } = await axios.post(
-            "http://localhost:4000/api/v1/register",
+            `${API_BASE_URL}/register`,
             { name, email, password, profile, handle, location, website },
             {
                 withCredentials: true,

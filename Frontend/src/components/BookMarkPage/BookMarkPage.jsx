@@ -14,6 +14,7 @@ import CommentBookmark from "../../context/Actions/CommentBookmark";
 import InfiniteScrollWrapper from "../CommonPostComponent/InfiniteScrollWrapper";
 import useModal from "../../CustomHooks/useModal";
 import { Link } from "react-router-dom";
+import { API_BASE_URL } from "../../../config";
 
 const BookMarkPage = () => {
     // this is just for showing the posts that were bookmarked by the logged in user, to see how the number of the bookmark is being changed or from where the api call is being made to mark a post as bookmark, refer to Frontend\src\components\CommonPostComponent\BookMark.jsx.
@@ -32,7 +33,7 @@ const BookMarkPage = () => {
         setUsersForRightSidebar(null);
         const functionToGetAllBookmarks = async () => {
             setLoading(true);
-            const { data } = await axios.get(`http://localhost:4000/api/v1/getBookmarks/${state.user._id}`, { withCredentials: true });
+            const { data } = await axios.get(`${API_BASE_URL}/getBookmarks/${state.user._id}`, { withCredentials: true });
             setLoading(false);
             setBookmarks(data.posts);
         };
@@ -48,9 +49,9 @@ const BookMarkPage = () => {
     };
     const deleteAllBookmarks = async () => {
         setBookmarks([]);
-        await axios.delete(`http://localhost:4000/api/v1/deleteAllBookmarks/${state.user._id}`, { withCredentials: true });
+        await axios.delete(`${API_BASE_URL}/deleteAllBookmarks/${state.user._id}`, { withCredentials: true });
     };
-    const url = `http://localhost:4000/api/v1/getBookmarks/${state.user._id}?page=`;
+    const url = `${API_BASE_URL}/getBookmarks/${state.user._id}?page=`;
     return (
         <div className="h-[100%] min-h-[100vh] border-l border-r">
             <div className="sticky inset-0 z-10 flex h-fit   justify-between    bg-white/60  backdrop-blur-md ">

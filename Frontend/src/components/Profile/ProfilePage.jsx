@@ -14,6 +14,7 @@ import CommentBookmark from "../../context/Actions/CommentBookmark";
 import PostBookmark from "../../context/Actions/PostBookmark";
 import FollowUser from "../../context/Actions/FollowUser";
 import InfiniteScrollWrapper from "../CommonPostComponent/InfiniteScrollWrapper";
+import { API_BASE_URL } from "../../../config";
 
 const UpdateModal = React.lazy(() => import("../Modal/UpdateModal"));
 
@@ -49,10 +50,10 @@ const ProfilePage = () => {
         document.body.style.overflow = "unset";
         setUsersForRightSidebar(null);
 
-        const getTweets = (userHandle) => fetchDataForButton("Tweets", `http://localhost:4000/api/v1/getTweets/${userHandle}`);
+        const getTweets = (userHandle) => fetchDataForButton("Tweets", `${API_BASE_URL}/getTweets/${userHandle}`);
 
         const getProfileUser = async (userHandle) => {
-            const { data } = await axios.get(`http://localhost:4000/api/v1/user/${userHandle}`, { withCredentials: true });
+            const { data } = await axios.get(`${API_BASE_URL}/user/${userHandle}`, { withCredentials: true });
             setUser(data.userProfile);
             setTotal(data.total);
             setIsPinned({ bool: data.userProfile.pinnedTweet ? true : false, id: data.userProfile.pinnedTweet ? data.userProfile.pinnedTweet : null });
@@ -81,20 +82,20 @@ const ProfilePage = () => {
         document.body.style.overflow = "unset";
     };
 
-    const tweetButtonHandler = () => fetchDataForButton("Tweets", `http://localhost:4000/api/v1/getTweets/${userHandle}`);
-    const replyButtonHandler = () => fetchDataForButton("Replies", `http://localhost:4000/api/v1/getReply/${userHandle}`);
-    const mediaButtonHandler = () => fetchDataForButton("Media", `http://localhost:4000/api/v1/getPostWithMedia/${userHandle}`);
-    const likedButtonHandler = () => fetchDataForButton("Likes", `http://localhost:4000/api/v1/getLikedPost/${userHandle}`);
+    const tweetButtonHandler = () => fetchDataForButton("Tweets", `${API_BASE_URL}/getTweets/${userHandle}`);
+    const replyButtonHandler = () => fetchDataForButton("Replies", `${API_BASE_URL}/getReply/${userHandle}`);
+    const mediaButtonHandler = () => fetchDataForButton("Media", `${API_BASE_URL}/getPostWithMedia/${userHandle}`);
+    const likedButtonHandler = () => fetchDataForButton("Likes", `${API_BASE_URL}/getLikedPost/${userHandle}`);
 
     const url =
-        (activeButton === "Tweets" && `http://localhost:4000/api/v1/getTweets/${userHandle}?page=`) ||
-        (activeButton === "Replies" && `http://localhost:4000/api/v1/getReply/${userHandle}?page=`) ||
-        (activeButton === "Media" && `http://localhost:4000/api/v1/getPostWithMedia/${userHandle}?page=`) ||
-        (activeButton === "Likes" && `http://localhost:4000/api/v1/getLikedPost/${userHandle}?page=`);
+        (activeButton === "Tweets" && `${API_BASE_URL}/getTweets/${userHandle}?page=`) ||
+        (activeButton === "Replies" && `${API_BASE_URL}/getReply/${userHandle}?page=`) ||
+        (activeButton === "Media" && `${API_BASE_URL}/getPostWithMedia/${userHandle}?page=`) ||
+        (activeButton === "Likes" && `${API_BASE_URL}/getLikedPost/${userHandle}?page=`);
 
     const followHandler = async (id) => {
         await FollowUser({ dispatchFollowUser, ACTIONS, id });
-        const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
+        const { data } = await axios.get("${API_BASE_URL}/me", { withCredentials: true });
         dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
     };
 

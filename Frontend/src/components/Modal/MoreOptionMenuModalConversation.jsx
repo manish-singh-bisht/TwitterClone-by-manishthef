@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Delete, PushPin } from "../SVGs/SVGs";
 import axios from "axios";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
+import { API_BASE_URL } from "../../../config";
 
 const MoreOptionMenuModalConversation = ({ visibility, handleOutsideClick, buttonPosition, infoToMoreOptionModal, setMessages, setVisibilityMoreOptionModalConversation, setConversationsArray, setIsPinnedConversation }) => {
     if (!visibility) return;
@@ -36,7 +37,7 @@ const MoreOptionMenuModalConversation = ({ visibility, handleOutsideClick, butto
                 return item._id !== infoToMoreOptionModal.conversationid;
             })
         );
-        await axios.delete(`http://localhost:4000/api/v1/chat/conversation/deleteConversation/${infoToMoreOptionModal.conversationid}`, {
+        await axios.delete(`${API_BASE_URL}/chat/conversation/deleteConversation/${infoToMoreOptionModal.conversationid}`, {
             data: {
                 userId,
             },
@@ -49,14 +50,14 @@ const MoreOptionMenuModalConversation = ({ visibility, handleOutsideClick, butto
         setIsPinnedConversation({ bool: false, id: null });
         setMessages((prev) => ({ ...prev, showingMessages: false }));
 
-        const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
+        const { data } = await axios.get("${API_BASE_URL}/me", { withCredentials: true });
 
         await dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
     };
 
     const pinHandler = async (handle, conversationid) => {
         if (!state.user.pinnedConversation) {
-            const { data } = await axios.get(`http://localhost:4000/api/v1/pinConversation/${handle}/${conversationid}`, { withCredentials: true });
+            const { data } = await axios.get(`${API_BASE_URL}/pinConversation/${handle}/${conversationid}`, { withCredentials: true });
 
             setConversationsArray((prev) => {
                 const pinnedConversationIndex = prev.findIndex((item) => {
@@ -78,7 +79,7 @@ const MoreOptionMenuModalConversation = ({ visibility, handleOutsideClick, butto
                 }
             });
         } else if (state.user.pinnedConversation && state.user.pinnedConversation !== infoToMoreOptionModal.conversationid) {
-            const { data } = await axios.put(`http://localhost:4000/api/v1/pinConversation/${handle}/${conversationid}`, null, { withCredentials: true });
+            const { data } = await axios.put(`${API_BASE_URL}/pinConversation/${handle}/${conversationid}`, null, { withCredentials: true });
 
             setConversationsArray((prev) => {
                 const pinnedConversationIndex = prev.findIndex((item) => {
@@ -99,7 +100,7 @@ const MoreOptionMenuModalConversation = ({ visibility, handleOutsideClick, butto
                 return prev;
             });
         } else {
-            const { data } = await axios.get(`http://localhost:4000/api/v1/unpinConversation/${handle}/${conversationid}`, { withCredentials: true });
+            const { data } = await axios.get(`${API_BASE_URL}/unpinConversation/${handle}/${conversationid}`, { withCredentials: true });
 
             setConversationsArray((prev) => {
                 const pinnedConversationIndex = prev.findIndex((item) => {
@@ -124,7 +125,7 @@ const MoreOptionMenuModalConversation = ({ visibility, handleOutsideClick, butto
             });
         }
 
-        const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
+        const { data } = await axios.get("${API_BASE_URL}/me", { withCredentials: true });
 
         await dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
     };

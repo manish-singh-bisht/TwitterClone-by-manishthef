@@ -1,11 +1,12 @@
 import axios from "axios";
+import { API_BASE_URL } from "../../../config";
 const LikeUnlike = async ({ dispatch, ACTIONS, postId, state, setComment }) => {
     const userData = { _id: state.user._id, name: state.user.name, handle: state.user.handle, profile: state.user.profile && state.user.profile, description: state.user.description };
 
     try {
         dispatch({ type: ACTIONS.LIKE_UNLIKE_REQUEST });
 
-        const { data } = await axios.get(`http://localhost:4000/api/v1/post/${postId}`, { withCredentials: true });
+        const { data } = await axios.get(`${API_BASE_URL}/post/${postId}`, { withCredentials: true });
 
         dispatch({ type: ACTIONS.LIKE_UNLIKE_SUCCESS, payload: data.message });
         setComment((prev) => {

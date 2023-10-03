@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import { toast } from "react-toastify";
+import { API_BASE_URL } from "../../../config";
 
 const SaveTweetModal = ({ visibilityCross, handleOutsideClickCross, setvisibilityCross, closeAll, text, fromDraft, handleUpdateDraft, firstTweetText }) => {
     if (!visibilityCross) return;
@@ -33,7 +34,7 @@ const SaveTweetModal = ({ visibilityCross, handleOutsideClickCross, setvisibilit
             setvisibilityCross(false);
         } else {
             const { data } = await axios.post(
-                `http://localhost:4000/api/v1/draft/create`,
+                `${API_BASE_URL}/draft/create`,
                 { text },
 
                 {

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { API_BASE_URL } from "../../../config";
 const RetweetComment = async ({ dispatchRetweet, ACTIONS, postId, user, state, setComment }) => {
     //postId here is commentid
 
@@ -8,7 +9,7 @@ const RetweetComment = async ({ dispatchRetweet, ACTIONS, postId, user, state, s
         dispatchRetweet({ type: ACTIONS.RETWEET_COMMENT_REQUEST });
 
         const { data } = await axios.post(
-            `http://localhost:4000/api/v1/comment/${postId}`,
+            `${API_BASE_URL}/comment/${postId}`,
             { user },
 
             {

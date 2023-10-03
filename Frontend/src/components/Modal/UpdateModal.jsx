@@ -4,6 +4,7 @@ import { BannerImage, ProfileImage } from "../Profile/ProfileBanner";
 import axios from "axios";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import { toast } from "react-toastify";
+import { API_BASE_URL } from "../../../config";
 
 const UpdateModal = ({ visibility, onClose, handleOutsideClick, profile, banner, name, website, bio, location, setUser }) => {
     if (!visibility) return;
@@ -88,7 +89,7 @@ const UpdateModal = ({ visibility, onClose, handleOutsideClick, profile, banner,
         }
         setLoading(true);
         await axios.put(
-            `http://localhost:4000/api/v1/update/profile`,
+            `${API_BASE_URL}/update/profile`,
             { name: formData.name, profile: updatedProfile, website: formData.website, location: formData.location, description: formData.bio },
 
             {
@@ -96,7 +97,7 @@ const UpdateModal = ({ visibility, onClose, handleOutsideClick, profile, banner,
                 headers: { "Content-Type": "application/json" },
             }
         );
-        const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
+        const { data } = await axios.get(`${API_BASE_URL}/me`, { withCredentials: true });
         dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
         setLoading(false);
 

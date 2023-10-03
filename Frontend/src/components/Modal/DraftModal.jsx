@@ -6,6 +6,7 @@ import Loader from "../Loader/Loader";
 import TweetModal from "./TweetModal";
 import { toast } from "react-toastify";
 import useModal from "../../CustomHooks/useModal";
+import { API_BASE_URL } from "../../../config";
 
 const DraftModal = ({ visibilityDraft, handleOutsideClickDraft, closeAll }) => {
     if (!visibilityDraft) return;
@@ -21,7 +22,7 @@ const DraftModal = ({ visibilityDraft, handleOutsideClickDraft, closeAll }) => {
 
     useEffect(() => {
         const getDraftHandler = async () => {
-            const { data } = await axios.get(`http://localhost:4000/api/v1/draft/get`, {
+            const { data } = await axios.get(`${API_BASE_URL}/draft/get`, {
                 withCredentials: true,
             });
             const dataNew = data.drafts.map((item) => {
@@ -67,7 +68,7 @@ const DraftModal = ({ visibilityDraft, handleOutsideClickDraft, closeAll }) => {
         setAnyChecked((prev) => ({ ...prev, number: drafts.length }));
     };
     const handleDeleteAll = async () => {
-        await axios.delete(`http://localhost:4000/api/v1/draft/deleteAll`, {
+        await axios.delete(`${API_BASE_URL}/draft/deleteAll`, {
             data: {},
             withCredentials: true,
             headers: {
@@ -79,7 +80,7 @@ const DraftModal = ({ visibilityDraft, handleOutsideClickDraft, closeAll }) => {
         state.user.drafts = 0;
     };
     const handleDelete = async (array) => {
-        await axios.delete(`http://localhost:4000/api/v1/draft/delete`, {
+        await axios.delete(`${API_BASE_URL}/draft/delete`, {
             data: { draftIds: array },
             withCredentials: true,
             headers: {
@@ -126,7 +127,7 @@ const DraftModal = ({ visibilityDraft, handleOutsideClickDraft, closeAll }) => {
             toast("Make some changes to the tweet to update the draft.", toastConfig);
         } else {
             const { data } = await axios.put(
-                `http://localhost:4000/api/v1//draft/edit`,
+                `${API_BASE_URL}//draft/edit`,
                 { draftId: activeDraft.id, text: text },
                 {
                     withCredentials: true,

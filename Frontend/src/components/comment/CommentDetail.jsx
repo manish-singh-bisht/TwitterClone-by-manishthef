@@ -11,6 +11,7 @@ import RetweetPost from "../../context/Actions/RetweetPost";
 import RetweetComment from "../../context/Actions/RetweetComment";
 import PostBookmark from "../../context/Actions/PostBookmark";
 import CommentBookmark from "../../context/Actions/CommentBookmark";
+import { API_BASE_URL } from "../../../config";
 
 const CommentCard = React.lazy(() => import("./CommentCard"));
 const ActiveComment = React.lazy(() => import("./ActiveComment"));
@@ -44,7 +45,7 @@ const CommentDetail = () => {
     useEffect(() => {
         setCommentArray([]);
         const getCommentById = async () => {
-            const { data } = await axios.get(`http://localhost:4000/api/v1/comment/${commentId}`, { withCredentials: true });
+            const { data } = await axios.get(`${API_BASE_URL}/comment/${commentId}`, { withCredentials: true });
             setPost(data.comment.post);
             setComment((prev) => ({ comments: [...prev.comments, data], activeComment: data }));
 

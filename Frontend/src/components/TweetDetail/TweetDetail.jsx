@@ -17,6 +17,7 @@ import HoverProfileCard from "../Profile/HoverProfileCard";
 import useModal from "../../CustomHooks/useModal";
 import ActionButtonPanelLong from "../CommonPostComponent/ActionButtonPanelLong";
 import ShowValues from "../CommonPostComponent/ShowValues";
+import { API_BASE_URL } from "../../../config";
 
 const ModalForLikesRetweets = React.lazy(() => import("../Modal/ModalForLikesRetweets"));
 const CommentCard = React.lazy(() => import("../comment/CommentCard"));
@@ -98,11 +99,11 @@ const TweetDetail = () => {
         //gets the updated data of likes, when user likes at homepage and then comes to detailpage,the user gets the updated data
         let value;
         if (isThread) {
-            const { data } = await axios.get(`http://localhost:4000/api/v1/${postId}/thread`, { withCredentials: true });
+            const { data } = await axios.get(`${API_BASE_URL}/${postId}/thread`, { withCredentials: true });
             setThread(data.thread.slice(1));
             value = data.thread[0];
         } else {
-            const { data } = await axios.get(`http://localhost:4000/api/v1/${postId}`, { withCredentials: true });
+            const { data } = await axios.get(`${API_BASE_URL}/${postId}`, { withCredentials: true });
             value = data;
         }
         setMainTweetDetailPost(value);

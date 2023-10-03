@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import FollowUser from "../../context/Actions/FollowUser";
 import InfiniteScrollWrapper from "../CommonPostComponent/InfiniteScrollWrapper";
+import { API_BASE_URL } from "../../../config";
 
 const Connect = () => {
     const [allUsers, setAllUsers] = useState([]);
@@ -16,7 +17,7 @@ const Connect = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
         const getAllusers = async () => {
-            const { data } = await axios.get(`http://localhost:4000/api/v1/users`, { withCredentials: true });
+            const { data } = await axios.get(`${API_BASE_URL}/users`, { withCredentials: true });
             setAllUsers(data.users);
         };
         if (window.location.pathname !== "/connect") {
@@ -30,11 +31,11 @@ const Connect = () => {
 
     const followHandler = async (id) => {
         await FollowUser({ dispatchFollowUser, ACTIONS, id });
-        const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
+        const { data } = await axios.get(`${API_BASE_URL}/me`, { withCredentials: true });
         dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
     };
 
-    const url = `http://localhost:4000/api/v1/users?page=`;
+    const url = `${API_BASE_URL}/users?page=`;
 
     return (
         <div className=" max-h-[full] min-h-[1400px]  border-l border-r">

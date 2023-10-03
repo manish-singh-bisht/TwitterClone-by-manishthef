@@ -14,6 +14,7 @@ import InfiniteScrollWrapper from "../CommonPostComponent/InfiniteScrollWrapper"
 import { Plus, TwitterIcon } from "../SVGs/SVGs";
 import Avatar from "../Avatar/Avatar";
 import SideBarMobile from "../Sidebar/SideBarMobile";
+import { API_BASE_URL } from "../../../config";
 
 const Home = () => {
     const {
@@ -61,7 +62,7 @@ const Home = () => {
         setUsersForRightSidebar(null);
         setCommentArray([]);
     }, []);
-    const url = `http://localhost:4000/api/v1/posts?page=`;
+    const url = `${API_BASE_URL}/posts?page=`;
 
     const uniquePosts = [];
     const seenIds = new Set();

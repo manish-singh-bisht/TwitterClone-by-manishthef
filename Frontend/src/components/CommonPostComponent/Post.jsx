@@ -11,6 +11,7 @@ import Loader from "../Loader/Loader";
 import useHoverCard from "../../CustomHooks/useHoverCard";
 import useModal from "../../CustomHooks/useModal";
 import ActionButtonPanelShort from "./ActionButtonPanelShort";
+import { API_BASE_URL } from "../../../config";
 
 const MoreOptionMenuModal = React.lazy(() => import("../Modal/MoreOptionMenuModal"));
 const HoverProfileCard = React.lazy(() => import("../Profile/HoverProfileCard"));
@@ -183,7 +184,7 @@ const Post = ({
     };
 
     const replyHandler = async (childCommentId) => {
-        const { data } = await axios.get(`http://localhost:4000/api/v1/comment/reply/${childCommentId}`, { withCredentials: true });
+        const { data } = await axios.get(`${API_BASE_URL}/comment/reply/${childCommentId}`, { withCredentials: true });
         setReplies(data.replies);
         setShowReplies(true);
     };

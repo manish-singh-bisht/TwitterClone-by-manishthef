@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import FollowUser from "../../context/Actions/FollowUser";
 import axios from "axios";
+import { API_BASE_URL } from "../../../config";
 
 const ModalForLikesRetweets = ({ visibility, onClose, type, list, handleOutsideClick }) => {
     if (!visibility) return;
@@ -17,7 +18,7 @@ const ModalForLikesRetweets = ({ visibility, onClose, type, list, handleOutsideC
     };
     const followHandler = async (id) => {
         await FollowUser({ dispatchFollowUser, ACTIONS, id });
-        const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
+        const { data } = await axios.get(`${API_BASE_URL}/me`, { withCredentials: true });
         dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
     };
     return (

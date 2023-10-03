@@ -7,6 +7,7 @@ import Loader from "../Loader/Loader";
 import { Link, useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import FollowUser from "../../context/Actions/FollowUser";
+import { API_BASE_URL } from "../../../config";
 
 const SidebarRight = () => {
     // let sidebar = document.getElementsByClassName("sidebar")[0];
@@ -50,7 +51,7 @@ const SidebarRight = () => {
             return;
         }
 
-        const { data } = await axios.get(`http://localhost:4000/api/v1/search/${valueTyped}`, { withCredentials: true });
+        const { data } = await axios.get(`${API_BASE_URL}/search/${valueTyped}`, { withCredentials: true });
         if (data.users) {
             setUserSearched(data.users);
         } else {
@@ -243,7 +244,7 @@ const TrendingFollow = memo(({ name, userId, username, profilePicture, descripti
     };
     const followHandler = async (id) => {
         await FollowUser({ dispatchFollowUser, ACTIONS, id });
-        const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
+        const { data } = await axios.get("${API_BASE_URL}/me", { withCredentials: true });
         dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
     };
     return (

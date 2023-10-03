@@ -3,6 +3,7 @@ import tippy from "tippy.js";
 import axios from "axios";
 import MentionList from "./MentionList.jsx";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
+import { API_BASE_URL } from "../../../../config.js";
 
 export default {
     items: AwesomeDebouncePromise(async ({ query }) => {
@@ -11,7 +12,7 @@ export default {
         }
 
         try {
-            const { data } = await axios.get(`http://localhost:4000/api/v1/search/${query}`, { withCredentials: true });
+            const { data } = await axios.get(`${API_BASE_URL}/search/${query}`, { withCredentials: true });
 
             if (data.users && data.users.length > 0) {
                 const users = data.users;

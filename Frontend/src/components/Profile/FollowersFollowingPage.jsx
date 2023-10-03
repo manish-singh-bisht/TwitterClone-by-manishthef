@@ -7,6 +7,7 @@ import Loader from "../Loader/Loader";
 import Avatar from "../Avatar/Avatar";
 import FollowUser from "../../context/Actions/FollowUser";
 import InfiniteScrollWrapper from "../CommonPostComponent/InfiniteScrollWrapper";
+import { API_BASE_URL } from "../../../config";
 
 const FollowersFollowingPage = () => {
     const { setUsersForRightSidebar, state, dispatchFollowUser, ACTIONS, dispatch } = useGlobalContext();
@@ -35,13 +36,13 @@ const FollowersFollowingPage = () => {
         const getFollowingFollowers = async (handle) => {
             if (type === "followers") {
                 setLoading(true);
-                const { data } = await axios.get(`http://localhost:4000/api/v1/followers/${handle}`, { withCredentials: true });
+                const { data } = await axios.get(`${API_BASE_URL}/followers/${handle}`, { withCredentials: true });
                 setUser(data.userProfile);
                 setfollowers(data.followers);
                 setLoading(false);
             } else {
                 setLoading(true);
-                const { data } = await axios.get(`http://localhost:4000/api/v1/following/${handle}`, { withCredentials: true });
+                const { data } = await axios.get(`${API_BASE_URL}/following/${handle}`, { withCredentials: true });
                 setUser(data.userProfile);
                 setfollowing(data.following);
                 setLoading(false);
@@ -51,7 +52,7 @@ const FollowersFollowingPage = () => {
         getFollowingFollowers(handle);
     }, [type]);
 
-    const url = type === "following" ? `http://localhost:4000/api/v1/following/${handle}?page=` : `http://localhost:4000/api/v1/followers/${handle}?page=`;
+    const url = type === "following" ? `${API_BASE_URL}/following/${handle}?page=` : `${API_BASE_URL}/followers/${handle}?page=`;
     return (
         <div className="h-[100%] min-h-[100vh] border-l border-r">
             <div className="sticky inset-0 z-10 flex h-fit   justify-between    bg-white/60  backdrop-blur-md ">
@@ -135,7 +136,7 @@ export const FollowersFollowingStructure = ({ user, state, dispatchFollowUser, A
 
     const followHandler = async (id) => {
         await FollowUser({ dispatchFollowUser, ACTIONS, id });
-        const { data } = await axios.get("http://localhost:4000/api/v1/me", { withCredentials: true });
+        const { data } = await axios.get("${API_BASE_URL}/me", { withCredentials: true });
         dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
     };
     return (

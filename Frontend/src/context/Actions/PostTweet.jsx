@@ -1,6 +1,7 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { API_BASE_URL } from "../../../config";
 
 const PostTweet = async ({ dispatchPostTweet, ACTIONS, tweet, parent, mentions, threadIdForTweetInThread, images, whoCanReply, whoCanReplyNumber }) => {
     if ((whoCanReplyNumber === 2 || whoCanReplyNumber === 3) && whoCanReply.length === 0) {
@@ -35,7 +36,7 @@ const PostTweet = async ({ dispatchPostTweet, ACTIONS, tweet, parent, mentions, 
     try {
         dispatchPostTweet({ type: ACTIONS.POST_TWEET_REQUEST });
         const { data } = await axios.post(
-            `http://localhost:4000/api/v1/post/upload`,
+            `${API_BASE_URL}/post/upload`,
             { tweet, parent, mentions, threadIdForTweetInThread, images, whoCanReply, whoCanReplyNumber },
 
             {

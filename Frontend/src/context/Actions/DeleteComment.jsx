@@ -1,11 +1,12 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { API_BASE_URL } from "../../../config";
 
 const DeleteComment = async ({ dispatchCommentDelete, ACTIONS, postID, commentID }) => {
     try {
         dispatchCommentDelete({ type: ACTIONS.COMMENT_DELETE_REQUEST });
-        const { data } = await axios.delete(`http://localhost:4000/api/v1/${postID}/${commentID}`, { withCredentials: true });
+        const { data } = await axios.delete(`${API_BASE_URL}/${postID}/${commentID}`, { withCredentials: true });
         const toastConfig = {
             position: "bottom-center",
             autoClose: 2000,

@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import MessageOutline from "./MessageOutline";
 import InfiniteScrollWrapperMessagesScrollableComponent from "../CommonPostComponent/InfiniteScrollWrapperMessagesScrollableComponent";
 import { toast } from "react-toastify";
+import { API_BASE_URL } from "../../../config";
 
 const MessageHomePage = () => {
     const searchInputRef = useRef(null);
@@ -46,7 +47,7 @@ const MessageHomePage = () => {
         document.body.style.overflow = "hidden";
         const functionToGetAllConversations = async () => {
             setConversations((prev) => ({ ...prev, loading: true }));
-            const { data } = await axios.get(`http://localhost:4000/api/v1/chat/conversation/getAll`, { withCredentials: true });
+            const { data } = await axios.get(`${API_BASE_URL}/chat/conversation/getAll`, { withCredentials: true });
             setConversations((prev) => ({ ...prev, loading: false }));
             if (state.user.pinnedConversation) {
                 const pinnedConversationIndex = data.conversations.findIndex((item) => item._id === state.user.pinnedConversation);
@@ -85,7 +86,7 @@ const MessageHomePage = () => {
             return;
         }
 
-        const { data } = await axios.get(`http://localhost:4000/api/v1/search/${valueTyped}`, { withCredentials: true });
+        const { data } = await axios.get(`${API_BASE_URL}/search/${valueTyped}`, { withCredentials: true });
         if (data.users) {
             setUserSearched((prev) => ({ ...prev, userArray: data.users, message: null, loadingUser: false }));
         } else {
@@ -99,7 +100,7 @@ const MessageHomePage = () => {
             textareaRef.current.style.height = "auto";
         }
         setMessages((prev) => ({ ...prev, messageLoading: true, showingMessages: false }));
-        const { data } = await axios.get(`http://localhost:4000/api/v1/chat/message/getAll/${id}`, { withCredentials: true });
+        const { data } = await axios.get(`${API_BASE_URL}/chat/message/getAll/${id}`, { withCredentials: true });
         const selectedConversation = conversationsArray.filter((item) => {
             return item._id === id;
         });
@@ -131,7 +132,7 @@ const MessageHomePage = () => {
         };
         try {
             const { data } = await axios.post(
-                `http://localhost:4000/api/v1/chat/message/create`,
+                `${API_BASE_URL}/chat/message/create`,
                 { conversationId: conversation, senderId: state.user._id, content: content, replyTo: reply.bool && { name: reply.name, message: reply.content }, image: selectedImages.image ? selectedImages.image : null },
 
                 {
@@ -182,7 +183,7 @@ const MessageHomePage = () => {
         };
         try {
             const { data } = await axios.post(
-                `http://localhost:4000/api/v1/chat/conversation/create`,
+                `${API_BASE_URL}/chat/conversation/create`,
                 { senderId: state.user._id, receiverId: id },
 
                 {
@@ -215,8 +216,8 @@ const MessageHomePage = () => {
         }
     }, [messages.showingMessages]);
 
-    const urlConversation = `http://localhost:4000/api/v1/chat/conversation/getAll?page=`;
-    const urlMessages = `http://localhost:4000/api/v1/chat/message/getAll/${conversations.activeConversation}?page=`;
+    const urlConversation = `${API_BASE_URL}/chat/conversation/getAll?page=`;
+    const urlMessages = `${API_BASE_URL}/chat/message/getAll/${conversations.activeConversation}?page=`;
 
     return (
         <div className="fixed z-10 h-[100%] w-full bg-white md:w-[calc(100vw-9.2%)] lg:w-[calc(100vw-7.1%)] xl:grid xl:w-[calc(100vw-25%)] xl:grid-cols-[24.5rem_auto] 2xl:w-[calc(100vw-25%)] ">

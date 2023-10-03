@@ -1,10 +1,11 @@
 import axios from "axios";
 
 import "react-toastify/dist/ReactToastify.css";
+import { API_BASE_URL } from "../../../config";
 const DeletePost = async ({ dispatchTweetDelete, ACTIONS, postID }) => {
     try {
         dispatchTweetDelete({ type: ACTIONS.TWEET_DELETE_REQUEST });
-        const { data } = await axios.delete(`http://localhost:4000/api/v1/post/${postID}`, { withCredentials: true });
+        const { data } = await axios.delete(`${API_BASE_URL}/post/${postID}`, { withCredentials: true });
 
         dispatchTweetDelete({ type: ACTIONS.TWEET_DELETE_SUCCESS, payload: data.message });
         return data.post;

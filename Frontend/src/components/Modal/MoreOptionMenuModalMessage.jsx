@@ -3,6 +3,7 @@ import { CopyMessage, Delete, Share } from "../SVGs/SVGs";
 import axios from "axios";
 import { useGlobalContext } from "../../CustomHooks/useGlobalContext";
 import { toast } from "react-toastify";
+import { API_BASE_URL } from "../../../config";
 
 const MoreOptionMenuModalMessage = ({ visibility, handleOutsideClick, buttonPosition, own, infoToMoreOptionModal, setMessageArray, messageFull, setVisibilityMoreOptionModalMessage, setReply }) => {
     if (!visibility) return;
@@ -42,7 +43,7 @@ const MoreOptionMenuModalMessage = ({ visibility, handleOutsideClick, buttonPosi
                 return item._id !== infoToMoreOptionModal.messageid;
             })
         );
-        const { data } = await axios.delete(`http://localhost:4000/api/v1/chat/message/deleteForAll/${infoToMoreOptionModal.messageid}`, { withCredentials: true });
+        const { data } = await axios.delete(`${API_BASE_URL}/chat/message/deleteForAll/${infoToMoreOptionModal.messageid}`, { withCredentials: true });
     };
 
     const deleteForYou = async () => {
@@ -53,7 +54,7 @@ const MoreOptionMenuModalMessage = ({ visibility, handleOutsideClick, buttonPosi
                 return item._id !== infoToMoreOptionModal.messageid;
             })
         );
-        const { data } = await axios.delete(`http://localhost:4000/api/v1/chat/message/deleteMessage`, {
+        const { data } = await axios.delete(`${API_BASE_URL}/chat/message/deleteMessage`, {
             data: {
                 messageId,
                 userId,
