@@ -34,7 +34,7 @@ const generateRandomString = (length = 10) => {
 };
 const SignUpOption = ({ onClose, isSignUpVisible, handleOutsideClickSignup }) => {
     if (!isSignUpVisible) return null;
-
+    const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState({
         name: "",
         email: "",
@@ -88,8 +88,9 @@ const SignUpOption = ({ onClose, isSignUpVisible, handleOutsideClickSignup }) =>
             toast("Handle cannot contain @", toastConfig);
             return;
         }
-
+        setIsLoading(true);
         await UserSignUp({ name: data.name, email: data.email, password: data.password, handle: data.handle, dispatch, ACTIONS });
+        setIsLoading(false);
     };
 
     const dataHandler = (e) => {
@@ -120,7 +121,9 @@ const SignUpOption = ({ onClose, isSignUpVisible, handleOutsideClickSignup }) =>
                         <InputField name="confirmPassword" type="password" placeholder="Confirm Password" value={data.confirmPassword} onChange={dataHandler} />
                         <InputField name="name" type="text" placeholder="Name" value={data.name} onChange={dataHandler} />
                         <InputField name="handle" type="text" placeholder="@Handle" value={data.handle} onChange={dataHandler} />
-                        <button className="h-9 w-[110%] rounded-[24rem] bg-gray-100 font-bold hover:bg-gray-200 active:bg-gray-300 md:w-full">Next</button>
+                        <button className="h-9 w-[110%] rounded-[24rem] bg-gray-100 font-bold hover:bg-gray-200 active:bg-gray-300 md:w-full" disabled={isLoading}>
+                            {isLoading ? "Wait..." : "Next"}
+                        </button>
                         <button className="h-12 w-[110%] rounded-[24rem] bg-blue-200 font-bold hover:bg-blue-400 active:bg-gray-500 md:w-full" onClick={generateRandomValues}>
                             Generate Random Values,
                             <br />

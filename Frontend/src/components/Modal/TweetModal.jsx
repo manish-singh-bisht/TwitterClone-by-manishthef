@@ -289,6 +289,7 @@ const TweetModal = ({ visibility, onClose, initialTweetFromOtherPartsOfApp, hand
                             return tweet.text.length > 0 && tweet.text.length <= 280;
                         }) ? (
                             <button
+                                disabled={isTweetPress}
                                 className=" w-fit rounded-3xl bg-blue-500  px-3 py-[0.2rem] font-bold text-white"
                                 onClick={() => {
                                     handleTweet();

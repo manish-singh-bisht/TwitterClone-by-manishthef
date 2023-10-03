@@ -33,10 +33,13 @@ const LoginOptionModal = ({ onClose, isLoginVisible, handleOutsideClick }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const { dispatch, ACTIONS } = useGlobalContext();
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
         await UserLogin({ email, password, dispatch, ACTIONS });
+        setIsLoading(false);
     };
 
     return (
@@ -56,7 +59,10 @@ const LoginOptionModal = ({ onClose, isLoginVisible, handleOutsideClick }) => {
                     <form className="relative mt-6 flex flex-col gap-4 xl:mt-12 2xl:mt-0" onSubmit={handleLogin}>
                         <InputField type="email" id="Email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
                         <InputField type="password" id="Password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                        <button className="h-9 w-[110%] rounded-[24rem] bg-gray-100 font-bold hover:bg-gray-200 active:bg-gray-300 md:w-full">Next</button>
+                        <button disabled={isLoading} className="h-9 w-[110%] rounded-[24rem] bg-gray-100 font-bold hover:bg-gray-200 active:bg-gray-300 md:w-full">
+                            {" "}
+                            {isLoading ? "Wait..." : "Next"}
+                        </button>
                     </form>
 
                     <div className="mt-16 flex gap-2 text-gray-400">
