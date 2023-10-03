@@ -14,7 +14,7 @@ const LoginSignUpMainPage = () => {
         <>
             <main className=" flex gap-3 overflow-auto xl:gap-8">
                 <div className="hidden h-[100vh] w-[60vw] lg:block">
-                    <img src="./../../../Public/twitter.jpg" alt="twitter logo" className="h-full" />
+                    <img src="../../../Public/twitter.jpg" alt="twitter logo" className="h-full" />
                 </div>
                 <div className="flex w-full flex-col justify-center  lg:w-[38vw]">
                     <div className="h-[70vh]flex flex-col  p-3 align-middle lg:p-0 lg:max-xl:mt-[-4rem]">
