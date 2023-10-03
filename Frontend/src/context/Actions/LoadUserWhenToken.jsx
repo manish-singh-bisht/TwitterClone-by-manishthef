@@ -8,8 +8,8 @@ const LoadUserWhenToken = async ({ dispatch, ACTIONS }) => {
         const { data } = await axios.get(`${API_BASE_URL}/me`, { withCredentials: true });
 
         dispatch({ type: ACTIONS.LOAD_SUCCESS, payload: { myProfile: data.myProfile, total: data.total } });
-    } catch (error) {
-        dispatch({ type: ACTIONS.LOAD_FAILURE, payload: error.response.data.message });
+    } catch (err) {
+        dispatch({ type: ACTIONS.LOAD_FAILURE, payload: err.response.data.message });
     }
 };
 
