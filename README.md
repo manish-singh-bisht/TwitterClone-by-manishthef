@@ -150,7 +150,7 @@ Here are the steps to run the project locally.
 7. Create another .env file,this time inside Frontend folder and add this
 
 ```
-API_BASE_URL=http://localhost:4000/api/v1
+VITE_REACT_APP_API_BASE_URL=http://localhost:4000/api/v1
 
 ```
 
