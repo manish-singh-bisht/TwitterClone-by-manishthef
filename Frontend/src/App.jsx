@@ -7,7 +7,7 @@ import Loader from "./components/Loader/Loader";
 import { useGlobalContext } from "./CustomHooks/useGlobalContext";
 import ExtendedMedia from "./components/CommonPostComponent/ExtendedMedia";
 import SidebarRight from "./components/Sidebar/SidebarRight";
-
+import LoadUserWhenToken from "./context/Actions/LoadUserWhenToken";
 const Home = React.lazy(() => import("./components/Home/Home"));
 const LoginSignUpMainPage = React.lazy(() => import("./components/Login_Register/LoginSignUpMainPage"));
 const TweetDetail = React.lazy(() => import("./components/TweetDetail/TweetDetail"));
@@ -19,7 +19,7 @@ const FollowersFollowingPage = React.lazy(() => import("./components/Profile/Fol
 const MessageHomePage = React.lazy(() => import("./components/Messages/MessageHomePage"));
 import OfflineComponent from "./components/Offline/OfflineComponent";
 import SideBarIconsOnly from "./components/Sidebar/SideBarIconsOnly";
-import LoadUserWhenToken from "./context/Actions/LoadUserWhenToken";
+
 const Page404 = React.lazy(() => import("./components/404/page404"));
 
 const App = () => {
