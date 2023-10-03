@@ -2,8 +2,11 @@ const express = require("express");
 const errorMiddleware = require("./middlewares/error");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const compression = require("compression");
 
 const app = express();
+
+app.use(compression({ level: 6 }));
 
 app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 
