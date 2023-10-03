@@ -152,7 +152,11 @@ API_BASE_URL=http://localhost:4000/api/v1
 
 ```
 
-8. Close all the terminals,and open two terminals
+8. Now go to `Backend->app.js`, here change this `app.use(cors({ credentials: true, origin: "https://twitter-clone-by-manishthef.vercel.app/" }));`
+
+to `app.use(cors({ credentials: true, origin: "http://localhost:5173" }));`.
+
+9. Close all the terminals,and open two terminals
     - In first,write `npm run start`
     - In second, do `cd Frontend` then do `npm run dev`
     - Now copy or click on the link in the second terminal,in the one in which you did cd Frontend,and your app should be running.
