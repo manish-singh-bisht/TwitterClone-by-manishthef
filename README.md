@@ -1,6 +1,7 @@
 # TwitterClone-by-manishthef
 
 A Twitter clone project built with MERN stack.
+```Change cookie settings to Allow All in the browser,for the web app to run.```
 
 ## Table of Contents
 
