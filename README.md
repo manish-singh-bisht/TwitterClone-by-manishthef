@@ -3,18 +3,19 @@
 A Twitter clone project built with MERN stack.
 ```Change cookie settings to Allow All in the browser,for the web app to run.```
 
+## Demo
+https://github.com/manish-singh-bisht/TwitterClone-by-manishthef/assets/114493480/c63ec15b-52df-4ec8-ad21-94fa28116fb8
+
+
 ## Table of Contents
 
--   [Demo](#Demo)
 -   [Problem It Solves](#Problem-It-Solves)
 -   [Features](#Features)
 -   [ShortComings](#ShortComings)
 -   [Development](#Development)
 -   [Contributing](#Contributing)
 
-## Demo
 
-Will be available soon.
 
 ## Problem It Solves
 
