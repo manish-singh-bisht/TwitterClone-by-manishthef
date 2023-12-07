@@ -1,11 +1,11 @@
 # TwitterClone-by-manishthef
 
 A Twitter clone project built with MERN stack.
-```Change cookie settings to Allow All in the browser,for the web app to run.```
+`Change cookie settings to Allow All in the browser,for the web app to run.`
 
 ## Demo
-https://github.com/manish-singh-bisht/TwitterClone-by-manishthef/assets/114493480/c63ec15b-52df-4ec8-ad21-94fa28116fb8
 
+https://github.com/manish-singh-bisht/TwitterClone-by-manishthef/assets/114493480/c63ec15b-52df-4ec8-ad21-94fa28116fb8
 
 ## Table of Contents
 
@@ -14,8 +14,6 @@ https://github.com/manish-singh-bisht/TwitterClone-by-manishthef/assets/11449348
 -   [ShortComings](#ShortComings)
 -   [Development](#Development)
 -   [Contributing](#Contributing)
-
-
 
 ## Problem It Solves
 
@@ -72,6 +70,10 @@ https://github.com/manish-singh-bisht/TwitterClone-by-manishthef/assets/11449348
 -   Profile section, edit profile.
 
 -   Pin tweet.
+
+-   Search User-debouncing
+
+-   Infinite Scroll
 
 -   Authentication:Jwt.
 
