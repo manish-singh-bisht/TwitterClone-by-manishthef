@@ -165,7 +165,7 @@ to `app.use(cors({ credentials: true, origin: "http://localhost:5173" }));`.
    - In second, do `cd Frontend` then do `npm run dev`
    - Now copy or click on the link in the second terminal,in the one in which you did cd Frontend,and your app should be running.
 
-`NOTE`:If during login,it doesn't happen as it should or if there is some error in console,then in the .env file in the main folder(this env file has many things like DB_URI,etc ) try changing the `mongodb://localhost:27017` to `mongodb://127.0.0.1:27017`.If it doesn't even after this,try google or ChatGpt or Gemini,etc.
+`NOTE`:If during login,it doesn't happen as it should or if there is some error in console,then in the .env file in the main folder(this env file has many things like DB_URI,etc ) try changing the `mongodb://localhost:27017` to `mongodb://127.0.0.1:27017`.If it doesn't work even after this,try google or ChatGpt or Gemini,etc to solve this issue.
 
 ## Contributing
 
