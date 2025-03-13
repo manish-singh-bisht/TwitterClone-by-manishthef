@@ -15,7 +15,8 @@ A Twitter clone project built with MERN stack.
 
 ## Demo
 
-https://github.com/manish-singh-bisht/TwitterClone-by-manishthef/assets/114493480/c63ec15b-52df-4ec8-ad21-94fa28116fb8
+
+https://github.com/user-attachments/assets/37363fea-50ec-4f4a-a579-74d6f66236c1
 
 ## Problem It Solves
 
